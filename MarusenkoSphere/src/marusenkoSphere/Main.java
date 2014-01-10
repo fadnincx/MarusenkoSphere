@@ -10,7 +10,7 @@ public class Main {
 		k.FillKugleRandom(8);
 		GUI.drawKugleToFrame(k);
 		
-		while(true){
+		/*while(true){
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
@@ -20,7 +20,7 @@ public class Main {
 		System.out.println("Next Time");
 		k.DrehenVertikal(1);
 		GUI.drawKugleToFrame(k);
-		}
+		}*/
 		
 	}
 }
