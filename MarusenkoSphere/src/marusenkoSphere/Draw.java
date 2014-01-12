@@ -54,14 +54,14 @@ public class Draw extends JPanel{
 				f7 = new Polygon();
 		
 		Color[] color = new Color[8];
-		color[0] = Color.white;
-		color[1] = Color.yellow;
-		color[2] = Color.orange;
-		color[3] = Color.blue;
-		color[4] = Color.red;
-		color[5] = Color.cyan;
-		color[6] = Color.magenta;
-		color[7] = Color.green;
+		color[0] = new Color(255, 255, 255); 
+		color[1] = new Color(255, 255, 0); 
+		color[2] = new Color(255, 150, 0); 
+		color[3] = new Color(0, 0, 255); 
+		color[4] = new Color(255, 0, 0); 
+		color[5] = new Color(0, 255, 255); 
+		color[6] = new Color(255, 0, 255); 
+		color[7] = new Color(0, 255, 0); 
 		
 		
 		//Polynome Definieren

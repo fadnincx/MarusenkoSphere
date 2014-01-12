@@ -6,7 +6,7 @@ public class Main {
 		Kugel k = new Kugel();
 		GUI GUI = new GUI(k);
 		//k.ChangeColor(3,3);
-		GUI.drawKugleToFrame(k);
+		//GUI.drawKugleToFrame(k);
 		k.FillKugleRandom(8);
 		GUI.drawKugleToFrame(k);
 		

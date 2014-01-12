@@ -26,13 +26,13 @@ public class GUI {
         //gui.setContentPane(new BackgroundPanel("img/backgroundFarbe.jpg"));
  
         
-       gui.addMouseListener(new MouseAdapter() {
+      /* gui.addMouseListener(new MouseAdapter() {
            @Override
            public void mousePressed(MouseEvent e) {
         	   mouseIsPressed(e);
            }
         });
-        
+        */
         gui.setVisible(true);
         gui.setLocationRelativeTo(null);
         gui.setResizable(true);
@@ -41,11 +41,12 @@ public class GUI {
 	
 	protected void drawKugleToFrame(Kugel k){
 		
-		//ContentPane.add(new Draw(k));
+		ContentPane.add(new Draw(k));
+		 // ContentPane.add(new DrawSphere(k));
 		ContentPane.repaint();
 		gui.setVisible(true);
 	}
-	
+	/*
 	private void mouseIsPressed(MouseEvent e){
 		int mouse_x = e.getXOnScreen();
 		int mouse_y = e.getYOnScreen();
