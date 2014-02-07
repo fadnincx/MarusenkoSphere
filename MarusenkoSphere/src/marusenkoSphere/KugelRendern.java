@@ -1602,6 +1602,7 @@ public class KugelRendern {
     }
     private void createWindow() throws Exception {
         DisplayMode d[] = Display.getAvailableDisplayModes();
+      //  System.out.println(d[0]);
         for (int i = 0; i < d.length; i++) {
             if (d[i].getWidth() == 640
                 && d[i].getHeight() == 480
@@ -1610,6 +1611,8 @@ public class KugelRendern {
                 break;
             }
         }
+        //displayMode = d[0];
+        
         Display.setDisplayMode(displayMode);
         Display.setTitle(windowTitle);
         Display.create();
