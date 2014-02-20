@@ -45,7 +45,7 @@ public class KugelRendern {
     }
     
     
-    private void mainloop() {
+  /*  private void mainloop() {
         if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Exit if Escape is pressed
             end();
         }
@@ -70,7 +70,7 @@ public class KugelRendern {
         
         
     }
-
+*/
 
     private void setColor(int n){
     	if(n == 0){
@@ -1602,7 +1602,6 @@ public class KugelRendern {
     }
     private void createWindow() throws Exception {
         DisplayMode d[] = Display.getAvailableDisplayModes();
-      //  System.out.println(d[0]);
         for (int i = 0; i < d.length; i++) {
             if (d[i].getWidth() == 640
                 && d[i].getHeight() == 480
@@ -1611,9 +1610,9 @@ public class KugelRendern {
                 break;
             }
         }
-        System.out.println(displayMode);
+       // System.out.println(displayMode);
         
-    	DisplayMode displayMode =  new DisplayMode(640, 480);
+    	//DisplayMode displayMode =  new DisplayMode(640, 480);
         Display.setDisplayMode(displayMode);
         Display.setTitle(windowTitle);
         Display.create();
