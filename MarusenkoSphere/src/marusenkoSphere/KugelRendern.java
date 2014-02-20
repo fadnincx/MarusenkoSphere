@@ -1611,8 +1611,9 @@ public class KugelRendern {
                 break;
             }
         }
-        //displayMode = d[0];
+        System.out.println(displayMode);
         
+    	DisplayMode displayMode =  new DisplayMode(640, 480);
         Display.setDisplayMode(displayMode);
         Display.setTitle(windowTitle);
         Display.create();
