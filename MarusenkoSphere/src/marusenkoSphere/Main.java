@@ -7,15 +7,20 @@ public class Main {
 
 	public static void main(String[] args){
 		Kugel k = new Kugel();
+		System.out.println("Created Kugel");
 		KugelRendern kr = new KugelRendern(k);
+		System.out.println("Created KugelRendern");
 		kr.run();
-		k.FillKugleRandom(8);
-		System.out.println("Next Time");
+		System.out.println("Start Running");
+		//k.FillKugelRandom();
+		k.FillKugelFix();
+		System.out.println("Filled Random");
 		kr.updateKugel(k);
-		int counter =  0;
+		System.out.println("Updated Kugel");
+	//	int counter =  0;
 		while(true){
-			counter++;
-			if(counter == 1000){
+		//	counter++;
+			/*if(counter == 1000){
 				counter = 0;
 				
 				if(Keyboard.isKeyDown(Keyboard.KEY_A)){
@@ -51,7 +56,7 @@ public class Main {
 			    	k.HalbDrehenHorizontal(3);
 			    }
 				
-			}
+			}*/
 			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Exit if Escape is pressed
 		        kr.end();
 		    }
@@ -70,36 +75,10 @@ public class Main {
 		    if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {          // Is F1 Being Pressed?
 		        kr.drehen(0.0f,+0.02f);
 		    }
-		    
 
-		    
-			
 			kr.doing();
-			
-			
-			
+
 		}
-		
-		
-		
-		/*GUI GUI = new GUI(k);
-		//k.ChangeColor(3,3);
-		//GUI.drawKugleToFrame(k);
-		k.FillKugleRandom(8);
-		GUI.drawKugleToFrame(k);
-		
-		/*while(true){
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("Next Time");
-		k.DrehenVertikal(1);
-		GUI.drawKugleToFrame(k);
-		}*/
-		
 	}
 	
 	

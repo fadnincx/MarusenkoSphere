@@ -2,6 +2,95 @@ package marusenkoSphere;
 
 import java.util.Random;
 
+public class Kugel{
+	
+	protected int[] tri; //Arrays for Triangles
+	protected int[] con; //Arrays for Connectors
+	
+	
+	public Kugel(){
+		//Arrays Grösse Zuweisen
+		tri = new int[24];
+		con = new int[8];
+		
+		//Kugel zufällig füllen
+		//FillKugelRandom();
+	}
+	protected void FillKugelFix(){
+		for(int i = 0; i<8;i++){
+			con[i]=1;
+		}
+		for(int i = 0; i<24;i++){
+			tri[i]=1;
+		}
+		
+		
+		//tri[0]=2;
+		//con[0] = 2;
+		
+	}
+	protected void FillKugelRandom(){
+		//Random für Zufall
+		Random rm = new Random();
+		//Alle fixen Felder auf -1 setzten, damit sagen, dass noch keine Farbe
+		for(int i = 0; i<8;i++){
+			con[i]=-1;
+		}
+		//Die 8 Fixen Positionen Zu ordnen
+		for(int i = 0; i<8;i++){
+			int r = rm.nextInt(8-i);
+			boolean found = false;
+			while(!found){
+				if(con[r]==-1){
+					con[r] = i;
+					found = true;
+				}else{
+					r++;
+					r %= 8;
+				}
+			}
+		}
+		//alle variablen Felder auf -1 setzten, damit sagen, dass noch keine Farbe
+		for(int i = 0; i<24;i++){
+			tri[i]=-1;
+		}
+		//Die 24 variabeln Positionen zu ordnen
+		for(int i = 0; i<24;i++){
+			int r = rm.nextInt(24-i);
+			int j = i/3;
+			boolean found = false;
+			while(!found){
+				if(tri[r]==-1){
+					tri[r] = j;
+					found = true;
+				}else{
+					r++;
+					r %= 24;
+				}
+			}
+		}		
+	}//#END FillKugelRandom
+	
+	//Funktion Dreht ein Pol
+	protected void changePol(int p1, int p2, int p3, int p4){
+		int zs = tri[p1];
+		tri[p1] = tri[p2];
+		tri[p2] = tri[p3];
+		tri[p3] = tri[p4];
+		tri[p4] = zs;
+	}
+	
+	protected void changePol(int polNr, int anz){
+		for(int i = 0; i<anz;i++){
+			changePol(4*i,4*i+1,4*i+2,4*i+3);
+		}
+	}
+	
+	
+}
+
+
+/*
 public class Kugel {
 	//Variabeln des Objektes Kugel
 	protected int[] p;
@@ -483,4 +572,4 @@ public class Kugel {
 		
 		TurnPol(6,1);
 	}//#End void DrehenHorizontal(int steps)
-}
+}*/
