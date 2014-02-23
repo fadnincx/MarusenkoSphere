@@ -5,18 +5,107 @@ import org.lwjgl.opengl.Display;
 
 public class Main {
 
+	/**
+	 * Main-Datei
+	 * 
+	 * Wird gestartet, initialisiert die Objekte
+	 * 
+	 */
 	public static void main(String[] args){
+		/**
+		 * Erstelle ein Kugel-Objekt
+		 */
 		Kugel k = new Kugel();
+		
+		/**
+		 * Debugging Information, dass Kugel erfolgreich erstellt wurde
+		 */
 		System.out.println("Created Kugel");
+		
+		/**
+		 * Erstelle das KugelRendern-Objekt, dies ist für die ganze Darstellung der Kugel verantwortlich
+		 */
 		KugelRendern kr = new KugelRendern(k);
+		
+		/**
+		 * Debugging Information, dass KugelRendern erfolgreich erstellt wurde
+		 */
 		System.out.println("Created KugelRendern");
+		
+		/**
+		 * Starte das Rendern der Kugel im Objekt KugelRendern
+		 */
 		kr.run();
+		
+		/**
+		 * Debuggling Information, dass das starten Erfolgreich war
+		 */
 		System.out.println("Start Running");
+		
+		/**
+		 * Befülle die Kugel mit Werten
+		 * 
+		 * k.FillKugelRandom(); für zufälliges Füllen der Kugel mit realistischen Werten
+		 * 
+		 * k.FillKugelFix(); für das füllen der Kugel mit fixen Werten welche in der Funktion definiert wurden, einfarbige Kugel
+		 */
 		//k.FillKugelRandom();
 		k.FillKugelFix();
+		
+		/**
+		 * Debugging Information, dass das füllen erfolgreich war
+		 */
 		System.out.println("Filled Random");
+		
+		/**
+		 * Sende die geupdatete Kugel an das KugelRendern-Objekt, damit es dargestellt werden kann 
+		 */
 		kr.updateKugel(k);
+		
+		/**
+		 * Debugging Information damit Update der Kugel erfolgreich an KugelRendern gesendet werden kann		
+		 */
 		System.out.println("Updated Kugel");
+		
+		/**
+		 * Erstelle das Solver-Objekt welches Kugel lösen soll
+		 */
+		Solver s = new Solver(k);
+		
+		/**
+		 * Debugging Information, dass Solver Initialisiert wurde
+		 */
+		System.out.println("Initialised Solver");
+		
+		/**
+		 * Sende Kugel an Solver zum lösen
+		 * 
+		 * Dieser Sendet die gelöste Kugel zurück
+		 */
+		k = s.solve(k);
+		
+		/**
+		 * Debugging Information, dass Kugel gelöst wurde
+		 */
+		System.out.println("Solved Kugel");
+		
+		/**
+		 * Sende gelöste Kugel an KugelRendern
+		 */
+		kr.updateKugel(k);
+		
+		/**
+		 * Debugging Information, dass Kugel geupdatet wurde
+		 */
+		System.out.println("Updated Kugel to Screen");
+		
+		/**
+		 * 
+		 * while(true)
+		 * 
+		 * zum drehen der Kugel
+		 * 
+		 */
 	//	int counter =  0;
 		while(true){
 		//	counter++;
