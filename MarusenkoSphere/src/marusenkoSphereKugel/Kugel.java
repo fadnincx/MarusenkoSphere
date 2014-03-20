@@ -120,11 +120,6 @@ public class Kugel{
 		}		
 	}//#END FillKugelRandom
 	
-	/**
-	 * Funktion, welche die halbe Kugel um den Pole dreht
-	 * @param pole : um welchen Pol
-	 * @param steps : wie viele Schritte
-	 */
 	public void turnKugel(int pole, int steps){
 		/**
 		 * Aktion für Anzahl Schritte durch führen
@@ -219,6 +214,7 @@ public class Kugel{
 		tri[p6] = tri[p8];
 		tri[p7] = zs1;
 		tri[p8] = zs2;
+		
 	}//#END cPol(8)
 	
 	/**
@@ -298,7 +294,7 @@ public class Kugel{
 	 * @param polNr : welcher Pol gedreht wird (int)(Dreieck id / 4) 
 	 * @param anz : um welche Anzahl soll gedreht werden
 	 */
-	public void changePol(int polNr, int anz){
+	public  void changePol(int polNr, int anz){
 		for(int i = 0; i<anz;i++){
 			if(polNr==1||polNr==2||polNr==4){
 				cPol(4*polNr+3,4*polNr+2,4*polNr+1,4*polNr);

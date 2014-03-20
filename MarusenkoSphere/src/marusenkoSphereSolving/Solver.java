@@ -4,11 +4,6 @@ import java.util.Arrays;
 
 import marusenkoSphere.Logger;
 import marusenkoSphereKugel.Kugel;
-import marusenkoSphereRender.KugelRendern;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
-
 /**
  * Solver-Datei 
  * 
@@ -21,74 +16,27 @@ public class Solver {
     * Definiert die Kugel, welche gelöst wird wird    
     */
 	protected Kugel k;
-	protected KugelRendern kr;
 	protected boolean[] ok = new boolean[24];
-	protected Logger l = new Logger("errorLog");
-	
-	
-	
-	//long endTime = 200000000;
-	long endTime = 0;
-	
+	protected Logger l;
 	/**
 	 * Initialisiert das Solver-Objekt
 	 * @param k
 	 */
-	public Solver(){}
-	public static void update(Kugel k, KugelRendern kr, long time){
-		/*try {
-			Thread.currentThread().sleep(time);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		time*=1000000;
-		long startTime = System.nanoTime();    
-		long estimatedTime = System.nanoTime() - startTime;
-		while(estimatedTime<time){
-			
-			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Exit if Escape is pressed
-		        kr.end();
-		    }
-		    if(Display.isCloseRequested()) {                     // Exit if window is closed
-		        kr.end();
-		    }
-		    if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {          // Is F1 Being Pressed?
-		    	kr.drehen(-0.02f,0.0f);
-		    }
-		    if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {          // Is F1 Being Pressed?
-		      	kr.drehen(+0.02f,0.0f);
-		    }
-		    if(Keyboard.isKeyDown(Keyboard.KEY_UP)) {          // Is F1 Being Pressed?
-		      	kr.drehen(0.0f,-0.02f);
-		    }
-		    if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {          // Is F1 Being Pressed?
-		        kr.drehen(0.0f,+0.02f);
-		    }
-		    if(Keyboard.isKeyDown(Keyboard.KEY_R)) {          // Is F1 Being Pressed?
-		        kr.setDrehen(0.0f,0.0f);
-		    }
-			kr.updateKugel(k);
-			
-			estimatedTime = System.nanoTime() - startTime;
-		}
-		
+	public Solver(Logger l){
+		this.l = l;
 	}
-	public static void update(Kugel k, KugelRendern kr){
-		update(k,kr,200);
-	}
+	
+	
+	
+	
 	/**
 	 * Hauptfunktion welche für das lösen der Kugel verantwortlich ist
 	 * @param k : Kugel welche gelöst werden soll
 	 * @return : gibt die gelöste Kugel zurück
 	 */
-	
-	public Kugel solve(Kugel kugel, KugelRendern Kugelrendern){
-		/**
-		 * Übergebene Kugel als eigene Speichern
-		 */
-		this.k = kugel;
-		this.kr = Kugelrendern;
+	public Kugel solve(Kugel kugel){
+
+		//Array "ok" mit false füllen
 		Arrays.fill(ok, false); 
 
 		/**
@@ -97,56 +45,21 @@ public class Solver {
 		 * Geht solange, bis Phase 1 abgeschlossen ist
 		 */
 		while(!everythingOk()){
-			//System.out.println("Again");
 			boolean recheck = true;
 			for(int i = 0; i<24; i++){
+				//Wenn recheck gefordert checke erneut
 				if(recheck){
 					recheck = false;
 					checkIfP1IsOK();
 				}
+				//Wenn Position noch nicht gelöst
 				if(!ok[i]){
+					//Recheck gefordert
 					recheck = true;
-					int changep = findPos(i);
-					//System.out.println("Change: "+i+", "+changep);
-					change2Positions(i,changep);
+					//Wechle die Positionen von i und dem mit findPos gefundenen Dreieck
+					change2Positions(i,findPos(i));
 				}
-				/**
-				 * Steuerung der Kugel
-				 */
-				long startTime = System.nanoTime();    
-				long estimatedTime = System.nanoTime() - startTime;
-				while(estimatedTime<endTime){
-					
-					if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Exit if Escape is pressed
-				        kr.end();
-				    }
-				    if(Display.isCloseRequested()) {                     // Exit if window is closed
-				        kr.end();
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {          // Is F1 Being Pressed?
-				    	kr.drehen(-0.02f,0.0f);
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {          // Is F1 Being Pressed?
-				      	kr.drehen(+0.02f,0.0f);
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_UP)) {          // Is F1 Being Pressed?
-				      	kr.drehen(0.0f,-0.02f);
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {          // Is F1 Being Pressed?
-				        kr.drehen(0.0f,+0.02f);
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_R)) {          // Is F1 Being Pressed?
-				        kr.setDrehen(0.0f,0.0f);
-				    }
-					kr.updateKugel(k);
-					
-					estimatedTime = System.nanoTime() - startTime;
-				}
-				/**
-				 * Steuerung der Kugel Ende
-				 */
 			}
-			
 		}
 		/**
 		 * Phase 2
@@ -154,87 +67,53 @@ public class Solver {
 		 * Löst die Kugel zu ende
 		 */
 		
-		/**
-		 * Setzt ok Array zurück 
-		 */
+		//Array ok erneut zurück auf false setzen
 		Arrays.fill(ok, false); 
 		
+		//Solange Kugel nicht gelösst
 		while(!isKugelSolved()){
+			//Gehe Jeden Pol durch
 			for(int i = 0; i<6; i++){
+				//Wenn Pol noch nicht gelösst, löse ihn
 				if(!isPolSolved(i)){
 					solvePol(i);
-					//System.out.println("Solved Pol "+i);
 				}
-				/**
-				 * Steuerung der Kugel
-				 */
-				long startTime = System.nanoTime();    
-				long estimatedTime = System.nanoTime() - startTime;
-				while(estimatedTime<endTime){
-					
-					if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Exit if Escape is pressed
-				        kr.end();
-				    }
-				    if(Display.isCloseRequested()) {                     // Exit if window is closed
-				        kr.end();
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {          // Is F1 Being Pressed?
-				    	kr.drehen(-0.02f,0.0f);
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {          // Is F1 Being Pressed?
-				      	kr.drehen(+0.02f,0.0f);
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_UP)) {          // Is F1 Being Pressed?
-				      	kr.drehen(0.0f,-0.02f);
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {          // Is F1 Being Pressed?
-				        kr.drehen(0.0f,+0.02f);
-				    }
-				    if(Keyboard.isKeyDown(Keyboard.KEY_R)) {          // Is F1 Being Pressed?
-				        kr.setDrehen(0.0f,0.0f);
-				    }
-					kr.updateKugel(k);
-					
-					estimatedTime = System.nanoTime() - startTime;
-				}
-				/**
-				 * Steuerung der Kugel Ende
-				 */
 			}
-			
 		}		
+		
+		//Gib die gelöste Kugel zurück
 		return k;
 		
 	}//#END solve(Kugel kugel)
+	
+	
+	
+	
+	
 	/**
 	 * Überprüft, ob ende Phase 1 erreicht ist
 	 * also Alle Dreiecke im richgigen Pol sind
 	 * @return gibt true zurück, wenn erreicht, sonst false
 	 */
 	private boolean everythingOk(){
-		/**
-		 * Gehe alle Dreiecke durch
-		 */
+		//Gehe alle Dreiecke durch
 		for(int i = 0; i<24; i++){
-			/**
-			 * Wenn eines in ok als false deklariert, dann return false
-			 */
+			//Wenn eines false, dann return false
 			if(!ok[i]){
 				return false;
 			}
 		}
-		/**
-		 * Wenn kein False dann return true
-		 */
+		//Wenn kein false, dann true
 		return true;
 	}
+	
+	
+	
 	/**
 	 * Prüft in Phase1, welche Dreiecke OK sind und welche nicht
 	 */
 	private void checkIfP1IsOK(){
-		/**
-		 * Gehe das ganze Pol weise durch --> 6x
-		 */
+		// Gehe alle Pole durch
 		for(int i = 0; i<6; i++){
 			/**
 			 * int[4] cons ==> Array in dem die 4 Con eines Pols gespeichert werden
@@ -244,34 +123,21 @@ public class Solver {
 			int[] cons = new int[4];
 			boolean[] allowCons = new boolean[4];
 			int[] tris = new int[4];
-			/**
-			 * Befülle die Array mit Daten aus der Kugel
-			 */
-			for(int j = 0; j<4; j++){
-				/**
-				 * Wert von con, Index wird gesucht zu tri Index Pol*4 + Position in Pol
-				 */
+
+			//Array mit daten aus Kugel füllen
+			for(int j = 0; j<4; j++){	 
+				//Wert von con, Index wird gesucht zu tri Index Pol*4 + Position in Pol
 				cons[j] = k.con[k.findCons(i*4+j)];
-				/**
-				 * Alle sind zu beginn noch benutzbar
-				 */
+				//Alle sind zu beginn noch benutzbar
 				allowCons[j] = true;
-				/**
-				 * Wert von tri bei Index Pol*4 + Position in Pol
-				 */
+				//Wert von tri bei Index Pol*4 + Position in Pol
 				tris[j] = k.tri[i*4+j];
 			}
-			/**
-			 * Gehe nun die 4 Position eines Pols durch
-			 */
+			//Gehe nun die 4 Position eines Pols durch
 			for(int j = 0; j<4; j++){
-				/**
-				 * boolean set sagt, ob Position schon neu gesetzt wurde
-				 */
+				//boolean set sagt, ob Position schon neu gesetzt wurde
 				boolean set = false;
-				/**
-				 * Prüfe für alle zur Verfügung stehenden cons ob sie passen
-				 */
+				//Prüfe für alle zur Verfügung stehenden cons ob sie passen
 				for(int k = 0; k<4; k++){
 					/**
 					 * Wenn Position noch nicht neu gesetzt wurde
@@ -290,9 +156,7 @@ public class Solver {
 						set = true;
 					}
 				}
-				/**
-				 * Wenn Position jetzt noch nicht neu gesetzt wurde, dann ist Dreieck falsch und somit muss ok = false gesetzt werden
-				 */
+				//Wenn Position jetzt noch nicht neu gesetzt wurde, dann ist Dreieck falsch und somit muss ok = false gesetzt werden
 				if(!set){
 					ok[i*4+j] = false;
 				}

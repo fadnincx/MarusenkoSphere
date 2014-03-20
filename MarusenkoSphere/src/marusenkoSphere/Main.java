@@ -29,7 +29,7 @@ public class Main {
 		k.FillKugelRandom();
 		kr.updateKugel(k);
 		
-		Solver s = new Solver(); 
+		Solver s = new Solver(l); 
 		
 		@SuppressWarnings("unused")
 		Manager m = new Manager(k,kr,s,d,l);

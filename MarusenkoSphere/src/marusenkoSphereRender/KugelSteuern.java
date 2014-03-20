@@ -14,7 +14,7 @@ public class KugelSteuern {
 			 * 
 			 * Dieser Sendet die gelöste Kugel zurück
 			 */
-			m.k = m.s.solve(m.k,m.kr);
+			m.startSolve();
 			/**
 			 * Debugging Information, dass Kugel gelöst wurde
 			 */
@@ -58,34 +58,34 @@ public class KugelSteuern {
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD0)) {          // Is Num0 Being Pressed?
 	    	m.k.turnKugel(0, 1);
-	    	m.update(m.k,m.kr);
+	    	m.update();
 	    	m.d.log("Num0 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD1)) {          // Is Num1 Being Pressed?
 	    	m.k.turnKugel(1, 1);
-	    	m.update(m.k,m.kr);
+	    	m.update();
 	    	m.d.log("Num1 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD2)) {          // Is Num2 Being Pressed?
 	    	m.k.turnKugel(2, 1);
-	    	m.update(m.k,m.kr);
+	    	m.update();
 	    	m.d.log("Num2 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD3)) {          // Is Num3 Being Pressed?
 	    	m.k.turnKugel(3, 1);
-	    	m.update(m.k,m.kr);
+	    	m.update();
 	    	m.d.log("Num3 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD4)) {          // Is Num4 Being Pressed?
 	    	m.k.turnKugel(4, 1); 
-	    	m.update(m.k,m.kr);
+	    	m.update();
 	    	m.d.log("Num4 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD5)) {          // Is Num5 Being Pressed?
 	    	m.k.turnKugel(5, 1);
-	    	m.update(m.k,m.kr);
+	    	m.update();
 	    	m.d.log("Num5 pressed");
 	    }    
-	    m.kr.doing();
+	    m.renderKugel();
 	}
 }

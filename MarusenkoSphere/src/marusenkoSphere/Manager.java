@@ -9,7 +9,7 @@ public class Manager {
 
 	public Kugel k;
 	public KugelRendern kr;
-	public Solver s;
+	private Solver s;
 	public Logger d;
 	public Logger l;
 	
@@ -34,7 +34,18 @@ public class Manager {
 			estimatedTime = System.nanoTime() - startTime;
 		}
 	}
-	public void update(Kugel k, KugelRendern kr){
+	public void update(){
 		update(200);
 	}
+	public void updateKugel(Kugel k){
+		this.k = k;
+		renderKugel();
+	}
+	public void renderKugel(){
+		kr.updateKugel(k);
+	}
+	public void startSolve(){
+		k = s.solve(k);
+	}
+	
 }
