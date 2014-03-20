@@ -1,4 +1,4 @@
-package marusenkoSphere;
+package marusenkoSphereRender;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -7,10 +7,15 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+import marusenkoSphereKugel.Kugel;
+
+import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+
+
 
 /**
  * KugelRendern-Datei
@@ -30,6 +35,7 @@ public class KugelRendern {
 	 */
     private float rtriy;                 // Angle For The Triangle ( NEW )
     private float rtrix;                 // Angle For The Triangle ( NEW )
+
     
     /**
      * Definiert DisplayMode ==> Verantwortlich, wie Fenster mit Farbmodus etc. ist
@@ -48,6 +54,7 @@ public class KugelRendern {
      */
     public KugelRendern(Kugel kugel){
     	this.k = kugel;
+    	run();
     }
     
     /**
@@ -55,6 +62,7 @@ public class KugelRendern {
      */
     public void updateKugel(Kugel kugel){
     	this.k = kugel;
+    	doing();
     }
     /**
      * Funktion welche versucht das Fenster zum Darstelltn zu starten
@@ -68,14 +76,17 @@ public class KugelRendern {
             e.printStackTrace();
             System.exit(0);
         }
+        
     }
     
     /**
      * Funktion welche das Fenster updatet
      */
     public void doing(){
-          render();
-          Display.update();
+    	GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+    	render(); 
+    	Display.sync(60); // cap fps to 60fps
+        Display.update();
     }
     
     /**
@@ -89,8 +100,15 @@ public class KugelRendern {
      * Funktion, welche die Variabeln ändern, um wie viel die Kugel gedreht wird 
      */
     public void drehen(float f, float x){
-    	rtriy += f;
-    	rtrix += x;
+    	rtriy += f*40;
+    	rtrix += x*40;
+    }
+    /**
+     * Funktion, welche die Variabeln ändern, um wie viel die Kugel gedreht wird 
+     */
+    public void setDrehen(float f, float x){
+    	rtriy = f;
+    	rtrix = x;
     }
 
     /**
@@ -99,28 +117,28 @@ public class KugelRendern {
      */
     private void setColor(int n){
     	if(n == 0){
-    		GL11.glColor3f(1.0f,1.0f,1.0f);
+    		GL11.glColor4f(1.0f,1.0f,1.0f, 1.0f);
     	}else
     	if(n == 1){
-    		GL11.glColor3f(1.0f,1.0f,0.0f);
+    		GL11.glColor4f(1.0f,1.0f,0.0f, 1.0f);
         }else
         if(n == 2){
-        	GL11.glColor3f(1.0f,0.6f,0.0f);	
+        	GL11.glColor4f(1.0f,0.6f,0.0f, 1.0f);	
         }else
         if(n == 3){
-        	GL11.glColor3f(0.0f,0.0f,1.0f);    		
+        	GL11.glColor4f(0.0f,0.0f,1.0f, 1.0f);    		
         }else
         if(n == 4){
-        	GL11.glColor3f(1.0f,0.0f,0.0f);        		
+        	GL11.glColor4f(1.0f,0.0f,0.0f, 1.0f);        		
         }else
         if(n == 5){
-        	GL11.glColor3f(0.0f,1.0f,1.0f);            		
+        	GL11.glColor4f(0.0f,1.0f,1.0f, 1.0f);            		
         }else
         if(n == 6){
-        	GL11.glColor3f(1.0f,0.0f,1.0f);                		
+        	GL11.glColor4f(1.0f,0.0f,1.0f, 1.0f);                		
         }else
         if(n == 7){
-        	GL11.glColor3f(0.0f,1.0f,0.0f);                      		
+        	GL11.glColor4f(0.0f,1.0f,0.0f, 1.0f);                      		
         }
     }
     
@@ -147,6 +165,8 @@ public class KugelRendern {
          */
         GL11.glLoadIdentity();
         
+      
+        
         /**
          * verschiebe das 0/0 Position zum Rendern, damit Kugel ganz sichtbar wird
          */
@@ -158,11 +178,12 @@ public class KugelRendern {
         GL11.glRotatef(rtriy,0.0f,1.0f,0.0f);
         GL11.glRotatef(rtrix,1.0f,0.0f,0.0f);
         
-        /**
+ /**
          * Starte das Zeichnen der einzelnen flächen der Kugel
          */
         GL11.glBegin(GL11.GL_TRIANGLES);
         	  
+        
         
         /**
          * 
@@ -1001,9 +1022,29 @@ public class KugelRendern {
     	/**
     	 * Beende das Rendern der Linien
     	 */
-    	
         GL11.glEnd();
-
+        
+       /*
+        GL11.glLoadIdentity();
+        GL11.glTranslatef(1.4f,1.0f,-4.0f);
+        Color.white.bind();
+        texture.bind(); // or GL11.glBind(texture.getTextureID());
+        
+        GL11.glBegin(GL11.GL_QUADS);
+	        GL11.glTexCoord2f(0.0f, 0.0f);
+	        GL11.glVertex3f(-0.5f, 0.5f, 0.5f); // Top Left Of The Texture and Quad
+	        
+	        GL11.glTexCoord2f(1.0f, 0.0f);
+	        GL11.glVertex3f( 0.5f, 0.5f, 0.5f); // Top Right Of The Texture and Quad
+	        
+	        GL11.glTexCoord2f(1.0f, 1.0f);
+	        GL11.glVertex3f( 0.5f, -0.5f, 0.5f); // Bottom Right Of The Texture and Quad
+	        
+	        GL11.glTexCoord2f(0.0f, 1.0f);
+	        GL11.glVertex3f(-0.5f, -0.5f, 0.5f); // Bottom Left Of The Texture and Quad
+        GL11.glEnd();
+        
+               */
         /**
          * Gebe true zurück, da Rendern ohne Fehler durch ging
          */
@@ -1014,7 +1055,7 @@ public class KugelRendern {
      * Funktion zum erstellen des Fensters
      */
     private void createWindow() throws Exception {
-    	
+    	try{
     	/**
     	 * Suche nach allen verfügbaren Moden mit welchen das Fenster dargestellt werden kann
     	 */
@@ -1065,6 +1106,9 @@ public class KugelRendern {
         /**
          * Setzte den DisplayMode und den Fenstertitel
          */
+        
+     
+        
         Display.setDisplayMode(displayMode);
         Display.setTitle(windowTitle);
         
@@ -1072,6 +1116,11 @@ public class KugelRendern {
          * Erstelle Fenster mit den voreingestellten Einstellungen
          */
         Display.create();
+        Display.setVSyncEnabled(true);
+    	}catch(LWJGLException e){
+    		e.printStackTrace();
+    		System.exit(0);
+    	}
     }
     
     /**
@@ -1083,13 +1132,12 @@ public class KugelRendern {
      * @param height : höhe der Datei, welche geladen werden wird
      * @return : gibt den ByteBuffer zurück
      */
-    public ByteBuffer loadIcon(String filename, int width, int height) throws IOException {
+    private ByteBuffer loadIcon(String filename, int width, int height) throws IOException {
     	
     	/**
     	 * Erstelle ein Buffered Image aus der Datei
     	 */
-    	
-        BufferedImage image = ImageIO.read(new File(filename));
+    	BufferedImage image = ImageIO.read(new File(filename));
 
         // convert image to byte array
         
@@ -1146,8 +1194,7 @@ public class KugelRendern {
     	/**
     	 * 
     	 */
-        //GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
-    	
+        GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
     	/**
     	 * Smooth ShadeModel aktivieren
     	 */
@@ -1179,6 +1226,7 @@ public class KugelRendern {
          */
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
+     
         
         /**
          * Die Perspektive Berechnen mit hilfe von GLU
@@ -1204,7 +1252,7 @@ public class KugelRendern {
          */
         rtriy=0.0f; 
         rtrix=0.0f;
-        
+
     }
     
     /**
