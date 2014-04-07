@@ -44,7 +44,7 @@ public class Solver {
 		 * 
 		 * Geht solange, bis Phase 1 abgeschlossen ist
 		 */
-		while(!everythingOk()){
+		while(!SolveCheck.ArrayIsFullyOk(ok)){
 			boolean recheck = true;
 			for(int i = 0; i<24; i++){
 				//Wenn recheck gefordert checke erneut
@@ -57,7 +57,7 @@ public class Solver {
 					//Recheck gefordert
 					recheck = true;
 					//Wechle die Positionen von i und dem mit findPos gefundenen Dreieck
-					change2Positions(i,findPos(i));
+					Solve1Phase(i,findPos(i));
 				}
 			}
 		}
@@ -71,11 +71,11 @@ public class Solver {
 		Arrays.fill(ok, false); 
 		
 		//Solange Kugel nicht gelösst
-		while(!isKugelSolved()){
+		while(!SolveCheck.isKugelSolved(k)){
 			//Gehe Jeden Pol durch
 			for(int i = 0; i<6; i++){
 				//Wenn Pol noch nicht gelösst, löse ihn
-				if(!isPolSolved(i)){
+				if(!SolveCheck.isPolSolved(i,k)){
 					solvePol(i);
 				}
 			}
@@ -87,26 +87,8 @@ public class Solver {
 	}//#END solve(Kugel kugel)
 	
 	
-	
-	
-	
-	/**
-	 * Überprüft, ob ende Phase 1 erreicht ist
-	 * also Alle Dreiecke im richgigen Pol sind
-	 * @return gibt true zurück, wenn erreicht, sonst false
-	 */
-	private boolean everythingOk(){
-		//Gehe alle Dreiecke durch
-		for(int i = 0; i<24; i++){
-			//Wenn eines false, dann return false
-			if(!ok[i]){
-				return false;
-			}
-		}
-		//Wenn kein false, dann true
-		return true;
-	}
-	
+
+
 	
 	
 	/**
@@ -121,12 +103,20 @@ public class Solver {
 			 * boolean[4] allowCons ==> Ist bei entsprechendem Index true, wenn Con noch nicht verbraucht ist
 			 */
 			int[] cons = new int[4];
+			//Arrays.fill(cons, -1); 
 			boolean[] allowCons = new boolean[4];
 			int[] tris = new int[4];
 
 			//Array mit daten aus Kugel füllen
 			for(int j = 0; j<4; j++){	 
 				//Wert von con, Index wird gesucht zu tri Index Pol*4 + Position in Pol
+				try{
+					System.out.println(k.con[0]);
+				}catch(Exception e){
+					
+					l.log(e.toString());	
+				}
+				
 				cons[j] = k.con[k.findCons(i*4+j)];
 				//Alle sind zu beginn noch benutzbar
 				allowCons[j] = true;
@@ -265,7 +255,7 @@ public class Solver {
 		return -1;
 	}
 	/**
-	 * Wechselt die Positionen von 2 Punkten
+	 * Notfall Funktion, damit Solver nicht abbricht, sollte nicht aufgerufen werden
 	 */
 	private void change2Positions(int p1, int p2){
 		/**
@@ -275,69 +265,295 @@ public class Solver {
 			int temp = k.tri[p1];
 			k.tri[p1] = k.tri[p2];
 			k.tri[p2] = temp;
+			//Solve1Phase(p1,p2);
+
+		}
+	}
+	private void Solve1Phase(int p1, int p2){
+		/**
+		 * Überprüft p1 und p2 auf Korrektheit ==> zugross, bzw zuklein werden ausgefiltert
+		 */
+		if(p1>=0&&p2>=0&&p1<=23&&p2<=23){
+			
+			if(p1>p2){
+				int temp = p1;
+				p1 = p2;
+				p2 = temp;
+			}
+			//p1 kleiner als p2
+			
+			int pol1 = p1/4;
+			int pol2 = p2/4;
+			int pos1 = p1%4;
+			int pos2 = p2%4;
+			
+				
+			int polRechts = change2PolPositionPR(pol1,pol2);
+			
+			switch(pol1){
+			case 0:
+				switch(pol2){
+				case 1:
+					while(pos1!=3){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					while(pos2!=3){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					k.turnKugel(polRechts, 1);
+					k.changePol(pol1, 1);
+					k.turnKugel(polRechts, 3);
+					break;
+				case 2:
+					while(pos1!=3){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					while(pos2!=3){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					k.turnKugel(polRechts, 2);
+					k.changePol(pol1, 1);
+					k.turnKugel(polRechts, 2);
+					break;
+				case 3:
+					while(pos1!=3){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					while(pos2!=1){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					k.turnKugel(polRechts, 3);
+					k.changePol(pol1, 1);
+					k.turnKugel(polRechts, 1);
+					break;
+				case 4:
+					while(pos1!=2){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					while(pos2!=2){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					k.turnKugel(polRechts, 1);
+					k.changePol(pol1, 1);
+					k.turnKugel(polRechts, 3);
+					break;	
+				case 5:
+					while(pos1!=2){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					while(pos2!=2){
+						k.changePol(0, 1);
+						pos1++;
+						pos1%=4;
+					}
+					k.turnKugel(polRechts, 3);
+					k.changePol(pol1, 1);
+					k.turnKugel(polRechts, 1);
+					break;	
+				}//#END switch pol1 --> 0
+				break;
+				
+				case 1:
+					switch(pol2){
+					
+					case 2:
+						while(pos1!=3){
+							k.changePol(0, 1);
+							pos1++;
+							pos1%=4;
+						}
+						while(pos2!=3){
+							k.changePol(0, 1);
+							pos1++;
+							pos1%=4;
+						}
+						k.turnKugel(polRechts, 1);
+						k.changePol(pol1, 1);
+						k.turnKugel(polRechts, 3);
+						break;
+					case 3:
+						while(pos1!=3){
+							k.changePol(0, 1);
+							pos1++;
+							pos1%=4;
+						}
+						while(pos2!=3){
+							k.changePol(0, 1);
+							pos1++;
+							pos1%=4;
+						}
+						k.turnKugel(polRechts, 2);
+						k.changePol(pol1, 1);
+						k.turnKugel(polRechts, 2);
+						break;
+					case 4:
+						while(pos1!=2){
+							k.changePol(0, 1);
+							pos1++;
+							pos1%=4;
+						}
+						while(pos2!=2){
+							k.changePol(0, 1);
+							pos1++;
+							pos1%=4;
+						}
+						k.turnKugel(polRechts, 1);
+						k.changePol(pol1, 1);
+						k.turnKugel(polRechts, 3);
+						break;	
+					case 5:
+						while(pos1!=2){
+							k.changePol(0, 1);
+							pos1++;
+							pos1%=4;
+						}
+						while(pos2!=2){
+							k.changePol(0, 1);
+							pos1++;
+							pos1%=4;
+						}
+						k.turnKugel(polRechts, 3);
+						k.changePol(pol1, 1);
+						k.turnKugel(polRechts, 1);
+						break;	
+					}//#END switch pol1 --> 1
+					break;	
+					
+					case 2:
+						switch(pol2){
+						
+						case 3:
+							while(pos1!=3){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							while(pos2!=3){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							k.turnKugel(polRechts, 1);
+							k.changePol(pol1, 1);
+							k.turnKugel(polRechts, 3);
+							break;
+						case 4:
+							while(pos1!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							while(pos2!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							k.turnKugel(polRechts, 1);
+							k.changePol(pol1, 1);
+							k.turnKugel(polRechts, 3);
+							break;	
+						case 5:
+							while(pos1!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							while(pos2!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							k.turnKugel(polRechts, 3);
+							k.changePol(pol1, 1);
+							k.turnKugel(polRechts, 1);
+							break;	
+					}//#END switch pol1 --> 2
+					break;	
+					
+					
+					case 3:
+						switch(pol2){
+						
+						case 4:
+							while(pos1!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							while(pos2!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							k.turnKugel(polRechts, 1);
+							k.changePol(pol1, 1);
+							k.turnKugel(polRechts, 3);
+							break;	
+						case 5:
+							while(pos1!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							while(pos2!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							k.turnKugel(polRechts, 3);
+							k.changePol(pol1, 1);
+							k.turnKugel(polRechts, 1);
+							break;	
+					}//#END switch pol1 --> 3
+					break;	
+					
+					case 4:
+						switch(pol2){
+						case 5:
+							while(pos1!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							while(pos2!=2){
+								k.changePol(0, 1);
+								pos1++;
+								pos1%=4;
+							}
+							k.turnKugel(polRechts, 2);
+							k.changePol(pol1, 1);
+							k.turnKugel(polRechts, 2);
+							break;	
+					}//#END switch pol1 --> 3
+					break;	
+			}//#END switch pol1
 
 		}
 	}
 	
-	/**
-	 * Prüft, ob Kugel fertig gelöst wurde
-	 * @return : wenn gelöst, dann true sonst false
-	 */
-	protected boolean isKugelSolved(){
-		/**
-		 * Prüfe jeden Pol
-		 */
-		for(int i = 0; i<6; i++){
-			if(!isPolSolved(i)){
-				return false;
-			}
-		}
-		
-		return true;
-	}//#END isKugelSolved
-	
-	/**
-	 * Überprüft, ob ein Pole vollständig gelöst ist
-	 * @param polNr : welcher Pole
-	 * @return : gibt true zurück, wenn Pole vollstängig gelösst ist
-	 */
-	protected boolean isPolSolved(int polNr){
-		int anzKorr = 0;
-		for(int i = 0; i<4; i++){
-			if(isPositionSolved((polNr*4)+i)){
-				anzKorr++;
-			}
-		}
-		if(anzKorr==4){
-			return true;
-		}else{
-			return false;
-		}
-	}//#END isPolSolved
-	
-	/**
-	 * Überprüft, ob eine Position/Dreieck gelöst ist
-	 * @param p : welches Dreieck geprüft werden soll
-	 * @return : gibt true zurück, wenn gelöst
-	 */
-	private boolean isPositionSolved(int p){
-		/**
-		 * Prüfe, ob tri mit con stimmt	
-		 * wenn ja, Return true	
-		 */
-		if(k.tri[p]==k.con[k.findCons(p)]){
-			return true;
-		}
-		/**
-		 * Wenn nicht abgebrochen durch return true, dann return false
-		 */
-		return false;
-	}//isPositionSolved
 
 	private void solvePol(int polNr){
 		boolean[] pOk = new boolean[4];
 		for(int i = 0; i<4; i++){
-			if(isPositionSolved(polNr*4+i)){
+			if(SolveCheck.isPositionSolved(polNr*4+i,k)){
 				pOk[i] = true;
 				//System.out.println("Pos "+i+" OK");
 			}else{
@@ -346,7 +562,7 @@ public class Solver {
 			}
 		}
 		//System.out.println("Made Ok");
-		while(!isPolSolved(polNr)){
+		while(!SolveCheck.isPolSolved(polNr,k)){
 		//	System.out.println("While");
 			for(int i = 0; i<4; i++){
 				if(!pOk[i]){
@@ -358,7 +574,7 @@ public class Solver {
 						}
 					}
 					for(int j = 0; j<4; j++){
-						if(isPositionSolved(polNr*4+j)){
+						if(SolveCheck.isPositionSolved(polNr*4+j,k)){
 							pOk[j] = true;
 						}else{
 							pOk[j] = false;
@@ -402,7 +618,7 @@ public class Solver {
 	 * @param p2 : P2
 	 * @return
 	 */
-	protected int change2PolPositionsD2(int p1, int p2){
+	private int change2PolPositionsD2(int p1, int p2){
 		if(p1>=p2){
 			int temp = p1;
 			p1 = p2;
@@ -436,7 +652,7 @@ public class Solver {
 	 * @param pol2: Pol oben
 	 * @return : Rechter Pol
 	 */
-	protected int change2PolPositionPR(int pol1, int pol2){
+	private int change2PolPositionPR(int pol1, int pol2){
 		/**
 		 * 0 - 1 ==> 5
 		 * 0 - 2 ==> ---
@@ -502,7 +718,7 @@ public class Solver {
 		
 		return false;
 	}
-	protected void change2Pol(int pol,int polO, int polR){
+	private void change2Pol(int pol,int polO, int polR){
 		k.turnKugel(polR, 3);
 		k.changePol(polO, 3);
 		k.turnKugel(polR, 1);
@@ -578,7 +794,7 @@ public class Solver {
        
     	//update(k,kr,500);
     	int end = 0;
-    	while(!isPolSolved(pol)&&end<4){
+    	while(!SolveCheck.isPolSolved(pol,k)&&end<4){
     		k.changePol(pol, 1);
     		end++;
     	}

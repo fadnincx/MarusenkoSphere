@@ -13,8 +13,8 @@ public class Kugel{
 	 * tri ==> Array, welches die Dreiecke der Pole beinhaltet
 	 * con ==> Array, welches die Verbindungsstücke beinhaltet
 	 */
-	public int[] tri; //Arrays for Triangles
-	public int[] con; //Arrays for Connectors
+	public int[] tri = new int[24]; //Arrays for Triangles
+	public int[] con = new int[8]; //Arrays for Connectors
 	
 	
 	/**
@@ -23,8 +23,6 @@ public class Kugel{
 	 * dabei wird den Array die Grösse zugewiesen
 	 */
 	public Kugel(){
-		tri = new int[24];
-		con = new int[8];
 	}//#END Kugel()
 	
 	/**
@@ -120,6 +118,11 @@ public class Kugel{
 		}		
 	}//#END FillKugelRandom
 	
+	/**
+	 * Dreht die Halbe Kugel um pol im gegenUhrzeigersinn
+	 * @param pole
+	 * @param steps
+	 */
 	public void turnKugel(int pole, int steps){
 		/**
 		 * Aktion für Anzahl Schritte durch führen
@@ -290,7 +293,8 @@ public class Kugel{
 	
 	/**
 	 * Funktion welche cPol(int p1, int p2, int p3, int p4) korrekt aufruft, wenn PolNr und Anzahl der Drehungen gegeben werden  
-	 * Höchste Nr wird tief
+	 * Gegen Uhrzeigersinn
+	 * 
 	 * @param polNr : welcher Pol gedreht wird (int)(Dreieck id / 4) 
 	 * @param anz : um welche Anzahl soll gedreht werden
 	 */
