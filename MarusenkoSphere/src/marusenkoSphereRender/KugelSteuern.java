@@ -54,16 +54,17 @@ public class KugelSteuern {
 	    if(Keyboard.isKeyDown(Keyboard.KEY_S)) {          // Is S Being Pressed?
 	    	m.k.FillKugelRandom();
 	    	m.kr.updateKugel(m.k);
+	    	m.update200();
 	    	m.d.log("Reset Kugel");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD0)) {          // Is Num0 Being Pressed?
 	    	m.k.turnKugel(0, 1);
-	    	m.update();
+	    	m.update200();
 	    	m.d.log("Num0 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD1)) {          // Is Num1 Being Pressed?
 	    	m.k.turnKugel(1, 1);
-	    	m.update();
+	    	m.update200();
 	    	m.d.log("Num1 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD2)) {          // Is Num2 Being Pressed?
@@ -73,17 +74,17 @@ public class KugelSteuern {
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD3)) {          // Is Num3 Being Pressed?
 	    	m.k.turnKugel(3, 1);
-	    	m.update();
+	    	m.update200();
 	    	m.d.log("Num3 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD4)) {          // Is Num4 Being Pressed?
 	    	m.k.turnKugel(4, 1); 
-	    	m.update();
+	    	m.update200();
 	    	m.d.log("Num4 pressed");
 	    }
 	    if(Keyboard.isKeyDown(Keyboard.KEY_NUMPAD5)) {          // Is Num5 Being Pressed?
 	    	m.k.turnKugel(5, 1);
-	    	m.update();
+	    	m.update200();
 	    	m.d.log("Num5 pressed");
 	    }    
 	    m.renderKugel();

@@ -2,6 +2,7 @@ package marusenkoSphereSolving;
 
 import marusenkoSphereKugel.Kugel;
 
+
 public class SolveCheck {
 
 	/**

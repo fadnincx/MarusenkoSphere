@@ -35,6 +35,9 @@ public class Manager {
 		}
 	}
 	public void update(){
+		update(100);
+	}
+	public void update200(){
 		update(200);
 	}
 	public void updateKugel(Kugel k){
@@ -45,6 +48,7 @@ public class Manager {
 		kr.updateKugel(k);
 	}
 	public void startSolve(){
+		d.log("Start Solving Kugel");
 		k = s.solve(k);
 	}
 	

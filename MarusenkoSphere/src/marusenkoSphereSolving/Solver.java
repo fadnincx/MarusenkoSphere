@@ -18,24 +18,50 @@ public class Solver {
 	protected Kugel k;
 	protected boolean[] ok = new boolean[24];
 	protected Logger l;
+	protected Logger d;
+	protected long steps;
+	protected long totsteps;
+	protected long solSteps;
+	protected boolean stopSteps = false;
 	/**
 	 * Initialisiert das Solver-Objekt
 	 * @param k
 	 */
-	public Solver(Logger l){
+	public Solver(Logger l, Logger d){
 		this.l = l;
+		this.d = d;
+		steps = 0;
+		totsteps = 0;
+		solSteps = 0;
+		stopSteps = false;
 	}
-	
-	
-	
-	
+	private boolean addSteps(){
+		steps++;
+		if(stopSteps&&steps>=solSteps){
+			return true;
+		}else{
+			if(steps>10000){
+				l.log(k,"Zuviele Schritte nötig!!!");
+				return true;
+			}
+			return false;
+		}
+		
+	}
+	public Kugel solve(Kugel kugel, long solSteps){
+		this.solSteps = solSteps;
+		stopSteps = true;
+		return solve(k);
+		
+	}
 	/**
 	 * Hauptfunktion welche für das lösen der Kugel verantwortlich ist
 	 * @param k : Kugel welche gelöst werden soll
 	 * @return : gibt die gelöste Kugel zurück
 	 */
 	public Kugel solve(Kugel kugel){
-
+		this.k = kugel;
+		this.steps = 0;
 		//Array "ok" mit false füllen
 		Arrays.fill(ok, false); 
 
@@ -56,8 +82,10 @@ public class Solver {
 				if(!ok[i]){
 					//Recheck gefordert
 					recheck = true;
+					//d.log(i+" "+findPos(i));
 					//Wechle die Positionen von i und dem mit findPos gefundenen Dreieck
 					Solve1Phase(i,findPos(i));
+					if(addSteps()){return k;}
 				}
 			}
 		}
@@ -77,6 +105,7 @@ public class Solver {
 				//Wenn Pol noch nicht gelösst, löse ihn
 				if(!SolveCheck.isPolSolved(i,k)){
 					solvePol(i);
+					if(addSteps()){return k;}
 				}
 			}
 		}		
@@ -110,13 +139,6 @@ public class Solver {
 			//Array mit daten aus Kugel füllen
 			for(int j = 0; j<4; j++){	 
 				//Wert von con, Index wird gesucht zu tri Index Pol*4 + Position in Pol
-				try{
-					System.out.println(k.con[0]);
-				}catch(Exception e){
-					
-					l.log(e.toString());	
-				}
-				
 				cons[j] = k.con[k.findCons(i*4+j)];
 				//Alle sind zu beginn noch benutzbar
 				allowCons[j] = true;
@@ -160,6 +182,7 @@ public class Solver {
 	 * @return : gibt Index aus, mit welchem gewechselt werden soll
 	 */
 	private int findPos(int p){
+		int urPol = p/4;
 		/**
 		 * Finde den richtigen Connector für p
 		 */
@@ -175,7 +198,7 @@ public class Solver {
 			/**
 			 * Wenn Phase 1 bei diesem Pol noch nicht abgeschlossen wurde dann kommt er in frage un wird weiter untersucht
 			 */
-			if(!checkPoleEndPhase1(polNr)){
+			if(!checkPoleEndPhase1(polNr)&&urPol!=polNr){
 				/**
 				 * Bei dem Pol wird jede Stelle durch gegeangen
 				 */
@@ -266,8 +289,32 @@ public class Solver {
 			k.tri[p1] = k.tri[p2];
 			k.tri[p2] = temp;
 			//Solve1Phase(p1,p2);
+			l.log("Missbrauch von Funktion change2Position");
 
 		}
+	}
+	private int posPlus(int polNr, int pos){
+		if(polNr==1||polNr==2||polNr==4){
+			pos+=1;
+			return pos%4;
+			
+		}else{
+			 pos+=3;
+			 return pos%4;
+		}
+	}
+	private void turnTo(int p, int position){
+		int pol = p/4;
+		int pos = p%4;
+		while(pos!=position){
+			k.changePol(pol, 1);
+			pos = posPlus(pol,pos);
+		}
+	}
+	private void change1Phase(int pol1,int polRechts,int s){
+		k.turnKugel(polRechts, s);
+		k.changePol(pol1, 1);
+		k.turnKugel(polRechts, 4-s);
 	}
 	private void Solve1Phase(int p1, int p2){
 		/**
@@ -284,268 +331,115 @@ public class Solver {
 			
 			int pol1 = p1/4;
 			int pol2 = p2/4;
-			int pos1 = p1%4;
-			int pos2 = p2%4;
-			
 				
 			int polRechts = change2PolPositionPR(pol1,pol2);
-			
-			switch(pol1){
-			case 0:
-				switch(pol2){
-				case 1:
-					while(pos1!=3){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					while(pos2!=3){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					k.turnKugel(polRechts, 1);
-					k.changePol(pol1, 1);
-					k.turnKugel(polRechts, 3);
-					break;
-				case 2:
-					while(pos1!=3){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					while(pos2!=3){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					k.turnKugel(polRechts, 2);
-					k.changePol(pol1, 1);
-					k.turnKugel(polRechts, 2);
-					break;
-				case 3:
-					while(pos1!=3){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					while(pos2!=1){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					k.turnKugel(polRechts, 3);
-					k.changePol(pol1, 1);
-					k.turnKugel(polRechts, 1);
-					break;
-				case 4:
-					while(pos1!=2){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					while(pos2!=2){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					k.turnKugel(polRechts, 1);
-					k.changePol(pol1, 1);
-					k.turnKugel(polRechts, 3);
-					break;	
-				case 5:
-					while(pos1!=2){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					while(pos2!=2){
-						k.changePol(0, 1);
-						pos1++;
-						pos1%=4;
-					}
-					k.turnKugel(polRechts, 3);
-					k.changePol(pol1, 1);
-					k.turnKugel(polRechts, 1);
-					break;	
-				}//#END switch pol1 --> 0
-				break;
-				
-				case 1:
+			if(polRechts>=0){
+
+				switch(pol1){
+				case 0:
 					switch(pol2){
-					
+					case 1:
+						turnTo(p1,3);
+						turnTo(p2,2);
+						change1Phase(pol1,polRechts,1);
+						break;
 					case 2:
-						while(pos1!=3){
-							k.changePol(0, 1);
-							pos1++;
-							pos1%=4;
-						}
-						while(pos2!=3){
-							k.changePol(0, 1);
-							pos1++;
-							pos1%=4;
-						}
-						k.turnKugel(polRechts, 1);
-						k.changePol(pol1, 1);
-						k.turnKugel(polRechts, 3);
+						turnTo(p1,3);
+						turnTo(p2,2);
+						change1Phase(pol1,polRechts,2);
 						break;
 					case 3:
-						while(pos1!=3){
-							k.changePol(0, 1);
-							pos1++;
-							pos1%=4;
-						}
-						while(pos2!=3){
-							k.changePol(0, 1);
-							pos1++;
-							pos1%=4;
-						}
-						k.turnKugel(polRechts, 2);
-						k.changePol(pol1, 1);
-						k.turnKugel(polRechts, 2);
+						turnTo(p1,3);
+						turnTo(p2,1);
+						change1Phase(pol1,polRechts,3);
 						break;
 					case 4:
-						while(pos1!=2){
-							k.changePol(0, 1);
-							pos1++;
-							pos1%=4;
-						}
-						while(pos2!=2){
-							k.changePol(0, 1);
-							pos1++;
-							pos1%=4;
-						}
-						k.turnKugel(polRechts, 1);
-						k.changePol(pol1, 1);
-						k.turnKugel(polRechts, 3);
+						turnTo(p1,2);
+						turnTo(p2,1);
+						change1Phase(pol1,polRechts,1);
 						break;	
 					case 5:
-						while(pos1!=2){
-							k.changePol(0, 1);
-							pos1++;
-							pos1%=4;
-						}
-						while(pos2!=2){
-							k.changePol(0, 1);
-							pos1++;
-							pos1%=4;
-						}
-						k.turnKugel(polRechts, 3);
-						k.changePol(pol1, 1);
-						k.turnKugel(polRechts, 1);
+						turnTo(p1,0);
+						turnTo(p2,2);
+						change1Phase(pol1,polRechts,1);
+						break;	
+					}//#END switch pol1 --> 0
+					break;	
+				case 1:
+					switch(pol2){
+					case 2:
+						turnTo(p1,0);
+						turnTo(p2,2);
+						change1Phase(pol1,polRechts,1);
+						break;
+					case 3:
+						turnTo(p1,0);
+						turnTo(p2,1);
+						change1Phase(pol1,polRechts,2);
+						break;
+					case 4:
+						turnTo(p1,1);
+						turnTo(p2,2);
+						change1Phase(pol1,polRechts,1);
+						break;	
+					case 5:
+						turnTo(p1,3);
+						turnTo(p2,3);
+						change1Phase(pol1,polRechts,1);
 						break;	
 					}//#END switch pol1 --> 1
 					break;	
 					
-					case 2:
-						switch(pol2){
-						
-						case 3:
-							while(pos1!=3){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							while(pos2!=3){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							k.turnKugel(polRechts, 1);
-							k.changePol(pol1, 1);
-							k.turnKugel(polRechts, 3);
-							break;
-						case 4:
-							while(pos1!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							while(pos2!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							k.turnKugel(polRechts, 1);
-							k.changePol(pol1, 1);
-							k.turnKugel(polRechts, 3);
-							break;	
-						case 5:
-							while(pos1!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							while(pos2!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							k.turnKugel(polRechts, 3);
-							k.changePol(pol1, 1);
-							k.turnKugel(polRechts, 1);
-							break;	
-					}//#END switch pol1 --> 2
-					break;	
-					
-					
+				case 2:
+					switch(pol2){
 					case 3:
-						switch(pol2){
-						
-						case 4:
-							while(pos1!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							while(pos2!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							k.turnKugel(polRechts, 1);
-							k.changePol(pol1, 1);
-							k.turnKugel(polRechts, 3);
-							break;	
-						case 5:
-							while(pos1!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							while(pos2!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							k.turnKugel(polRechts, 3);
-							k.changePol(pol1, 1);
-							k.turnKugel(polRechts, 1);
-							break;	
-					}//#END switch pol1 --> 3
-					break;	
-					
+						turnTo(p1,0);
+						turnTo(p2,1);
+						change1Phase(pol1,polRechts,1);
+						break;
 					case 4:
-						switch(pol2){
-						case 5:
-							while(pos1!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							while(pos2!=2){
-								k.changePol(0, 1);
-								pos1++;
-								pos1%=4;
-							}
-							k.turnKugel(polRechts, 2);
-							k.changePol(pol1, 1);
-							k.turnKugel(polRechts, 2);
-							break;	
-					}//#END switch pol1 --> 3
-					break;	
-			}//#END switch pol1
+						turnTo(p1,1);
+						turnTo(p2,3);
+						change1Phase(pol1,polRechts,1);
+						break;	
+					case 5:
+						turnTo(p1,3);
+						turnTo(p2,0);
+						change1Phase(pol1,polRechts,1);
+						break;	
+				}//#END switch pol1 --> 2
+				break;	
+				
+				
+				case 3:
+					switch(pol2){
+					case 4:
+						turnTo(p1,2);
+						turnTo(p2,0);
+						change1Phase(pol1,polRechts,1);
+						break;	
+					case 5:
+						turnTo(p1,0);
+						turnTo(p2,1);
+						change1Phase(pol1,polRechts,1);
+						break;	
+				}//#END switch pol1 --> 3
+				break;	
+				
+				case 4:
+					switch(pol2){
+					case 5:
+						turnTo(p1,3);
+						turnTo(p2,0);
+						change1Phase(pol1,polRechts,2);
 
+				}//#END switch pol1 --> 3
+				break;	
+				}//#END switch pol1
+				
+			}else{
+				System.out.println("Zukleines PolR "+p1+":"+pol1+" "+p2+":"+pol2);
+			}
 		}
 	}
 	
@@ -691,7 +585,7 @@ public class Solver {
 		if((pol1==0&&pol2==4)||(pol1==2&&pol2==5)||(pol1==4&&pol2==2)||(pol1==5&&pol2==0)){
 			return 1;
 		}else
-		if((pol1==1&&pol2==4)||(pol1==2&&pol2==5)||(pol1==4&&pol2==3)||(pol1==5&&pol2==1)){
+		if((pol1==1&&pol2==4)||(pol1==3&&pol2==5)||(pol1==4&&pol2==3)||(pol1==5&&pol2==1)){
 			return 2;
 		}else
 		if((pol1==0&&pol2==5)||(pol1==2&&pol2==4)||(pol1==4&&pol2==0)||(pol1==5&&pol2==2)){
@@ -702,7 +596,14 @@ public class Solver {
 		}else
 		if((pol1==0&&pol2==1)||(pol1==1&&pol2==2)||(pol1==2&&pol2==3)||(pol1==3&&pol2==0)){
 			return 5;
+		}else
+		if((pol1==0&&pol2==2)||(pol1==1&&pol2==3)){
+			return 5;
+		}else
+		if((pol1==4&&pol2==5)){
+			return 1;
 		}
+		
 		
 		return -1;
 	}
