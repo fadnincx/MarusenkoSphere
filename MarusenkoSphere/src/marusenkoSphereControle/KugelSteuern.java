@@ -1,4 +1,4 @@
-package marusenkoSphereRender;
+package marusenkoSphereControle;
 
 import marusenkoSphere.Manager;
 

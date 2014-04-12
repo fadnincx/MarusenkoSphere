@@ -16,6 +16,8 @@ public class Kugel{
 	public int[] tri = new int[24]; //Arrays for Triangles
 	public int[] con = new int[8]; //Arrays for Connectors
 	
+	public int steps = 0;
+	
 	
 	/**
 	 * Funktion welche zum Initialisieren der Kugel aufgerufen wird
@@ -42,6 +44,19 @@ public class Kugel{
 		 */
 		for(int i = 0; i<24;i++){
 			tri[i]=1;
+		}
+		steps=0;
+	}//#END FillKugelFix()
+	public void FillKugelFromString(String s){
+		String[] sp = s.split("n");
+		if(sp[0].length()==32&&sp.length==2){
+			for(int i = 0; i<8;i++){
+				con[i]=Integer.parseInt(s.substring(i, i+1));
+			}
+			for(int i = 0; i<24;i++){
+				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
+			}
+			steps = Integer.parseInt(sp[1]);
 		}
 	}//#END FillKugelFix()
 
@@ -115,8 +130,22 @@ public class Kugel{
 					r %= 24;
 				}
 			}
-		}		
+		}	
+		steps = 0;
 	}//#END FillKugelRandom
+	
+	public String getSphere(){
+		String out = "";
+		for(int i = 0; i<8;i++){
+			out+=con[i];
+		}
+		for(int i = 0; i<24;i++){
+			out+=tri[i];
+		}
+		out += "n"+steps;
+		return out;
+	}
+	
 	
 	/**
 	 * Dreht die Halbe Kugel um pol im gegenUhrzeigersinn

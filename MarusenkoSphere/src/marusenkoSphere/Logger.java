@@ -10,8 +10,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import marusenkoSphereKugel.Kugel;
-
 public class Logger {
 	/**
 	 * 
@@ -26,9 +24,9 @@ public class Logger {
 	 * Konstruktor, Setzt den Dateinamen des aktuellen Logger Objekts
 	 * @param filename : Dateiname
 	 */
-	public Logger(String filename){
-		this.logfile = "D:/marusenkoLog/"+filename+".txt";
-		
+	public Logger(String Path, String filename){
+		//this.logfile = "/home/pi/"+filename+".txt";
+		this.logfile = Path+filename+".txt";
 	}
 
 	/**
@@ -36,7 +34,7 @@ public class Logger {
 	 * @param k : Kugel
 	 * @param error : Log
 	 */
-	public void log(Kugel k, String error){
+	public void log(String sphere, String error){
 		/**
 		 * Liest bisherige Datei aus
 		 */
@@ -49,17 +47,28 @@ public class Logger {
 		/**
 		 * Datum und Error zu ausgabe hinzufügen
 		 */
-		out = out+("\n"+dateFormat.format(date));
+		out = out+("\n"+dateFormat.format(date)+" ");
 		out = out+error;
+		out += "\n--------\n";  
 		/**
 		 * Kugel hinzufügen
 		 */
+		/*for(int i = 0; i<8;i++){
+			out+=k.con[i];
+		}
 		for(int i = 0; i<24;i++){
+			out+=k.tri[i];
+		}
+		out += "n"+k.steps;*/
+		out += sphere;
+		out += "\n--------\n";  
+		
+	/*	for(int i = 0; i<24;i++){
 			out = out+"\n Tri["+i+"]: "+k.tri[i];
 		}
 		for(int i = 0; i<8;i++){
 			out = out+"\n Con["+i+"]: "+k.con[i];
-		}
+		}*/
 		/**
 		 * Log schreiben
 		 */
@@ -88,6 +97,51 @@ public class Logger {
 		 * Log schreiben
 		 */
 		writeLog(out);
+	}
+	public boolean logAnz(int anzahl){
+		boolean alsoErrorLog = false;
+		/**
+		 * Liest bisherige Datei aus
+		 */
+		try{
+			String out = readLogFile();
+			String[] s = out.split("n");
+			//System.out.println(out);
+			if(s.length<4){
+				out = anzahl+"n"+anzahl+"n"+anzahl+"n1";
+			}else{
+			/*	System.out.println(s[0]+"-"+s[1]);
+				System.out.println(s[2]+"-"+s[3]);*/
+				int max = Integer.parseInt(s[0].trim());
+				int min = Integer.parseInt(s[1].trim());
+				int schnitt = Integer.parseInt(s[2].trim());
+				int anzKugel = Integer.parseInt(s[3].trim());
+				
+				if(anzahl>max){
+					max = anzahl;
+					alsoErrorLog = true;
+				}
+				if(anzahl<min){
+					min = anzahl;
+				}
+				schnitt = ((schnitt*anzKugel)+anzahl)/(anzKugel+1);
+				anzKugel += 1;
+				
+				out = max+"n"+min+"n"+schnitt+"n"+anzKugel;
+			}
+			
+			
+			/**
+			 * Log schreiben
+			 */
+			writeLog(out);
+		}catch(Exception e){
+			
+		}
+		
+		
+		
+		return alsoErrorLog;
 	}
 	/**
 	 * Schreibt den Log in die Datei

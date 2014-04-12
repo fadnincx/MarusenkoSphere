@@ -7,6 +7,7 @@ import marusenkoSphereSolving.Solver;
 public class Main {
 	
 	protected static final boolean KONSOLE = true;
+
 	
 	/**
 	 * Main-Datei
@@ -16,11 +17,27 @@ public class Main {
 	 */
 	@SuppressWarnings("unused")
 	public static void main(String[] args){
+		int i;
+		try{
+			i = Integer.parseInt(args[0].trim());
+		}catch(Exception e){
+			System.out.println("Konnte kein Input lesen");
+			i = 0;
+		}
+		i--;
+		String[] logPlace = new String[6];
+		logPlace[0]="B:/";
+		logPlace[1]="C:/users/marcel/Desktop/marusenkoLog/1/";
+		logPlace[2]="D:/marusenkoLog/";
+		logPlace[3]="C:/users/marcel/Desktop/marusenkoLog/2/";
+		logPlace[4]="C:/users/marcel/Desktop/marusenkoLog/3/";
+		logPlace[5]="C:/users/marcel/Desktop/marusenkoLog/4/";
 		//Debugging Logger
-		Logger d = new Logger("debugLog");
+		Logger d = new Logger(logPlace[i],"debugLog");
 		
 		//Error Logger
-		Logger l = new Logger("errorLog");
+		Logger l = new Logger(logPlace[i],"errorLog");
+		
 		 
 		//Kugel
 		Kugel k = new Kugel();
@@ -28,6 +45,7 @@ public class Main {
 		if(!KONSOLE){
 			//KugelRendern
 			KugelRendern kr = new KugelRendern(k);
+			
 			
 			k.FillKugelRandom();
 			kr.updateKugel(k);
@@ -38,7 +56,7 @@ public class Main {
 		}else{
 			Solver s = new Solver(l,d); 
 			
-			Konsole c = new Konsole(k,s,d,l);
+			Konsole c = new Konsole(k,s,d,l,logPlace[i]);
 		}
 		
 		

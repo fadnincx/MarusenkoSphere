@@ -13,7 +13,7 @@ public class Konsole {
 	public Logger d;
 	
 	
-	public Konsole(Kugel k, Solver s, Logger l, Logger d){
+	public Konsole(Kugel k, Solver s, Logger d, Logger l,String logInput){
 		this.k = k;
 		this.s = s;
 		this.l = l;
@@ -32,8 +32,19 @@ public class Konsole {
 			 }
 		 }
 */
-		k.FillKugelRandom();
-		k = s.solve(k);
+		
+		Logger out = new Logger(logInput,"AnzahlLog");
+		
+		for(long i = 0;i<9223372036854775807L;i++){
+			k.FillKugelRandom();
+			String sphere = k.getSphere();
+			k = s.solve(k);
+			System.out.println(i+". Kugel solved in "+k.steps+" steps");
+			if(out.logAnz(k.steps)){
+				l.log(sphere, "longest sphere --> "+k.steps);
+			}
+		}
+		
 	}
 }
 

@@ -19,10 +19,14 @@ public class Solver {
 	protected boolean[] ok = new boolean[24];
 	protected Logger l;
 	protected Logger d;
-	protected long steps;
+	//protected long steps;
 	protected long totsteps;
 	protected long solSteps;
 	protected boolean stopSteps = false;
+	private final boolean consLog = false;
+	private boolean end = false;
+	private String startSphere = "";
+	
 	/**
 	 * Initialisiert das Solver-Objekt
 	 * @param k
@@ -30,20 +34,33 @@ public class Solver {
 	public Solver(Logger l, Logger d){
 		this.l = l;
 		this.d = d;
-		steps = 0;
+		//steps = 0;
 		totsteps = 0;
 		solSteps = 0;
 		stopSteps = false;
 	}
+	private void consLog(String s){
+		if(consLog){
+			System.out.println(s);
+		}
+	}
+	private void end(){
+		end = true;
+	}
 	private boolean addSteps(){
-		steps++;
-		if(stopSteps&&steps>=solSteps){
+		return addSteps(1);
+	}
+	private boolean addSteps(int i){
+		k.steps+=i;
+		if(stopSteps&&k.steps>=solSteps){
 			return true;
 		}else{
-			if(steps>10000){
-				l.log(k,"Zuviele Schritte nötig!!!");
+			if(k.steps>10000){
+				l.log(startSphere);
+				l.log(k.getSphere(),"Zuviele Schritte nötig!!!");
 				return true;
 			}
+			//System.out.println(k.steps);
 			return false;
 		}
 		
@@ -61,7 +78,8 @@ public class Solver {
 	 */
 	public Kugel solve(Kugel kugel){
 		this.k = kugel;
-		this.steps = 0;
+		this.startSphere = k.getSphere();
+		//this.steps = 0;
 		//Array "ok" mit false füllen
 		Arrays.fill(ok, false); 
 
@@ -84,8 +102,9 @@ public class Solver {
 					recheck = true;
 					//d.log(i+" "+findPos(i));
 					//Wechle die Positionen von i und dem mit findPos gefundenen Dreieck
+					consLog(i+" "+findPos(i));
 					Solve1Phase(i,findPos(i));
-					if(addSteps()){return k;}
+					if(end){return k;}
 				}
 			}
 		}
@@ -94,7 +113,7 @@ public class Solver {
 		 * 
 		 * Löst die Kugel zu ende
 		 */
-		
+		consLog("Phase 2");
 		//Array ok erneut zurück auf false setzen
 		Arrays.fill(ok, false); 
 		
@@ -105,7 +124,7 @@ public class Solver {
 				//Wenn Pol noch nicht gelösst, löse ihn
 				if(!SolveCheck.isPolSolved(i,k)){
 					solvePol(i);
-					if(addSteps()){return k;}
+					if(end){return k;}
 				}
 			}
 		}		
@@ -183,10 +202,12 @@ public class Solver {
 	 */
 	private int findPos(int p){
 		int urPol = p/4;
+		consLog("UrPol: "+urPol);
 		/**
 		 * Finde den richtigen Connector für p
 		 */
 		int con = findCon(p);
+		consLog("Con: "+p+" - "+con);
 		/**
 		 * Gehe für die drei möglichen Pole durch
 		 */
@@ -195,6 +216,7 @@ public class Solver {
 			 * Finde die entsprechende PolNr
 			 */
 			int polNr = k.con2pol(con, i);
+			consLog("Con-Pol: "+con+" - "+polNr);
 			/**
 			 * Wenn Phase 1 bei diesem Pol noch nicht abgeschlossen wurde dann kommt er in frage un wird weiter untersucht
 			 */
@@ -202,6 +224,7 @@ public class Solver {
 				/**
 				 * Bei dem Pol wird jede Stelle durch gegeangen
 				 */
+				consLog(polNr+" Pol nicht gelösst");
 				for(int j = 0; j<4; j++){
 					/**
 					 * Prüfe, ob Position noch nicht korrekt ist und dass die beiden Farben nicht Identisch sind
@@ -213,6 +236,8 @@ public class Solver {
 						return polNr*4+j;
 					}
 				}
+			}else{
+				consLog(polNr+"Pol gelöst!");
 			}
 		}
 		/**
@@ -239,7 +264,7 @@ public class Solver {
 		 */
 		for(int i = 0; i<4; i++){
 			tris[i]=k.tri[polNr*4+i];
-			cons[i]=k.findCons(polNr*4+i);
+			cons[i]=k.con[k.findCons(polNr*4+i)];
 		}
 		/**
 		 * Sortiere die Arrays
@@ -349,9 +374,9 @@ public class Solver {
 						change1Phase(pol1,polRechts,2);
 						break;
 					case 3:
-						turnTo(p1,3);
-						turnTo(p2,1);
-						change1Phase(pol1,polRechts,3);
+						turnTo(p1,1);
+						turnTo(p2,3);
+						change1Phase(pol1,polRechts,1);
 						break;
 					case 4:
 						turnTo(p1,2);
@@ -436,7 +461,7 @@ public class Solver {
 				}//#END switch pol1 --> 3
 				break;	
 				}//#END switch pol1
-				
+				if(addSteps()){end();}
 			}else{
 				System.out.println("Zukleines PolR "+p1+":"+pol1+" "+p2+":"+pol2);
 			}
@@ -497,7 +522,7 @@ public class Solver {
 					turn++;
 					change2PolPositions(p1,p2,turn);
 				}else{
-					l.log(k, "Error - Muss sonst lösen - P1: "+p1+"; P2: "+p2);
+					l.log(k.getSphere(), "Error - Muss sonst lösen - P1: "+p1+"; P2: "+p2);
 					/*System.out.println("Anderst");
 					System.out.println(p1+" "+p2);
 					update(k,kr,30000);*/
@@ -645,7 +670,7 @@ public class Solver {
 		k.changePol(polO, 3);
 		k.turnKugel(polR, 1);
 		k.changePol(pol, 2);
-		
+		if(addSteps(24)){end();}
 	}
 	private void solvePolGegenuber(int p1,int p2){
     	if(p1>p2){
@@ -669,6 +694,7 @@ public class Solver {
 		int polR = change2PolPositionPR(pol, polO);
 		
 		change2Pol(pol,polO,polR);
+		if(addSteps()){end();}
 		//update(k,kr,500);
 		p2 = p2_old;
 		p1++;
@@ -680,7 +706,7 @@ public class Solver {
 		polR = change2PolPositionPR(pol, polO);
 		
 		change2Pol(pol,polO,polR);
-       
+		if(addSteps()){end();}
     	//update(k,kr,500);
     	
     	p1 = p1_old;
@@ -692,11 +718,12 @@ public class Solver {
 		polR = change2PolPositionPR(pol, polO);
 		
 		change2Pol(pol,polO,polR);
-       
+		if(addSteps()){end();}
     	//update(k,kr,500);
     	int end = 0;
     	while(!SolveCheck.isPolSolved(pol,k)&&end<4){
     		k.changePol(pol, 1);
+    		if(addSteps()){end();}
     		end++;
     	}
 		
