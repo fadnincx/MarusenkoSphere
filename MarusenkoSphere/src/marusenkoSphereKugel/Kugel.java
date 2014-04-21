@@ -1,53 +1,38 @@
 package marusenkoSphereKugel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 /**
  * Kugel-Datei
  * 
- * Kugel-Objekt, beinhaltet die Ganze Kugel für das ganze Programm, bringt den Zustand der Kugel jeweils von einem Objekt in ein nächstes
+ * Kugel-Objekt, beinhaltet die Ganze Kugel fï¿½r das ganze Programm, bringt den Zustand der Kugel jeweils von einem Objekt in ein nï¿½chstes
  * 
  */
 public class Kugel{
 	/**
 	 * tri ==> Array, welches die Dreiecke der Pole beinhaltet
-	 * con ==> Array, welches die Verbindungsstücke beinhaltet
+	 * con ==> Array, welches die Verbindungsstï¿½cke beinhaltet
 	 */
 	public int[] tri = new int[24]; //Arrays for Triangles
 	public int[] con = new int[8]; //Arrays for Connectors
-	
+	public ArrayList<String> SolvingList = new ArrayList<String>();
 	public int steps = 0;
 	
 	
 	/**
 	 * Funktion welche zum Initialisieren der Kugel aufgerufen wird
 	 * 
-	 * dabei wird den Array die Grösse zugewiesen
+	 * dabei wird den Array die Grï¿½sse zugewiesen
 	 */
 	public Kugel(){
+		FillKugelRandom();
 	}//#END Kugel()
 	
-	/**
-	 * Funktion, welche die Kugel fix füllt
-	 * 
-	 * eine einfarbige Kugel, hauptsächlich fürs Debugging der Grundfunktionen
-	 */
-	public void FillKugelFix(){
-		/**
-		 * Füllen der Verbingungsstücke
-		 */
-		for(int i = 0; i<8;i++){
-			con[i]=1;
-		}
-		/**
-		 * Füllen der Dreiecke
-		 */
-		for(int i = 0; i<24;i++){
-			tri[i]=1;
-		}
-		steps=0;
-	}//#END FillKugelFix()
-	public void FillKugelFromString(String s){
+	
+	private void UpdateSolvingList(){
+		this.SolvingList = new Solver().solve(this);
+		String s = SolvingList.get(0);
 		String[] sp = s.split("n");
 		if(sp[0].length()==32&&sp.length==2){
 			for(int i = 0; i<8;i++){
@@ -58,10 +43,48 @@ public class Kugel{
 			}
 			steps = Integer.parseInt(sp[1]);
 		}
+	}
+	
+	/**
+	 * Funktion, welche die Kugel fix fï¿½llt
+	 * 
+	 * eine einfarbige Kugel, hauptsï¿½chlich fï¿½rs Debugging der Grundfunktionen
+	 */
+	public void FillKugelFix(){
+		/**
+		 * Fï¿½llen der Verbingungsstï¿½cke
+		 */
+		for(int i = 0; i<8;i++){
+			con[i]=1;
+		}
+		/**
+		 * Fï¿½llen der Dreiecke
+		 */
+		for(int i = 0; i<24;i++){
+			tri[i]=1;
+		}
+		steps=0;
+		UpdateSolvingList();
 	}//#END FillKugelFix()
+	public void FillKugelFromString(String s){
+		FillKugelFromStringWithoutSolvingList(s);
+		UpdateSolvingList();
+	}
+	public void FillKugelFromStringWithoutSolvingList(String s){
+		String[] sp = s.split("n");
+		if(sp[0].length()==32&&sp.length==2){
+			for(int i = 0; i<8;i++){
+				con[i]=Integer.parseInt(s.substring(i, i+1));
+			}
+			for(int i = 0; i<24;i++){
+				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
+			}
+			steps = Integer.parseInt(sp[1]);
+		}
+	}
 
 	/**
-	 * Funktion zum zufälligen Füllen der Kugel mit realistischen Werten
+	 * Funktion zum zufï¿½lligen Fï¿½llen der Kugel mit realistischen Werten
 	 */
 	public void FillKugelRandom(){
 		/**
@@ -70,11 +93,11 @@ public class Kugel{
 		Random rm = new Random();
 		
 		/**
-		 * Alle Verbingungsstücke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben
+		 * Alle Verbingungsstï¿½cke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben
 		 */
 		Arrays.fill(con, -1);
 		/**
-		 * Diesen 8 Verbingungsstücken wird eine Farbe zu geteilt
+		 * Diesen 8 Verbingungsstï¿½cken wird eine Farbe zu geteilt
 		 */
 		for(int i = 0; i<8;i++){
 			/**
@@ -82,7 +105,7 @@ public class Kugel{
 			 */
 			int r = rm.nextInt(8-i);
 			/**
-			 * Finde das nächste noch nicht einer Farbe zugeteilte Verbindungsstück
+			 * Finde das nï¿½chste noch nicht einer Farbe zugeteilte Verbindungsstï¿½ck
 			 * 
 			 * wenn gefunden, dann weise Farbe zu
 			 */
@@ -116,7 +139,7 @@ public class Kugel{
 			int j = i/3;
 			
 			/**
-			 * Finde das nächste noch nicht einer Farbe zugeteilte Dreieck
+			 * Finde das nï¿½chste noch nicht einer Farbe zugeteilte Dreieck
 			 * 
 			 * wenn gefunden, dann weise Farbe zu
 			 */
@@ -132,6 +155,7 @@ public class Kugel{
 			}
 		}	
 		steps = 0;
+		UpdateSolvingList();
 	}//#END FillKugelRandom
 	
 	public String getSphere(){
@@ -154,7 +178,7 @@ public class Kugel{
 	 */
 	public void turnKugel(int pole, int steps){
 		/**
-		 * Aktion für Anzahl Schritte durch führen
+		 * Aktion fï¿½r Anzahl Schritte durch fï¿½hren
 		 */
 		for(int i = 0; i<steps; i++){
 			switch(pole){
@@ -200,7 +224,7 @@ public class Kugel{
 	 */
 	public void turn3Ring(int pole){
 		/**
-		 * Aktion für Anzahl Schritte durch führen
+		 * Aktion fï¿½r Anzahl Schritte durch fï¿½hren
 		 */
 		switch(pole){
 		
@@ -255,7 +279,7 @@ public class Kugel{
 	 */
 	private void turn2Ring(int pole){
 		/**
-		 * Aktion für Anzahl Schritte durch führen
+		 * Aktion fï¿½r Anzahl Schritte durch fï¿½hren
 		 */
 		int temp;
 		switch(pole){
@@ -339,17 +363,17 @@ public class Kugel{
 	}//#END changePol
 	
 	/**
-	 * Alias für findCons(int p, int i) wobei i = 0; 
-	 * Gibt den con des tri[p] zurück
-	 * @param p : tri[p] für con
+	 * Alias fï¿½r findCons(int p, int i) wobei i = 0; 
+	 * Gibt den con des tri[p] zurï¿½ck
+	 * @param p : tri[p] fï¿½r con
 	 * @return index von con
 	 */
 	public int findCons(int p){
 		return findCons(p, 0);
 	}
 	/**
-	 * Gibt den i-ten con des tri[p] zurück
-	 * @param p : tri[p] für con
+	 * Gibt den i-ten con des tri[p] zurï¿½ck
+	 * @param p : tri[p] fï¿½r con
 	 * @param i : den i-ten Pol
 	 * @return index von con
 	 */
@@ -410,7 +434,7 @@ public class Kugel{
 	 * Von con zu pol
 	 * @param con : von welchem con
 	 * @param i : der wievielte Pol
-	 * @return int des i-ten Pol, -1 == ungültiger con, -2, ungültiges i (nur 0, 1 oder 2)
+	 * @return int des i-ten Pol, -1 == ungï¿½ltiger con, -2, ungï¿½ltiges i (nur 0, 1 oder 2)
 	 */
 	public int con2pol(int con,int i){
 		switch(con){

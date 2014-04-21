@@ -1,13 +1,12 @@
-package marusenkoSphereSolving;
+package marusenkoSphereKugel;
 
-import marusenkoSphereKugel.Kugel;
 
 
 public class SolveCheck {
 
 	/**
-	 * Überprüft, ob aller Werte in Array true ist.
-	 * @return gibt true zurück, wenn alles true, sonst false
+	 * ÃœberprÃ¼ft, ob aller Werte in Array true ist.
+	 * @return gibt true zurÃ¼ck, wenn alles true, sonst false
 	 */
 	protected static boolean ArrayIsFullyOk(boolean[] ok){
 		//Gehe alle Dreiecke durch
@@ -23,12 +22,12 @@ public class SolveCheck {
 	
 	
 	/**
-	 * Prüft, ob Kugel fertig gelöst wurde
-	 * @return : wenn gelöst, dann true sonst false
+	 * PrÃ¼ft, ob Kugel fertig gelÃ¶st wurde
+	 * @return : wenn gelÃ¶st, dann true sonst false
 	 */
 	protected static boolean isKugelSolved(Kugel k){
 		/**
-		 * Prüfe jeden Pol
+		 * PrÃ¼fe jeden Pol
 		 */
 		for(int i = 0; i<6; i++){
 			if(!isPolSolved(i,k)){
@@ -40,9 +39,9 @@ public class SolveCheck {
 	}//#END isKugelSolved
 	
 	/**
-	 * Überprüft, ob ein Pole vollständig gelöst ist
+	 * ÃœberprÃ¼ft, ob ein Pole vollstÃ¤ndig gelÃ¶st ist
 	 * @param polNr : welcher Pole
-	 * @return : gibt true zurück, wenn Pole vollstängig gelösst ist
+	 * @return : gibt true zurÃ¼ck, wenn Pole vollstÃ¤ngig gelÃ¶sst ist
 	 */
 	protected static boolean isPolSolved(int polNr, Kugel k){
 		int anzKorr = 0;
@@ -59,13 +58,13 @@ public class SolveCheck {
 	}//#END isPolSolved
 	
 	/**
-	 * Überprüft, ob eine Position/Dreieck gelöst ist
-	 * @param p : welches Dreieck geprüft werden soll
-	 * @return : gibt true zurück, wenn gelöst
+	 * ÃœberprÃ¼ft, ob eine Position/Dreieck gelÃ¶st ist
+	 * @param p : welches Dreieck geprÃ¼ft werden soll
+	 * @return : gibt true zurÃ¼ck, wenn gelÃ¶st
 	 */
 	protected static boolean isPositionSolved(int p, Kugel k){
 		/**
-		 * Prüfe, ob tri mit con stimmt	
+		 * PrÃ¼fe, ob tri mit con stimmt	
 		 * wenn ja, Return true	
 		 */
 		if(k.tri[p]==k.con[k.findCons(p)]){
