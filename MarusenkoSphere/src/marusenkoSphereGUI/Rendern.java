@@ -1,7 +1,6 @@
 package marusenkoSphereGUI;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -196,10 +195,10 @@ public class Rendern {
             /**
              * Defniniere welche Icons geladen werden, inklusive der grösse
              */
-            icons[0] = loadIcon("img/icon_16.png", 16, 16);
-            //icons[1] = loadIcon("img/icon_32.png", 32, 32);
-            //icons[0] = loadIcon("img/icon_64.png", 64, 64);
-            //icons[0] = loadIcon("img/icon_128.png", 128, 128);
+            icons[0] = loadIcon("/img/icon_16.png", 16, 16);
+            //icons[1] = loadIcon("/img/icon_32.png", 32, 32);
+            //icons[2] = loadIcon("/img/icon_64.png", 64, 64);
+            //icons[3] = loadIcon("/img/icon_128.png", 128, 128);
             
             /**
              * Setzte die Icons           
@@ -247,7 +246,7 @@ public class Rendern {
     	/**
     	 * Erstelle ein Buffered Image aus der Datei
     	 */
-    	BufferedImage image = ImageIO.read(new File(filename));
+    	BufferedImage image = ImageIO.read(this.getClass().getResourceAsStream(filename));
     	
         /**
          * Wandle das Bild in ein ByteArray um
