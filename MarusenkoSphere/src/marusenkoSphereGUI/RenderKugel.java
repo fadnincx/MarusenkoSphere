@@ -4,24 +4,54 @@ import marusenkoSphereKugel.Kugel;
 
 import org.lwjgl.opengl.GL11;
 
-public class KugelR {
+/**
+ * RenderKugel - Datei
+ * 
+ * Enthält die Funktion, welche die Kugel effektiv Rendert
+ *
+ */
+public class RenderKugel {
 
-	protected static boolean render(Kugel k,float rtrix, float rtriy, float rtriz) {
+	/**
+	 * Funktion welche das rendern der Kugel Aufruft
+	 * @param k
+	 * @param rx
+	 * @param ry
+	 * @param rz
+	 * @return
+	 */
+	protected static boolean render(Kugel k, float rx, float ry, float rz){
+		//Ändere die Methode um ein anderes Rendern zu bekommen
+		return render20(k,rx,ry,rz);
+	}
+	
+	
+	/**
+	 * Erste Version der Kugel zu Rendern, funktioniert praktisch ohne Fehler, jedoch ist Kugel nicht wirklich Rund
+	 * Auch ist sie alles Andere als Effizient
+	 * @param k : Kugel die gerendert werden soll
+	 * @param rtrix : Drehung um x-Achse
+	 * @param rtriy : Drehung um y-Achse
+	 * @param rtriz : Drehung um z-Achse
+	 * @return : true wenn erfolgreich
+	 */
+	@SuppressWarnings("unused")
+	private static boolean render10(Kugel k,float rtrix, float rtriy, float rtriz) {
     	/**
-    	 * Auskommentieren, damit Flï¿½chen der Kugel nicht gefï¿½llt werden
+    	 * Auskommentieren, damit Flächen der Kugel nicht gefüllt werden und nur die aussen Kanten einer Fläche gezeichnet werden
     	 * 
     	 * Eigentlich zum Debugging beim erstellen gedacht
     	 */
     	//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
     	
     	/**
-    	 * Lï¿½scht den gesammten Bereich, damit neu gerendert werden kann (inklusive Depth Buffer)
+    	 * Löscht den gesammten Bereich, damit neu gerendert werden kann
     	 * 
     	 */
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         /**
-         * Setze die Position zum Rendern zurï¿½ck 
+         * Setze die Position zum Rendern zurück 
          */
         GL11.glLoadIdentity();
         
@@ -33,19 +63,17 @@ public class KugelR {
         GL11.glTranslatef(0.0f,0.0f,-4.0f);
         
         /**
-         * Drehe die Kugel gemï¿½ss den Variabeln auf x bzw y Achse
+         * Drehe die Kugel gemäss den Variabeln auf x,y und z Achse
          */
         GL11.glRotatef(rtriy,0.0f,1.0f,0.0f);
         GL11.glRotatef(rtrix,1.0f,0.0f,0.0f);
         GL11.glRotatef(rtriz,0.0f,0.0f,1.0f);
         
- /**
-         * Starte das Zeichnen der einzelnen flï¿½chen der Kugel
+        /**
+         * Starte das Zeichnen der einzelnen Flächen der Kugel
          */
         GL11.glBegin(GL11.GL_TRIANGLES);
-        	  
-        
-        
+
         /**
          * 
          * Zeichne die Pole
@@ -56,7 +84,7 @@ public class KugelR {
          * Zeichne Pol Nr 0 bis 3
          */
         	/**
-        	 * Wird fï¿½r jeden der 4 Pole erneut durch gegangen
+        	 * Wird für jeden der 4 Pole erneut durch gegangen
         	 */
         	for(int i = 0; i<4; i++){
         		/**
@@ -65,18 +93,18 @@ public class KugelR {
         		int vx = 1, vy = 1; 
         		
         		/**
-        		 * ï¿½ndere die Negationsvariabeln gemï¿½ss Pol und setzte die Farbe, mit welcher Gerendert wird
+        		 * ändere die Negationsvariabeln gemäss Pol und setzte die Farbe, mit welcher Gerendert wird
         		 */
-        		if(i == 0){vx = 1;vy = 1; KugelRendern.setColor(k.tri[0]);
-        		}else if(i == 1){vx = 1;vy = -1; KugelRendern.setColor(k.tri[1]);
-            	}else if(i == 2){vx = -1;vy = -1; KugelRendern.setColor(k.tri[2]);
-                }else if(i == 3){vx = -1;vy = 1; KugelRendern.setColor(k.tri[3]);	
+        		if(i == 0){vx = 1;vy = 1; Rendern.setColor(k.tri[0]);
+        		}else if(i == 1){vx = 1;vy = -1; Rendern.setColor(k.tri[1]);
+            	}else if(i == 2){vx = -1;vy = -1; Rendern.setColor(k.tri[2]);
+                }else if(i == 3){vx = -1;vy = 1; Rendern.setColor(k.tri[3]);	
                 }
  
         		/**
         		 * Rendere die 4Segmente eines Poles
         		 */
-        		
+	
         		GL11.glVertex3f( vx*0.00f, vy*0.00f, 1.00f);
             	GL11.glVertex3f( vx*0.00f, vy*0.50f, 0.65f);
             	GL11.glVertex3f( vx*0.19f, vy*0.46f, 0.65f);
@@ -92,6 +120,7 @@ public class KugelR {
             	GL11.glVertex3f( vx*0.00f, vy*0.00f, 1.00f);
             	GL11.glVertex3f( vx*0.46f, vy*0.19f, 0.65f);
             	GL11.glVertex3f( vx*0.50f, vy*0.00f, 0.65f);
+            	
         	}
         	
         	  
@@ -102,10 +131,10 @@ public class KugelR {
              */
         	for(int i = 0; i<4; i++){
         		int vx = 1, vy = 1; 
-        		if(i == 0){vx = 1;vy = 1; KugelRendern.setColor(k.tri[4]);
-        		}else if(i == 1){vx = 1;vy = -1; KugelRendern.setColor(k.tri[5]);
-            	}else if(i == 2){vx = -1;vy = -1; KugelRendern.setColor(k.tri[6]);
-                }else if(i == 3){vx = -1;vy = 1; KugelRendern.setColor(k.tri[7]);	
+        		if(i == 0){vx = 1;vy = 1; Rendern.setColor(k.tri[4]);
+        		}else if(i == 1){vx = 1;vy = -1; Rendern.setColor(k.tri[5]);
+            	}else if(i == 2){vx = -1;vy = -1; Rendern.setColor(k.tri[6]);
+                }else if(i == 3){vx = -1;vy = 1; Rendern.setColor(k.tri[7]);	
                 } 	
         		GL11.glVertex3f( 1.00f, vy*0.00f, vx*0.00f);
             	GL11.glVertex3f( 0.65f, vy*0.50f, vx*0.00f);
@@ -131,10 +160,10 @@ public class KugelR {
              */
         	for(int i = 0; i<4; i++){
         		int vx = 1, vy = 1; 
-        		if(i == 0){vx = 1;vy = 1; KugelRendern.setColor(k.tri[8]);
-        		}else if(i == 1){vx = 1;vy = -1; KugelRendern.setColor(k.tri[9]);
-            	}else if(i == 2){vx = -1;vy = -1; KugelRendern.setColor(k.tri[10]);
-                }else if(i == 3){vx = -1;vy = 1; KugelRendern.setColor(k.tri[11]);	
+        		if(i == 0){vx = 1;vy = 1; Rendern.setColor(k.tri[8]);
+        		}else if(i == 1){vx = 1;vy = -1; Rendern.setColor(k.tri[9]);
+            	}else if(i == 2){vx = -1;vy = -1; Rendern.setColor(k.tri[10]);
+                }else if(i == 3){vx = -1;vy = 1; Rendern.setColor(k.tri[11]);	
                 } 	
         		GL11.glVertex3f( vx*0.00f, vy*0.00f, -1.00f);
             	GL11.glVertex3f( vx*0.00f, vy*0.50f, -0.65f);
@@ -160,10 +189,10 @@ public class KugelR {
              */
         	for(int i = 0; i<4; i++){
         		int vx = 1, vy = 1; 
-        		if(i == 0){vx = 1;vy = 1; KugelRendern.setColor(k.tri[12]);
-        		}else if(i == 1){vx = 1;vy = -1; KugelRendern.setColor(k.tri[13]);
-            	}else if(i == 2){vx = -1;vy = -1; KugelRendern.setColor(k.tri[14]);
-                }else if(i == 3){vx = -1;vy = 1; KugelRendern.setColor(k.tri[15]);	
+        		if(i == 0){vx = 1;vy = 1; Rendern.setColor(k.tri[12]);
+        		}else if(i == 1){vx = 1;vy = -1; Rendern.setColor(k.tri[13]);
+            	}else if(i == 2){vx = -1;vy = -1; Rendern.setColor(k.tri[14]);
+                }else if(i == 3){vx = -1;vy = 1; Rendern.setColor(k.tri[15]);	
                 } 	
         		GL11.glVertex3f( -1.00f, vy*0.00f, vx*0.00f);
             	GL11.glVertex3f( -0.65f, vy*0.50f, vx*0.00f);
@@ -190,10 +219,10 @@ public class KugelR {
              */   	
         	for(int i = 0; i<4; i++){
         		int vx = 1, vy = 1; 
-        		if(i == 0){vx = 1;vy = 1; KugelRendern.setColor(k.tri[16]);
-        		}else if(i == 1){vx = 1;vy = -1; KugelRendern.setColor(k.tri[17]);
-            	}else if(i == 2){vx = -1;vy = -1; KugelRendern.setColor(k.tri[18]);
-                }else if(i == 3){vx = -1;vy = 1; KugelRendern.setColor(k.tri[19]);	
+        		if(i == 0){vx = 1;vy = 1; Rendern.setColor(k.tri[16]);
+        		}else if(i == 1){vx = 1;vy = -1; Rendern.setColor(k.tri[17]);
+            	}else if(i == 2){vx = -1;vy = -1; Rendern.setColor(k.tri[18]);
+                }else if(i == 3){vx = -1;vy = 1; Rendern.setColor(k.tri[19]);	
                 }
  
         		GL11.glVertex3f( vx*0.00f, 1.00f, vy*0.00f);
@@ -220,10 +249,10 @@ public class KugelR {
              */	
         	for(int i = 0; i<4; i++){
         		int vx = 1, vy = 1; 
-        		if(i == 0){vx = 1;vy = 1; KugelRendern.setColor(k.tri[20]);
-        		}else if(i == 1){vx = 1;vy = -1; KugelRendern.setColor(k.tri[21]);
-            	}else if(i == 2){vx = -1;vy = -1; KugelRendern.setColor(k.tri[22]);
-                }else if(i == 3){vx = -1;vy = 1; KugelRendern.setColor(k.tri[23]);	
+        		if(i == 0){vx = 1;vy = 1; Rendern.setColor(k.tri[20]);
+        		}else if(i == 1){vx = 1;vy = -1; Rendern.setColor(k.tri[21]);
+            	}else if(i == 2){vx = -1;vy = -1; Rendern.setColor(k.tri[22]);
+                }else if(i == 3){vx = -1;vy = 1; Rendern.setColor(k.tri[23]);	
                 } 	
         		GL11.glVertex3f( vx*0.00f, -1.00f, vy*0.00f);
         		GL11.glVertex3f( vx*0.00f, -0.65f, vy*0.50f);
@@ -245,15 +274,15 @@ public class KugelR {
         	
         	/**
         	 * 
-        	 * Zeichne die zwischen Flï¿½chen
+        	 * Zeichne die zwischen Flächen
         	 * 
         	 */
         	
         	
         	/**
-        	 * Zeichne Flï¿½che 2
+        	 * Zeichne Fläche 2
         	 */
-        	KugelRendern.setColor(k.con[2]); 
+        	Rendern.setColor(k.con[2]); 
         	GL11.glVertex3f( 0.50f, 0.00f, 0.65f);
         	GL11.glVertex3f( 0.65f, 0.00f, 0.50f);
         	GL11.glVertex3f( 0.46f, 0.19f, 0.65f);
@@ -309,9 +338,9 @@ public class KugelR {
         	
         	
         	/**
-        	 * Zeichne Flï¿½che 3
+        	 * Zeichne Fläche 3
         	 */
-        	KugelRendern.setColor(k.con[3]); 
+        	Rendern.setColor(k.con[3]); 
         	   
 			GL11.glVertex3f( 0.65f, 0.00f,-0.50f);
         	GL11.glVertex3f( 0.50f, 0.00f,-0.65f);
@@ -368,9 +397,9 @@ public class KugelR {
         	
         	
         	/**
-        	 * Zeichne Flï¿½che 0
+        	 * Zeichne Fläche 0
         	 */
-        	KugelRendern.setColor(k.con[0]); 
+        	Rendern.setColor(k.con[0]); 
         	
 			GL11.glVertex3f(-0.50f, 0.00f,-0.65f);
         	GL11.glVertex3f(-0.65f, 0.00f,-0.50f);
@@ -427,9 +456,9 @@ public class KugelR {
         	
         	
         	/**
-        	 * Zeichne Flï¿½che 1
+        	 * Zeichne Fläche 1
         	 */
-        	KugelRendern.setColor(k.con[1]);
+        	Rendern.setColor(k.con[1]);
         	
 			GL11.glVertex3f(-0.65f, 0.00f, 0.50f);
         	GL11.glVertex3f(-0.50f, 0.00f, 0.65f);
@@ -486,9 +515,9 @@ public class KugelR {
         	
         	
         	/**
-        	 * Zeichne Flï¿½che 6
+        	 * Zeichne Fläche 6
         	 */
-        	KugelRendern.setColor(k.con[6]); 
+        	Rendern.setColor(k.con[6]); 
         	GL11.glVertex3f( 0.50f, -0.00f, 0.65f);
         	GL11.glVertex3f( 0.65f, -0.00f, 0.50f);
         	GL11.glVertex3f( 0.46f, -0.19f, 0.65f);
@@ -544,9 +573,9 @@ public class KugelR {
         	
         	
         	/**
-        	 * Zeichne Flï¿½che 7
+        	 * Zeichne Fläche 7
         	 */
-        	KugelRendern.setColor(k.con[7]); 
+        	Rendern.setColor(k.con[7]); 
         	   
 			GL11.glVertex3f( 0.65f, -0.00f,-0.50f);
         	GL11.glVertex3f( 0.50f, -0.00f,-0.65f);
@@ -603,9 +632,9 @@ public class KugelR {
         	
         	
         	/**
-        	 * Zeichne Flï¿½che 4
+        	 * Zeichne Fläche 4
         	 */
-        	KugelRendern.setColor(k.con[4]); 
+        	Rendern.setColor(k.con[4]); 
         	
 			GL11.glVertex3f(-0.50f, -0.00f,-0.65f);
         	GL11.glVertex3f(-0.65f, -0.00f,-0.50f);
@@ -662,9 +691,9 @@ public class KugelR {
         	
         	
         	/**
-        	 * Zeichne Flï¿½che 5
+        	 * Zeichne Fläche 5
         	 */
-        	KugelRendern.setColor(k.con[5]);
+        	Rendern.setColor(k.con[5]);
         	
 			GL11.glVertex3f(-0.65f, -0.00f, 0.50f);
         	GL11.glVertex3f(-0.50f, -0.00f, 0.65f);
@@ -836,7 +865,7 @@ public class KugelR {
 
 
         /**
-         * Rendere die Zwischen Stï¿½cke zwischen den Polen
+         * Rendere die Zwischen Stücke zwischen den Polen
          */
     	
     	GL11.glVertex3f(0.50f, 0.00f, 0.65f);
@@ -885,86 +914,362 @@ public class KugelR {
     	 */
         GL11.glEnd();
         
-       /*
-        GL11.glLoadIdentity();
-        GL11.glTranslatef(1.4f,1.0f,-4.0f);
-        Color.white.bind();
-        texture.bind(); // or GL11.glBind(texture.getTextureID());
-        
-        GL11.glBegin(GL11.GL_QUADS);
-	        GL11.glTexCoord2f(0.0f, 0.0f);
-	        GL11.glVertex3f(-0.5f, 0.5f, 0.5f); // Top Left Of The Texture and Quad
-	        
-	        GL11.glTexCoord2f(1.0f, 0.0f);
-	        GL11.glVertex3f( 0.5f, 0.5f, 0.5f); // Top Right Of The Texture and Quad
-	        
-	        GL11.glTexCoord2f(1.0f, 1.0f);
-	        GL11.glVertex3f( 0.5f, -0.5f, 0.5f); // Bottom Right Of The Texture and Quad
-	        
-	        GL11.glTexCoord2f(0.0f, 1.0f);
-	        GL11.glVertex3f(-0.5f, -0.5f, 0.5f); // Bottom Left Of The Texture and Quad
-        GL11.glEnd();
-        
-               */
         /**
-         * Gebe true zurï¿½ck, da Rendern ohne Fehler durch ging
+         * Gebe true zurück, da Rendern ohne Fehler durch ging
          */
         return true;
     }
-	protected static boolean render20(Kugel k,float rtrix, float rtriy, float rtriz) {
+	
+	/**
+	 * Funktion damit die Winkel der Bequemheits halber in Grad angegeben werden können und diese dann in Radiant umgerechnet werden können
+	 * @param deg
+	 * @return
+	 */
+	private static double deg2rad(double deg){
+		return deg*(Math.PI/180);
+	}
+	
+	/**
+	 * 2. Version der Methode zum Rendern der Kugel. Ist eine Wirkliche Kugel, jedoch noch nicht ganz Fehler frei. 
+	 * 		==> Übergang von 1em zum anderen Element ist nicht sauber...
+	 * @param k : Kugel
+	 * @param rx : Rotation auf x-Achse
+	 * @param ry : Rotation auf y-Achse
+	 * @param rz : Rotation auf z-Achse
+	 * @return : true wenn Erfolgreich
+	 */
+	private static boolean render20(Kugel k,float rx, float ry, float rz) {
     	/**
-    	 * Auskommentieren, damit Flï¿½chen der Kugel nicht gefï¿½llt werden
+    	 * Auskommentieren, damit Flächen der Kugel nicht gefüllt werden
     	 * 
-    	 * Eigentlich zum Debugging beim erstellen gedacht
+    	 * Hauptsächlich zum Debugging beim erstellen gedacht
     	 */
-    	GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+    	//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
     	
-    	/**
-    	 * Lï¿½scht den gesammten Bereich, damit neu gerendert werden kann (inklusive Depth Buffer)
-    	 * 
-    	 */
+		
+    	//Löscht den gesammten Bereich, damit neu gerendert werden kann
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        /**
-         * Setze die Position zum Rendern zurï¿½ck 
-         */
+        //Setze die Position zum Rendern zurück 
         GL11.glLoadIdentity();
         
-      
-        
-        /**
-         * verschiebe das 0/0 Position zum Rendern, damit Kugel ganz sichtbar wird
-         */
+        //Verschiebe die 0/0 Position zum Rendern, damit Kugel ganz sichtbar wird
         GL11.glTranslatef(0.0f,0.0f,-4.0f);
         
-        /**
-         * Drehe die Kugel gemï¿½ss den Variabeln auf x bzw y Achse
-         */
-        GL11.glRotatef(rtriy,0.0f,1.0f,0.0f);
-        GL11.glRotatef(rtrix,1.0f,0.0f,0.0f);
-        GL11.glRotatef(rtriz,0.0f,0.0f,1.0f);
+        //Drehe die Kugel gemäss den Variabeln auf der x,y und z Achse
+        GL11.glRotatef(ry,0.0f,1.0f,0.0f);
+        GL11.glRotatef(rx,1.0f,0.0f,0.0f);
+        GL11.glRotatef(rz,0.0f,0.0f,1.0f);
         
- /**
-         * Starte das Zeichnen der einzelnen flï¿½chen der Kugel
-         */
+
+        //Starte das Zeichnen der einzelnen Flächen der Kugel
         GL11.glBegin(GL11.GL_TRIANGLES);
+
         
-        double r = 1.0;
-        KugelRendern.setColor(k.con[3]); 
-        for(double x = -1.0;x>1.0;x+=0.1){
-        	for(double y = -1.0;y>1.0;y+=0.1){
-        		for(double z = -1.0;z>1.0;z+=0.1){
-        			if(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2)==Math.pow(r,2)){
-        				GL11.glVertex3d(x,y,z);
-        	        	GL11.glVertex3d(x+0.01,y+0.01,z);
-        	        	GL11.glVertex3d(x,y,z+0.01);
-        			}
-                }
-            }
-        }
-        
-        
+		//Definiere zwei relativ grosse 4-Dimensionale Arrays, welche die Korrdinaten für die Dreiecke enthalten welche einen Pol Viertel, bzw ein Zwischenstück ergeben
+        //([j][l][Koordinate][x/y/z]
+		double[][][][] pole = new double[90][40][6][3];
+		double[][][][] zwi = new double[90][90][6][3];
+		
+		//Fülle das Array für einen Pol Viertel
+		for(int j = 0; j<90; j++){
+			for(int l = 50; l<90; l++){	
+				//1. Dreieck 1. Korrdinate
+				pole[j][l-50][0][0] = (Math.cos(deg2rad(l))*Math.sin(deg2rad(j)));
+				pole[j][l-50][0][1] = (Math.cos(deg2rad(l))*Math.cos(deg2rad(j)));
+				pole[j][l-50][0][2] = Math.sin(deg2rad(l));
+				//1. Dreieck 2. Korrdinate
+				pole[j][l-50][1][0] = (Math.cos(deg2rad(l))*Math.sin(deg2rad(j+1)));
+				pole[j][l-50][1][1] = (Math.cos(deg2rad(l))*Math.cos(deg2rad(j+1)));
+				pole[j][l-50][1][2] = Math.sin(deg2rad(l));
+				//1. Dreieck 3. Korrdinate
+				pole[j][l-50][2][0] = (Math.cos(deg2rad(l+1))*Math.sin(deg2rad(j+1)));
+				pole[j][l-50][2][1] = (Math.cos(deg2rad(l+1))*Math.cos(deg2rad(j+1)));
+				pole[j][l-50][2][2] = Math.sin(deg2rad(l+1));
+				
+				//2. Dreieck 1. Korrdinate
+				pole[j][l-50][3][0] = (Math.cos(deg2rad(l))*Math.sin(deg2rad(j)));
+				pole[j][l-50][3][1] = (Math.cos(deg2rad(l))*Math.cos(deg2rad(j)));
+				pole[j][l-50][3][2] = Math.sin(deg2rad(l));
+				//2. Dreieck 2. Korrdinate
+				pole[j][l-50][4][0] = (Math.cos(deg2rad(l+1))*Math.sin(deg2rad(j)));
+				pole[j][l-50][4][1] = (Math.cos(deg2rad(l+1))*Math.cos(deg2rad(j)));
+				pole[j][l-50][4][2] = Math.sin(deg2rad(l+1));
+				//2. Dreieck 3. Korrdinate 
+				pole[j][l-50][5][0] = (Math.cos(deg2rad(l+1))*Math.sin(deg2rad(j+1)));
+				pole[j][l-50][5][1] = (Math.cos(deg2rad(l+1))*Math.cos(deg2rad(j+1)));
+				pole[j][l-50][5][2] = Math.sin(deg2rad(l+1));
+			} 			
+   		}
+		
+		//Fülle das Array für ein Verbindungsstück
+		for(int j = 50; j>0; j--){
+			for(int l = 0; l<90; l++){	
+				//Sofern nicht Teil eines Pols...
+				if((Math.cos(deg2rad(j))*Math.sin(deg2rad(l)))<=Math.sin(deg2rad(50))&&(Math.cos(deg2rad(j))*Math.cos(deg2rad(l)))<=Math.sin(deg2rad(50))){
+					//1. Dreieck 1. Korrdinate
+					zwi[j][l][0][0] = (Math.cos(deg2rad(j))*Math.sin(deg2rad(l)));
+					zwi[j][l][0][1] = Math.sin(deg2rad(j));
+					zwi[j][l][0][2] = (Math.cos(deg2rad(j))*Math.cos(deg2rad(l)));
+					//1. Dreieck 2. Korrdinate
+					zwi[j][l][1][0] = (Math.cos(deg2rad(j))*Math.sin(deg2rad(l+1)));
+					zwi[j][l][1][1] = Math.sin(deg2rad(j));
+					zwi[j][l][1][2] = (Math.cos(deg2rad(j))*Math.cos(deg2rad(l+1)));
+					//1. Dreieck 3. Korrdinate
+					zwi[j][l][2][0] = (Math.cos(deg2rad(j-1))*Math.sin(deg2rad(l)));
+					zwi[j][l][2][1] = Math.sin(deg2rad(j-1));
+					zwi[j][l][2][2] = (Math.cos(deg2rad(j-1))*Math.cos(deg2rad(l)));
+					
+					//2. Dreieck 1. Korrdinate
+					zwi[j][l][3][0] = (Math.cos(deg2rad(j-1))*Math.sin(deg2rad(l+1)));
+					zwi[j][l][3][1] = Math.sin(deg2rad(j-1));
+					zwi[j][l][3][2] = (Math.cos(deg2rad(j-1))*Math.cos(deg2rad(l+1)));
+					//2. Dreieck 2. Korrdinate
+					zwi[j][l][4][0] = (Math.cos(deg2rad(j))*Math.sin(deg2rad(l+1)));
+					zwi[j][l][4][1] = Math.sin(deg2rad(j));
+					zwi[j][l][4][2] = (Math.cos(deg2rad(j))*Math.cos(deg2rad(l+1)));
+					//2. Dreieck 3. Korrdinate 
+					zwi[j][l][5][0] = (Math.cos(deg2rad(j-1))*Math.sin(deg2rad(l)));
+					zwi[j][l][5][1] = Math.sin(deg2rad(j-1));
+					zwi[j][l][5][2] = (Math.cos(deg2rad(j-1))*Math.cos(deg2rad(l)));
+				}
+			} 			
+   		}
+		
+		//Schleife um alle 24 Pol Viertel aus dem Berechneten auszu geben
+		for(int i = 0; i<24; i++){
+			
+			//Invertierungs Variabel
+			int ix = 1;
+			int iy = 1;
+			int iz = 1;
+			
+			//Positionierungs Variabeln
+			int px = 0;
+			int py = 1;
+			int pz = 2;
+			
+			//Definiere die Invertierungs Variabel und die Positionierungs Variabel für jeden Viertel neu. Zusätzlich noch die Farbe des Viertels Definieren
+			switch(i){
+			case 0:
+				ix = 1; iy = 1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.tri[0]);
+				break;
+			case 1:
+				ix = 1; iy =-1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.tri[1]);
+				break;
+			case 2:
+				ix =-1; iy =-1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.tri[2]);
+				break;
+			case 3:
+				ix =-1; iy = 1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.tri[3]);
+				break;
+			//
+			case 4:
+				ix = 1; iy = 1; iz = 1;
+				px = 2; py = 0; pz = 1;
+				Rendern.setColor(k.tri[4]);
+				break;
+			case 5:
+				ix = 1; iy = -1; iz =1;
+				px = 2; py = 0; pz = 1;
+				Rendern.setColor(k.tri[5]);
+				break;
+			case 6:
+				ix = 1; iy =-1; iz =-1;
+				px = 2; py = 0; pz = 1;
+				Rendern.setColor(k.tri[6]);
+				break;
+			case 7:
+				ix = 1; iy =1; iz = -1;
+				px = 2; py = 0; pz = 1;
+				Rendern.setColor(k.tri[7]);
+				break;
+			//
+			case 8:
+				ix = 1; iy = 1; iz =-1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.tri[8]);
+				break;
+			case 9:
+				ix = 1; iy =-1; iz =-1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.tri[9]);
+				break;
+			case 10:
+				ix =-1; iy =-1; iz =-1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.tri[10]);
+				break;
+			case 11:
+				ix =-1; iy = 1; iz =-1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.tri[11]);
+				break;
+			//
+			case 12:
+				ix =-1; iy = 1; iz = 1;
+				px = 2; py = 1; pz = 0;
+				Rendern.setColor(k.tri[12]);
+				break;
+			case 13:
+				ix =-1; iy =-1; iz = 1;
+				px = 2; py = 1; pz = 0;
+				Rendern.setColor(k.tri[13]);
+				break;
+			case 14:
+				ix =-1; iy =-1; iz =-1;
+				px = 2; py = 1; pz = 0;
+				Rendern.setColor(k.tri[14]);
+				break;
+			case 15:
+				ix =-1; iy = 1; iz =-1;
+				px = 2; py = 1; pz = 0;
+				Rendern.setColor(k.tri[15]);
+				break;
+			//
+			case 16:
+				ix = 1; iy = 1; iz = 1;
+				px = 0; py = 2; pz = 1;
+				Rendern.setColor(k.tri[16]);
+				break;
+			case 17:
+				ix = 1; iy = 1; iz =-1;
+				px = 0; py = 2; pz = 1;
+				Rendern.setColor(k.tri[17]);
+				break;
+			case 18:
+				ix =-1; iy = 1; iz =-1;
+				px = 0; py = 2; pz = 1;
+				Rendern.setColor(k.tri[18]);
+				break;
+			case 19:
+				ix =-1; iy = 1; iz = 1;
+				px = 0; py = 2; pz = 1;
+				Rendern.setColor(k.tri[19]);
+				break;
+			//
+			case 20:
+				ix = 1; iy =-1; iz = 1;
+				px = 0; py = 2; pz = 1;
+				Rendern.setColor(k.tri[20]);
+				break;
+			case 21:
+				ix = 1; iy =-1; iz =-1;
+				px = 0; py = 2; pz = 1;
+				Rendern.setColor(k.tri[21]);
+				break;
+			case 22:
+				ix =-1; iy =-1; iz =-1;
+				px = 0; py = 2; pz = 1;
+				Rendern.setColor(k.tri[22]);
+				break;
+			case 23:
+				ix =-1; iy =-1; iz = 1;
+				px = 0; py = 2; pz = 1;
+				Rendern.setColor(k.tri[23]);
+				break;
+			}
+			
+			//Dann den Viertel Rendern 
+			for(int j = 0; j<90; j++){
+    			for(int l = 0; l<40; l++){
+    				GL11.glVertex3d(ix*pole[j][l][0][px], iy*pole[j][l][0][py], iz*pole[j][l][0][pz]);
+    				GL11.glVertex3d(ix*pole[j][l][1][px], iy*pole[j][l][1][py], iz*pole[j][l][1][pz]);
+    				GL11.glVertex3d(ix*pole[j][l][2][px], iy*pole[j][l][2][py], iz*pole[j][l][2][pz]);
+    				
+    				GL11.glVertex3d(ix*pole[j][l][3][px], iy*pole[j][l][3][py], iz*pole[j][l][3][pz]);
+    				GL11.glVertex3d(ix*pole[j][l][4][px], iy*pole[j][l][4][py], iz*pole[j][l][4][pz]);
+    				GL11.glVertex3d(ix*pole[j][l][5][px], iy*pole[j][l][5][py], iz*pole[j][l][5][pz]);
+    			} 			
+       		}
+			
+			
+		}
+		
+		//Rendern der Zwischen Stücke
+		for(int i = 0; i<8; i++){
+			//Invertierungsvariabeln
+			int ix = 1;
+			int iy = 1;
+			int iz = 1;
+			//Positionierungsvariabeln
+			int px = 0;
+			int py = 1;
+			int pz = 2;
+			
+			//Definiere die Variabeln und die Farbe für jedes Zwischenstück individuell
+			switch(i){
+			case 0:
+				ix = -1; iy = 1; iz = -1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.con[0]);
+				break;
+			case 1:
+				ix = -1; iy = 1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.con[1]);
+				break;
+			case 2:
+				ix = 1; iy = 1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.con[2]);
+				break;
+			case 3:
+				ix = 1; iy = 1; iz = -1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.con[3]);
+				break;
+			case 4:
+				ix = -1; iy = -1; iz = -1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.con[4]);
+				break;
+			case 5:
+				ix = -1; iy = -1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.con[5]);
+				break;
+			case 6:
+				ix = 1; iy = -1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.con[6]);
+				break;
+			case 7:
+				ix = 1; iy = -1; iz = -1;
+				px = 0; py = 1; pz = 2;
+				Rendern.setColor(k.con[7]);
+				break;	
+			}
+			
+			//Rendere Jedes Zwischenstück
+			for(int j = 50; j>0; j--){
+				for(int l = 0; l<90; l++){	
+					//Sofern es nicht zu einem Pol gehört
+					if((Math.cos(deg2rad(j))*Math.sin(deg2rad(l)))<=Math.sin(deg2rad(50))&&(Math.cos(deg2rad(j))*Math.cos(deg2rad(l)))<=Math.sin(deg2rad(50))){
+						GL11.glVertex3d(ix*zwi[j][l][0][px],iy*zwi[j][l][0][py],iz*zwi[j][l][0][pz]);
+						GL11.glVertex3d(ix*zwi[j][l][1][px],iy*zwi[j][l][1][py],iz*zwi[j][l][1][pz]);
+						GL11.glVertex3d(ix*zwi[j][l][2][px],iy*zwi[j][l][2][py],iz*zwi[j][l][2][pz]);
+						
+						GL11.glVertex3d(ix*zwi[j][l][3][px],iy*zwi[j][l][3][py],iz*zwi[j][l][3][pz]);
+						GL11.glVertex3d(ix*zwi[j][l][4][px],iy*zwi[j][l][4][py],iz*zwi[j][l][4][pz]);
+						GL11.glVertex3d(ix*zwi[j][l][5][px],iy*zwi[j][l][5][py],iz*zwi[j][l][5][pz]);
+					}
+				} 			
+	   		}
+			
+		}
+		//Beende das Rendern
         GL11.glEnd();
+        
+        //Gib true zurück, wenn hier ankommt, dann alles Erfolgreich
         return true;
     }
 }

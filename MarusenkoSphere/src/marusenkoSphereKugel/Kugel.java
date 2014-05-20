@@ -3,112 +3,89 @@ package marusenkoSphereKugel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+
+import marusenkoSphere.Log;
 /**
  * Kugel-Datei
  * 
- * Kugel-Objekt, beinhaltet die Ganze Kugel fï¿½r das ganze Programm, bringt den Zustand der Kugel jeweils von einem Objekt in ein nï¿½chstes
+ * Kugel-Objekt, beinhaltet die ganze Kugel für das ganze Programm, bringt den Zustand der Kugel jeweils von einem Objekt in ein nächstes
  * 
  */
 public class Kugel{
 	/**
 	 * tri ==> Array, welches die Dreiecke der Pole beinhaltet
-	 * con ==> Array, welches die Verbindungsstï¿½cke beinhaltet
+	 * con ==> Array, welches die Verbindungsstücke beinhaltet
 	 */
-	public int[] tri = new int[24]; //Arrays for Triangles
-	public int[] con = new int[8]; //Arrays for Connectors
-	public ArrayList<String> SolvingList = new ArrayList<String>();
-	public int steps = 0;
+	
+	//Aktueller Status
+	public int[] tri = new int[24]; //Array für die Dreiecke (Triangles)
+	public int[] con = new int[8]; //Array für die Verbindungsstücke (Connectors)
+	
+	//Für ganzer Lösungsweg
+	public ArrayList<String> SolvingList = new ArrayList<String>(); //Arraylist mit dem Lösungsweg
+	protected int step = 0; //Wo in der Liste ist der Aktuelle Status
 	
 	
 	/**
-	 * Funktion welche zum Initialisieren der Kugel aufgerufen wird
-	 * 
-	 * dabei wird den Array die Grï¿½sse zugewiesen
+	 * Konstruktor des Kugel Objekt, generiert gleich die erste Kugel, damit es nirgends zu fehlern, wegen nicht gesetzten Variablen kommt
 	 */
 	public Kugel(){
 		FillKugelRandom();
-	}//#END Kugel()
-	
-	
-	private void UpdateSolvingList(){
-		this.SolvingList = new Solver().solve(this);
-		String s = SolvingList.get(0);
-		String[] sp = s.split("n");
-		if(sp[0].length()==32&&sp.length==2){
-			for(int i = 0; i<8;i++){
-				con[i]=Integer.parseInt(s.substring(i, i+1));
-			}
-			for(int i = 0; i<24;i++){
-				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
-			}
-			steps = Integer.parseInt(sp[1]);
-		}
 	}
 	
 	/**
-	 * Funktion, welche die Kugel fix fï¿½llt
-	 * 
-	 * eine einfarbige Kugel, hauptsï¿½chlich fï¿½rs Debugging der Grundfunktionen
+	 * Setzte die Kugel gemäss eines Inputstrings
+	 * @param s
 	 */
-	public void FillKugelFix(){
-		/**
-		 * Fï¿½llen der Verbingungsstï¿½cke
-		 */
-		for(int i = 0; i<8;i++){
-			con[i]=1;
-		}
-		/**
-		 * Fï¿½llen der Dreiecke
-		 */
-		for(int i = 0; i<24;i++){
-			tri[i]=1;
-		}
-		steps=0;
-		UpdateSolvingList();
-	}//#END FillKugelFix()
 	public void FillKugelFromString(String s){
+		//Führe die Funktion ohne lösen der Kugel durch
 		FillKugelFromStringWithoutSolvingList(s);
+		//Löse die Kugel
 		UpdateSolvingList();
 	}
+	
+	/**
+	 * Setzt die Kugel gemäss eines Inputstrings ohne Lösen der Kugel, bzw ohne überschreiben des Lösungsweges
+	 * @param s
+	 */
 	public void FillKugelFromStringWithoutSolvingList(String s){
+		s = s.trim();
+		//Teile den String bei "n" auf ("n" ist das Trennzeichen im String)
 		String[] sp = s.split("n");
+		//Prüfe ob String der erwarteten Form entspricht, ansonsten ErrorLog
 		if(sp[0].length()==32&&sp.length==2){
+			//Setzte die Arrays gemäss dem String
 			for(int i = 0; i<8;i++){
 				con[i]=Integer.parseInt(s.substring(i, i+1));
 			}
 			for(int i = 0; i<24;i++){
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
 			}
-			steps = Integer.parseInt(sp[1]);
+			//Update den Step
+			step = Integer.parseInt(sp[1]);
+		}else{
+			Log.ErrorLog("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
 		}
 	}
 
 	/**
-	 * Funktion zum zufï¿½lligen Fï¿½llen der Kugel mit realistischen Werten
+	 * Funktion zum zufülligen Füllen der Kugel mit realistischen Werten
 	 */
 	public void FillKugelRandom(){
-		/**
-		 * Objekt rm als Zufallsobjekt, auswelcher dann die Zusatzzahl generiert wird
-		 */
+		
+		//Objekt rm als Zufallsobjekt, auswelcher dann die Zusatzzahl generiert wird
 		Random rm = new Random();
 		
-		/**
-		 * Alle Verbingungsstï¿½cke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben
-		 */
+		//Alle Verbingungsstücke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben
 		Arrays.fill(con, -1);
-		/**
-		 * Diesen 8 Verbingungsstï¿½cken wird eine Farbe zu geteilt
-		 */
+		
+		//Diesen 8 Verbingungsstücken wird eine Farbe zu geteilt
 		for(int i = 0; i<8;i++){
-			/**
-			 * Neue Zufallszahl
-			 */
+			
+			//Neue Zufallszahl
 			int r = rm.nextInt(8-i);
-			/**
-			 * Finde das nï¿½chste noch nicht einer Farbe zugeteilte Verbindungsstï¿½ck
-			 * 
-			 * wenn gefunden, dann weise Farbe zu
-			 */
+			
+			//Finde das nächste noch nicht einer Farbe zugeteilte Verbindungsstück --> wenn gefunden, dann weise Farbe zu
 			boolean found = false;
 			while(!found){
 				if(con[r]==-1){
@@ -121,28 +98,19 @@ public class Kugel{
 			}
 		}
 		
-		/**
-		 * Alle Dreiecke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben 
-		 */
+		//Alle Dreiecke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben 
 		Arrays.fill(tri, -1);
-		/**
-		 * Den 24 Dreiecken wird eine Farbe zugeteilt (jeweils 3 Dreiecken die selbe)
-		 */
+		
+		//Den 24 Dreiecken wird eine Farbe zugeteilt (jeweils 3 Dreiecken die selbe)
 		for(int i = 0; i<24;i++){
-			/**
-			 * Neue Zufallszahl
-			 */
+			
+			// Neue Zufallszahl
 			int r = rm.nextInt(24-i);
-			/**
-			 * Durch 3, damit 3 die selbe farbe kriegen
-			 */
+			
+			// Durch 3, damit 3 die selbe farbe kriegen
 			int j = i/3;
 			
-			/**
-			 * Finde das nï¿½chste noch nicht einer Farbe zugeteilte Dreieck
-			 * 
-			 * wenn gefunden, dann weise Farbe zu
-			 */
+			//Finde das nächste noch nicht einer Farbe zugeteilte Dreieck --> wenn gefunden, dann weise Farbe zu
 			boolean found = false;
 			while(!found){
 				if(tri[r]==-1){
@@ -154,102 +122,152 @@ public class Kugel{
 				}
 			}
 		}	
-		steps = 0;
+		step = 0;
+		
+		//Löse die Kugel
 		UpdateSolvingList();
+	
 	}//#END FillKugelRandom
 	
-	public String getSphere(){
+	
+	/**
+	 * Getter-Methode für den Step
+	 * @return
+	 */
+	public int getStep(){
+		return this.step;
+	}
+	
+	/**
+	 * Methode, welche die Kugel als String ausgibt
+	 * @return
+	 */
+	protected String getSphere(){
+		//Output = leer
 		String out = "";
+		//Füge die Zahlenwerte der Verbindungsstücke ein
 		for(int i = 0; i<8;i++){
 			out+=con[i];
 		}
+		//Füge die Zahlenwerte der Pole ein
 		for(int i = 0; i<24;i++){
 			out+=tri[i];
 		}
-		out += "n"+steps;
+		//Füge "n" als Trennzeichen hinzu, sowie den Step
+		out += "n"+step;
 		return out;
+	}
+	
+	/**
+	 * Methode zum Updaten der Liste beim Lösen, also die Methode, welche das Lösen startet und das Ergebnis verwaltet.
+	 */
+	private void UpdateSolvingList(){
+		//Die SolvingList ist das Resultat eines neuen Objekts Solver und dessen Methode solve mit dieser Kugel als Argument 
+		this.SolvingList = new Solver().solve(this);
+		//Setzte die Kugel in den Zustand zu beginn
+		FillKugelFromStringWithoutSolvingList(SolvingList.get(0));
+		System.out.println(getSphere());
+	}
+	
+	
+	/**********************************************************************************************************************************************
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 * Die Folgenden Funktionen werden für das Lösen der Kugel benötigt                                                                           *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 *                                                                                                                                            *
+	 **********************************************************************************************************************************************/
+	
+	
+	
+	
+	/**
+	 * Dreht die Halbe Kugel um den gegebenen Pol im gegenUhrzeigersinn
+	 * @param pole
+	 * @param steps
+	 */
+	protected void turnKugel(int pole, int steps){
+		//Aktion für Anzahl Schritte durch führen --> 3x im GegenUhrzeigersinn = 1x im Uhrzeigersinn 
+		
+		for(int i = 0; i<steps; i++){
+			//Dreht den Pol
+			changePol(pole,1);
+			//Dreht die Verbindungsstücke
+			turn2Ring(pole);
+			//Dreht die Pole am Äquator
+			turn3Ring(pole);
+		}
 	}
 	
 	
 	/**
-	 * Dreht die Halbe Kugel um pol im gegenUhrzeigersinn
-	 * @param pole
-	 * @param steps
+	 * HilfsFunktion, zum Drehen von Halber Kugel
+	 * @param pole : Pol
 	 */
-	public void turnKugel(int pole, int steps){
-		/**
-		 * Aktion fï¿½r Anzahl Schritte durch fï¿½hren
-		 */
-		for(int i = 0; i<steps; i++){
-			switch(pole){
-			
-			case 0:
-				changePol(0,1);
-				turn2Ring(0);
-				turn3Ring(0);
-				break;
-			case 1:
-				changePol(1,1);
-				turn2Ring(1);
-				turn3Ring(1);
-				break;
-			case 2:
-				changePol(2,1);
-				turn2Ring(2);
-				turn3Ring(2);
-				break;
-			case 3:
-				changePol(3,1);
-				turn2Ring(3);
-				turn3Ring(3);
-				break;
-			case 4:
-				changePol(4,1);
-				turn2Ring(4);
-				turn3Ring(4);
-				break;
-			case 5:
-				changePol(5,1);
-				turn2Ring(5);
-				turn3Ring(5);
-				break;
-			}
-			
-		}
+	private void turn3Ring(int pole){
+		//Die Tri's in der Unten gegebenen Reihenfolge mit der cPol funktion durch wechseln 
+		switch(pole){	
+		case 0:
+			change8Tri(19, 16, 4, 5, 20, 23, 13, 12);
+			break;
+		case 1:
+			change8Tri(16, 17, 8, 9, 21, 20, 1, 0);
+			break;
+		case 2:
+			change8Tri(17, 18, 15, 14, 22, 21, 6, 7);
+			break;
+		case 3:
+			change8Tri(18, 19, 3, 2, 23, 22, 10, 11);
+			break;
+		case 4:
+			change8Tri(3, 0, 15, 12, 8, 11, 4, 7);
+			break;
+		case 5:
+			change8Tri(2, 1, 5, 6, 9, 10, 14, 13);
+			break;
+		}	
 	}
 	
 	/**
 	 * HilfsFunktion, zum Drehen von Halber Kugel
 	 * @param pole : Pol
 	 */
-	public void turn3Ring(int pole){
-		/**
-		 * Aktion fï¿½r Anzahl Schritte durch fï¿½hren
-		 */
+	private void turn2Ring(int pole){
 		switch(pole){
-		
 		case 0:
-			 cPol(19, 16, 4, 5, 20, 23, 13, 12);
+			change4Con(1,2,6,5);
 			break;
 		case 1:
-			 cPol(16, 17, 8, 9, 21, 20, 1, 0);
+			change4Con(2,3,7,6);
 			break;
 		case 2:
-			 cPol(17, 18, 15, 14, 22, 21, 6, 7);
+			change4Con(3,0,4,7);
 			break;
 		case 3:
-			 cPol(18, 19, 3, 2, 23, 22, 10, 11);
+			change4Con(0,1,5,4);
 			break;
 		case 4:
-			 cPol(3, 0, 15, 12, 8, 11, 4, 7);
+			change4Con(0,3,2,1);
 			break;
 		case 5:
-			 cPol(2, 1, 5, 6, 9, 10, 14, 13);
+			change4Con(4,5,6,7);
 			break;
 		}	
 	}
+	
+	
 	/**
-	 * Funktion, welcher die Positionen einer Kugel wechselt, zum drehen eines Pols
+	 * Funktion, welcher die Positionen einer Kugel wechselt, zum drehen eines Pols --> Hilfsfunktion von turn3Ring
 	 * @param p1 : 1. Pol-Position
 	 * @param p2 : 2. Pol-Position
 	 * @param p3 : 3. Pol-Position
@@ -259,7 +277,7 @@ public class Kugel{
 	 * @param p7 : 7. Pol-Position
 	 * @param p8 : 8. Pol-Position
 	 */
-	private void cPol(int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8){
+	private void change8Tri(int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8){
 		int zs1 = tri[p1];
 		int zs2 = tri[p2];
 		tri[p1] = tri[p3];
@@ -271,64 +289,23 @@ public class Kugel{
 		tri[p7] = zs1;
 		tri[p8] = zs2;
 		
-	}//#END cPol(8)
-	
-	/**
-	 * HilfsFunktion, zum Drehen von Halber Kugel
-	 * @param pole : Pol
-	 */
-	private void turn2Ring(int pole){
-		/**
-		 * Aktion fï¿½r Anzahl Schritte durch fï¿½hren
-		 */
-		int temp;
-		switch(pole){
-		
-		case 0:
-			temp =con[1];
-			con[1] = con[2];
-			con[2] = con[6];
-			con[6] = con[5];
-			con[5] = temp;
-			break;
-		case 1:
-			temp =con[2];
-			con[2] = con[3];
-			con[3] = con[7];
-			con[7] = con[6];
-			con[6] = temp;
-			break;
-		case 2:
-			temp =con[3];
-			con[3] = con[0];
-			con[0] = con[4];
-			con[4] = con[7];
-			con[7] = temp;
-			break;
-		case 3:
-			temp =con[0];
-			con[0] = con[1];
-			con[1] = con[5];
-			con[5] = con[4];
-			con[4] = temp;
-			break;
-		case 4:
-			temp =con[0];
-			con[0] = con[3];
-			con[3] = con[2];
-			con[2] = con[1];
-			con[1] = temp;
-			break;
-		case 5:
-			temp =con[4];
-			con[4] = con[5];
-			con[5] = con[6];
-			con[6] = con[7];
-			con[7] = temp;
-			break;
-		}	
 	}
 	
+	/**
+	 * Funktion, welcher die Positionen einer Kugel wechselt, zum drehen eines Pols --> Hilfsfunktion von turn2Ring
+	 * @param p1 : 1. Pol-Position
+	 * @param p2 : 2. Pol-Position
+	 * @param p3 : 3. Pol-Position
+	 * @param p4 : 4. Pol-Position
+	 */
+	private void change4Con(int p1, int p2, int p3, int p4){
+		int zs =con[p1];
+		con[p1] = con[p2];
+		con[p2] = con[p3];
+		con[p3] = con[p4];
+		con[p4] = zs;
+	}
+
 	/**
 	 * Funktion, welcher die Positionen einer Kugel wechselt, zum drehen eines Pols
 	 * @param p1 : 1. Pol-Position
@@ -336,48 +313,49 @@ public class Kugel{
 	 * @param p3 : 3. Pol-Position
 	 * @param p4 : 4. Pol-Position
 	 */
-	private void cPol(int p1, int p2, int p3, int p4){
+	private void change4Tri(int p1, int p2, int p3, int p4){
 		int zs = tri[p1];
 		tri[p1] = tri[p2];
 		tri[p2] = tri[p3];
 		tri[p3] = tri[p4];
 		tri[p4] = zs;
-	}//#END cPol(4)
+	}
 	
 	/**
-	 * Funktion welche cPol(int p1, int p2, int p3, int p4) korrekt aufruft, wenn PolNr und Anzahl der Drehungen gegeben werden  
+	 * Funktion welche change4Tri(int p1, int p2, int p3, int p4) korrekt aufruft, wenn PolNr und Anzahl der Drehungen gegeben werden  
 	 * Gegen Uhrzeigersinn
 	 * 
 	 * @param polNr : welcher Pol gedreht wird (int)(Dreieck id / 4) 
 	 * @param anz : um welche Anzahl soll gedreht werden
 	 */
-	public  void changePol(int polNr, int anz){
+	protected  void changePol(int polNr, int anz){
 		for(int i = 0; i<anz;i++){
 			if(polNr==1||polNr==2||polNr==4){
-				cPol(4*polNr+3,4*polNr+2,4*polNr+1,4*polNr);
+				change4Tri(4*polNr+3,4*polNr+2,4*polNr+1,4*polNr);
 			}else{
-				cPol(4*polNr,4*polNr+1,4*polNr+2,4*polNr+3);
+				change4Tri(4*polNr,4*polNr+1,4*polNr+2,4*polNr+3);
 			}
 			
 		}
-	}//#END changePol
+	}
 	
 	/**
-	 * Alias fï¿½r findCons(int p, int i) wobei i = 0; 
-	 * Gibt den con des tri[p] zurï¿½ck
-	 * @param p : tri[p] fï¿½r con
+	 * Alias für findCons(int p, int i) wobei i = 0; 
+	 * Gibt den con des tri[p] zurück
+	 * @param p : tri[p] für con
 	 * @return index von con
 	 */
-	public int findCons(int p){
+	protected int findCons(int p){
 		return findCons(p, 0);
 	}
+	
 	/**
-	 * Gibt den i-ten con des tri[p] zurï¿½ck
-	 * @param p : tri[p] fï¿½r con
+	 * Gibt den i-ten con des tri[p] zurück --> Wird benötigt, für die Grob Sortierung
+	 * @param p : tri[p] für con
 	 * @param i : den i-ten Pol
 	 * @return index von con
 	 */
-	public int findCons(int p, int i){
+	protected int findCons(int p, int i){
 		switch(i){
 			case 0:
 				switch(p){
@@ -430,13 +408,14 @@ public class Kugel{
 		}//#End switch i
 		return -1;
 	}
+	
 	/**
 	 * Von con zu pol
 	 * @param con : von welchem con
 	 * @param i : der wievielte Pol
-	 * @return int des i-ten Pol, -1 == ungï¿½ltiger con, -2, ungï¿½ltiges i (nur 0, 1 oder 2)
+	 * @return int des i-ten Pol, -1 == ungültiger con, -2, ungütiges i (nur 0, 1 oder 2)
 	 */
-	public int con2pol(int con,int i){
+	protected int con2pol(int con,int i){
 		switch(con){
 			case 0:
 				switch(i){

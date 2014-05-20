@@ -10,48 +10,67 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Die Log Klasse schreibt Fehler die während dem Ausführen des Programms auftreten in eine Log-Datei.
+ * Auch können Allgemeine Infos in ein Debug-Log geschrieben werden.
+ * 
+ * 
+ * Dadurch dass alle Methoden statisch sind muss kein Log-Objekt erstellt werden um auf diese zurück zu greifen
+ * 
+ *
+ */
 public class Log {
 
+	/**
+	 * Die Konstante mit dem Speicherpfad für die Logs
+	 */
+	public static final String LOG_PATH = "/home/marcel/marusenkoLog";
 	
 	/**
 	 * Schreibe ErrorLog zu Datei
 	 * @param error
 	 */
 	public static void ErrorLog(String error){
-		LogFile(error,"/home/marcel/marusenkoLog/error.log");
+		LogFile(error,LOG_PATH+"/error.log");
+		System.out.println("!!!Error!!!  "+error);
 	}
 	/**
 	 * Schreibe DebugLog zu Datei
 	 * @param debug
 	 */
 	public static void DebugLog(String debug){
-		LogFile(debug,"/home/marcel/marusenkoLog/debug.log");
+		LogFile(debug,LOG_PATH+"/debug.log");
+		System.out.println("Debug, "+debug);
 	}
 	
+	
 	/**
-	 * Schreibe den ErrorLog in die Datei
-	 * @param error
+	 * Schreibe den Log in die Datei
+	 * @param log
 	 */
-	private static void LogFile(String error, String logfile){
-		//Error Log Dateiname
-		//String logfile = "/home/marcel/marusenkoLog/error.log";
+	private static void LogFile(String log, String logfile){
+		
 		//Erstelle File Objekt mit Ort logfile
 		File file = new File(logfile);
-		//Erstelle File Objekt mit Ort Beinhaltender Ordner von file
+		
+		//Erstelle File Objekt mit Ort beinhaltender Ordner von file
 		File parent = file.getParentFile();
 
-		//Wenn Ordner nicht existiert versuche zu erstellen sonst Exception
+		//Wenn dieser Ordner nicht existiert versuche Ihn zu erstellen sonst wirf eine Exception-->in Log schreiben geht nicht...
 		if(!parent.exists() && !parent.mkdirs()){
-		    throw new IllegalStateException("Couldn't create dir: " + parent);
+		    throw new IllegalStateException("Ordner kann nicht erstellt werden: " + parent);
 		} 
-		//Versuche Datei zu erstellen
+		
+		//Versuche Datei zu erstellen ansonsten wirf eine Exception 
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		//Initialisiere die Output Variable
 		String out = "";
+		
 		//Initialisiere FileReader zum bisherige Datei zu lesen 
 		FileReader fileR = null;
 
@@ -59,23 +78,23 @@ public class Log {
 		try {
 			//FileReader get logFile
 			fileR = new FileReader(logfile);
-			//Ãœbergebe an einen BufferedReader
+			//Übergebe an einen BufferedReader
 			@SuppressWarnings("resource")
 			BufferedReader reader = new BufferedReader(fileR);
 		    String line = "";
-		    //Gehe Zeile fÃ¼r Zeile durch und schreibe in out
+		    //Gehe Zeile für Zeile durch und schreibe in die Outputvariable out
 		    while ((line = reader.readLine()) != null) {
 		    	out += line + "\n";
 		    }
 		}catch(Exception e){
 			throw new RuntimeException(e);
 		}finally{
-			//Wenn mÃ¶glich FileReader wieder schliessen
+			//Wenn möglich FileReader wieder schliessen
 			if(file != null) {
 				try{
 					fileR.close();
 				}catch(IOException e){
-					// Ignore issues during closing 
+					// Ignoriere Fehler beim Schliessen des FileReaders
 				}
 		    }
 		}
@@ -84,19 +103,20 @@ public class Log {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		
-		//Vor die Ausgabe Datum hÃ¤ngen
+		//Vor die Ausgabe Datum hängen
 		out = out+("\n"+dateFormat.format(date)+" ");
-		out = out+error;
+		out = out+log;
 		
 		//Versuche Log zu schreiben
 		try {
-			//BufferedWriter als neuer FileWriter zu logfile initialisieren
+			//Versuche einen BufferedWriter als neuer FileWriter mit logfile initialisieren
 	    	BufferedWriter writer = new BufferedWriter(new FileWriter(logfile));
 	    	//Log schreiben
 			writer.write(out);
 			//Writer schliessen
 			writer.close();
 		} catch (IOException e) {
+			//Bei einem Fehler wirf eine Exception
 			e.printStackTrace();
 		}
 	}

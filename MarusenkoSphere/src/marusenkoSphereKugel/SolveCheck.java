@@ -1,12 +1,15 @@
 package marusenkoSphereKugel;
 
-
+/**
+ * Klasse welche Methoden enthält, welche beim Lösen der Kugel prüfen, ob ein bestimmter Zustand bereits eingetroffen ist.
+ *
+ */
 
 public class SolveCheck {
 
 	/**
-	 * ÃœberprÃ¼ft, ob aller Werte in Array true ist.
-	 * @return gibt true zurÃ¼ck, wenn alles true, sonst false
+	 * Überprüft, ob aller Werte in Array true ist.
+	 * @return gibt true zurück, wenn alles true, sonst false
 	 */
 	protected static boolean ArrayIsFullyOk(boolean[] ok){
 		//Gehe alle Dreiecke durch
@@ -22,8 +25,8 @@ public class SolveCheck {
 	
 	
 	/**
-	 * PrÃ¼ft, ob Kugel fertig gelÃ¶st wurde
-	 * @return : wenn gelÃ¶st, dann true sonst false
+	 * Prüt, ob Kugel fertig gelöst wurde
+	 * @return : wenn gelöst, dann true sonst false
 	 */
 	protected static boolean isKugelSolved(Kugel k){
 		/**
@@ -36,12 +39,13 @@ public class SolveCheck {
 		}
 		
 		return true;
-	}//#END isKugelSolved
+	}
+
 	
 	/**
-	 * ÃœberprÃ¼ft, ob ein Pole vollstÃ¤ndig gelÃ¶st ist
+	 * Überprüft, ob ein Pole vollständig geläst ist
 	 * @param polNr : welcher Pole
-	 * @return : gibt true zurÃ¼ck, wenn Pole vollstÃ¤ngig gelÃ¶sst ist
+	 * @return : gibt true zurück, wenn Pole vollständig gelösst ist
 	 */
 	protected static boolean isPolSolved(int polNr, Kugel k){
 		int anzKorr = 0;
@@ -55,16 +59,17 @@ public class SolveCheck {
 		}else{
 			return false;
 		}
-	}//#END isPolSolved
+	}
+	
 	
 	/**
-	 * ÃœberprÃ¼ft, ob eine Position/Dreieck gelÃ¶st ist
-	 * @param p : welches Dreieck geprÃ¼ft werden soll
-	 * @return : gibt true zurÃ¼ck, wenn gelÃ¶st
+	 * Überprüft, ob eine Position/Dreieck gelöst ist
+	 * @param p : welches Dreieck geprüft werden soll
+	 * @return : gibt true zurück, wenn gelöst
 	 */
 	protected static boolean isPositionSolved(int p, Kugel k){
 		/**
-		 * PrÃ¼fe, ob tri mit con stimmt	
+		 * Prüfe, ob tri mit con stimmt	
 		 * wenn ja, Return true	
 		 */
 		if(k.tri[p]==k.con[k.findCons(p)]){
@@ -74,6 +79,6 @@ public class SolveCheck {
 		 * Wenn nicht abgebrochen durch return true, dann return false
 		 */
 		return false;
-	}//isPositionSolved
+	}
 	
 }
