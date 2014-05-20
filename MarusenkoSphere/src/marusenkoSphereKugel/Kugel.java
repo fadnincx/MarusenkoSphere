@@ -166,7 +166,7 @@ public class Kugel{
 		this.SolvingList = new Solver().solve(this);
 		//Setzte die Kugel in den Zustand zu beginn
 		FillKugelFromStringWithoutSolvingList(SolvingList.get(0));
-		System.out.println(getSphere());
+		//System.out.println(getSphere());
 	}
 	
 	

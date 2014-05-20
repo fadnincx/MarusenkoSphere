@@ -1003,10 +1003,10 @@ public class RenderKugel {
    		}
 		
 		//Fülle das Array für ein Verbindungsstück
-		for(int j = 50; j>0; j--){
+		for(int j = 60; j>0; j--){
 			for(int l = 0; l<90; l++){	
 				//Sofern nicht Teil eines Pols...
-				if((Math.cos(deg2rad(j))*Math.sin(deg2rad(l)))<=Math.sin(deg2rad(50))&&(Math.cos(deg2rad(j))*Math.cos(deg2rad(l)))<=Math.sin(deg2rad(50))){
+				
 					//1. Dreieck 1. Korrdinate
 					zwi[j][l][0][0] = (Math.cos(deg2rad(j))*Math.sin(deg2rad(l)));
 					zwi[j][l][0][1] = Math.sin(deg2rad(j));
@@ -1032,7 +1032,7 @@ public class RenderKugel {
 					zwi[j][l][5][0] = (Math.cos(deg2rad(j-1))*Math.sin(deg2rad(l)));
 					zwi[j][l][5][1] = Math.sin(deg2rad(j-1));
 					zwi[j][l][5][2] = (Math.cos(deg2rad(j-1))*Math.cos(deg2rad(l)));
-				}
+				
 			} 			
    		}
 		
@@ -1262,6 +1262,7 @@ public class RenderKugel {
 						GL11.glVertex3d(ix*zwi[j][l][4][px],iy*zwi[j][l][4][py],iz*zwi[j][l][4][pz]);
 						GL11.glVertex3d(ix*zwi[j][l][5][px],iy*zwi[j][l][5][py],iz*zwi[j][l][5][pz]);
 					}
+					
 				} 			
 	   		}
 			
