@@ -8,6 +8,10 @@ import java.awt.event.ActionListener;
 
 
 
+
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -37,10 +41,12 @@ public class ControlPanel implements ActionListener{
 	private JButton bt_kugel_uebernehmen = new JButton("Kugel Übernehmen");
 	
 	//Pfeile zum drehen der Kugel sowie Zurücksetzt Button
-	private JButton bt_up = new JButton(new ImageIcon(new ImageIcon("img/up.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
-	private JButton bt_right = new JButton(new ImageIcon(new ImageIcon("img/right.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
-	private JButton bt_left = new JButton(new ImageIcon(new ImageIcon("img/left.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));;
-	private JButton bt_down = new JButton(new ImageIcon(new ImageIcon("img/down.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+	private JButton bt_up = new JButton();
+	private JButton bt_right = new JButton();
+	private JButton bt_left = new JButton();
+	private JButton bt_down = new JButton();
+	//new ImageIcon(new ImageIcon("/img/down.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH))
+	
 	private JButton bt_reset_view = new JButton("Reset");
 	
 	//Schritte vorwärts und zurück gehen
@@ -114,6 +120,25 @@ public class ControlPanel implements ActionListener{
 	 * Funktion zum Alle Objekte dem Fenster hinzuzufügen
 	 */
 	private void display(){
+		
+		//Lade die Bilder Für die Pfeiltasten und füge sie den Buttons hinzu
+		try {
+			ImageIcon imageUp = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/up.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+			ImageIcon imageDown = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/down.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+			ImageIcon imageRight = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/right.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+			ImageIcon imageLeft = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/left.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+			
+			bt_up.setIcon(imageUp);
+			bt_down.setIcon(imageDown);
+			bt_right.setIcon(imageRight);
+			bt_left.setIcon(imageLeft);
+		} catch (IOException e) {
+			//Wenn fehlgeschlagen gibt Fehlermeldung aus
+			e.printStackTrace();
+		}
+		
+		
+		
 		//Setze jedem Objekt zwei Korrdinaten die eine Rechteck aufspannen in welchem das Objekt dargestellt wird 
 		//(start horizontal, start vertikal, end horizontal, end vertikal) (0,0) ist die Linke obere Ecke
 		bt_fillSphere.setBounds(20, 20, 145, 50);
@@ -162,6 +187,9 @@ public class ControlPanel implements ActionListener{
         bt_oneStep.addActionListener(this);
         bt_backStep.addActionListener(this);
         bt_goPos.addActionListener(this);
+        
+        //Controlpanel neu Zeichnen
+        controlp.repaint();
         
 	}
 	
