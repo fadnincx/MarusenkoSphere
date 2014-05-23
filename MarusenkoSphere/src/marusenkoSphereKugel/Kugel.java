@@ -20,10 +20,15 @@ public class Kugel{
 	//Aktueller Status
 	public int[] tri = new int[24]; //Array für die Dreiecke (Triangles)
 	public int[] con = new int[8]; //Array für die Verbindungsstücke (Connectors)
-	
+	public String drehung = "000";
+	public String oldDrehung = "000";
+	public int drehRichtung = 1;
+	public double standRot = 0.0;
+	protected int oldStep = 0;
 	//Für ganzer Lösungsweg
 	public ArrayList<String> SolvingList = new ArrayList<String>(); //Arraylist mit dem Lösungsweg
 	protected int step = 0; //Wo in der Liste ist der Aktuelle Status
+	
 	
 	
 	/**
@@ -53,7 +58,7 @@ public class Kugel{
 		//Teile den String bei "n" auf ("n" ist das Trennzeichen im String)
 		String[] sp = s.split("n");
 		//Prüfe ob String der erwarteten Form entspricht, ansonsten ErrorLog
-		if(sp[0].length()==32&&sp.length==2){
+		if(sp[0].length()==32&&sp.length==3&&sp[2].length()==3){
 			//Setzte die Arrays gemäss dem String
 			for(int i = 0; i<8;i++){
 				con[i]=Integer.parseInt(s.substring(i, i+1));
@@ -62,7 +67,36 @@ public class Kugel{
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
 			}
 			//Update den Step
+			
+			oldDrehung = drehung;
+			oldStep = step;
 			step = Integer.parseInt(sp[1]);
+			drehung = sp[2];
+			
+			
+			if(Integer.parseInt(drehung.substring(1, 2)) == 0){
+				standRot = 0.0;
+				drehRichtung = 1;
+			}else
+			if(Integer.parseInt(drehung.substring(1, 2)) == 1){
+				standRot = 90.0;
+				drehRichtung = 1;
+			}else
+			if(Integer.parseInt(drehung.substring(1, 2)) == 2){
+				standRot = 180.0;
+				drehRichtung = 1;
+			}else
+			if(Integer.parseInt(drehung.substring(1, 2)) == 3){
+				standRot = 90.0;
+				drehRichtung = -1;
+			}else{
+				standRot = 0.0;
+				drehRichtung = 1;
+			}
+			
+			
+			
+			System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung);
 		}else{
 			Log.ErrorLog("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
 		}
@@ -137,6 +171,14 @@ public class Kugel{
 	public int getStep(){
 		return this.step;
 	}
+	/**
+	 * Getter-Methode für den Step
+	 * @return
+	 */
+	public int getOldStep(){
+		return this.oldStep;
+	}
+	
 	
 	/**
 	 * Methode, welche die Kugel als String ausgibt
@@ -154,7 +196,26 @@ public class Kugel{
 			out+=tri[i];
 		}
 		//Füge "n" als Trennzeichen hinzu, sowie den Step
-		out += "n"+step;
+		out += "n"+step+"n000";
+		return out;
+	}
+	/**
+	 * Methode, welche die Kugel als String ausgibt mit zusätzlicher Drehung
+	 * @return
+	 */
+	protected String getSphere(String dreh){
+		//Output = leer
+		String out = "";
+		//Füge die Zahlenwerte der Verbindungsstücke ein
+		for(int i = 0; i<8;i++){
+			out+=con[i];
+		}
+		//Füge die Zahlenwerte der Pole ein
+		for(int i = 0; i<24;i++){
+			out+=tri[i];
+		}
+		//Füge "n" als Trennzeichen hinzu, sowie den Step
+		out += "n"+step+"n"+dreh;
 		return out;
 	}
 	
@@ -165,8 +226,9 @@ public class Kugel{
 		//Die SolvingList ist das Resultat eines neuen Objekts Solver und dessen Methode solve mit dieser Kugel als Argument 
 		this.SolvingList = new Solver().solve(this);
 		//Setzte die Kugel in den Zustand zu beginn
+		
 		FillKugelFromStringWithoutSolvingList(SolvingList.get(0));
-		//System.out.println(getSphere());
+		System.out.println(getSphere());
 	}
 	
 	

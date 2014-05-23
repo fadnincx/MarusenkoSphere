@@ -308,6 +308,7 @@ public class Rendern {
         //Definiere den Hintergrund auf ein helles Grau
         GL11.glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
         
+
         /**
          * Definiert wie viel beim ClearDepth durchgeführt wurde
          * und Aktiviere den DepthTest
@@ -362,6 +363,8 @@ public class Rendern {
     	rtriy = y;
     	rtriz = z;
     }
+   
+
     
     /**
      * Funktion welche beim Beenden Aufgerufen wird, ist relativ wichtig, damit Speicher wieder freigegeben wird 

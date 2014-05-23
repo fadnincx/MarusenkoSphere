@@ -54,7 +54,7 @@ public class Solver {
 	 * @return : true, wenn Lösen Abgebrochen werden soll
 	 */
 	
-	private boolean addSteps(){
+	private boolean addSteps(int pol, int anz, int modus){
 		//Erhöhe den Step
 		k.step++;
 		//Wenn Step zu gross, breche Ab und Gebe Error aus
@@ -64,10 +64,11 @@ public class Solver {
 			return true;
 		}
 		//Füge Kugel zum Lösungsprozess hinzu
-		solvingWay.add(k.getSphere());
+		solvingWay.add(k.getSphere(""+pol+anz+modus));
 		
 		return false;
 	}
+	
 	
 	/**
 	 * Hauptfunktion welche für das lösen der Kugel verantwortlich ist
@@ -333,7 +334,7 @@ public class Solver {
 		int pos = p%4;
 		while(pos!=position){
 			k.changePol(pol, 1);
-			addSteps();
+			addSteps(pol,1,1);
 			pos = posPlus(pol,pos);
 		}
 	}
@@ -346,11 +347,11 @@ public class Solver {
 	 */
 	private void change1Phase(int pol1,int polRechts,int s){
 		k.turnKugel(polRechts, s);
-		addSteps();
+		addSteps(polRechts, s, 3);
 		k.changePol(pol1, 1);
-		addSteps();
+		addSteps(pol1, 1, 1);
 		k.turnKugel(polRechts, 4-s);
-		addSteps();
+		addSteps(polRechts, 4-s, 3);
 	}
 	
 	/**
@@ -659,54 +660,54 @@ public class Solver {
 	 */
 	private void change2Pol(int pol,int polO, int polR){
 		k.turnKugel(polR, 3);
-		if(addSteps()){end();}
+		if(addSteps(polR, 3, 3)){end();}
 		k.changePol(polO, 3);
-		if(addSteps()){end();}
+		if(addSteps(polO, 3, 1)){end();}
 		k.turnKugel(polR, 1);
-		if(addSteps()){end();}
+		if(addSteps(polR, 1, 3)){end();}
 		k.changePol(polO, 3);
-		if(addSteps()){end();}
+		if(addSteps(polO, 3, 1)){end();}
 		k.turnKugel(polR, 3);
-		if(addSteps()){end();}
+		if(addSteps(polR, 3, 3)){end();}
 		k.changePol(polO, 1);
-		if(addSteps()){end();}
+		if(addSteps(polO, 1, 1)){end();}
 		k.turnKugel(polR, 1);
-		if(addSteps()){end();}
+		if(addSteps(polR, 1, 3)){end();}
 		k.changePol(polO, 3);
-		if(addSteps()){end();}
+		if(addSteps(polO, 3, 1)){end();}
 		k.turnKugel(polR, 3);
-		if(addSteps()){end();}
+		if(addSteps(polR, 3, 3)){end();}
 		k.changePol(polO, 3);
-		if(addSteps()){end();}
+		if(addSteps(polO, 3, 1)){end();}
 		k.turnKugel(polR, 1);
-		if(addSteps()){end();}
+		if(addSteps(polR, 1, 3)){end();}
 		
 		k.changePol(pol, 1);
-		if(addSteps()){end();}
+		if(addSteps(pol, 1, 1)){end();}
 		k.turnKugel(polR, 3);
-		if(addSteps()){end();}
+		if(addSteps(polR, 3, 3)){end();}
 		k.changePol(polO, 3);
-		if(addSteps()){end();}
+		if(addSteps(polO, 3, 1)){end();}
 		k.turnKugel(polR, 1);
-		if(addSteps()){end();}
+		if(addSteps(polR, 1, 3)){end();}
 		k.changePol(polO, 3);
-		if(addSteps()){end();}
+		if(addSteps(polO, 3, 1)){end();}
 		k.turnKugel(polR, 3);
-		if(addSteps()){end();}
+		if(addSteps(polR, 3, 3)){end();}
 		k.changePol(polO, 1);
-		if(addSteps()){end();}
+		if(addSteps(polO, 1, 1)){end();}
 		k.turnKugel(polR, 1);
-		if(addSteps()){end();}
+		if(addSteps(polR, 1, 3)){end();}
 		k.changePol(polO, 3);
-		if(addSteps()){end();}
+		if(addSteps(polO, 3, 1)){end();}
 		k.turnKugel(polR, 3);
-		if(addSteps()){end();}
+		if(addSteps(polR, 3, 3)){end();}
 		k.changePol(polO, 3);
-		if(addSteps()){end();}
+		if(addSteps(polO, 3, 1)){end();}
 		k.turnKugel(polR, 1);
-		if(addSteps()){end();}
+		if(addSteps(polR, 1, 3)){end();}
 		k.changePol(pol, 2);
-		if(addSteps()){end();}
+		if(addSteps(pol, 2, 1)){end();}
 	}
 	
 	/**
@@ -739,7 +740,7 @@ public class Solver {
 		
 		//Wechsle beide jetzt
 		change2Pol(pol,polO,polR);
-		if(addSteps()){end();}
+		
 
 		//p2 zurück setzten, p1 verschieben
 		p2 = p2_old;
@@ -753,7 +754,7 @@ public class Solver {
 		
 		//Wechsle erneut
 		change2Pol(pol,polO,polR);
-		if(addSteps()){end();}
+
     	
 		//p1 zurücksetzten und p2 verschieben
     	p1 = p1_old;
@@ -767,12 +768,12 @@ public class Solver {
 		
 		//Zum letzten Mal wechseln
 		change2Pol(pol,polO,polR);
-		if(addSteps()){end();};
+		
     	int end = 0;
     	//Prüfe ob Pol gelöst ist ansonsten drehe Pol bis gelöst
     	while(!SolveCheck.isPolSolved(pol,k)&&end<4){
     		k.changePol(pol, 1);
-    		if(addSteps()){end();}
+    		if(addSteps(pol, 1, 1)){end();}
     		end++;
     	}
 		
