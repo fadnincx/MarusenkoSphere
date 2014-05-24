@@ -31,6 +31,9 @@ public class SetToState {
 		}else if(step>=getSolvingLength(k.SolvingList)){
 			step = getSolvingLength(k.SolvingList)-1;
 		}
+		if(Manager.doQuetoEnd&&step==getSolvingLength(k.SolvingList)){
+			Manager.doQuetoEnd = false;
+		}
 		k.FillKugelFromStringWithoutSolvingList(k.SolvingList.get(step));
 		return k;
 	}

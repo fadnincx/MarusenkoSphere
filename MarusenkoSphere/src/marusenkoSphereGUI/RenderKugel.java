@@ -1,10 +1,7 @@
 package marusenkoSphereGUI;
 
-import java.nio.FloatBuffer;
-
 import marusenkoSphereKugel.Kugel;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -1363,6 +1360,7 @@ public class RenderKugel {
 		double drehy = 0.0;
 		double drehz = 0.0;
 		int neg = 1;
+		int addNeg = 1;
 		
 		
 		if(k.standRot>0){
@@ -1376,15 +1374,20 @@ public class RenderKugel {
 					x1 = true;
 					break;
 				case 2:
+					addNeg = -1;
 					mz1 = true;
 					break;
 				case 3:
+					addNeg = -1;
 					mx1 = true;
 					break;
 				case 4:
 					y1 = true;
 					break;
 				case 5:
+					if(k.drehRichtung==-1){
+						addNeg = -1;
+					}
 					my1 = true; 
 					break;
 				}
@@ -1393,10 +1396,12 @@ public class RenderKugel {
 				neg = -1;
 				switch(drehePol){
 				case 0:
+					addNeg = -1;
 					z1 = true;
 					z3 = true;
 					break;
 				case 1:
+					addNeg = -1;
 					x1 = true;
 					x3 = true;
 					break;
@@ -1409,6 +1414,7 @@ public class RenderKugel {
 					mx3 = true;
 					break;
 				case 4:
+					addNeg = -1;
 					y1 = true;
 					y3 = true;
 					break;
@@ -1419,10 +1425,10 @@ public class RenderKugel {
 				}
 			}
 		}
-        
+       
        
         //double k.standRot = k.k.standRot;
-        double rot = 2.0;
+        double rot = Manager.getRotationSpeed();
         int renderSteps = 5;//Muss durch 90 und 40 dividierbar sein
         int renderStepsZ = 5;
 		
@@ -1778,12 +1784,15 @@ public class RenderKugel {
 				break;
 			}
 			
-			/*	drehx*=k.drehRichtung;
+				drehx*=k.drehRichtung;
 				drehy*=k.drehRichtung;
-				drehz*=k.drehRichtung;*/
+				drehz*=k.drehRichtung;
 				drehx*=neg;
 				drehy*=neg;
 				drehz*=neg;
+				drehx*=addNeg;
+				drehy*=addNeg;
+				drehz*=addNeg;
 		
 			if(k.getOldStep()>k.getStep()){
 				drehx*=-1;
@@ -2203,18 +2212,12 @@ public class RenderKugel {
         	k.standRot = k.standRot-rot;
         	//if(k.standRot==89||k.standRot==179)
         	//System.out.println(k.standRot);
+        }else{
+        	Manager.doQueue = true;
         }
         
         
         //Gib true zurück, wenn hier ankommt, dann alles Erfolgreich
         return true;
     }
-	 public static FloatBuffer floatBuffer(float a, float b, float c, float d)
-	    {
-	    float[] data = new float[]{a,b,c,d};
-	    FloatBuffer fb = BufferUtils.createFloatBuffer(data.length);
-	    fb.put(data);
-	    fb.flip();
-	    return fb;
-	     }
 }

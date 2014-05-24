@@ -30,7 +30,7 @@ public class SolveCheck {
 	 */
 	protected static boolean isKugelSolved(Kugel k){
 		/**
-		 * PrÃ¼fe jeden Pol
+		 * Prüfe jeden Pol
 		 */
 		for(int i = 0; i<6; i++){
 			if(!isPolSolved(i,k)){

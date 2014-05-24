@@ -66,11 +66,14 @@ public class Kugel{
 			for(int i = 0; i<24;i++){
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
 			}
-			//Update den Step
+			
 			
 			oldDrehung = drehung;
 			oldStep = step;
+			
+			//Update den Step
 			step = Integer.parseInt(sp[1]);
+
 			drehung = sp[2];
 			
 			
@@ -93,7 +96,6 @@ public class Kugel{
 				standRot = 0.0;
 				drehRichtung = 1;
 			}
-			
 			
 			
 			System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung);
@@ -172,7 +174,13 @@ public class Kugel{
 		return this.step;
 	}
 	/**
-	 * Getter-Methode für den Step
+	 * Resetet den Step zu 0 --> für nach dem Kugel manuell eingegeben wurde
+	 */
+	public void resetStep(){
+		this.step = 0;
+	}
+	/**
+	 * Getter-Methode für den OldStep
 	 * @return
 	 */
 	public int getOldStep(){
@@ -184,7 +192,7 @@ public class Kugel{
 	 * Methode, welche die Kugel als String ausgibt
 	 * @return
 	 */
-	protected String getSphere(){
+	public String getSphere(){
 		//Output = leer
 		String out = "";
 		//Füge die Zahlenwerte der Verbindungsstücke ein

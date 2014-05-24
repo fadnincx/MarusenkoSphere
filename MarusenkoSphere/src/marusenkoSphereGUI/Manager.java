@@ -1,6 +1,9 @@
 package marusenkoSphereGUI;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import marusenkoSphereKugel.Kugel;
 
@@ -9,7 +12,14 @@ public class Manager {
 	public Kugel k;
 	private Rendern rendern;
 	private ControlPanel cp;
-	public ArrayList<String> BlockedKey = new ArrayList<String>();
+	protected ArrayList<String> BlockedKey = new ArrayList<String>();
+	protected int displayMode = 0; //0 = Kugel, 1 = Editor, 2 = dev
+	private int oldDisplayMode = 0; //0 = Kugel, 1 = Editor, 2 = dev
+	private int selectedColor = 0;
+	protected static double rotationSpeed = 3.0;
+	protected Queue<String> toDoQueue = new LinkedList<String>();
+	protected static boolean doQueue = false;
+	protected static boolean doQuetoEnd = false;
 	
 	/**
 	 * Manager zum Lösen Verwalten der GUI und lösen der Kugel
@@ -22,8 +32,8 @@ public class Manager {
 		this.k = k;
 		
 		//Initialisiere die Fenster (KugelRendern und ControlPanel)
-		rendern = new Rendern(k);
-		cp = new ControlPanel(this);
+		rendern = new Rendern(k,displayMode);
+		cp = new ControlPanel(this,displayMode);
 		
 		//Fülle Kugel zufällig
 		fillSphere();
@@ -48,7 +58,7 @@ public class Manager {
 		//Gehe durch bis Zeit verstrichen sit
 		while(estimatedTime<time){
 			//Frage den Input ab --> Zeitvertreib
-			KugelSteuern.Input(this);
+			//KugelSteuern.Input(this);
 			//Vergangene Zeit nachführen
 			estimatedTime = System.nanoTime() - startTime;
 		}
@@ -66,21 +76,23 @@ public class Manager {
 	 * Startet das Rendern der Kugel
 	 */
 	public void renderKugel(){
-		rendern.updateKugel(k);
+		rendern.updateKugel(k,displayMode);
 	}
 	/**
 	 * Zeit die Gelöste Kugel an
 	 */
 	public void startSolve(){
-		k = SetToState.getKugelFromArrayList(k);
-		updateList();
+		//k = SetToState.getKugelFromArrayList(k);
+		//updateList();
+		doQuetoEnd = true;
 	}
 	/**
 	 * Füllt die Kugel zufällig
 	 */
 	public void fillSphere(){
-		k.FillKugelRandom();
-		updateList();
+	    k.FillKugelRandom();
+		updateList();   
+		doQuetoEnd = false;
 	}
 	/**
 	 * Füllt die Kugel gemäss String s
@@ -89,6 +101,7 @@ public class Manager {
 	public void fillSphere(String s){
 		k.FillKugelFromString(s);
 		updateList();
+		doQuetoEnd = false;
 	}
 	/**
 	 * Updatet die Stats Liste im ControlPanel
@@ -119,6 +132,53 @@ public class Manager {
 		k = SetToState.getKugelFromArrayList(k,i);
 		updateList();
 	}
+	protected void changeModeEdior(){
+		if(isSphereAllowed()){
+			displayMode++;
+			displayMode%=2;
+			cp.updateMode(displayMode);
+			System.out.println("Mode: "+displayMode);
+		}
+		if(displayMode==0){
+			k.resetStep();
+			fillSphere(k.getSphere());
+		}
+	}
+	protected void enableDevPanel(){
+		
+		switch(displayMode){
+		case 2:
+			displayMode=oldDisplayMode;
+			if(oldDisplayMode != displayMode){
+				oldDisplayMode = displayMode;
+			}
+			cp.updateMode(displayMode);
+			System.out.println("Mode: "+displayMode+" Old: "+oldDisplayMode);
+			break;
+		default:
+			if(oldDisplayMode != displayMode){
+				oldDisplayMode = displayMode;
+			}
+			displayMode=2;
+			cp.updateMode(displayMode);
+			System.out.println("Mode: "+displayMode+" Old: "+oldDisplayMode);
+			break;
+		}
+
+	}
+	protected int getSelectedColor(){
+		return selectedColor;
+	}
+	protected void changeSelectedColor(int n){
+		this.selectedColor = n;
+	}
+	protected void getRotationSpeedfromCp(){
+		rotationSpeed = cp.getRotationSpeed()/10;
+	}
+	protected static double getRotationSpeed(){
+		return rotationSpeed;
+	}
+	
 	/**
 	 * Nimmt das ändern der Drehung der Kugel vor
 	 * @param x
@@ -134,6 +194,37 @@ public class Manager {
 			rendern.setDrehen(x,y,z);
 			break;
 		}
+	}
+	protected void editSphereTri(int n){
+		k.tri[n] = selectedColor;
+		updateSphere();
+	}
+	protected void editSphereCon(int n){
+		k.con[n] = selectedColor;
+		updateSphere();
+	}
+	private void updateSphere(){
+		cp.updateAllowKugel(isSphereAllowed());
+	}
+	private boolean isSphereAllowed(){
+		int[] checkTri = new int[24];
+		int[] checkCon = new int[8];
+		int[] referenceTri = new int [24];
+		int[] referenceCon = new int[8];
+		for(int i = 0; i<24;i++){
+			checkTri[i] = k.tri[i];
+			referenceTri[i] = i/3;
+		}
+		for(int i = 0; i<8;i++){
+			checkCon[i] = k.con[i];
+			referenceCon[i] = i;
+		}
+		Arrays.sort(checkTri);
+		Arrays.sort(checkCon);
+		if(Arrays.equals(checkTri,referenceTri)&&Arrays.equals(checkCon,referenceCon)){
+			return true;
+		}
+		return false;
 	}
 	public void exitProgramm(){
 		rendern.end();

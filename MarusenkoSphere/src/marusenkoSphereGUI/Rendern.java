@@ -9,9 +9,11 @@ import javax.imageio.ImageIO;
 import marusenkoSphereKugel.Kugel;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
 
@@ -46,12 +48,22 @@ public class Rendern {
      */
     protected Kugel k;
 
+    protected int mode = 0;
+    
+    
+    //fps
+    
+    long lastFrame;
+    int fps;
+    long lastFPS;
+
     /**
      * Konstruktor des Rendern-Objekts
      * 
      * Option kugel wird auch als aktuelle Kugel des Rendern-Objekts definiert
      */
-    protected Rendern(Kugel kugel){
+    protected Rendern(Kugel kugel, int mode){
+    	this.mode = mode;
     	this.k = kugel;
     	//Starte das Rendern
     	run();
@@ -60,7 +72,8 @@ public class Rendern {
     /**
      * Funktion zum Updaten der Kugel
      */
-    protected void updateKugel(Kugel kugel){
+    protected void updateKugel(Kugel kugel, int mode){
+    	this.mode = mode;
     	this.k = kugel;
     	doing();
     }
@@ -86,8 +99,18 @@ public class Rendern {
      * Funktion welche das Fenster updatet
      */
     protected void doing(){
-    	//Rendere die Kugel mit der externen Funktion
-    	RenderKugel.render(k, rtrix, rtriy, rtriz); 
+    	switch(mode){
+    	case 1:
+    		//Editor
+    		Editor.renderEditor(k, rtrix, rtriy, rtriz);
+    		break;
+    	default:
+    		//Rendere die Kugel mit der externen Funktion
+        	RenderKugel.render(k, rtrix, rtriy, rtriz); 
+    		break;
+    	}
+    	updateFPS();
+    	Display.setTitle("FPS: " + fps);
     	
     	//Fixiere Frame rate auf 60fps (Kugel wird maximal 60 mal pro Sekunde neu gerendert)
     	Display.sync(60);
@@ -95,7 +118,23 @@ public class Rendern {
     	//Update die Dartellung auf dem Display
         Display.update();
     }
-    
+    public long getTime() {
+    	return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    }
+    public int getDelta() {
+    	long time = getTime();
+    	int delta = (int) (time - lastFrame);
+    	lastFrame = time;
+    	return delta;
+    }
+    public void updateFPS() {
+    	if (getTime() - lastFPS > 1000) {
+    		Display.setTitle("FPS: " + fps);
+    		fps = 0;
+    		lastFPS += 1000;
+    	}
+    	fps++;
+    }
     /**
      * Beendet das Rendern und schliesst das Fenster
      */
@@ -105,39 +144,49 @@ public class Rendern {
     
    
 
+    
+    protected static float[] getColorFloat(int n){
+    	float[] color = new float[3];
+    	switch(n){
+    	case 0:
+    		color[0] = 1.0f; color[1] = 1.0f; color[2] = 1.0f;
+    		break;
+    	case 1:
+    		color[0] = 1.0f; color[1] = 1.0f; color[2] = 0.0f;
+    		break;	
+    	case 2:
+    		color[0] = 1.0f; color[1] = 0.6f; color[2] = 0.0f;
+    		break;
+    	case 3:
+    		color[0] = 0.0f; color[1] = 0.0f; color[2] = 1.0f;
+    		break;	
+    	case 4:
+    		color[0] = 1.0f; color[1] = 0.0f; color[2] = 0.0f; 
+    		break;
+    	case 5:
+    		color[0] = 0.0f; color[1] = 1.0f; color[2] = 1.0f;
+    		break;	
+    	case 6:
+    		color[0] = 1.0f; color[1] = 0.0f; color[2] = 1.0f;
+    		break;
+    	case 7:
+    		color[0] = 0.0f; color[1] = 1.0f; color[2] = 0.0f;    
+    		break;	
+    	}
+    	return color;
+    }
     /**
      * Funktion welche die Farbe setzt, mit welcher die Dreiecke gerendert werden 
      * @param n : Farbcode
      */
     protected static void setColor(int n){
-    	switch(n){
-    	case 0:
-    		GL11.glColor4f(1.0f,1.0f,1.0f, 1.0f);
-    		break;
-    	case 1:
-    		GL11.glColor4f(1.0f,1.0f,0.0f, 1.0f);
-    		break;	
-    	case 2:
-    		GL11.glColor4f(1.0f,0.6f,0.0f, 1.0f);
-    		break;
-    	case 3:
-    		GL11.glColor4f(0.0f,0.0f,1.0f, 1.0f);  
-    		break;	
-    	case 4:
-    		GL11.glColor4f(1.0f,0.0f,0.0f, 1.0f);     
-    		break;
-    	case 5:
-    		GL11.glColor4f(0.0f,1.0f,1.0f, 1.0f);   
-    		break;	
-    	case 6:
-    		GL11.glColor4f(1.0f,0.0f,1.0f, 1.0f);   
-    		break;
-    	case 7:
-    		GL11.glColor4f(0.0f,1.0f,0.0f, 1.0f);       
-    		break;	
-    	}
+    	float[] color = getColorFloat(n);
+    	GL11.glColor4f(color[0],color[1],color[2], 1.0f);
     }
-
+    protected static float getColorFloat(int n,int a){
+    	float[] color = getColorFloat(n);
+    	return color[a];
+    }
     /**
      * Funktion zum erstellen des Fensters
      */
@@ -224,12 +273,19 @@ public class Rendern {
         /**
          * Erstelle Fenster mit den voreingestellten Einstellungen
          */
-        Display.create();
+        try{
+        Display.create(new PixelFormat(0, 8, 0, 4));
+        }catch(LWJGLException ex){
+        	System.out.println("Kein Antialiasing Möglich!");
+        	Display.create();
+        }
         Display.setVSyncEnabled(true);
     	}catch(LWJGLException e){
     		e.printStackTrace();
     		System.exit(0);
     	}
+    	getDelta();
+    	lastFPS = getTime();
     }
     
     /**
@@ -300,15 +356,14 @@ public class Rendern {
     	
     	//Smooth ShadeModel aktivieren
         GL11.glShadeModel(GL11.GL_SMOOTH);
-
+        
         //Bestimmt verhalten mit Transparenz
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         
         //Definiere den Hintergrund auf ein helles Grau
         GL11.glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
-        
-
+       
         /**
          * Definiert wie viel beim ClearDepth durchgeführt wurde
          * und Aktiviere den DepthTest
@@ -338,7 +393,8 @@ public class Rendern {
 
         //Verbessere die Berechnungen der Perspektive
         GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
-        
+        GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
+        GL11.glEnable(GL11.GL_BLEND);
        //Definiere die Rotation der Kugel zu begin auf 0.0 in allen Achsen (x, y und z)
         rtrix=0.0f;
         rtriy=0.0f; 
@@ -364,7 +420,6 @@ public class Rendern {
     	rtriz = z;
     }
    
-
     
     /**
      * Funktion welche beim Beenden Aufgerufen wird, ist relativ wichtig, damit Speicher wieder freigegeben wird 
