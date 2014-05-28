@@ -11,18 +11,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Die Log Klasse schreibt Fehler die während dem Ausführen des Programms auftreten in eine Log-Datei.
- * Auch können Allgemeine Infos in ein Debug-Log geschrieben werden.
+ * Die Log Klasse schreibt Fehler die wÃ¤hrend dem AusfÃ¼hren des Programms auftreten in eine Log-Datei.
+ * Auch kÃ¶nnen Allgemeine Infos in ein Debug-Log geschrieben werden.
  * 
  * 
- * Dadurch dass alle Methoden statisch sind muss kein Log-Objekt erstellt werden um auf diese zurück zu greifen
+ * Dadurch dass alle Methoden statisch sind muss kein Log-Objekt erstellt werden um auf diese zurÃ¼ck zu greifen
  * 
  *
  */
 public class Log {
 
 	/**
-	 * Die Konstante mit dem Speicherpfad für die Logs
+	 * Die Konstante mit dem Speicherpfad fÃ¼r die Logs
 	 */
 	public static final String LOG_PATH = "/home/marcel/marusenkoLog";
 	
@@ -78,18 +78,18 @@ public class Log {
 		try {
 			//FileReader get logFile
 			fileR = new FileReader(logfile);
-			//Übergebe an einen BufferedReader
+			//Ã¼bergebe an einen BufferedReader
 			@SuppressWarnings("resource")
 			BufferedReader reader = new BufferedReader(fileR);
 		    String line = "";
-		    //Gehe Zeile für Zeile durch und schreibe in die Outputvariable out
+		    //Gehe Zeile fÃ¼r Zeile durch und schreibe in die Outputvariable out
 		    while ((line = reader.readLine()) != null) {
 		    	out += line + "\n";
 		    }
 		}catch(Exception e){
 			throw new RuntimeException(e);
 		}finally{
-			//Wenn möglich FileReader wieder schliessen
+			//Wenn mÃ¶glich FileReader wieder schliessen
 			if(file != null) {
 				try{
 					fileR.close();
@@ -103,7 +103,7 @@ public class Log {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		
-		//Vor die Ausgabe Datum hängen
+		//Vor die Ausgabe Datum hï¿½ngen
 		out = out+("\n"+dateFormat.format(date)+" ");
 		out = out+log;
 		

@@ -81,10 +81,9 @@ public class Rendern {
      * Funktion welche versucht das Fenster zum Darstellen zu starten
      * 
      * Bei nicht Support Wird hier schon eine Exception geworfen und das Programm beendet
-     * --> Tritt bekanntermassen nur auf, wenn Grafikkartentreiber nicht richtig installiert und mit JAR-Splice Zusatz-Option nicht hinzugefügt wurde
+     * --> Tritt bekanntermassen nur auf, wenn Grafikkartentreiber nicht richtig installiert und mit JAR-Splice Zusatz-Option nicht hinzugefï¿½gt wurde
      */
     protected void run() {
-
         try {
             init();
         }
@@ -110,7 +109,7 @@ public class Rendern {
     		break;
     	}
     	updateFPS();
-    	Display.setTitle("FPS: " + fps);
+    	//Display.setTitle("FPS: " + fps);
     	
     	//Fixiere Frame rate auf 60fps (Kugel wird maximal 60 mal pro Sekunde neu gerendert)
     	Display.sync(60);
@@ -172,6 +171,8 @@ public class Rendern {
     	case 7:
     		color[0] = 0.0f; color[1] = 1.0f; color[2] = 0.0f;    
     		break;	
+    	case 8:
+    		color[0] = 0.0f; color[1] = 0.0f; color[2] = 0.0f;  
     	}
     	return color;
     }
@@ -193,7 +194,7 @@ public class Rendern {
     private void createWindow() throws Exception {
     	try{
     	/**
-    	 * Suche nach allen verfügbaren Moden mit welchen das Fenster dargestellt werden kann
+    	 * Suche nach allen verfÃ¼gbaren Moden mit welchen das Fenster dargestellt werden kann
     	 */
     		
         DisplayMode d[] = Display.getAvailableDisplayModes();
@@ -233,16 +234,16 @@ public class Rendern {
         
 
         /**
-         * Versuche das Icon für das Fenster zu laden
+         * Versuche das Icon fÃ¼r das Fenster zu laden
          */
         try {
         	/**
-        	 * Erstelle ein ByteBuffer array für alle verfügbaren icons
+        	 * Erstelle ein ByteBuffer array fÃ¼r alle verfÃ¼gbaren icons
         	 */
             ByteBuffer[] icons = new ByteBuffer[1];
             
             /**
-             * Defniniere welche Icons geladen werden, inklusive der grösse
+             * Defniniere welche Icons geladen werden, inklusive der grï¿½sse
              */
             icons[0] = loadIcon("/img/icon_16.png", 16, 16);
             //icons[1] = loadIcon("/img/icon_32.png", 32, 32);
@@ -274,9 +275,10 @@ public class Rendern {
          * Erstelle Fenster mit den voreingestellten Einstellungen
          */
         try{
-        Display.create(new PixelFormat(0, 8, 0, 4));
+        	Display.create(new PixelFormat(0, 8, 0, 4));
+        	//Display.create();
         }catch(LWJGLException ex){
-        	System.out.println("Kein Antialiasing Möglich!");
+        	System.out.println("Kein Antialiasing Mï¿½glich!");
         	Display.create();
         }
         Display.setVSyncEnabled(true);
@@ -289,13 +291,13 @@ public class Rendern {
     }
     
     /**
-     * Funktion, welche für das laden des Icons und umwandeln zu einem Bytebuffer verantwortlich ist
+     * Funktion, welche fÃ¼r das laden des Icons und umwandeln zu einem Bytebuffer verantwortlich ist
      * 
      * 
      * @param filename : gibt den Dateinamen an, welche Datei geladen wird
      * @param width : breite der Datei, welche geladen werden wird
-     * @param height : höhe der Datei, welche geladen werden wird
-     * @return : gibt den ByteBuffer zuröck
+     * @param height : hÃ¶he der Datei, welche geladen werden wird
+     * @return : gibt den ByteBuffer zurï¿½ck
      */
     private ByteBuffer loadIcon(String filename, int width, int height) throws IOException {
     	
@@ -307,8 +309,8 @@ public class Rendern {
         /**
          * Wandle das Bild in ein ByteArray um
          * 
-         * erstelle ein Array welches genügend gross für die voreingestellte grösse des Bildes ist
-         * breite*höhe*4 (die 4 ist für rot, grün, blau und alpha)
+         * erstelle ein Array welches genÃ¼gend gross fÃ¼r die voreingestellte grÃ¶sse des Bildes ist
+         * breite*hÃ¶he*4 (die 4 ist fï¿½r rot, grÃ¼n, blau und alpha)
          * 
          */
     
@@ -322,7 +324,7 @@ public class Rendern {
                 int pixel = image.getRGB(j, i);
                 
                 /**
-                 * Rot, Grün und Blau in das Array schreiben 
+                 * Rot, GrÃ¼n und Blau in das Array schreiben 
                  */
                 for (int k = 0; k < 3; k++){
                     imageBytes[(i*16+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
@@ -336,7 +338,7 @@ public class Rendern {
         }
         
         /**
-         * Wandle das Byte Arre in ein ByteBuffer um und gebe ihn zurück
+         * Wandle das Byte Arre in ein ByteBuffer um und gebe ihn zurÃ¼ck
          */
         return ByteBuffer.wrap(imageBytes);
     }
@@ -365,9 +367,9 @@ public class Rendern {
         GL11.glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
        
         /**
-         * Definiert wie viel beim ClearDepth durchgeführt wurde
+         * Definiert wie viel beim ClearDepth durchgefÃ¼hrt wurde
          * und Aktiviere den DepthTest
-         * sowie welchert Type von DepthTest durchgeführt wird
+         * sowie welchert Type von DepthTest durchgefÃ¼hrt wird
          */
         GL11.glClearDepth(1.0);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -375,7 +377,7 @@ public class Rendern {
         
         /**
          * Definie die Projektions Matrix
-         * sowie das zurücksetzen dieser Matrix
+         * sowie das zurÃ¼cksetzen dieser Matrix
          */
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
@@ -388,7 +390,7 @@ public class Rendern {
           0.1f,
           100.0f);
         
-        //Den Matrixmodus wählen
+        //Den Matrixmodus wÃ¤hlen
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
         //Verbessere die Berechnungen der Perspektive
@@ -403,7 +405,7 @@ public class Rendern {
     }
     
     /**
-     * Funktion, welche die Variabeln ändern, um wie viel die Kugel gedreht wird 
+     * Funktion, welche die Variabeln Ã¤ndern, um wie viel die Kugel gedreht wird 
      */
     protected void drehen(float x, float y, float z){
     	rtrix += x*40;

@@ -10,7 +10,7 @@ import marusenkoSphereKugel.Kugel;
 /**
  * Main-Datei
  * 
- * Wird gestartet, initialisiert das Kugel-Objekt und gibt dieses dem Manager für die GUI oder der Konsole weiter
+ * Wird gestartet, initialisiert das Kugel-Objekt und gibt dieses dem Manager fÃ¼r die GUI oder der Konsole weiter
  * 
  */
 public class Main {
@@ -27,7 +27,7 @@ public class Main {
 		StartArgs = StringArrayListToLowerCase(StartArgs);
 		
 		
-		//Wenn Argument "konsole", "console" oder "ng" bzw "-ng" (NoGUI) übergeben worden ist, dann mit keiner GUI starten 
+		//Wenn Argument "konsole", "console" oder "ng" bzw "-ng" (NoGUI) Ã¼bergeben worden ist, dann mit keiner GUI starten 
 		if(StartArgs.contains("konsole")||StartArgs.contains("console")||StartArgs.contains("ng")||StartArgs.contains("-ng")){
 			konsole = true;
 		}
@@ -55,7 +55,7 @@ public class Main {
 	 * @return
 	 */
 	private static List<String> StringArrayListToLowerCase(List<String> StringList){
-		// Gehe für jedes Element durch --> Variable l ist zu beginn gesetzt, damit nicht jedesmal die Länge neu berechnet werden muss, da sich diese nie ändert
+		// Gehe fÃ¼r jedes Element durch --> Variable l ist zu beginn gesetzt, damit nicht jedesmal die LÃ¤nge neu berechnet werden muss, da sich diese nie Ã¤ndert
 		for(int i=0,l=StringList.size(); i<l; i++){
 			//Ersetzte das Element an der Stelle i durch das klein geschriebene Element an der Stelle i
 			StringList.set(i, StringList.get(i).toLowerCase());

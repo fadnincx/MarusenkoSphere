@@ -7,9 +7,9 @@ import org.lwjgl.opengl.Display;
 
 public class KugelSteuern {
 
-	public static void Input(Manager m){
+	public static void Input(Manager m){	
 		
-		//Programm beenden, wenn Esc gedrück
+		//Programm beenden, wenn Esc gedrÃ¼ck
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 	        m.exitProgramm();
 	    }
@@ -18,7 +18,7 @@ public class KugelSteuern {
 	    	m.exitProgramm();
 	    }
 	    
-	    //Zu Editor wechseln/zurück wenn E gedrückt, zusätzlich 100ms blockieren, damit nicht doppelt passiert
+	    //Zu Editor wechseln/zurÃ¼ck wenn E gedrÃ¼ckt, zusÃ¤tzlich 100ms blockieren, damit nicht doppelt passiert
 	    if(Keyboard.isKeyDown(Keyboard.KEY_E)) {
 	    	if(!m.BlockedKey.contains("e")){
 	    		m.changeModeEdior();
@@ -27,7 +27,7 @@ public class KugelSteuern {
 		    	m.BlockedKey.remove("e");
 	    	}
 	    }
-	   //Zu Devpanel wechseln/zurück wenn D gedrückt, zusätzlich 100ms blockieren, damit nicht doppelt passiert
+	   //Zu Devpanel wechseln/zurÃ¼ck wenn D gedrÃ¼ckt, zusÃ¤tzlich 100ms blockieren, damit nicht doppelt passiert
 	    if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
 	    	if(!m.BlockedKey.contains("d")){
 	    		m.enableDevPanel();
@@ -38,23 +38,23 @@ public class KugelSteuern {
 	    }
 	    //Wenn Kugel dargestellt wird
 	    if(m.displayMode==0){
-	    	//Drehen wenn links gedrück ist
+	    	//Drehen wenn links gedrÃ¼ck ist
 		    if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
 		    	m.rendernDrehen(-0.1f,0.0f,0.0f,0);
 		    }
-		    //Drehen wenn rechts gerückt ist
+		    //Drehen wenn rechts gerÃ¼ckt ist
 		    if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
 		    	m.rendernDrehen(+0.1f,0.0f,0.0f,0);
 		    }
-		    //Drehen wenn oben gedrückt ist
+		    //Drehen wenn oben gedrÃ¼ckt ist
 		    if(Keyboard.isKeyDown(Keyboard.KEY_UP)) {
 		    	m.rendernDrehen(0.0f,-0.1f,0.0f,0);
 		    }
-		    //Drehen wenn Unten gedrückt ist
+		    //Drehen wenn Unten gedrÃ¼ckt ist
 		    if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
 		    	m.rendernDrehen(0.0f,+0.1f,0.0f,0);
 		    }
-		  //Kugel lösen wenn L gedrückt is, zusätzlich L 100ms blockieren, damit nicht doppelt passiert
+		  //Kugel lÃ¶sen wenn L gedrÃ¶ckt is, zusÃ¤tzlich L 100ms blockieren, damit nicht doppelt passiert
 		    if(Keyboard.isKeyDown(Keyboard.KEY_L)){		
 				if(!m.BlockedKey.contains("l")){
 					m.startSolve();
@@ -63,7 +63,7 @@ public class KugelSteuern {
 			    	m.BlockedKey.remove("l");
 		    	}
 			}
-		    //Kugel neu füllen, wenn S gedrückt ist, zusätzlich 200ms blockieren, damit nicht doppelt passiert
+		    //Kugel neu fÃ¼llen, wenn S gedrÃ¼ckt ist, zusÃ¤tzlich 200ms blockieren, damit nicht doppelt passiert
 		    if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
 		    	if(!m.BlockedKey.contains("s")){
 		    		m.fillSphere();
@@ -72,7 +72,7 @@ public class KugelSteuern {
 			    	m.BlockedKey.remove("s");
 		    	}
 		    }
-		    //Einen Schritt weiter gehen, wenn X gedrückt, zusätzlich 100ms blockieren, damit nicht doppelt passiert
+		    //Einen Schritt weiter gehen, wenn X gedrÃ¼ckt, zusÃ¤tzlich 100ms blockieren, damit nicht doppelt passiert
 		    if(Keyboard.isKeyDown(Keyboard.KEY_X)) {
 		    	if(!m.BlockedKey.contains("x")){
 		    		m.toDoQueue.offer("x");
@@ -82,7 +82,7 @@ public class KugelSteuern {
 		    	}
 		    	
 		    }
-		    //Einen Schritt zurück gehen, wenn Y gedrückt, zusätzlich 100ms blockieren, damit nicht doppelt passiert
+		    //Einen Schritt zurÃ¼ck gehen, wenn Y gedrÃ¼ckt, zusÃ¤tzlich 100ms blockieren, damit nicht doppelt passiert
 		    if(Keyboard.isKeyDown(Keyboard.KEY_Y)) {
 		    	if(!m.BlockedKey.contains("y")){
 		    		m.toDoQueue.offer("y");
@@ -91,7 +91,7 @@ public class KugelSteuern {
 			    	m.BlockedKey.remove("y");
 		    	}
 		    }
-		    //Drehung zurück setzten wenn R gedrückt ist
+		    //Drehung zurÃ¼ck setzten wenn R gedrÃ¼ckt ist
 		    if(Keyboard.isKeyDown(Keyboard.KEY_R)) {
 		    	m.rendernDrehen(0.0f,0.0f,0.0f,1);
 		    }
@@ -103,7 +103,7 @@ public class KugelSteuern {
 	    	int x = Mouse.getX();
 	    	int y = Mouse.getY();
 	    	
-	    	//Wenn links Klick aus geführt wird
+	    	//Wenn links Klick aus gefÃ¼hrt wird
 	    	if(Mouse.isButtonDown(0)){//Links Klick
 	    		
 	    		//Bekomme die Koordinaten der Maus im 3Dimensionalen System

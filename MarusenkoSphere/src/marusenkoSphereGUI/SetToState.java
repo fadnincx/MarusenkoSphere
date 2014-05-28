@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import marusenkoSphereKugel.Kugel;
 
 /**
- * Klasse welche Methoden enthält um die den aktuelle Zustand der Kugel gemäss des Lösungsweg zu ändern
+ * Klasse welche Methoden enthÃ¤lt um die den aktuelle Zustand der Kugel gemÃ¤ss des LÃ¶sungsweg zu Ã¤ndern
  * 
  */
 public class SetToState {
 	
 	/**
-	 * Gibt die Kugel zum Endstatus zurück
+	 * Gibt die Kugel zum Endstatus zurÃ¼ck
 	 * @param k
 	 * @return
 	 */
@@ -20,7 +20,7 @@ public class SetToState {
 	}
 	
 	/**
-	 * Gibt die Kugel zur Gegebenen Step zurück
+	 * Gibt die Kugel zur Gegebenen Step zurÃ¼ck
 	 * @param k
 	 * @param step
 	 * @return
@@ -39,7 +39,7 @@ public class SetToState {
 	}
 	
 	/**
-	 * Gibt zurück, wie lange der Lösungsweg der Kugel ist
+	 * Gibt zurÃ¼ck, wie lange der LÃ¶sungsweg der Kugel ist
 	 * @param solvingList
 	 * @return
 	 */

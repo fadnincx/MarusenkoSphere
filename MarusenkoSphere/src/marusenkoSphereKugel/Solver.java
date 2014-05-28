@@ -8,13 +8,13 @@ import marusenkoSphere.Log;
 /**
  * Solver-Datei 
  * 
- * Ist für das lösen der Kugel verantwortlich
+ * Ist fÃ¼r das lÃ¶sen der Kugel verantwortlich
  * 
  */
 public class Solver {
 
 	/**
-    * Definiert die Kugel, welche gelöst wird wird    
+    * Definiert die Kugel, welche gelÃ¶st wird   
     */
 	protected Kugel k;
 	protected boolean[] ok = new boolean[24];
@@ -32,7 +32,7 @@ public class Solver {
 	 * Gibt den genauen Log in der Konsole aus, wenn entsprechenden Variabel true gesetzt ist
 	 * Zum Debuggen --> Genau schauen, wann was macht
 	 * 
-	 * Zusätzlich wird noch in DebugLog geschrieben
+	 * ZusÃ¤tzlich wird noch in DebugLog geschrieben
 	 * @param s
 	 */
 	private void consLog(String s){
@@ -43,27 +43,27 @@ public class Solver {
 	}
 	
 	/**
-	 * Beendet das lösen --> Wenn zuviele Schritte braucht, was heissen muss, dass in Schlaufe fest hängt und Programm einen Fehler hat
+	 * Beendet das lÃ¶sen --> Wenn zuviele Schritte braucht, was heissen muss, dass in Schlaufe fest hÃ¤ngt und Programm einen Fehler hat
 	 */
 	private void end(){
 		end = true;
 	}
 	
 	/**
-	 * Fügt eine Kugeln zum Lösungsprozess hinzu
-	 * @return : true, wenn Lösen Abgebrochen werden soll
+	 * FÃ¼gt eine Kugeln zum LÃ¶sungsprozess hinzu
+	 * @return : true, wenn LÃ¶sen Abgebrochen werden soll
 	 */
 	
 	private boolean addSteps(int pol, int anz, int modus){
-		//Erhöhe den Step
+		//ErhÃ¶he den Step
 		k.step++;
 		//Wenn Step zu gross, breche Ab und Gebe Error aus
 		if(k.step>1000000){
 			Log.ErrorLog(solvingWay.get(0));
-			Log.ErrorLog("Zuviele Schritte nötig!!!");
+			Log.ErrorLog("Zuviele Schritte nï¿½tig!!!");
 			return true;
 		}
-		//Füge Kugel zum Lösungsprozess hinzu
+		//FÃ¼ge Kugel zum LÃ¶sungsprozess hinzu
 		solvingWay.add(k.getSphere(""+pol+anz+modus));
 		
 		return false;
@@ -71,19 +71,19 @@ public class Solver {
 	
 	
 	/**
-	 * Hauptfunktion welche für das lösen der Kugel verantwortlich ist
-	 * @param k : Kugel welche gelöst werden soll
-	 * @return : gibt ArrayList mit Lösungsweg zurück
+	 * Hauptfunktion welche fÃ¼r das lÃ¶sen der Kugel verantwortlich ist
+	 * @param k : Kugel welche gelÃ¶st werden soll
+	 * @return : gibt ArrayList mit LÃ¶sungsweg zurÃ¼ck
 	 */
 	public ArrayList<String> solve(Kugel kugel){
 		
-		//Nimmt die übergebene Kugel zum lösen
+		//Nimmt die Ã¼bergebene Kugel zum lÃ¶sen
 		this.k = kugel;
 		
-		//Füge die Ausgangskugel als erste Kugel hinzu
+		//FÃ¼ge die Ausgangskugel als erste Kugel hinzu
 		solvingWay.add(k.getSphere());
 		
-		//Array "ok" mit false füllen
+		//Array "ok" mit false fÃ¼llen
 		Arrays.fill(ok, false); 
 
 		/**
@@ -99,7 +99,7 @@ public class Solver {
 					recheck = false;
 					checkIfP1IsOK();
 				}
-				//Wenn Position noch nicht gelöst
+				//Wenn Position noch nicht gelÃ¶st
 				if(!ok[i]){
 					//Recheck gefordert
 					recheck = true;
@@ -114,17 +114,17 @@ public class Solver {
 		/**
 		 * Phase 2
 		 * 
-		 * Löst die Kugel zu ende
+		 * LÃ¶st die Kugel zu ende
 		 */
 		consLog("Phase 2");
-		//Array ok erneut zurück auf false setzen
+		//Array ok erneut zurÃ¼ck auf false setzen
 		Arrays.fill(ok, false); 
 		
-		//Solange Kugel nicht gelösst
+		//Solange Kugel nicht gelÃ¶sst
 		while(!SolveCheck.isKugelSolved(k)){
 			//Gehe Jeden Pol durch
 			for(int i = 0; i<6; i++){
-				//Wenn Pol noch nicht gelöst, löse ihn
+				//Wenn Pol noch nicht gelÃ¶st, lÃ¶se ihn
 				if(!SolveCheck.isPolSolved(i,k)){
 					solvePol(i);
 					//Abbrechen, falls gefordert
@@ -133,7 +133,7 @@ public class Solver {
 			}
 		}		
 		
-		//Gib die gelöste Kugel zurück
+		//Gib die gelÃ¶ste Kugel zurÃ¼ck
 		return solvingWay;
 		
 	}//#END solve(Kugel kugel)
@@ -141,7 +141,7 @@ public class Solver {
 	
 	
 	/**
-	 * Prüft in Phase1, welche Dreiecke OK sind und welche nicht
+	 * Prï¿½ft in Phase1, welche Dreiecke OK sind und welche nicht
 	 */
 	private void checkIfP1IsOK(){
 		// Gehe alle Pole durch
@@ -156,7 +156,7 @@ public class Solver {
 			boolean[] allowCons = new boolean[4];
 			int[] tris = new int[4];
 
-			//Array mit daten aus Kugel füllen
+			//Array mit daten aus Kugel fÃ¼llen
 			for(int j = 0; j<4; j++){	 
 				//Wert von con, Index wird gesucht zu tri Index Pol*4 + Position in Pol
 				cons[j] = k.con[k.findCons(i*4+j)];
@@ -169,14 +169,14 @@ public class Solver {
 			for(int j = 0; j<4; j++){
 				//boolean set sagt, ob Position schon neu gesetzt wurde
 				boolean set = false;
-				//Prüfe für alle zur Verfügung stehenden cons ob sie passen
+				//PrÃ¼fe fÃ¼r alle zur VerfÃ¼gung stehenden cons ob sie passen
 				for(int k = 0; k<4; k++){
 					/**
 					 * Wenn Position noch nicht neu gesetzt wurde
 					 * UND
 					 * Wenn Con noch erlaubt ist
 					 * UND
-					 * Wenn tri und con übereinstimmen
+					 * Wenn tri und con ï¿½bereinstimmen
 					 * 
 					 * Dann setzte ok bei entsprechender Position = true
 					 * Dann setzte allowCons bei entsprechender Position = false
@@ -206,11 +206,11 @@ public class Solver {
 		int urPol = p/4;
 		consLog("UrPol: "+urPol);
 		
-		//Finde den richtigen Connector für p
+		//Finde den richtigen Connector fÃ¼r p
 		int con = findCon(p);
 		consLog("Con: "+p+" - "+con);
 		
-		//Gehe für die drei möglichen Pole durch
+		//Gehe fÃ¼r die drei mÃ¼glichen Pole durch
 		for(int i = 0; i<3; i++){
 			
 			//Finde die entsprechende PolNr
@@ -221,39 +221,39 @@ public class Solver {
 			if(!checkPoleEndPhase1(polNr)&&urPol!=polNr){
 				
 				//Bei dem Pol wird jede Stelle durch gegeangen
-				consLog(polNr+" Pol nicht gelöst");
+				consLog(polNr+" Pol nicht gelï¿½st");
 				for(int j = 0; j<4; j++){
 					
-					//Prüfe, ob Position noch nicht korrekt ist und dass die beiden Farben nicht Identisch sind
+					//PrÃ¼fe, ob Position noch nicht korrekt ist und dass die beiden Farben nicht Identisch sind
 					if(!ok[polNr*4+j]&&k.tri[polNr*4+j]!=k.tri[p]){
 						
-						//Gibt den Tri index zurück, damit zwischen diesen Beiden gewechselt werden kann
+						//Gibt den Tri index zurÃ¼ck, damit zwischen diesen Beiden gewechselt werden kann
 						return polNr*4+j;
 					}
 				}
 			}else{
-				consLog(polNr+"Pol gelöst!");
+				consLog(polNr+"Pol gelï¿½st!");
 			}
 		}
 		
-		//Gibt -1 zurück, wenn kein Erfolg --> Sollte nicht auftreten
+		//Gibt -1 zurÃ¼ck, wenn kein Erfolg --> Sollte nicht auftreten
 		return -1;
 	}
 	
 	/**
-	 * Prüft, ob Pol mit Phase 1 fertig ist
-	 * @param polNr : Pol welcher geprüft werden soll
+	 * PrÃ¼ft, ob Pol mit Phase 1 fertig ist
+	 * @param polNr : Pol welcher geprÃ¼ft werden soll
 	 * @return : true wenn fertig, sonst false
 	 */
 	private boolean checkPoleEndPhase1(int polNr){
 		/**
 		 * Erstelle Arrays
-		 * tris[4] enthält alle Tri eines Pols
-		 * cons[4] enthält alle Con eines Pols 
+		 * tris[4] enthÃ¤lt alle Tri eines Pols
+		 * cons[4] enthÃ¤lt alle Con eines Pols 
 		 */
 		int[] tris = new int[4];
 		int[] cons = new int[4];
-		//Fülle Arrays mit Daten aus Kugel
+		//FÃ¼lle Arrays mit Daten aus Kugel
 		for(int i = 0; i<4; i++){
 			tris[i]=k.tri[polNr*4+i];
 			cons[i]=k.con[k.findCons(polNr*4+i)];
@@ -261,8 +261,8 @@ public class Solver {
 		/**
 		 * Sortiere die Arrays
 		 * 
-		 * Anschliessen prüfen, ob die Array identisch sind
-		 * Je nach Ergebnis true oder false zurück geben
+		 * Anschliessen prÃ¼fen, ob die Array identisch sind
+		 * Je nach Ergebnis true oder false zurÃ¼ck geben
 		 */
 		Arrays.sort(tris);
 		Arrays.sort(cons);
@@ -282,13 +282,13 @@ public class Solver {
 		//Gehe alle 8 Connector durch
 		for(int i = 0; i<8; i++){
 			
-			//Wenn Tri = Con dann gibt den Con Index zurück
+			//Wenn Tri = Con dann gibt den Con Index zurÃ¼ï¿½ck
 			if(k.con[i]==k.tri[p]){
 				return i;
 			}
 		}
 		
-		//Wenn keine übereinstimmung gefunden werden konnte dann gibt -1 zurück
+		//Wenn keine Ã¼bereinstimmung gefunden werden konnte dann gibt -1 zurÃ¼ck
 		return -1;
 	}
 	
@@ -299,7 +299,7 @@ public class Solver {
 	 */
 	private void change2Positions(int p1, int p2){
 		
-		//überprüft p1 und p2 auf Korrektheit ==> zugross, bzw zuklein werden ausgefiltert
+		//Ã¼berprÃ¼ft p1 und p2 auf Korrektheit ==> zugross, bzw zuklein werden ausgefiltert
 		if(p1>=0&&p2>=0&&p1<=23&&p2<=23){
 			int temp = k.tri[p1];
 			k.tri[p1] = k.tri[p2];
@@ -309,7 +309,7 @@ public class Solver {
 		}
 	}
 	/**
-	 * Korrektur Funktion zum Drehen eines Pols, damit alle Pole mit einer Funktion in eine Einheitliche Richtung gedreht werden können
+	 * Korrektur Funktion zum Drehen eines Pols, damit alle Pole mit einer Funktion in eine Einheitliche Richtung gedreht werden kÃ¶nnen
 	 * @param polNr
 	 * @param pos
 	 * @return
@@ -340,7 +340,7 @@ public class Solver {
 	}
 	
 	/**
-	 * Wechsle 2 Stücke in Phase 1 und füge Schritte dem Lösungsweg hinzu;
+	 * Wechsle 2 StÃ¼cke in Phase 1 und fÃ¼ge Schritte dem LÃ¶sungsweg hinzu;
 	 * @param pol1
 	 * @param polRechts
 	 * @param s
@@ -355,13 +355,13 @@ public class Solver {
 	}
 	
 	/**
-	 * Nimmt das wechseln von 2 Positionen für Phase 1 vor
+	 * Nimmt das wechseln von 2 Positionen fÃ¼r Phase 1 vor
 	 * @param p1
 	 * @param p2
 	 */
 	private void Solve1Phase(int p1, int p2){
 		
-		//überprüft p1 und p2 auf Korrektheit ==> zugross, bzw zuklein werden ausgefiltert
+		//Ã¼berprÃ¼ft p1 und p2 auf Korrektheit ==> zugross, bzw zuklein werden ausgefiltert
 		if(p1>=0&&p2>=0&&p1<=23&&p2<=23){
 			
 			//Wechsle so, dass p1 kleiner als p2
@@ -380,12 +380,12 @@ public class Solver {
 			int polRechts = change2PolPositionPR(pol1,pol2);
 			//Wenn gefunden
 			if(polRechts>=0){
-				//Variabel zur End Positionsbestimmung festlegen und mit Werten füllen, so dass nichts geändert wird 
+				//Variabel zur End Positionsbestimmung festlegen und mit Werten fÃ¼llen, so dass nichts geÃ¤ndert wird 
 				int pos1 = p1%4;
 				int pos2 = p2%4;
 				int opt1 = 1;
 				
-				//Individuell nach Pol diese Variablen ändern
+				//Individuell nach Pol diese Variablen ï¿½ndern
 				switch(pol1){
 				case 0:
 					switch(pol2){
@@ -440,12 +440,12 @@ public class Solver {
 	}
 	
 	/**
-	 * Funktion zum lösen eines Pols
+	 * Funktion zum lÃ¶sen eines Pols
 	 * @param polNr
 	 */
 	private void solvePol(int polNr){
 		
-		//Gehe für jede Position durch, ob gelöst oder nicht und speichere in Variable
+		//Gehe fÃ¼r jede Position durch, ob gelÃ¶st oder nicht und speichere in Variable
 		boolean[] pOk = new boolean[4];
 		for(int i = 0; i<4; i++){
 			if(SolveCheck.isPositionSolved(polNr*4+i,k)){
@@ -454,7 +454,7 @@ public class Solver {
 				pOk[i] = false;
 			}
 		}
-		//Solange Pol nicht gelöst, noch einen Anlauf wagen 
+		//Solange Pol nicht gelÃ¶st, noch einen Anlauf wagen 
 		while(!SolveCheck.isPolSolved(polNr,k)){
 			//Gehe jede Position durch
 			for(int i = 0; i<4; i++){
@@ -462,7 +462,7 @@ public class Solver {
 				if(!pOk[i]){
 					//Finde den Farbwert der Position heraus
 					int tri = polNr*4+i;
-					//Finde das dazu gehörige Verbindungsteil heraus
+					//Finde das dazu gehÃ¶rige Verbindungsteil heraus
 					int con = k.findCons(tri);
 					//Finde Dreieck mit welchem getauscht werden muss und tausche dann
 					for(int j = 0; j<4; j++){
@@ -470,7 +470,7 @@ public class Solver {
 							change2PolPositions(tri, polNr*4+j);
 						}
 					}
-					//Erneut prüfen, ob Pol gelöst
+					//Erneut prÃ¼fen, ob Pol gelÃ¶st
 					for(int j = 0; j<4; j++){
 						if(SolveCheck.isPositionSolved(polNr*4+j,k)){
 							pOk[j] = true;
@@ -504,13 +504,13 @@ public class Solver {
 		int polO = change2PolPositionsD2(p1, p2);
 		//Pol Rechts ermitteln
 		int polR = change2PolPositionPR(pol, polO);
-		//Sofern dies geht wechsle gemäss Schema
+		//Sofern dies geht wechsle gemÃ¤ss Schema
 		if(polO != -1){
 			change2Pol(pol,polO,polR);	
 		}else{
-			//Löst Speziallfälle --> 
+			//LÃ¶st SpeziallfÃ¤lle --> 
 			
-			//Prüft ob übers Kreuz gelöst werden muss --> dann tue das
+			//PrÃ¼ft ob Ã¼bers Kreuz gelÃ¶st werden muss --> dann tue das
 			if(isPolGegenUber(p1,p2)){
 				solvePolGegenuber(p1,p2);
 			}else{
@@ -521,7 +521,7 @@ public class Solver {
 					change2PolPositions(p1,p2,turn);
 				}else{
 					//Wenns definitiv nicht geht Error ausgeben
-					Log.ErrorLog(k.getSphere()+" \n Error - Muss sonst lösen - P1: "+p1+"; P2: "+p2);
+					Log.ErrorLog(k.getSphere()+" \n Error - Muss sonst lï¿½sen - P1: "+p1+"; P2: "+p2);
 					change2Positions(p1, p2);
 				}
 			}
@@ -541,7 +541,7 @@ public class Solver {
 			p1 = p2;
 			p2 = temp;
 		}
-		//Gibt den Wert zurück
+		//Gibt den Wert zurÃ¼ck
 		if((p1==12&&p2==13)||(p1==16&&p2==19)||(p1==4&&p2==5)||(p1==20&&p2==23)){
 			return 0;
 		}else
@@ -632,7 +632,7 @@ public class Solver {
 		return -1;
 	}
 	/**
-	 * Prüfen ob übers Kreuz gelöst werden muss
+	 * PrÃ¼fen ob Ã¼bers Kreuz gelÃ¶st werden muss
 	 * @param p1
 	 * @param p2
 	 * @return
@@ -644,16 +644,16 @@ public class Solver {
 			p1 = p2;
 			p2 = temp;
 		}
-		//Prüfe ob das so ist und es die Lösung bringt...
+		//PrÃ¼fe ob das so ist und es die LÃ¶sung bringt...
 		if(p1+2 == p2&&(k.con[k.findCons(p1)]==k.tri[p2]||k.con[k.findCons(p2)]==k.tri[p1])){
 			return true;
 		}
-		//Ansonsten gibt false zurück
+		//Ansonsten gibt false zurÃ¼ck
 		return false;
 	}
 	
 	/**
-	 * Macht die Wechselfunktion der Pole durch gemäs Schema
+	 * Macht die Wechselfunktion der Pole durch gemÃ¤ss Schema
 	 * @param pol : pol, auf welchem gewechselt wird
 	 * @param polO : pol Oben davon
 	 * @param polR : pol Rechts davon
@@ -711,7 +711,7 @@ public class Solver {
 	}
 	
 	/**
-	 * Löse übers Kreuz
+	 * LÃ¶se Ã¼bers Kreuz
 	 * @param p1
 	 * @param p2
 	 */
@@ -729,7 +729,7 @@ public class Solver {
 		//Pol in Variabel schreiben
 		int pol = p1/4;
 		p2--;
-		//p2 ändern so das gelöst werden kann
+		//p2Ã¤ndern so das gelÃ¶st werden kann
 		if(p2<pol*4){
 			p2+=4;
 		}
@@ -742,7 +742,7 @@ public class Solver {
 		change2Pol(pol,polO,polR);
 		
 
-		//p2 zurück setzten, p1 verschieben
+		//p2 zurÃ¼ck setzten, p1 verschieben
 		p2 = p2_old;
 		p1++;
 		if(p1>pol*4+3){
@@ -756,7 +756,7 @@ public class Solver {
 		change2Pol(pol,polO,polR);
 
     	
-		//p1 zurücksetzten und p2 verschieben
+		//p1 zurÃ¼cksetzten und p2 verschieben
     	p1 = p1_old;
 		p2--;
 		if(p2<pol*4){
@@ -770,7 +770,7 @@ public class Solver {
 		change2Pol(pol,polO,polR);
 		
     	int end = 0;
-    	//Prüfe ob Pol gelöst ist ansonsten drehe Pol bis gelöst
+    	//PrÃ¼fe ob Pol gelÃ¶st ist ansonsten drehe Pol bis gelÃ¶st
     	while(!SolveCheck.isPolSolved(pol,k)&&end<4){
     		k.changePol(pol, 1);
     		if(addSteps(pol, 1, 1)){end();}

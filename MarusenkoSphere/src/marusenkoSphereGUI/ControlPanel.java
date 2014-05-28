@@ -21,9 +21,9 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 /**
- * Diese Klasse ist f¸r die Darstellung des 2. Fensters, des Kontolpanels zust‰ndig
+ * Diese Klasse ist f√º die Darstellung des 2. Fensters, des Kontolpanels zust√§ndig
  * 
- * Zus‰tzlich ist ein ActionListener implementiert um direkt auf die Aktionen einzugehen
+ * Zus√§tzlich ist ein ActionListener implementiert um direkt auf die Aktionen einzugehen
  */
 
 public class ControlPanel implements ActionListener{
@@ -41,11 +41,11 @@ public class ControlPanel implements ActionListener{
 
 	
 	
-	//Buttons zum neu mischen, bzw lˆsen der Kugel
+	//Buttons zum neu mischen, bzw l√∂sen der Kugel
 	private JButton bt_fillSphere = new JButton("neu mischen");
-	private JButton bt_solveSphere = new JButton("lˆsen");
+	private JButton bt_solveSphere = new JButton("lÔøΩsen");
 	
-	//Pfeile zum drehen der Kugel sowie Zur¸cksetzt Button
+	//Pfeile zum drehen der Kugel sowie Zur√ºcksetzt Button
 	private JButton bt_up = new JButton();
 	private JButton bt_right = new JButton();
 	private JButton bt_left = new JButton();
@@ -53,7 +53,7 @@ public class ControlPanel implements ActionListener{
 
 	private JButton bt_reset_view = new JButton("Reset");
 	
-	//Schritte vorw‰rts und zur¸ck gehen
+	//Schritte vorw√§rts und zur√ºck gehen
 	private JButton bt_oneStep = new JButton("+1 Schritt");
 	private JButton bt_backStep = new JButton("-1 Schritt");
 
@@ -79,25 +79,25 @@ public class ControlPanel implements ActionListener{
 	private Color color7 = new Color(Rendern.getColorFloat(7,0),Rendern.getColorFloat(7,1),Rendern.getColorFloat(7,2),1.0f);
 	
 	
-	//Label f¸r Editor setzten
-	private JLabel isError = new JLabel("Die Kugel enth‰lt keine Fehler");
-	private JLabel isSelected = new JLabel("Ausgew‰hlt");
+	//Label f√ºr Editor setzten
+	private JLabel isError = new JLabel("Die Kugel enthÔøΩlt keine Fehler");
+	private JLabel isSelected = new JLabel("AusgewÔøΩhlt");
 	
 	//Text um Infos darzustellen
 	private JLabel lbl_aktuell_anz = new JLabel("Anzahl Schritte:");
-	private JLabel lbl_max_anz = new JLabel("Gelˆst bei Schritte:");
+	private JLabel lbl_max_anz = new JLabel("GelÔøΩst bei Schritte:");
 	
 	//Rotation Speed info
 	private JLabel lbl_rotationSpeedInfo = new JLabel("Animationsgeschwindigkeit:");
 	
 	
-	//Textfeld um zu Position zu gehen inklusie Best‰tigungs Button
+	//Textfeld um zu Position zu gehen inklusie Best√§tigungs Button
 	private JTextField txt_goPos = new JTextField();
 	private JButton bt_goPos = new JButton("Go to");
 	
-	//Debugging Feld f¸r eingabe von Kugel inklusive Best‰tigungs Button
+	//Debugging Feld f√ºr eingabe von Kugel inklusive Best√§tigungs Button
 	private JTextField txt_kugelInput = new JTextField();
-	private JButton bt_kugel_uebernehmen = new JButton("Kugel ‹bernehmen");
+	private JButton bt_kugel_uebernehmen = new JButton("Kugel ÔøΩbernehmen");
 	
 	private JSlider rotationSpeed = new JSlider();
 	
@@ -108,7 +108,7 @@ public class ControlPanel implements ActionListener{
 	private int y;
 	
 	/**
-	 * Konstruktor welcher das Manager-Objekt initialisiert und ein neues Fenster erstellen l‰sst
+	 * Konstruktor welcher das Manager-Objekt initialisiert und ein neues Fenster erstellen lÔøΩsst
 	 * @param m : Manager
 	 */
 	public ControlPanel(Manager m, int mode){
@@ -124,11 +124,11 @@ public class ControlPanel implements ActionListener{
 	 * Funktion zum Erstellen eines Neuen Fensters
 	 */
 	private void createFrame(){
-		//Neues Toolkit Objekt erstellen, wird gebraucht um an die Bildschirmauflˆsung zu kommen
+		//Neues Toolkit Objekt erstellen, wird gebraucht um an die Bildschirmaufl√§sung zu kommen
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Dimension screenSize = tk.getScreenSize();
 		
-		//Schreibe die Bildschirmauflˆsung in final int's 
+		//Schreibe die Bildschirmaufl√∂sung in final int's 
 		final int WIDTH = screenSize.width;
 		final int HEIGHT = screenSize.height;
 		
@@ -136,7 +136,7 @@ public class ControlPanel implements ActionListener{
 		x=(WIDTH/2)+337;
 		y=(HEIGHT/2)-240;
 		
-		//Setzte die Grˆsse des Controlpanels
+		//Setzte die Gr√∂sse des Controlpanels
 		controlp.setSize(350, 510);
 		editorp.setSize(350, 510);
 		devp.setSize(350, 510);
@@ -156,7 +156,7 @@ public class ControlPanel implements ActionListener{
 		editorp.setLocation(x,y);
 		devp.setLocation(x,y);
 		
-		//Setzte, dass Fenster grˆsse nicht ver‰nderbar durch Benutzer
+		//Setzte, dass Fenster gr√∂sse nicht ver√§nderbar durch Benutzer
 		controlp.setResizable(false);
 		editorp.setResizable(false);
 		devp.setResizable(false);
@@ -170,7 +170,7 @@ public class ControlPanel implements ActionListener{
 		display();
 	}
 	private void display(){
-		//Rufe die Funktion display auf um die Objekte dem eben erstellten Objekt hinzuzuf¸gen
+		//Rufe die Funktion display auf um die Objekte dem eben erstellten Objekt hinzuzuf√ºgen
 		displayEditor();
 		displayKugelControlpanel();
 		displayDev();
@@ -235,11 +235,11 @@ public class ControlPanel implements ActionListener{
 		editorp.repaint();
 	}
 	/**
-	 * Funktion zum Alle Objekte dem Fenster hinzuzuf¸gen
+	 * Funktion zum Alle Objekte dem Fenster hinzuzufÔøΩgen
 	 */
 	private void displayKugelControlpanel(){
 		
-		//Lade die Bilder F¸r die Pfeiltasten und f¸ge sie den Buttons hinzu
+		//Lade die Bilder F√ºr die Pfeiltasten und f√ºge sie den Buttons hinzu
 		try {
 			ImageIcon imageUp = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/up.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 			ImageIcon imageDown = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/down.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
@@ -278,8 +278,8 @@ public class ControlPanel implements ActionListener{
     	rotationSpeed.setMinimum(5);    //stellt den Minimalwert auf 10 ein
     	rotationSpeed.setMaximum(180);  //stellt den Maximalwert auf 150 ein
     	rotationSpeed.setValue(30);     //selektiert den Wert 30
-    	rotationSpeed.setMinorTickSpacing(5); //Abst‰nde im Feinraster
-    	rotationSpeed.setMajorTickSpacing(10); //Abst‰nde im Groﬂraster
+    	rotationSpeed.setMinorTickSpacing(5); //Abst√∂nde im Feinraster
+    	rotationSpeed.setMajorTickSpacing(10); //Abst√∂nde im Grossraster
     	rotationSpeed.setSnapToTicks(false); //deaktiviert das automatische Versetzen / Einrasten im Raster
     	rotationSpeed.setExtent(0); //der Zeiger verspringt jedesmal 15 Einheiten
     	rotationSpeed.setPaintLabels(false);  //Zahlen werden nicht angezeigt
@@ -287,7 +287,7 @@ public class ControlPanel implements ActionListener{
     	//noch frei 
     	//.setBounds(20,130,310,40);
     	
-    	//F¸ge jedes Objekt dem Controlpanel hinzu
+    	//F√ºge jedes Objekt dem Controlpanel hinzu
     	controlp.add(bt_fillSphere);
     	controlp.add(bt_solveSphere);
     	controlp.add(bt_up);
@@ -304,7 +304,7 @@ public class ControlPanel implements ActionListener{
     	controlp.add(rotationSpeed);
     	controlp.add(lbl_rotationSpeedInfo);
     	
-    	//F¸ge den Buttons ein ActionListener hinzu, um auf Aktionen einzugehen
+    	//F√ºge den Buttons ein ActionListener hinzu, um auf Aktionen einzugehen
     	bt_fillSphere.addActionListener(this);
         bt_solveSphere.addActionListener(this);
         bt_up.addActionListener(this);
@@ -344,14 +344,14 @@ public class ControlPanel implements ActionListener{
 	}
 	
 	/**
-	 * Methode um die Werte ¸ber die Kugel im Konrolpanel zu aktualisieren
+	 * Methode um die Werte √ºber die Kugel im Konrolpanel zu aktualisieren
 	 * @param anzAktuell : Position Aktuell
-	 * @param anzMax : Wann Kugel gelˆsst
+	 * @param anzMax : Wann Kugel gel√∂sst
 	 */
 	public void updateKugelState(int anzAktuell, int anzMax){
 		//Setzte Text neu
 		lbl_aktuell_anz.setText("Anzahl Schritte: "+anzAktuell);
-		lbl_max_anz.setText("Gelˆst bei Schritte: "+anzMax);
+		lbl_max_anz.setText("GelÔøΩst bei Schritte: "+anzMax);
 		//display();
 	}
 	private void updateSelectedPosition(){
@@ -361,14 +361,14 @@ public class ControlPanel implements ActionListener{
 	}
 	public void updateAllowKugel(boolean isOk){
 		if(isOk){
-			isError.setText("Die Kugel enth‰lt keine Fehler");
+			isError.setText("Die Kugel enthÔøΩlt keine Fehler");
 		}else{
-			isError.setText("Die Kugel ist nicht g¸ltig");
+			isError.setText("Die Kugel ist nicht gÔøΩltig");
 		}
 	}
 	
 	/**
-	 * Die ActionListener-Methode f¸r die Buttons, da Klasse die ActionListener implementiert hat
+	 * Die ActionListener-Methode f√ºr die Buttons, da Klasse die ActionListener implementiert hat
 	 */
 	@Override
 	public void actionPerformed(ActionEvent z) {
@@ -376,7 +376,7 @@ public class ControlPanel implements ActionListener{
 		//Lange if/else-Kette da switch nur primitive Datentypen erlaubt also keine ActionEvents
 		
 		if (z.getSource() == bt_fillSphere){
-			//F¸lle die Kugel neu inklusiv blockieren, damit nicht zu schnell
+			//F√ºlle die Kugel neu inklusiv blockieren, damit nicht zu schnell
 			if(!m.BlockedKey.contains("bt_fillSphere")){
 		    	m.BlockedKey.add("bt_fillSphere");
 				m.fillSphere();
@@ -384,7 +384,7 @@ public class ControlPanel implements ActionListener{
 		    	m.BlockedKey.remove("bt_fillSphere");
 	    	}
         }else if (z.getSource() == bt_solveSphere){
-        	//Lˆse die Kugel zu ende
+        	//L√∂se die Kugel zu ende
         	m.startSolve();
         }else if (z.getSource() == bt_kugel_uebernehmen){
         	//Debugging Option um Kugel zu Status zu setzten
@@ -403,10 +403,10 @@ public class ControlPanel implements ActionListener{
         	//Kugel nach unten drehen
         	m.rendernDrehen(0.0f,+0.2f,0.0f,0);
         }else if (z.getSource() == bt_reset_view){
-        	//Drehen zur¸ck setzen
+        	//Drehen zur√ºck setzen
         	m.rendernDrehen(0.0f,0.0f,0.0f,1);
         }else if (z.getSource() == bt_oneStep){
-        	//einen Schritt im lˆsen weiter
+        	//einen Schritt im l√∂sen weiter
         	if(!m.BlockedKey.contains("bt_oneStep")){
 		    	m.BlockedKey.add("bt_oneStep");
 		    	m.toDoQueue.offer("x");
@@ -414,7 +414,7 @@ public class ControlPanel implements ActionListener{
 		    	m.BlockedKey.remove("bt_oneStep");
 	    	}
         }else if (z.getSource() == bt_backStep){
-        	//einen Schritt im lˆsen zur¸ck
+        	//einen Schritt im l√∂sen zur√ºck
         	if(!m.BlockedKey.contains("bt_backStep")){
 		    	m.BlockedKey.add("bt_backStep");
 		    	m.toDoQueue.offer("y");
@@ -425,35 +425,35 @@ public class ControlPanel implements ActionListener{
         	//Zu Position springen --> String to Int erfolg im Manager
         	m.setPos(txt_goPos.getText());
         }else if (z.getSource() == bt_color_0){
-        	//Ausgew‰hlte Farbe w‰hlen
+        	//Ausgew√§hlte Farbe w√§hlen
         	m.changeSelectedColor(0);
         	updateSelectedPosition();
         }else if (z.getSource() == bt_color_1){
-        	//Ausgew‰hlte Farbe w‰hlen
+        	//Ausgew√§hlte Farbe w√§hlen
         	m.changeSelectedColor(1);
         	updateSelectedPosition();
         }else if (z.getSource() == bt_color_2){
-        	//Ausgew‰hlte Farbe w‰hlen
+        	//Ausgew√§hlte Farbe w√§hlen
         	m.changeSelectedColor(2);
         	updateSelectedPosition();
         }else if (z.getSource() == bt_color_3){
-        	//Ausgew‰hlte Farbe w‰hlen
+        	//Ausgew√§hlte Farbe w√§hlen
         	m.changeSelectedColor(3);
         	updateSelectedPosition();
         }else if (z.getSource() == bt_color_4){
-        	//Ausgew‰hlte Farbe w‰hlen
+        	//Ausgew√§hlte Farbe w√§hlen
         	m.changeSelectedColor(4);
         	updateSelectedPosition();
         }else if (z.getSource() == bt_color_5){
-        	//Ausgew‰hlte Farbe w‰hlen
+        	//Ausgew√§hlte Farbe w√§hlen
         	m.changeSelectedColor(5);
         	updateSelectedPosition();
         }else if (z.getSource() == bt_color_6){
-        	//Ausgew‰hlte Farbe w‰hlen
+        	//Ausgew√§hlte Farbe w√§hlen
         	m.changeSelectedColor(6);
         	updateSelectedPosition();
         }else if (z.getSource() == bt_color_7){
-        	//Ausgew‰hlte Farbe w‰hlen
+        	//Ausgew√§hlte Farbe w√§hlen
         	m.changeSelectedColor(7);
         	updateSelectedPosition();
         }

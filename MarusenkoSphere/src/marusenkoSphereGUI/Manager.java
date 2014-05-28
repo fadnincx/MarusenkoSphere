@@ -22,22 +22,24 @@ public class Manager {
 	protected static boolean doQuetoEnd = false;
 	
 	/**
-	 * Manager zum Lösen Verwalten der GUI und lösen der Kugel
-	 * @param k : Kugel zum lösen
+	 * Manager zum LÃ¶sen Verwalten der GUI und lÃ¶sen der Kugel
+	 * @param k : Kugel zum lÃ¶sen
 	 * @param d : DebugLog
 	 * @param l : ErrorLog
 	 */
 	public Manager(Kugel k){
-		//Übernehme Kugel von der Main-Datei
+		//Ã¼bernehme Kugel von der Main-Datei
 		this.k = k;
+		
+		//Berechne die Trigonimetrischen Funktionen bereits hier, damit diese spÃ¤ter schon berechnet sind
+		Trigonometrie.CalcTrigonometrie();
 		
 		//Initialisiere die Fenster (KugelRendern und ControlPanel)
 		rendern = new Rendern(k,displayMode);
 		cp = new ControlPanel(this,displayMode);
 		
-		//Fülle Kugel zufällig
+		//FÃ¼lle Kugel zufÃ¤llig
 		fillSphere();
-		
 		//In Endlosschleife auf Tastatureingabe warten
 		while(true){
 			KugelSteuern.Input(this);
@@ -59,12 +61,12 @@ public class Manager {
 		while(estimatedTime<time){
 			//Frage den Input ab --> Zeitvertreib
 			//KugelSteuern.Input(this);
-			//Vergangene Zeit nachführen
+			//Vergangene Zeit nachfÃ¼hren
 			estimatedTime = System.nanoTime() - startTime;
 		}
 	}
 	/**
-	 * Setzt die Kugel des Managers neu, und führt anschliessend alle Updatefunktionen aus
+	 * Setzt die Kugel des Managers neu, und fÃ¼hrt anschliessend alle Updatefunktionen aus
 	 * @param k
 	 */
 	public void updateKugel(Kugel k){
@@ -79,7 +81,7 @@ public class Manager {
 		rendern.updateKugel(k,displayMode);
 	}
 	/**
-	 * Zeit die Gelöste Kugel an
+	 * Zeit die GelÃ¶ste Kugel an
 	 */
 	public void startSolve(){
 		//k = SetToState.getKugelFromArrayList(k);
@@ -87,7 +89,7 @@ public class Manager {
 		doQuetoEnd = true;
 	}
 	/**
-	 * Füllt die Kugel zufällig
+	 * FÃ¼llt die Kugel zufÃ¤llig
 	 */
 	public void fillSphere(){
 	    k.FillKugelRandom();
@@ -95,7 +97,7 @@ public class Manager {
 		doQuetoEnd = false;
 	}
 	/**
-	 * Füllt die Kugel gemäss String s
+	 * FÃ¼llt die Kugel gemÃ¤ss String s
 	 * @param s : Kugel als String 
 	 */
 	public void fillSphere(String s){
@@ -110,21 +112,21 @@ public class Manager {
 		cp.updateKugelState(k.getStep(), SetToState.getSolvingLength(k.SolvingList)-1);
 	}
 	/**
-	 * Geht im Lösungsprozess eine Position weiter
+	 * Geht im LÃ¶sungsprozess eine Position weiter
 	 */
 	public void oneStep(){
 		k = SetToState.getKugelFromArrayList(k,k.getStep()+1);
 		updateList();
 	}
 	/**
-	 * Geht im Lösungsprozess eine Position zurück
+	 * Geht im LÃ¶sungsprozess eine Position zurÃ¼ck
 	 */
 	public void backStep(){
 		k = SetToState.getKugelFromArrayList(k,k.getStep()-1);
 		 updateList();
 	}
 	/**
-	 * Geht im Lösungsprozess zur gegebenen Position
+	 * Geht im LÃ¶sungsprozess zur gegebenen Position
 	 * @param s
 	 */
 	public void setPos(String s){
@@ -180,7 +182,7 @@ public class Manager {
 	}
 	
 	/**
-	 * Nimmt das ändern der Drehung der Kugel vor
+	 * Nimmt das Ã¤ndern der Drehung der Kugel vor
 	 * @param x
 	 * @param y
 	 * @param mode

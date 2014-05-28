@@ -10,8 +10,8 @@ import org.lwjgl.util.glu.GLU;
 import marusenkoSphereKugel.Kugel;
 
 /**
- * Diese Klasse enthält alle Funktionen welche zum Rendern des Editors im Kugelfenster benötigt werden. 
- * Zusätzlich auch jene Funktionen, welche zum Erkennen sind, auf Was geklickt wurde
+ * Diese Klasse enthÃ¤lt alle Funktionen welche zum Rendern des Editors im Kugelfenster benÃ¶tigt werden. 
+ * ZusÃ¤tzlich auch jene Funktionen, welche zum Erkennen sind, auf Was geklickt wurde
  *
  *
  */
@@ -27,17 +27,17 @@ public class Editor {
 	 */
 	protected static boolean renderEditor(Kugel k,float rx, float ry, float rz){
 		/**
-    	 * Auskommentieren, damit Flächen der Kugel nicht gefüllt werden
+    	 * Auskommentieren, damit FlÃ¤chen der Kugel nicht gefÃ¼llt werden
     	 * 
-    	 * Hauptsächlich zum Debugging beim erstellen gedacht
+    	 * HauptsÃ¤chlich zum Debugging beim erstellen gedacht
     	 */
     	//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
     	
 		
-    	//Löscht den gesammten Bereich, damit neu gerendert werden kann
+    	//LÃ¶scht den gesammten Bereich, damit neu gerendert werden kann
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        //Setze die Position zum Rendern zurück 
+        //Setze die Position zum Rendern zurÃ¼ck 
         GL11.glLoadIdentity();
 
         //Verschiebe die 0/0 Position zum Rendern, damit Kugel ganz sichtbar wird
@@ -48,7 +48,7 @@ public class Editor {
         //GL11.glRotatef(rx,1.0f,0.0f,0.0f);
         //GL11.glRotatef(rz,0.0f,0.0f,1.0f);
         
-        //Starte das Zeichnen der einzelnen Flächen der Kugel
+        //Starte das Zeichnen der einzelnen Flï¿½chen der Kugel
         GL11.glBegin(GL11.GL_TRIANGLES);
         
         
@@ -64,10 +64,10 @@ public class Editor {
         	double x = 0;
         	double y = 0;
         	
-        	//Setzet Farbe Standartmässig auf Dreieck mit Index i --> Spezialfall 16-19 wird nachher noch geändert
+        	//Setzet Farbe StandartmÃ¤ssig auf Dreieck mit Index i --> Spezialfall 16-19 wird nachher noch geÃ¤ndert
         	Rendern.setColor(k.tri[i]);
         	
-        	//Ändere spezifisch die Variablen
+        	//Ã¤ndere spezifisch die Variablen
         	switch(i){
 	        	case 0:  ix =  1; iy =  1; x =  0; break;
 	        	case 1:  ix =  1; iy = -1; x =  0; break;
@@ -128,7 +128,7 @@ public class Editor {
 	        	case 7: x1 = -3; x2 =  0; iy = -1; break;
         	}
         	
-        	//Zentrale Position Negativieren falls nötig
+        	//Zentrale Position Negativieren falls nï¿½tig
         	zy*=iy;
         	
         	//Brechne die Position der Kreismitte 
@@ -149,7 +149,7 @@ public class Editor {
         }
         
         
-        //Rendern der Verbindungsstücke
+        //Rendern der Verbindungsstï¿½cke
         for(int i = 0; i<8; i++){
         	//Zentraler Punkt
         	double zx = 0.5;
@@ -259,7 +259,7 @@ public class Editor {
 	 * Methode die aus den x/y-Koordinaten sagt, auf welches Feld geklickt wurden
 	 * @param x : x-Achse
 	 * @param y : y-Achse
-	 * @return : 0-23 Dreieck - 24-31 Verbindungsstücke als (0-7)+24
+	 * @return : 0-23 Dreieck - 24-31 Verbindungsstï¿½cke als (0-7)+24
 	 */
 	protected static int onWhichField(double x, double y){
 		if(isInCircle(0,0,1,x,y)){
@@ -357,12 +357,12 @@ public class Editor {
 	
 	
 	/**
-	 * Funktion die Prüft, Ob die Position(X/Y) innerhalb des Kreises an Position(X/Y) mit gegebenem Radius befindet
+	 * Funktion die PrÃ¼ft, Ob die Position(X/Y) innerhalb des Kreises an Position(X/Y) mit gegebenem Radius befindet
 	 * @param CircleX : Position Kreismitte auf X-Achse
 	 * @param CircleY : Position Kreismitte auf Y-Achse
 	 * @param CircleRadius : Radius des Kreises
-	 * @param PositionX : Position welche zu Prüfen ist auf X-Achse
-	 * @param PositionY : Position welche zu Prüfen ist auf Y-Achse
+	 * @param PositionX : Position welche zu Prï¿½fen ist auf X-Achse
+	 * @param PositionY : Position welche zu Prï¿½fen ist auf Y-Achse
 	 * @return
 	 */
 	private static boolean isInCircle(double CircleX, double CircleY, double CircleRadius, double PositionX, double PositionY){
@@ -375,12 +375,12 @@ public class Editor {
 	}
 	
 	/**
-	 * Funktion gibt zurück, in welchem Viertel eines Kreises die zu Prüfende Position lieft
+	 * Funktion gibt zurÃ¼ck, in welchem Viertel eines Kreises die zu PrÃ¼fende Position lieft
 	 * @param CircleX : Position der Kreismitte auf X-Achse
 	 * @param CircleY : Position der Kreismitte auf Y-Achse
-	 * @param PositionX : Zu prüfende Position auf X-Achse
-	 * @param PositionY : Zu prüfende Position auf Y-Achse
-	 * @return : Int von 0-3 für jeden Viertel --> -1 wenn ein Fehler auftritt
+	 * @param PositionX : Zu prÃ¼fende Position auf X-Achse
+	 * @param PositionY : Zu prÃ¼fende Position auf Y-Achse
+	 * @return : Int von 0-3 fÃ¼r jeden Viertel --> -1 wenn ein Fehler auftritt
 	 */
 	private static int posInCircle(double CircleX, double CircleY, double PositionX, double PositionY){
 		PositionX-=CircleX;
@@ -401,7 +401,7 @@ public class Editor {
 	}
 	
 	/**
-	 * Funktion welche mit Hilfe der Baryzentrischen Koordinaten präft, ob ein Punkt innerhalb eines Dreieckes liegt oder nicht
+	 * Funktion welche mit Hilfe der Baryzentrischen Koordinaten prÃ¼ft, ob ein Punkt innerhalb eines Dreieckes liegt oder nicht
 	 * 	Baryzentrische Koordinaten --> http://en.wikipedia.org/wiki/Barycentric_coordinate_system_%28mathematics%29
 	 * @param TriangleX1 : Dreieck 1.Punkt X-Achse
 	 * @param TriangleY1 : Dreieck 1.Punkt Y-Achse
@@ -409,8 +409,8 @@ public class Editor {
 	 * @param TriangleY2 : Dreieck 2.Punkt Y-Achse
 	 * @param TriangleX3 : Dreieck 3.Punkt X-Achse
 	 * @param TriangleY3 : Dreieck 3.Punkt Y-Achse
-	 * @param PositionX : Zu prüfende Position auf X-Achse
-	 * @param PositionY : Zu prüfende Position auf Y-Achse
+	 * @param PositionX : Zu prÃ¼fende Position auf X-Achse
+	 * @param PositionY : Zu prÃ¼fende Position auf Y-Achse
 	 * @return
 	 */
 	private static boolean isInTriangle(double TriangleX1, double TriangleY1, double TriangleX2, double TriangleY2, double TriangleX3, double TriangleY3, double PositionX, double PositionY){

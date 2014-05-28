@@ -8,25 +8,25 @@ import marusenkoSphere.Log;
 /**
  * Kugel-Datei
  * 
- * Kugel-Objekt, beinhaltet die ganze Kugel für das ganze Programm, bringt den Zustand der Kugel jeweils von einem Objekt in ein nächstes
+ * Kugel-Objekt, beinhaltet die ganze Kugel fÃ¼r das ganze Programm, bringt den Zustand der Kugel jeweils von einem Objekt in ein nÃ¤chstes
  * 
  */
 public class Kugel{
 	/**
 	 * tri ==> Array, welches die Dreiecke der Pole beinhaltet
-	 * con ==> Array, welches die Verbindungsstücke beinhaltet
+	 * con ==> Array, welches die VerbindungsstÃ¼cke beinhaltet
 	 */
 	
 	//Aktueller Status
-	public int[] tri = new int[24]; //Array für die Dreiecke (Triangles)
-	public int[] con = new int[8]; //Array für die Verbindungsstücke (Connectors)
+	public int[] tri = new int[24]; //Array fï¿½r die Dreiecke (Triangles)
+	public int[] con = new int[8]; //Array fï¿½r die VerbindungsstÃ¼cke (Connectors)
 	public String drehung = "000";
 	public String oldDrehung = "000";
 	public int drehRichtung = 1;
 	public double standRot = 0.0;
 	protected int oldStep = 0;
-	//Für ganzer Lösungsweg
-	public ArrayList<String> SolvingList = new ArrayList<String>(); //Arraylist mit dem Lösungsweg
+	//FÃ¼r ganzer LÃ¶sungsweg
+	public ArrayList<String> SolvingList = new ArrayList<String>(); //Arraylist mit dem LÃ¶sungsweg
 	protected int step = 0; //Wo in der Liste ist der Aktuelle Status
 	
 	
@@ -39,27 +39,27 @@ public class Kugel{
 	}
 	
 	/**
-	 * Setzte die Kugel gemäss eines Inputstrings
+	 * Setzte die Kugel gemÃ¤ss eines Inputstrings
 	 * @param s
 	 */
 	public void FillKugelFromString(String s){
-		//Führe die Funktion ohne lösen der Kugel durch
+		//FÃ¼hre die Funktion ohne lÃ¶sen der Kugel durch
 		FillKugelFromStringWithoutSolvingList(s);
-		//Löse die Kugel
+		//LÃ¶se die Kugel
 		UpdateSolvingList();
 	}
 	
 	/**
-	 * Setzt die Kugel gemäss eines Inputstrings ohne Lösen der Kugel, bzw ohne überschreiben des Lösungsweges
+	 * Setzt die Kugel gemÃ¤ss eines Inputstrings ohne LÃ¶sen der Kugel, bzw ohne Ã¼berschreiben des LÃ¶sungsweges
 	 * @param s
 	 */
 	public void FillKugelFromStringWithoutSolvingList(String s){
 		s = s.trim();
 		//Teile den String bei "n" auf ("n" ist das Trennzeichen im String)
 		String[] sp = s.split("n");
-		//Prüfe ob String der erwarteten Form entspricht, ansonsten ErrorLog
+		//PrÃ¼fe ob String der erwarteten Form entspricht, ansonsten ErrorLog
 		if(sp[0].length()==32&&sp.length==3&&sp[2].length()==3){
-			//Setzte die Arrays gemäss dem String
+			//Setzte die Arrays gemÃ¤ss dem String
 			for(int i = 0; i<8;i++){
 				con[i]=Integer.parseInt(s.substring(i, i+1));
 			}
@@ -105,23 +105,23 @@ public class Kugel{
 	}
 
 	/**
-	 * Funktion zum zufülligen Füllen der Kugel mit realistischen Werten
+	 * Funktion zum zufÃ¤lligen FÃ¼llen der Kugel mit realistischen Werten
 	 */
 	public void FillKugelRandom(){
 		
 		//Objekt rm als Zufallsobjekt, auswelcher dann die Zusatzzahl generiert wird
 		Random rm = new Random();
 		
-		//Alle Verbingungsstücke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben
+		//Alle VerbingungsstÃ¼cke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben
 		Arrays.fill(con, -1);
 		
-		//Diesen 8 Verbingungsstücken wird eine Farbe zu geteilt
+		//Diesen 8 VerbingungsstÃ¼cken wird eine Farbe zu geteilt
 		for(int i = 0; i<8;i++){
 			
 			//Neue Zufallszahl
 			int r = rm.nextInt(8-i);
 			
-			//Finde das nächste noch nicht einer Farbe zugeteilte Verbindungsstück --> wenn gefunden, dann weise Farbe zu
+			//Finde das nÃ¤chste noch nicht einer Farbe zugeteilte VerbindungsstÃ¼ck --> wenn gefunden, dann weise Farbe zu
 			boolean found = false;
 			while(!found){
 				if(con[r]==-1){
@@ -146,7 +146,7 @@ public class Kugel{
 			// Durch 3, damit 3 die selbe farbe kriegen
 			int j = i/3;
 			
-			//Finde das nächste noch nicht einer Farbe zugeteilte Dreieck --> wenn gefunden, dann weise Farbe zu
+			//Finde das nÃ¤chste noch nicht einer Farbe zugeteilte Dreieck --> wenn gefunden, dann weise Farbe zu
 			boolean found = false;
 			while(!found){
 				if(tri[r]==-1){
@@ -160,27 +160,33 @@ public class Kugel{
 		}	
 		step = 0;
 		
-		//Löse die Kugel
+		//LÃ¶se die Kugel
 		UpdateSolvingList();
 	
 	}//#END FillKugelRandom
 	
 	
 	/**
-	 * Getter-Methode für den Step
+	 * Getter-Methode fÃ¼r den Step
 	 * @return
 	 */
 	public int getStep(){
 		return this.step;
 	}
 	/**
-	 * Resetet den Step zu 0 --> für nach dem Kugel manuell eingegeben wurde
+	 * Getter-Methode fÃ¼r die Maximale Anzahl an Schritten
+	 */
+	public int getMaxStep(){
+		return SolvingList.size()-1;
+	}
+	/**
+	 * Resetet den Step zu 0 --> fÃ¼r nach dem Kugel manuell eingegeben wurde
 	 */
 	public void resetStep(){
 		this.step = 0;
 	}
 	/**
-	 * Getter-Methode für den OldStep
+	 * Getter-Methode fÃ¼r den OldStep
 	 * @return
 	 */
 	public int getOldStep(){
@@ -195,40 +201,40 @@ public class Kugel{
 	public String getSphere(){
 		//Output = leer
 		String out = "";
-		//Füge die Zahlenwerte der Verbindungsstücke ein
+		//FÃ¼ge die Zahlenwerte der VerbindungsstÃ¼cke ein
 		for(int i = 0; i<8;i++){
 			out+=con[i];
 		}
-		//Füge die Zahlenwerte der Pole ein
+		//FÃ¼ge die Zahlenwerte der Pole ein
 		for(int i = 0; i<24;i++){
 			out+=tri[i];
 		}
-		//Füge "n" als Trennzeichen hinzu, sowie den Step
+		//FÃ¼ge "n" als Trennzeichen hinzu, sowie den Step
 		out += "n"+step+"n000";
 		return out;
 	}
 	/**
-	 * Methode, welche die Kugel als String ausgibt mit zusätzlicher Drehung
+	 * Methode, welche die Kugel als String ausgibt mit zusÃ¤tzlicher Drehung
 	 * @return
 	 */
 	protected String getSphere(String dreh){
 		//Output = leer
 		String out = "";
-		//Füge die Zahlenwerte der Verbindungsstücke ein
+		//FÃ¼ge die Zahlenwerte der VerbindungsstÃ¼cke ein
 		for(int i = 0; i<8;i++){
 			out+=con[i];
 		}
-		//Füge die Zahlenwerte der Pole ein
+		//FÃ¼ge die Zahlenwerte der Pole ein
 		for(int i = 0; i<24;i++){
 			out+=tri[i];
 		}
-		//Füge "n" als Trennzeichen hinzu, sowie den Step
+		//FÃ¼ge "n" als Trennzeichen hinzu, sowie den Step
 		out += "n"+step+"n"+dreh;
 		return out;
 	}
 	
 	/**
-	 * Methode zum Updaten der Liste beim Lösen, also die Methode, welche das Lösen startet und das Ergebnis verwaltet.
+	 * Methode zum Updaten der Liste beim LÃ¶sen, also die Methode, welche das LÃ¶sen startet und das Ergebnis verwaltet.
 	 */
 	private void UpdateSolvingList(){
 		//Die SolvingList ist das Resultat eines neuen Objekts Solver und dessen Methode solve mit dieser Kugel als Argument 
@@ -246,7 +252,7 @@ public class Kugel{
 	 *                                                                                                                                            *
 	 *                                                                                                                                            *
 	 *                                                                                                                                            *
-	 * Die Folgenden Funktionen werden für das Lösen der Kugel benötigt                                                                           *
+	 * Die Folgenden Funktionen werden fÃ¼r das LÃ¶sen der Kugel benÃ¶tigt                                                                           *
 	 *                                                                                                                                            *
 	 *                                                                                                                                            *
 	 *                                                                                                                                            *
@@ -267,14 +273,14 @@ public class Kugel{
 	 * @param steps
 	 */
 	protected void turnKugel(int pole, int steps){
-		//Aktion für Anzahl Schritte durch führen --> 3x im GegenUhrzeigersinn = 1x im Uhrzeigersinn 
+		//Aktion fÃ¼r Anzahl Schritte durch fÃ¼hren --> 3x im GegenUhrzeigersinn = 1x im Uhrzeigersinn 
 		
 		for(int i = 0; i<steps; i++){
 			//Dreht den Pol
 			changePol(pole,1);
-			//Dreht die Verbindungsstücke
+			//Dreht die VerbindungsstÃ¼cke
 			turn2Ring(pole);
-			//Dreht die Pole am Äquator
+			//Dreht die Pole am Ã¼quator
 			turn3Ring(pole);
 		}
 	}
@@ -410,9 +416,9 @@ public class Kugel{
 	}
 	
 	/**
-	 * Alias für findCons(int p, int i) wobei i = 0; 
-	 * Gibt den con des tri[p] zurück
-	 * @param p : tri[p] für con
+	 * Alias fÃ¼r findCons(int p, int i) wobei i = 0; 
+	 * Gibt den con des tri[p] zurÃ¼ck
+	 * @param p : tri[p] fÃ¼r con
 	 * @return index von con
 	 */
 	protected int findCons(int p){
@@ -420,8 +426,8 @@ public class Kugel{
 	}
 	
 	/**
-	 * Gibt den i-ten con des tri[p] zurück --> Wird benötigt, für die Grob Sortierung
-	 * @param p : tri[p] für con
+	 * Gibt den i-ten con des tri[p] zurÃ¼ck --> Wird benÃ¼tigt, fÃ¼r die Grob Sortierung
+	 * @param p : tri[p] fÃ¼r con
 	 * @param i : den i-ten Pol
 	 * @return index von con
 	 */
@@ -483,7 +489,7 @@ public class Kugel{
 	 * Von con zu pol
 	 * @param con : von welchem con
 	 * @param i : der wievielte Pol
-	 * @return int des i-ten Pol, -1 == ungültiger con, -2, ungütiges i (nur 0, 1 oder 2)
+	 * @return int des i-ten Pol, -1 == ungÃ¼ltiger con, -2, ungÃ¼tiges i (nur 0, 1 oder 2)
 	 */
 	protected int con2pol(int con,int i){
 		switch(con){
