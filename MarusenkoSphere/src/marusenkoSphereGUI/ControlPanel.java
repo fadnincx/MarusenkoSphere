@@ -21,7 +21,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 /**
- * Diese Klasse ist fü die Darstellung des 2. Fensters, des Kontolpanels zuständig
+ * Diese Klasse ist für die Darstellung des 2. Fensters, des Kontolpanels zuständig
  * 
  * Zusätzlich ist ein ActionListener implementiert um direkt auf die Aktionen einzugehen
  */
@@ -43,7 +43,7 @@ public class ControlPanel implements ActionListener{
 	
 	//Buttons zum neu mischen, bzw lösen der Kugel
 	private JButton bt_fillSphere = new JButton("neu mischen");
-	private JButton bt_solveSphere = new JButton("l�sen");
+	private JButton bt_solveSphere = new JButton("lösen");
 	
 	//Pfeile zum drehen der Kugel sowie Zurücksetzt Button
 	private JButton bt_up = new JButton();
@@ -56,6 +56,11 @@ public class ControlPanel implements ActionListener{
 	//Schritte vorwärts und zurück gehen
 	private JButton bt_oneStep = new JButton("+1 Schritt");
 	private JButton bt_backStep = new JButton("-1 Schritt");
+	
+	//Zu Fenster WechselButton
+	private JButton bt_changeToEditor = new JButton("Editor");
+	private JButton bt_changeToDev = new JButton("Dev");
+	private JButton bt_changeToSphere = new JButton("Kugel");
 
 	//Die Farbigen Buttons
 	private JButton bt_color_0 = new JButton();
@@ -80,12 +85,12 @@ public class ControlPanel implements ActionListener{
 	
 	
 	//Label für Editor setzten
-	private JLabel isError = new JLabel("Die Kugel enth�lt keine Fehler");
-	private JLabel isSelected = new JLabel("Ausgew�hlt");
+	private JLabel isError = new JLabel("Die Kugel enthält keine Fehler");
+	private JLabel isSelected = new JLabel("Ausgewählt");
 	
 	//Text um Infos darzustellen
 	private JLabel lbl_aktuell_anz = new JLabel("Anzahl Schritte:");
-	private JLabel lbl_max_anz = new JLabel("Gel�st bei Schritte:");
+	private JLabel lbl_max_anz = new JLabel("Gelöst bei Schritte:");
 	
 	//Rotation Speed info
 	private JLabel lbl_rotationSpeedInfo = new JLabel("Animationsgeschwindigkeit:");
@@ -97,7 +102,7 @@ public class ControlPanel implements ActionListener{
 	
 	//Debugging Feld für eingabe von Kugel inklusive Bestätigungs Button
 	private JTextField txt_kugelInput = new JTextField();
-	private JButton bt_kugel_uebernehmen = new JButton("Kugel �bernehmen");
+	private JButton bt_kugel_uebernehmen = new JButton("Kugel übernehmen");
 	
 	private JSlider rotationSpeed = new JSlider();
 	
@@ -176,12 +181,21 @@ public class ControlPanel implements ActionListener{
 		displayDev();
 	}
 	private void displayDev(){
-		txt_kugelInput.setBounds(20,80,310, 40);
-    	bt_kugel_uebernehmen.setBounds(20,130, 310, 50);
+		
+    	bt_changeToEditor.setBounds(20, 20, 145, 50);
+    	bt_changeToSphere.setBounds(185, 20, 145, 50);
+    	
+    	txt_kugelInput.setBounds(20,90,310, 40);
+    	bt_kugel_uebernehmen.setBounds(20,140, 310, 50);
+    	
     	
     	devp.add(txt_kugelInput);
     	devp.add(bt_kugel_uebernehmen);
+    	devp.add(bt_changeToEditor);
+    	devp.add(bt_changeToSphere);
     	
+    	bt_changeToEditor.addActionListener(this);
+    	bt_changeToSphere.addActionListener(this);
         bt_kugel_uebernehmen.addActionListener(this);
         
     	//Controlpanel neu Zeichnen
@@ -206,10 +220,15 @@ public class ControlPanel implements ActionListener{
 		bt_color_5.setBounds(20, 170, 150, 20);
 		bt_color_6.setBounds(20, 200, 150, 20);
 		bt_color_7.setBounds(20, 230, 150, 20);
+	
+		bt_changeToSphere.setBounds(20,330,145,50);
+		bt_changeToDev.setBounds(185, 330, 145,50);
 		
 		isError.setBounds(20,260,300,50);
 		isSelected.setBounds(180, (m.getSelectedColor()*30)+20, 100, 20);
 		
+		editorp.add(bt_changeToDev);
+		editorp.add(bt_changeToSphere);
 		editorp.add(bt_color_0);
 		editorp.add(bt_color_1);
 		editorp.add(bt_color_2);
@@ -221,6 +240,7 @@ public class ControlPanel implements ActionListener{
 		editorp.add(isError);
 		editorp.add(isSelected);
 		
+		
 		bt_color_0.addActionListener(this);
 		bt_color_1.addActionListener(this);
 		bt_color_2.addActionListener(this);
@@ -229,13 +249,14 @@ public class ControlPanel implements ActionListener{
 		bt_color_5.addActionListener(this);
 		bt_color_6.addActionListener(this);
 		bt_color_7.addActionListener(this);
-		
+		bt_changeToDev.addActionListener(this);
+		bt_changeToSphere.addActionListener(this);
 		
 		//Controlpanel neu Zeichnen
 		editorp.repaint();
 	}
 	/**
-	 * Funktion zum Alle Objekte dem Fenster hinzuzuf�gen
+	 * Funktion zum Alle Objekte dem Fenster hinzuzufügen
 	 */
 	private void displayKugelControlpanel(){
 		
@@ -261,19 +282,29 @@ public class ControlPanel implements ActionListener{
 		//(start horizontal, start vertikal, end horizontal, end vertikal) (0,0) ist die Linke obere Ecke
 		bt_fillSphere.setBounds(20, 20, 145, 50);
     	bt_solveSphere.setBounds(185, 20,145, 50);
+    	
+    	lbl_rotationSpeedInfo.setBounds(20,80,310,20);
+    	rotationSpeed.setBounds(20,100,310,30);
+    	
+    	bt_changeToDev.setBounds(20,130,145,50);
+    	bt_changeToEditor.setBounds(185,130,145,50);
+    	
+    	txt_goPos.setBounds(20, 190, 145, 50);
+    	bt_goPos.setBounds(185, 190, 145, 50);
+    	
+    	lbl_aktuell_anz.setBounds(20,250,200,20);
+    	lbl_max_anz.setBounds(20,270,200,20);
+    	
+    	bt_reset_view.setBounds(250,300,80,50);
     	bt_up.setBounds(150,300,50,50);
     	bt_left.setBounds(90,360,50,50);
     	bt_right.setBounds(210,360,50,50);
     	bt_down.setBounds(150,360,50,50);
-    	bt_reset_view.setBounds(250,300,80,50);
+    	
+    	
     	bt_backStep.setBounds(20,420,145,50);
     	bt_oneStep.setBounds(185,420,145,50);
-    	lbl_aktuell_anz.setBounds(20,250,200,20);
-    	lbl_max_anz.setBounds(20,270,200,20);
-    	txt_goPos.setBounds(20, 190, 145, 50);
-    	bt_goPos.setBounds(185, 190, 145, 50);
-    	rotationSpeed.setBounds(20,100,310,30);
-    	lbl_rotationSpeedInfo.setBounds(20,80,310,20);
+    	
     	
     	rotationSpeed.setMinimum(5);    //stellt den Minimalwert auf 10 ein
     	rotationSpeed.setMaximum(180);  //stellt den Maximalwert auf 150 ein
@@ -303,6 +334,8 @@ public class ControlPanel implements ActionListener{
     	controlp.add(bt_goPos);
     	controlp.add(rotationSpeed);
     	controlp.add(lbl_rotationSpeedInfo);
+    	controlp.add(bt_changeToDev);
+    	controlp.add(bt_changeToEditor);
     	
     	//Füge den Buttons ein ActionListener hinzu, um auf Aktionen einzugehen
     	bt_fillSphere.addActionListener(this);
@@ -315,6 +348,8 @@ public class ControlPanel implements ActionListener{
         bt_oneStep.addActionListener(this);
         bt_backStep.addActionListener(this);
         bt_goPos.addActionListener(this);
+        bt_changeToDev.addActionListener(this);
+        bt_changeToEditor.addActionListener(this);
         
         //Controlpanel neu Zeichnen
         //controlp.revalidate();
@@ -351,7 +386,7 @@ public class ControlPanel implements ActionListener{
 	public void updateKugelState(int anzAktuell, int anzMax){
 		//Setzte Text neu
 		lbl_aktuell_anz.setText("Anzahl Schritte: "+anzAktuell);
-		lbl_max_anz.setText("Gel�st bei Schritte: "+anzMax);
+		lbl_max_anz.setText("Gelöst bei Schritte: "+anzMax);
 		//display();
 	}
 	private void updateSelectedPosition(){
@@ -361,9 +396,9 @@ public class ControlPanel implements ActionListener{
 	}
 	public void updateAllowKugel(boolean isOk){
 		if(isOk){
-			isError.setText("Die Kugel enth�lt keine Fehler");
+			isError.setText("Die Kugel enthält keine Fehler");
 		}else{
-			isError.setText("Die Kugel ist nicht g�ltig");
+			isError.setText("Die Kugel ist nicht gültig");
 		}
 	}
 	
@@ -456,6 +491,15 @@ public class ControlPanel implements ActionListener{
         	//Ausgewählte Farbe wählen
         	m.changeSelectedColor(7);
         	updateSelectedPosition();
+        }else if (z.getSource() == bt_changeToDev){
+        	//Zu dev Fenster wechseln
+        	m.changeToMode(2);
+        }else if (z.getSource() == bt_changeToEditor){
+        	//Zu editor wechseln
+        	m.changeToMode(1);
+        }else if (z.getSource() == bt_changeToSphere){
+        	//Zu Kugel wechseln
+        	m.changeToMode(0);
         }
 		
 		

@@ -134,6 +134,11 @@ public class Manager {
 		k = SetToState.getKugelFromArrayList(k,i);
 		updateList();
 	}
+	protected void changeToMode(int i){
+		displayMode = i;
+		cp.updateMode(displayMode);
+		System.out.println("Mode: "+displayMode);
+	}
 	protected void changeModeEdior(){
 		if(isSphereAllowed()){
 			displayMode++;

@@ -17,11 +17,11 @@ public class KugelSteuern {
 	    if(Display.isCloseRequested()) {                  
 	    	m.exitProgramm();
 	    }
-	    
 	    //Zu Editor wechseln/zurück wenn E gedrückt, zusätzlich 100ms blockieren, damit nicht doppelt passiert
 	    if(Keyboard.isKeyDown(Keyboard.KEY_E)) {
 	    	if(!m.BlockedKey.contains("e")){
 	    		m.changeModeEdior();
+	    		//System.out.println("e");
 		    	m.BlockedKey.add("e");
 		    	m.update(100);
 		    	m.BlockedKey.remove("e");
@@ -31,6 +31,7 @@ public class KugelSteuern {
 	    if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
 	    	if(!m.BlockedKey.contains("d")){
 	    		m.enableDevPanel();
+	    		//System.out.println("D");
 		    	m.BlockedKey.add("d");
 		    	m.update(100);
 		    	m.BlockedKey.remove("d");

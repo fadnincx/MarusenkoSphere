@@ -18,8 +18,8 @@ public class Kugel{
 	 */
 	
 	//Aktueller Status
-	public int[] tri = new int[24]; //Array f�r die Dreiecke (Triangles)
-	public int[] con = new int[8]; //Array f�r die Verbindungsstücke (Connectors)
+	public int[] tri = new int[24]; //Array für die Dreiecke (Triangles)
+	public int[] con = new int[8]; //Array für die Verbindungsstücke (Connectors)
 	public String drehung = "000";
 	public String oldDrehung = "000";
 	public int drehRichtung = 1;
@@ -48,7 +48,31 @@ public class Kugel{
 		//Löse die Kugel
 		UpdateSolvingList();
 	}
-	
+	protected int[] SplitDrehungFromSphere(String s){
+		s = SplitDrehungFromSphereAsS(s);
+		int[] i = new int[3];
+		if(s.length()==3){
+			i[0] = Integer.parseInt(s.substring(0,1));
+			i[1] = Integer.parseInt(s.substring(1,2));
+			i[2] = Integer.parseInt(s.substring(2,3));
+		}
+		return i;
+	}
+	protected String SplitDrehungFromSphereAsS(String s){
+		s = s.trim();
+		String[] sp = s.split("n");
+		return sp[2];
+	}
+	protected int SplitDrehungFromSphereAsI(String s){
+		System.out.println(s);
+		s = SplitDrehungFromSphereAsS(s);
+		return Integer.parseInt(s);
+	}
+	protected String SphereWithoutDrehungAndStep(String s){
+		s = s.trim();
+		String[] sp = s.split("n");
+		return sp[0];
+	}
 	/**
 	 * Setzt die Kugel gemäss eines Inputstrings ohne Lösen der Kugel, bzw ohne überschreiben des Lösungsweges
 	 * @param s

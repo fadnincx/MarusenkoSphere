@@ -60,7 +60,7 @@ public class Solver {
 		//Wenn Step zu gross, breche Ab und Gebe Error aus
 		if(k.step>1000000){
 			Log.ErrorLog(solvingWay.get(0));
-			Log.ErrorLog("Zuviele Schritte n�tig!!!");
+			Log.ErrorLog("Zuviele Schritte nötig!!!");
 			return true;
 		}
 		//Füge Kugel zum Lösungsprozess hinzu
@@ -119,6 +119,7 @@ public class Solver {
 		consLog("Phase 2");
 		//Array ok erneut zurück auf false setzen
 		Arrays.fill(ok, false); 
+		turnPolToOptinalPosition();
 		
 		//Solange Kugel nicht gelösst
 		while(!SolveCheck.isKugelSolved(k)){
@@ -132,16 +133,28 @@ public class Solver {
 				}
 			}
 		}		
+		/*String debug = "";
+		for(int i = 0; i<solvingWay.size();i++){
+			debug=debug+"\n"+solvingWay.get(i);
+		}
+		
+		solvingWay = RemoveUnusedSteps(solvingWay);
+		for(int i = 0; i<solvingWay.size();i++){
+			debug=debug+"\n"+solvingWay.get(i);
+		}
+		*/
+		//Log.DebugLog(debug);
+		
 		
 		//Gib die gelöste Kugel zurück
-		return solvingWay;
+		return RemoveUnusedSteps(solvingWay);
 		
 	}//#END solve(Kugel kugel)
 	
 	
 	
 	/**
-	 * Pr�ft in Phase1, welche Dreiecke OK sind und welche nicht
+	 * Prüft in Phase1, welche Dreiecke OK sind und welche nicht
 	 */
 	private void checkIfP1IsOK(){
 		// Gehe alle Pole durch
@@ -176,7 +189,7 @@ public class Solver {
 					 * UND
 					 * Wenn Con noch erlaubt ist
 					 * UND
-					 * Wenn tri und con �bereinstimmen
+					 * Wenn tri und con übereinstimmen
 					 * 
 					 * Dann setzte ok bei entsprechender Position = true
 					 * Dann setzte allowCons bei entsprechender Position = false
@@ -221,7 +234,7 @@ public class Solver {
 			if(!checkPoleEndPhase1(polNr)&&urPol!=polNr){
 				
 				//Bei dem Pol wird jede Stelle durch gegeangen
-				consLog(polNr+" Pol nicht gel�st");
+				consLog(polNr+" Pol nicht gelöst");
 				for(int j = 0; j<4; j++){
 					
 					//Prüfe, ob Position noch nicht korrekt ist und dass die beiden Farben nicht Identisch sind
@@ -232,7 +245,7 @@ public class Solver {
 					}
 				}
 			}else{
-				consLog(polNr+"Pol gel�st!");
+				consLog(polNr+"Pol gelöst!");
 			}
 		}
 		
@@ -779,4 +792,67 @@ public class Solver {
 		
 		
 	}
+	/**
+	 * Ersetzt unnützliche mehrfach Drehungen durch eine einzige
+	 * @param arrayList
+	 * @return
+	 */
+	private ArrayList<String> RemoveUnusedSteps(ArrayList<String> arrayList){
+		
+		for(int i = 0; i<arrayList.size()-1;i++){
+			int[] dreh1 = k.SplitDrehungFromSphere(arrayList.get(i));
+			int[] dreh2 = k.SplitDrehungFromSphere(arrayList.get(i+1));
+			if((dreh1[0]==dreh2[0])&&(dreh1[2]==dreh2[2])){
+				//System.out.println("Do");
+				//int[] dreh = k.SplitDrehungFromSphere(arrayList.get(i));
+				int anz = dreh1[1]+dreh2[2];
+				//anz+=anz;
+				anz%=4;
+				if(anz!=0){
+					arrayList.set(i, k.SphereWithoutDrehungAndStep(arrayList.get(i+1))+"n"+i+"n"+dreh1[0]+""+(anz)+""+dreh1[2]);
+					arrayList.remove(i+1);
+				}else{
+					arrayList.remove(i);
+					arrayList.remove(i+1);
+				}
+				i-=2;
+			}else{
+				arrayList.set(i, k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+dreh1[0]+""+dreh1[1]+""+dreh1[2]);
+			}
+		}
+		int[] dreh = k.SplitDrehungFromSphere(arrayList.get(arrayList.size()-1));
+		arrayList.set(arrayList.size()-1, k.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-1))+"n"+(arrayList.size()-1)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
+		
+		return arrayList;
+		
+	}
+	private void turnPolToOptinalPosition(){
+		for(int i = 0; i<6;i++){
+			int best = 0;
+			int best_anz = 0;
+			int jetzt_anz = 0;
+			int[] cons = new int[4];
+			for(int j = 0; j<4; j++){
+				cons[j] = k.con[k.findCons(i*4+j)];
+			}
+			for(int j = 0; j<4; j++){
+				jetzt_anz = 0;
+				for(int l = 0; l<4;l++){
+					//int conIndex = (j+l)%4;
+					if(k.tri[(i*4)+l]==k.con[k.findCons((i*4+l),j)]){
+						jetzt_anz++;
+					}
+				}
+				if(jetzt_anz>best_anz){
+					best_anz = jetzt_anz;
+					best = j;
+				}
+			}
+			if(best>0){
+				k.changePol(i, best);
+				if(addSteps(i, best, 1)){end();}
+			}
+		}
+	}
+	
 }
