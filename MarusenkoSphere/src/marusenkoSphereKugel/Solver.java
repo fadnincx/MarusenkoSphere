@@ -55,10 +55,20 @@ public class Solver {
 	 */
 	
 	private boolean addSteps(int pol, int anz, int modus){
+		switch(modus){
+		case 1:
+			k.changePol(pol, anz);
+		break;
+		case 3:
+			k.turnKugel(pol, anz);
+		break;
+		}
+		
+		
 		//Erhöhe den Step
 		k.step++;
 		//Wenn Step zu gross, breche Ab und Gebe Error aus
-		if(k.step>1000000){
+		if(k.step>10000){
 			Log.ErrorLog(solvingWay.get(0));
 			Log.ErrorLog("Zuviele Schritte nötig!!!");
 			return true;
@@ -119,20 +129,35 @@ public class Solver {
 		consLog("Phase 2");
 		//Array ok erneut zurück auf false setzen
 		Arrays.fill(ok, false); 
+		//Drehe Pole in Optimale Position
 		turnPolToOptinalPosition();
-		
-		//Solange Kugel nicht gelösst
-		while(!SolveCheck.isKugelSolved(k)){
-			//Gehe Jeden Pol durch
-			for(int i = 0; i<6; i++){
-				//Wenn Pol noch nicht gelöst, löse ihn
-				if(!SolveCheck.isPolSolved(i,k)){
-					solvePol(i);
-					//Abbrechen, falls gefordert
-					if(end){return solvingWay;}
+		//Pol schneller lösen
+		solveFasterOverCross();
+		//System.out.println("Done CrossOver");
+		checkIfP1IsOK();
+		if(SolveCheck.ArrayIsFullyOk(ok)){
+			while(!SolveCheck.isKugelSolved(k)){
+				//Gehe Jeden Pol durch
+				for(int i = 0; i<6; i++){
+					//Wenn Pol noch nicht gelöst, löse ihn
+					if(!SolveCheck.isPolSolved(i,k)){
+						//System.out.println("Pol "+i+" not solved");
+						solvePol(i);
+						//System.out.println("Pol "+i+" solved");
+						//Abbrechen, falls gefordert
+						if(end){return solvingWay;}
+					}
 				}
-			}
-		}		
+				consLog("Spher not solved");
+			}	
+		}else{
+			System.out.println("Nicht korrekte Kugel!!!");
+			
+		}
+		//System.out.println(SolveCheck.ArrayIsFullyOk(ok)+" Kugel in ordnung");
+		
+		//Solange Kugel nicht gelöst
+			
 		/*String debug = "";
 		for(int i = 0; i<solvingWay.size();i++){
 			debug=debug+"\n"+solvingWay.get(i);
@@ -148,7 +173,7 @@ public class Solver {
 		
 		//Gib die gelöste Kugel zurück
 		return RemoveUnusedSteps(solvingWay);
-		
+		//return solvingWay;
 	}//#END solve(Kugel kugel)
 	
 	
@@ -295,13 +320,14 @@ public class Solver {
 		//Gehe alle 8 Connector durch
 		for(int i = 0; i<8; i++){
 			
-			//Wenn Tri = Con dann gibt den Con Index zurü�ck
+			//Wenn Tri = Con dann gibt den Con Index zurüück
 			if(k.con[i]==k.tri[p]){
 				return i;
 			}
 		}
 		
 		//Wenn keine übereinstimmung gefunden werden konnte dann gibt -1 zurück
+		System.out.println(k.getSphere());
 		return -1;
 	}
 	
@@ -346,7 +372,7 @@ public class Solver {
 		int pol = p/4;
 		int pos = p%4;
 		while(pos!=position){
-			k.changePol(pol, 1);
+			//k.changePol(pol, 1);
 			addSteps(pol,1,1);
 			pos = posPlus(pol,pos);
 		}
@@ -359,11 +385,11 @@ public class Solver {
 	 * @param s
 	 */
 	private void change1Phase(int pol1,int polRechts,int s){
-		k.turnKugel(polRechts, s);
+		//k.turnKugel(polRechts, s);
 		addSteps(polRechts, s, 3);
-		k.changePol(pol1, 1);
+		//k.changePol(pol1, 1);
 		addSteps(pol1, 1, 1);
-		k.turnKugel(polRechts, 4-s);
+		//k.turnKugel(polRechts, 4-s);
 		addSteps(polRechts, 4-s, 3);
 	}
 	
@@ -468,11 +494,12 @@ public class Solver {
 			}
 		}
 		//Solange Pol nicht gelöst, noch einen Anlauf wagen 
-		while(!SolveCheck.isPolSolved(polNr,k)){
+		while(!SolveCheck.isPolSolved(polNr,k)||!end){
 			//Gehe jede Position durch
 			for(int i = 0; i<4; i++){
 				//Wenn noch nicht korrekt
 				if(!pOk[i]){
+					//System.out.println("Pos "+i+" nicht gelöst");
 					//Finde den Farbwert der Position heraus
 					int tri = polNr*4+i;
 					//Finde das dazu gehörige Verbindungsteil heraus
@@ -493,6 +520,7 @@ public class Solver {
 					}
 				}
 			}
+			
 		}
 	}
 	
@@ -529,12 +557,12 @@ public class Solver {
 			}else{
 				//Sonst Pol einmal drehen und dann erneut versuchen
 				if(turn<4){
-					k.changePol(p1/4, 1);
+					//k.changePol(p1/4, 1);
 					turn++;
 					change2PolPositions(p1,p2,turn);
 				}else{
 					//Wenns definitiv nicht geht Error ausgeben
-					Log.ErrorLog(k.getSphere()+" \n Error - Muss sonst l�sen - P1: "+p1+"; P2: "+p2);
+					Log.ErrorLog(k.getSphere()+" \n Error - Muss sonst lösen - P1: "+p1+"; P2: "+p2);
 					change2Positions(p1, p2);
 				}
 			}
@@ -672,54 +700,54 @@ public class Solver {
 	 * @param polR : pol Rechts davon
 	 */
 	private void change2Pol(int pol,int polO, int polR){
-		k.turnKugel(polR, 3);
+	//	k.turnKugel(polR, 3);
 		if(addSteps(polR, 3, 3)){end();}
-		k.changePol(polO, 3);
+		//k.changePol(polO, 3);
 		if(addSteps(polO, 3, 1)){end();}
-		k.turnKugel(polR, 1);
+		//k.turnKugel(polR, 1);
 		if(addSteps(polR, 1, 3)){end();}
-		k.changePol(polO, 3);
+		//k.changePol(polO, 3);
 		if(addSteps(polO, 3, 1)){end();}
-		k.turnKugel(polR, 3);
+		//k.turnKugel(polR, 3);
 		if(addSteps(polR, 3, 3)){end();}
-		k.changePol(polO, 1);
+		//k.changePol(polO, 1);
 		if(addSteps(polO, 1, 1)){end();}
-		k.turnKugel(polR, 1);
+		//k.turnKugel(polR, 1);
 		if(addSteps(polR, 1, 3)){end();}
-		k.changePol(polO, 3);
+		//k.changePol(polO, 3);
 		if(addSteps(polO, 3, 1)){end();}
-		k.turnKugel(polR, 3);
+		//k.turnKugel(polR, 3);
 		if(addSteps(polR, 3, 3)){end();}
-		k.changePol(polO, 3);
+		//k.changePol(polO, 3);
 		if(addSteps(polO, 3, 1)){end();}
-		k.turnKugel(polR, 1);
+		//k.turnKugel(polR, 1);
 		if(addSteps(polR, 1, 3)){end();}
 		
-		k.changePol(pol, 1);
+		//k.changePol(pol, 1);
 		if(addSteps(pol, 1, 1)){end();}
-		k.turnKugel(polR, 3);
+		//k.turnKugel(polR, 3);
 		if(addSteps(polR, 3, 3)){end();}
-		k.changePol(polO, 3);
+		//k.changePol(polO, 3);
 		if(addSteps(polO, 3, 1)){end();}
-		k.turnKugel(polR, 1);
+		//k.turnKugel(polR, 1);
 		if(addSteps(polR, 1, 3)){end();}
-		k.changePol(polO, 3);
+		//k.changePol(polO, 3);
 		if(addSteps(polO, 3, 1)){end();}
-		k.turnKugel(polR, 3);
+		//k.turnKugel(polR, 3);
 		if(addSteps(polR, 3, 3)){end();}
-		k.changePol(polO, 1);
+		//k.changePol(polO, 1);
 		if(addSteps(polO, 1, 1)){end();}
-		k.turnKugel(polR, 1);
+		//k.turnKugel(polR, 1);
 		if(addSteps(polR, 1, 3)){end();}
-		k.changePol(polO, 3);
+		//k.changePol(polO, 3);
 		if(addSteps(polO, 3, 1)){end();}
-		k.turnKugel(polR, 3);
+		//k.turnKugel(polR, 3);
 		if(addSteps(polR, 3, 3)){end();}
-		k.changePol(polO, 3);
+		//k.changePol(polO, 3);
 		if(addSteps(polO, 3, 1)){end();}
-		k.turnKugel(polR, 1);
+		//k.turnKugel(polR, 1);
 		if(addSteps(polR, 1, 3)){end();}
-		k.changePol(pol, 2);
+	//	k.changePol(pol, 2);
 		if(addSteps(pol, 2, 1)){end();}
 	}
 	
@@ -785,47 +813,58 @@ public class Solver {
     	int end = 0;
     	//Prüfe ob Pol gelöst ist ansonsten drehe Pol bis gelöst
     	while(!SolveCheck.isPolSolved(pol,k)&&end<4){
-    		k.changePol(pol, 1);
+    		//k.changePol(pol, 1);
     		if(addSteps(pol, 1, 1)){end();}
     		end++;
     	}
 		
 		
 	}
+	
 	/**
 	 * Ersetzt unnützliche mehrfach Drehungen durch eine einzige
 	 * @param arrayList
 	 * @return
 	 */
 	private ArrayList<String> RemoveUnusedSteps(ArrayList<String> arrayList){
-		
-		for(int i = 0; i<arrayList.size()-1;i++){
+		//Gehe jede position durch
+		for(int i = 0; i<arrayList.size()-2;i++){
+			//Nehme die Drehungen der nächsten beiden Stadien
 			int[] dreh1 = k.SplitDrehungFromSphere(arrayList.get(i));
 			int[] dreh2 = k.SplitDrehungFromSphere(arrayList.get(i+1));
+			//Wenn auf gleichem Pol im Gleichen Modus gedreht wird
 			if((dreh1[0]==dreh2[0])&&(dreh1[2]==dreh2[2])){
-				//System.out.println("Do");
-				//int[] dreh = k.SplitDrehungFromSphere(arrayList.get(i));
-				int anz = dreh1[1]+dreh2[2];
-				//anz+=anz;
+				//Beide drehungen Addieren und Modulo 4 nehmen
+				int anz = dreh1[1]+dreh2[1];
 				anz%=4;
+				//Wenn Anzahl nicht gleich 0 dann ersetzte erstes Element mit neuer Drehung und lösche zweites
 				if(anz!=0){
 					arrayList.set(i, k.SphereWithoutDrehungAndStep(arrayList.get(i+1))+"n"+i+"n"+dreh1[0]+""+(anz)+""+dreh1[2]);
 					arrayList.remove(i+1);
 				}else{
+					//Wenn Anzahl = 0, dann lösche beide
 					arrayList.remove(i);
 					arrayList.remove(i+1);
 				}
+				//Gehe 2 Schritte zurück, um allfällige neue überschneidungen zu entfernen
 				i-=2;
 			}else{
-				arrayList.set(i, k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+dreh1[0]+""+dreh1[1]+""+dreh1[2]);
+				//Wenn nicht auf gleichem Pol, bzw Modus, korrigiere den Step, da dieser nun verschoben ist
+				arrayList.set(i, k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+dreh1[0]+dreh1[1]+dreh1[2]);
 			}
 		}
-		int[] dreh = k.SplitDrehungFromSphere(arrayList.get(arrayList.size()-1));
+		//Korrigiere auch die Letzte Kugel, wegen dem i und i+1 ist es nicht mögluch dies in der Schlaufe zu tun
+		int[] dreh = k.SplitDrehungFromSphere(arrayList.get(arrayList.size()-2));
+		arrayList.set(arrayList.size()-2, k.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-2))+"n"+(arrayList.size()-2)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
+		dreh = k.SplitDrehungFromSphere(arrayList.get(arrayList.size()-1));
 		arrayList.set(arrayList.size()-1, k.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-1))+"n"+(arrayList.size()-1)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
-		
-		return arrayList;
+		//Gib arraylist zurück
+		return advancedTurnMinimizer(arrayList);
 		
 	}
+	/**
+	 * Pol in beste Position drehen, da so viele viele Schritte vermieden werden können
+	 */
 	private void turnPolToOptinalPosition(){
 		for(int i = 0; i<6;i++){
 			int best = 0;
@@ -849,10 +888,386 @@ public class Solver {
 				}
 			}
 			if(best>0){
-				k.changePol(i, best);
+			//	k.changePol(i, best);
 				if(addSteps(i, best, 1)){end();}
 			}
 		}
 	}
-	
+	private void solveFasterOverCross(){
+		for(int i = 0; i<5; i++){
+			for(int j = i+1; j<6; j++){
+				//Wenn nicht gegenüber und beide nicht gelöst
+				//System.out.println(i+" "+j);
+				//System.out.println(polGegenuber(i));
+				//System.out.println(SolveCheck.isPolSolved(i, k));
+				//System.out.println(SolveCheck.isPolSolved(j, k));
+				turnPolToOptinalPosition();
+				if(j!=polGegenuber(i)&&!SolveCheck.isPolSolved(i, k)&&!SolveCheck.isPolSolved(j, k)){
+					//System.out.println("Do cross accepted");
+					int pr = change2PolPositionPR(i,j);
+					int con1 = gemeinsameCons(i,j,0);
+					int con2 = gemeinsameCons(i,j,1);
+					int p1c1 = ConPol2Tri(con1, i);
+					int p1c2 = ConPol2Tri(con2, i);
+					int p2c1 = ConPol2Tri(con1, j);
+					int p2c2 = ConPol2Tri(con2, j);
+					//System.out.println("Cross c1:"+i+" c2:"+j+" c1:"+k.con[con1]+" c2:"+k.con[con2]+" p1c1:"+k.tri[p1c1]+" p1c2:"+k.tri[p1c2]+" p2c1:"+k.tri[p2c1]+" p2c2:"+k.tri[p2c2]);
+					//Alles Legal
+					if(p1c1!=-1&&p1c2!=-1&&p2c1!=-1&&p2c2!=-1){
+						//Pol 1/2 bereit
+						boolean p1ready = false;
+						boolean p2ready = false;
+						int goStep = 2;
+						int doTurn = 3;
+						int hpTurn = 1;
+						//int p1r = 0;
+						//int p2r = 0;
+						int pol1 = i;
+						//int pol2 = j;
+						if((i==1&&j==2)||(i==0&&j==4)||(i==0&&j==5)||(i==1&&j==5)||(i==2&&j==5)||(i==3&&j==5)||(i==0&&j==1)||(i==1&&j==4)||(i==2&&j==3)||(i==3&&j==4)||(i==2&&j==4)||(i==0&&j==3)){
+							doTurn = 1;
+						}
+						if((i==0&&j==3)){
+							hpTurn = 3;
+						}
+						if(k.tri[p1c1]==k.con[con2]&&k.tri[p1c2]==k.con[con1]){
+							p1ready = true;
+							//p1r = 1;
+						}else
+						if(k.tri[p1c1]==k.con[con1]&&k.tri[p1c2]==k.con[con2]){
+							p1ready = true;
+							goStep = 1;
+							//p1r = 2;
+						}else
+						if(k.tri[p1c1]==k.con[con1]&&k.tri[i*4+(((p1c1%4)+3)%4)]==k.con[con2]){
+						/*	k.changePol(i, 3);
+							if(addSteps(i, 3, 1)){end();}*/
+							p1ready = true;
+							//p1r = 3;
+						}else
+						if(k.tri[p1c2]==k.con[con2]&&k.tri[i*4+(((p1c2%4)+1)%4)]==k.con[con1]){
+							/*k.changePol(i, 1);
+							if(addSteps(i, 1, 1)){end();}*/
+							p1ready = true;
+							//p1r = 4;
+						}
+						
+						if(k.tri[p2c1]==k.con[con2]&&k.tri[p2c2]==k.con[con1]){
+							p2ready = true;
+						//	p2r = 1;
+						}else
+						if(k.tri[p2c1]==k.con[con1]&&k.tri[p2c2]==k.con[con2]&&goStep==2){
+							p2ready = true;
+							goStep = 1;
+							//p2r = 2;
+						}else
+						if(k.tri[p2c1]==k.con[con1]&&k.tri[j*4+(((p2c1%4)+3)%4)]==k.con[con2]){
+						/*	k.changePol(j, 1);
+							if(addSteps(j, 1, 1)){end();}*/
+							p2ready = true;
+							//p2r = 3;
+						}else
+						if(k.tri[p2c2]==k.con[con2]&&k.tri[j*4+(((p2c2%4)+1)%4)]==k.con[con1]){
+							/*k.changePol(j, 3);
+							if(addSteps(j, 3, 1)){end();}*/
+							p2ready = true;
+							//p2r = 4;
+						}
+						if(hpTurn==3){
+							/*int temp = pol1;
+							pol1 = pol2;
+							pol2 = temp;*/
+						}
+						//System.out.println(p1ready+" "+p1r+" : "+p2ready+" "+p2r);
+						if(p1ready&&p2ready){
+							//System.out.println("Cross done");
+							boolean isCorrect = false;
+							while(!isCorrect){
+								if((k.tri[p1c1]==k.con[con2]&&k.tri[p1c2]==k.con[con1])){
+									isCorrect=true;
+									goStep = 2;
+								}else
+								if((k.tri[p1c1]==k.con[con1]&&k.tri[p1c2]==k.con[con2])){
+									isCorrect=true;
+									goStep = 1;
+								}else{
+									//k.changePol(i, 1);
+									if(addSteps(i, 1, 1)){end();}
+								}
+							}
+							isCorrect = false;
+							while(!isCorrect){
+								if((k.tri[p2c1]==k.con[con2]&&k.tri[p2c2]==k.con[con1])){
+									isCorrect=true;
+									goStep = 2;
+								}else
+								if((k.tri[p2c1]==k.con[con1]&&k.tri[p2c2]==k.con[con2])&&goStep==2){
+									isCorrect=true;
+									goStep = 1;
+								/*}else
+								if(goStep==1){
+									isCorrect=true;*/
+								}else{
+									//k.changePol(j, 1);
+									if(addSteps(j, 1, 1)){end();}
+								}
+							}
+							//Pol zurecht drehen
+							//k.changePol(i, doTurn);
+							if(addSteps(i, doTurn, 1)){end();}
+							
+							//k.changePol(j, 1);
+							if(addSteps(j, 1, 1)){end();}
+							
+							//Kugel hin
+							//k.turnKugel(pr, hpTurn);
+							if(addSteps(pr, 1, 3)){end();}
+							
+							//Wechsel
+							//k.changePol(pol1, goStep);
+							if(addSteps(pol1, goStep, 1)){end();}
+							
+							//Kugel zurück
+							//k.turnKugel(pr, ((hpTurn+2)%4));
+							if(addSteps(pr, ((1+2)%4), 3)){end();}
+							
+							//Pol zurück
+							//k.changePol(j, 3);
+							if(addSteps(j, 3, 1)){end();}
+							
+						//	k.changePol(i, ((doTurn+2)%4));
+							if(addSteps(i, ((doTurn+2)%4), 1)){end();}
+						}
+						
+						
+						
+					}else{
+					//	System.out.println("Error");
+					}
+					
+					
+					
+					
+					
+				}else{
+					//System.out.println("Gegenüber oder gelöst");
+				}
+			}
+		}
+		
+	}
+	/**Welcher Pol ist gegenüber
+	 * @param pol
+	 * @return
+	 */
+	private int polGegenuber(int pol){
+		switch(pol){
+			case 0: return 2;
+			case 1: return 3;
+			case 2: return 0;
+			case 3: return 1;
+			case 4: return 5;
+			case 5: return 4;
+			default: return -1;
+		}
+	}
+	private int gemeinsameCons(int pol1, int pol2, int i){
+		if(pol1>pol2){
+			/*int temp = pol1;
+			pol1 = pol2;
+			pol2 = temp;*/
+			System.out.println("Error-->Klein später");
+		}
+		switch(pol1){
+			case 0:
+				switch(pol2){
+					case 1:
+						switch(i){
+							case 0: return 2;
+							case 1: return 6;
+						}
+					break;
+					case 3:
+						switch(i){
+							case 0: return 1;
+							case 1: return 5;
+						}
+					break;
+					case 4:
+						switch(i){
+							case 0: return 1;
+							case 1: return 2;
+						}
+					break;
+					case 5:
+						switch(i){
+							case 0: return 5;
+							case 1: return 6;
+						}
+					break;
+				}
+			break;
+			case 1:
+				switch(pol2){
+					case 2:
+						switch(i){
+							case 0: return 3;
+							case 1: return 7;
+						}
+					break;
+					case 4:
+						switch(i){
+							case 0: return 2;
+							case 1: return 3;
+						}
+					break;
+					case 5:
+						switch(i){
+							case 0: return 6;
+							case 1: return 7;
+						}
+					break;
+				}
+			break;
+			case 2:
+				switch(pol2){
+					case 3:
+						switch(i){
+							case 0: return 0;
+							case 1: return 4;
+						}
+					break;
+					case 4:
+						switch(i){
+							case 0: return 3;
+							case 1: return 0;
+						}
+					break;
+					case 5:
+						switch(i){
+							case 0: return 7;
+							case 1: return 4;
+						}
+					break;
+				}
+			break;
+			case 3:
+				switch(pol2){
+					case 4:
+						switch(i){
+							case 0: return 0;
+							case 1: return 1;
+						}
+					break;
+					case 5:
+						switch(i){
+							case 0: return 4;
+							case 1: return 5;
+						}
+					break;
+				}
+			break;
+		}
+		return -1;
+	}
+	private int ConPol2Tri(int con, int pol){
+		switch(con){
+		case 0:
+			switch(pol){
+				case 2: return 11;
+				case 3: return 15;
+				case 4: return 18;
+			}
+		break;
+		case 1:
+			switch(pol){
+				case 0: return 3;
+				case 3: return 12;
+				case 4: return 19;
+			}
+		break;
+		case 2:
+			switch(pol){
+				case 0: return 0;
+				case 1: return 4;
+				case 4: return 16;
+			}
+		break;
+		case 3:
+			switch(pol){
+				case 1: return 7;
+				case 2: return 8;
+				case 4: return 17;
+			}
+		break;
+		case 4:
+			switch(pol){
+				case 2: return 10;
+				case 3: return 14;
+				case 5: return 22;
+			}
+		break;
+		case 5:
+			switch(pol){
+				case 0: return 2;
+				case 3: return 13;
+				case 5: return 23;
+			}
+		break;
+		case 6:
+			switch(pol){
+				case 0: return 1;
+				case 1: return 5;
+				case 5: return 20;
+			}
+		break;
+		case 7:
+			switch(pol){
+				case 1: return 6;
+				case 2: return 9;
+				case 5: return 21;
+			}
+		break;
+		
+		}
+		return -1;
+	}
+	private ArrayList<String> advancedTurnMinimizer(ArrayList<String> arrayList){
+		for(int i = 0; i<6;i++){
+			int lastTurnPos = 0;
+			int[] lastPos = new int[4];
+			int anz = 0;
+			Arrays.fill(lastPos,-1);
+			for(int j = 0; j<arrayList.size()-1;j++){
+				//pol, anz, modus
+				int[] aktOpt = k.SplitDrehungFromSphere(arrayList.get(j));
+				int[] akt = k.GetPolFromSphereString(arrayList.get(j),i);
+				Arrays.sort(akt);
+				Arrays.sort(lastPos);
+				if(aktOpt[0]==i&&aktOpt[2]==1&&Arrays.equals(akt,lastPos)){
+					anz+=aktOpt[1];
+					anz%=4;
+					arrayList.set(j, k.SphereWithoutDrehungAndStep(arrayList.get(j))+"n"+j+"n"+aktOpt[0]+""+(anz)+""+aktOpt[2]);
+					arrayList.remove(lastTurnPos);
+					lastPos = k.GetPolFromSphereString(arrayList.get(j),i);
+				}else
+				if(aktOpt[0]==i&&aktOpt[2]==1&&lastTurnPos==-1){
+					lastTurnPos = j;
+					anz+=aktOpt[1];
+					lastPos = k.GetPolFromSphereString(arrayList.get(j),i);
+				}else
+				if(aktOpt[0]==1&&aktOpt[2]==1){
+					lastTurnPos =-1;
+					anz = 0;
+					Arrays.fill(lastPos,-1);
+				}
+			}
+		}
+		for(int i = 0; i<arrayList.size();i++){
+			//Neu Nummerieren...
+			arrayList.set(i,k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+k.SplitDrehungFromSphereAsS(arrayList.get(i)));
+			//System.out.println(arrayList.get(i));
+		}
+		return arrayList;
+	}
 }

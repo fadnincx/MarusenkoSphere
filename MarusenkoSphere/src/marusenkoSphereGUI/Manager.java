@@ -33,10 +33,14 @@ public class Manager {
 		
 		//Berechne die Trigonimetrischen Funktionen bereits hier, damit diese später schon berechnet sind
 		Trigonometrie.CalcTrigonometrie();
-		
+		try{
+			rendern = new Rendern(k,displayMode);
+			cp = new ControlPanel(this,displayMode);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		//Initialisiere die Fenster (KugelRendern und ControlPanel)
-		rendern = new Rendern(k,displayMode);
-		cp = new ControlPanel(this,displayMode);
+		
 		
 		//Fülle Kugel zufällig
 		fillSphere();
@@ -50,7 +54,7 @@ public class Manager {
 	 * Wartet bis time Millisekunden verstrichen sind
 	 * @param time
 	 */
-	public void update(long time){
+	protected void update(long time){
 		//setze Startzeit
 		long startTime = System.nanoTime();
 		//Vergangene Zeit = jetzt - Startzeit
@@ -69,7 +73,7 @@ public class Manager {
 	 * Setzt die Kugel des Managers neu, und führt anschliessend alle Updatefunktionen aus
 	 * @param k
 	 */
-	public void updateKugel(Kugel k){
+	protected void updateKugel(Kugel k){
 		this.k = k;
 		updateList();
 		renderKugel();
@@ -77,30 +81,28 @@ public class Manager {
 	/**
 	 * Startet das Rendern der Kugel
 	 */
-	public void renderKugel(){
+	protected void renderKugel(){
 		rendern.updateKugel(k,displayMode);
 	}
 	/**
 	 * Zeit die Gelöste Kugel an
 	 */
-	public void startSolve(){
-		//k = SetToState.getKugelFromArrayList(k);
-		//updateList();
-		doQuetoEnd = true;
+	protected void startSolve(){
+		doQuetoEnd = !doQuetoEnd;
 	}
 	/**
 	 * Füllt die Kugel zufällig
 	 */
-	public void fillSphere(){
+	protected void fillSphere(){
+		doQuetoEnd = false;
 	    k.FillKugelRandom();
 		updateList();   
-		doQuetoEnd = false;
 	}
 	/**
 	 * Füllt die Kugel gemäss String s
 	 * @param s : Kugel als String 
 	 */
-	public void fillSphere(String s){
+	protected void fillSphere(String s){
 		k.FillKugelFromString(s);
 		updateList();
 		doQuetoEnd = false;
@@ -108,20 +110,20 @@ public class Manager {
 	/**
 	 * Updatet die Stats Liste im ControlPanel
 	 */
-	public void updateList(){
+	protected void updateList(){
 		cp.updateKugelState(k.getStep(), SetToState.getSolvingLength(k.SolvingList)-1);
 	}
 	/**
 	 * Geht im Lösungsprozess eine Position weiter
 	 */
-	public void oneStep(){
+	protected void oneStep(){
 		k = SetToState.getKugelFromArrayList(k,k.getStep()+1);
 		updateList();
 	}
 	/**
 	 * Geht im Lösungsprozess eine Position zurück
 	 */
-	public void backStep(){
+	protected void backStep(){
 		k = SetToState.getKugelFromArrayList(k,k.getStep()-1);
 		 updateList();
 	}
@@ -129,7 +131,7 @@ public class Manager {
 	 * Geht im Lösungsprozess zur gegebenen Position
 	 * @param s
 	 */
-	public void setPos(String s){
+	protected void setPos(String s){
 		int i = Integer.parseInt(s);
 		k = SetToState.getKugelFromArrayList(k,i);
 		updateList();
@@ -192,7 +194,7 @@ public class Manager {
 	 * @param y
 	 * @param mode
 	 */
-	public void rendernDrehen(float y, float x, float z, int mode){
+	protected void rendernDrehen(float y, float x, float z, int mode){
 		switch(mode){
 		case 0: 
 			rendern.drehen(x,y,z);

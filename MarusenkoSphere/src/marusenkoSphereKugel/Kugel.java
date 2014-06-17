@@ -35,7 +35,8 @@ public class Kugel{
 	 * Konstruktor des Kugel Objekt, generiert gleich die erste Kugel, damit es nirgends zu fehlern, wegen nicht gesetzten Variablen kommt
 	 */
 	public Kugel(){
-		FillKugelRandom();
+		//FillKugelRandom();
+		FillKugelFromStringWithoutSolvingList("00000000000000000000000000000000n0n000");
 	}
 	
 	/**
@@ -72,6 +73,14 @@ public class Kugel{
 		s = s.trim();
 		String[] sp = s.split("n");
 		return sp[0];
+	}
+	protected int[] GetPolFromSphereString(String s, int Pol){
+		int[] i = new int[4];
+		i[0] = Integer.parseInt(s.substring(((Pol*4+0)+8),((Pol*4+0)+9)));
+		i[1] = Integer.parseInt(s.substring(((Pol*4+1)+8),((Pol*4+1)+9)));
+		i[2] = Integer.parseInt(s.substring(((Pol*4+2)+8),((Pol*4+2)+9)));
+		i[3] = Integer.parseInt(s.substring(((Pol*4+3)+8),((Pol*4+3)+9)));
+		return i;
 	}
 	/**
 	 * Setzt die Kugel gemäss eines Inputstrings ohne Lösen der Kugel, bzw ohne überschreiben des Lösungsweges
@@ -122,7 +131,7 @@ public class Kugel{
 			}
 			
 			
-			System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung);
+			System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung+" Sphere: "+s);
 		}else{
 			Log.ErrorLog("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
 		}
@@ -423,14 +432,14 @@ public class Kugel{
 	
 	/**
 	 * Funktion welche change4Tri(int p1, int p2, int p3, int p4) korrekt aufruft, wenn PolNr und Anzahl der Drehungen gegeben werden  
-	 * Gegen Uhrzeigersinn
+	 * Gegen Uhrzeigersinn mit Korrektur
 	 * 
 	 * @param polNr : welcher Pol gedreht wird (int)(Dreieck id / 4) 
 	 * @param anz : um welche Anzahl soll gedreht werden
 	 */
 	protected  void changePol(int polNr, int anz){
 		for(int i = 0; i<anz;i++){
-			if(polNr==1||polNr==2||polNr==4){
+			if((polNr==1||polNr==2||polNr==4)){
 				change4Tri(4*polNr+3,4*polNr+2,4*polNr+1,4*polNr);
 			}else{
 				change4Tri(4*polNr,4*polNr+1,4*polNr+2,4*polNr+3);
@@ -438,6 +447,7 @@ public class Kugel{
 			
 		}
 	}
+	
 	
 	/**
 	 * Alias für findCons(int p, int i) wobei i = 0; 
@@ -578,5 +588,4 @@ public class Kugel{
 		}//#End switch con
 		
 	}
-
 }

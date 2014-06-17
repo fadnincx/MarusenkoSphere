@@ -31,15 +31,20 @@ public class Main {
 		if(StartArgs.contains("konsole")||StartArgs.contains("console")||StartArgs.contains("ng")||StartArgs.contains("-ng")){
 			konsole = true;
 		}
-		
+		System.out.println("started");
 		//Kugel
 		Kugel k = new Kugel();
-		
+		//System.out.println("kugel");
 		
 		//Entscheide, ob GUI oder Konsole gestarted wird
 		if(!konsole){
 			//Starte GUI
-			Manager m = new Manager(k);
+			try{
+				Manager m = new Manager(k);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			
 		}else{			
 			//Starte Konsole
 			Konsole c = new Konsole(k);
