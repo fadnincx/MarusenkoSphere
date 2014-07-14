@@ -24,7 +24,8 @@ public class Log {
 	/**
 	 * Die Konstante mit dem Speicherpfad für die Logs
 	 */
-	public static final String LOG_PATH = "/home/marcel/marusenkoLog";
+	//public static final String LOG_PATH = "/home/marcel/marusenkoLog";
+	public static final String LOG_PATH = "D:/marusenkoLog";
 	
 	/**
 	 * Schreibe ErrorLog zu Datei
@@ -103,7 +104,7 @@ public class Log {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		
-		//Vor die Ausgabe Datum h�ngen
+		//Vor die Ausgabe Datum hängen
 		out = out+("\n"+dateFormat.format(date)+" ");
 		out = out+log;
 		

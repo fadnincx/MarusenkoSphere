@@ -36,6 +36,8 @@ public class Rendern {
     private float rtriy;                 
     private float rtrix;
     private float rtriz;
+    
+    
 
     
     /**
@@ -105,6 +107,8 @@ public class Rendern {
     		break;
     	default:
     		//Rendere die Kugel mit der externen Funktion
+    		
+    		GLU.gluLookAt(rtrix, rtrix, rtrix, rtrix, rtrix, rtrix, rtrix, rtrix, rtrix);
         	RenderKugel.render(k, rtrix, rtriy, rtriz); 
     		break;
     	}
@@ -128,7 +132,7 @@ public class Rendern {
     }
     public void updateFPS() {
     	if (getTime() - lastFPS > 1000) {
-    		Display.setTitle("FPS: " + fps);
+    		Display.setTitle(windowTitle+" - FPS: " + fps);
     		fps = 0;
     		lastFPS += 1000;
     	}
@@ -397,10 +401,11 @@ public class Rendern {
         GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
         GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
         GL11.glEnable(GL11.GL_BLEND);
+        
        //Definiere die Rotation der Kugel zu begin auf 0.0 in allen Achsen (x, y und z)
-        rtrix=0.0f;
-        rtriy=0.0f; 
-        rtriz=0.0f;
+        rtrix=20.0f;
+        rtriy=45.0f; 
+        rtriz=20.0f;
 
     }
     
@@ -411,6 +416,14 @@ public class Rendern {
     	rtrix += x*40;
     	rtriy += y*40;
     	rtriz += z*40;
+    	//System.out.println(rtrix+" "+rtriy+" "+rtriz);
+    }
+    protected float[] getDrehen(){
+    	float[] drehen = new float[3];
+    	drehen[0] = rtrix;
+    	drehen[1] = rtriy;
+    	drehen[2] = rtriz;
+    	return drehen;
     }
     
     /**

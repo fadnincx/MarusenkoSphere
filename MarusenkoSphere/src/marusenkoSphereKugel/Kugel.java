@@ -43,6 +43,17 @@ public class Kugel{
 	 * Setzte die Kugel gemäss eines Inputstrings
 	 * @param s
 	 */
+	public void FillKugelFromString(String s,boolean solving){
+		//Führe die Funktion ohne lösen der Kugel durch
+		FillKugelFromStringWithoutSolvingList(s);
+		if(solving){
+			//Löse die Kugel
+			UpdateSolvingList();
+		}else{
+			SolvingList.clear();
+			SolvingList.add(getSphere()+"n0n000");
+		}
+	}
 	public void FillKugelFromString(String s){
 		//Führe die Funktion ohne lösen der Kugel durch
 		FillKugelFromStringWithoutSolvingList(s);
@@ -130,8 +141,19 @@ public class Kugel{
 				drehRichtung = 1;
 			}
 			
-			
-			System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung+" Sphere: "+s);
+			System.out.println(s);
+		//	System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung+" Sphere: "+s);
+		}else if(sp[0].length()==32){
+			for(int i = 0; i<8;i++){
+				con[i]=Integer.parseInt(s.substring(i, i+1));
+			}
+			for(int i = 0; i<24;i++){
+				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
+			}
+			step=0;
+			drehung="000";
+			standRot = 0.0;
+			drehRichtung = 1;
 		}else{
 			Log.ErrorLog("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
 		}
@@ -273,7 +295,7 @@ public class Kugel{
 		//Die SolvingList ist das Resultat eines neuen Objekts Solver und dessen Methode solve mit dieser Kugel als Argument 
 		this.SolvingList = new Solver().solve(this);
 		//Setzte die Kugel in den Zustand zu beginn
-		
+		System.out.println(SolvingList.toString());
 		FillKugelFromStringWithoutSolvingList(SolvingList.get(0));
 		System.out.println(getSphere());
 	}

@@ -43,6 +43,7 @@ public class RenderKugel {
         GL11.glRotatef(ry,0.0f,1.0f,0.0f);
         GL11.glRotatef(rx,1.0f,0.0f,0.0f);
         GL11.glRotatef(rz,0.0f,0.0f,1.0f);
+        
 
         //Starte das Zeichnen der einzelnen Flächen der Kugel als Dreiecke
         GL11.glBegin(GL11.GL_TRIANGLES);
@@ -909,9 +910,10 @@ public class RenderKugel {
         		}
         		
         	}
+        	/*
         	for(int i = 0; i<8; i++){
         		
-        		//Setzet Drehung zur�ck auf 0
+        		//Setzet Drehung zurück auf 0
     			drehx = 0;
     			drehy = 0;
     			drehz = 0;
@@ -1019,7 +1021,7 @@ public class RenderKugel {
         		
         	}
         	
-        
+        */
         
         GL11.glEnd();
         

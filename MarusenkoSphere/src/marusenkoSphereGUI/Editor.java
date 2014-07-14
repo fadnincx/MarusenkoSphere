@@ -235,9 +235,9 @@ public class Editor {
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
 		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
 		
-		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, model);
+		/*GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, model);
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
-		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
+		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);*/
 		
 		FloatBuffer z = BufferUtils.createFloatBuffer(1);
 		GL11.glReadPixels((int) x, (int) y, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, z);

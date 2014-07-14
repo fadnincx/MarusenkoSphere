@@ -71,11 +71,13 @@ public class Solver {
 		if(k.step>10000){
 			Log.ErrorLog(solvingWay.get(0));
 			Log.ErrorLog("Zuviele Schritte nötig!!!");
+			k.step-=10000;
+			Thread.getAllStackTraces();
 			return true;
 		}
 		//Füge Kugel zum Lösungsprozess hinzu
 		solvingWay.add(k.getSphere(""+pol+anz+modus));
-		
+		//System.out.println(k.getSphere(""+pol+anz+modus));
 		return false;
 	}
 	
@@ -129,51 +131,42 @@ public class Solver {
 		consLog("Phase 2");
 		//Array ok erneut zurück auf false setzen
 		Arrays.fill(ok, false); 
+		
 		//Drehe Pole in Optimale Position
 		turnPolToOptinalPosition();
+
 		//Pol schneller lösen
 		solveFasterOverCross();
-		//System.out.println("Done CrossOver");
+		
+		//Prüfe ob Kugel noch Korrekt ist, oder ob es einen Fehler gibt
 		checkIfP1IsOK();
 		if(SolveCheck.ArrayIsFullyOk(ok)){
+			
+			//So lange die Kugel nicht gelöst ist...
 			while(!SolveCheck.isKugelSolved(k)){
+				
 				//Gehe Jeden Pol durch
 				for(int i = 0; i<6; i++){
+					
 					//Wenn Pol noch nicht gelöst, löse ihn
-					if(!SolveCheck.isPolSolved(i,k)){
-						//System.out.println("Pol "+i+" not solved");
+					if(!SolveCheck.isPolSolved(i,k)){		
 						solvePol(i);
-						//System.out.println("Pol "+i+" solved");
-						//Abbrechen, falls gefordert
+						//Wenn zulang --> Fehler dann breche ab!
 						if(end){return solvingWay;}
 					}
 				}
-				consLog("Spher not solved");
+				consLog("Sphere not solved");
 			}	
 		}else{
 			System.out.println("Nicht korrekte Kugel!!!");
 			
 		}
-		//System.out.println(SolveCheck.ArrayIsFullyOk(ok)+" Kugel in ordnung");
-		
-		//Solange Kugel nicht gelöst
 			
-		/*String debug = "";
-		for(int i = 0; i<solvingWay.size();i++){
-			debug=debug+"\n"+solvingWay.get(i);
-		}
-		
-		solvingWay = RemoveUnusedSteps(solvingWay);
-		for(int i = 0; i<solvingWay.size();i++){
-			debug=debug+"\n"+solvingWay.get(i);
-		}
-		*/
-		//Log.DebugLog(debug);
-		
-		
 		//Gib die gelöste Kugel zurück
-		return RemoveUnusedSteps(solvingWay);
+		
+		return advancedTurnMinimizer(RemoveUnusedSteps(solvingWay));
 		//return solvingWay;
+		
 	}//#END solve(Kugel kugel)
 	
 	
@@ -494,7 +487,7 @@ public class Solver {
 			}
 		}
 		//Solange Pol nicht gelöst, noch einen Anlauf wagen 
-		while(!SolveCheck.isPolSolved(polNr,k)||!end){
+		while(!SolveCheck.isPolSolved(polNr,k)&&!end){
 			//Gehe jede Position durch
 			for(int i = 0; i<4; i++){
 				//Wenn noch nicht korrekt
@@ -859,7 +852,7 @@ public class Solver {
 		dreh = k.SplitDrehungFromSphere(arrayList.get(arrayList.size()-1));
 		arrayList.set(arrayList.size()-1, k.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-1))+"n"+(arrayList.size()-1)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
 		//Gib arraylist zurück
-		return advancedTurnMinimizer(arrayList);
+		return arrayList;
 		
 	}
 	/**
@@ -904,6 +897,7 @@ public class Solver {
 				turnPolToOptinalPosition();
 				if(j!=polGegenuber(i)&&!SolveCheck.isPolSolved(i, k)&&!SolveCheck.isPolSolved(j, k)){
 					//System.out.println("Do cross accepted");
+					//System.out.println("Anz Steps: "+k.step);
 					int pr = change2PolPositionPR(i,j);
 					int con1 = gemeinsameCons(i,j,0);
 					int con2 = gemeinsameCons(i,j,1);
@@ -932,7 +926,7 @@ public class Solver {
 						}
 						if(k.tri[p1c1]==k.con[con2]&&k.tri[p1c2]==k.con[con1]){
 							p1ready = true;
-							//p1r = 1;
+						//	p1r = 1;
 						}else
 						if(k.tri[p1c1]==k.con[con1]&&k.tri[p1c2]==k.con[con2]){
 							p1ready = true;
@@ -954,7 +948,7 @@ public class Solver {
 						
 						if(k.tri[p2c1]==k.con[con2]&&k.tri[p2c2]==k.con[con1]){
 							p2ready = true;
-						//	p2r = 1;
+							//p2r = 1;
 						}else
 						if(k.tri[p2c1]==k.con[con1]&&k.tri[p2c2]==k.con[con2]&&goStep==2){
 							p2ready = true;
@@ -979,9 +973,11 @@ public class Solver {
 							pol2 = temp;*/
 						}
 						//System.out.println(p1ready+" "+p1r+" : "+p2ready+" "+p2r);
+						//System.out.println("Anz vor ready Steps: "+k.step);
 						if(p1ready&&p2ready){
 							//System.out.println("Cross done");
 							boolean isCorrect = false;
+							boolean doNothing = false;
 							while(!isCorrect){
 								if((k.tri[p1c1]==k.con[con2]&&k.tri[p1c2]==k.con[con1])){
 									isCorrect=true;
@@ -995,6 +991,8 @@ public class Solver {
 									if(addSteps(i, 1, 1)){end();}
 								}
 							}
+						//	System.out.println("Anz Steps nach 1: "+k.step);
+							
 							isCorrect = false;
 							while(!isCorrect){
 								if((k.tri[p2c1]==k.con[con2]&&k.tri[p2c2]==k.con[con1])){
@@ -1004,57 +1002,64 @@ public class Solver {
 								if((k.tri[p2c1]==k.con[con1]&&k.tri[p2c2]==k.con[con2])&&goStep==2){
 									isCorrect=true;
 									goStep = 1;
-								/*}else
-								if(goStep==1){
-									isCorrect=true;*/
+								}else
+								if((k.tri[p2c1]==k.con[con1]&&k.tri[p2c2]==k.con[con2])){
+									doNothing = true;
+									isCorrect = true;
 								}else{
 									//k.changePol(j, 1);
 									if(addSteps(j, 1, 1)){end();}
 								}
 							}
-							//Pol zurecht drehen
-							//k.changePol(i, doTurn);
-							if(addSteps(i, doTurn, 1)){end();}
+						//	System.out.println("Anz Steps nach 2: "+k.step);
 							
-							//k.changePol(j, 1);
-							if(addSteps(j, 1, 1)){end();}
+							if(!doNothing){
+								//Pol zurecht drehen
+								//k.changePol(i, doTurn);
+								if(addSteps(i, doTurn, 1)){end();}
+								
+								//k.changePol(j, 1);
+								if(addSteps(j, 1, 1)){end();}
+								
+								//Kugel hin
+								//k.turnKugel(pr, hpTurn);
+								if(addSteps(pr, 1, 3)){end();}
+								
+								//Wechsel
+								//k.changePol(pol1, goStep);
+								if(addSteps(pol1, goStep, 1)){end();}
+								
+								//Kugel zurück
+								//k.turnKugel(pr, ((hpTurn+2)%4));
+								if(addSteps(pr, ((1+2)%4), 3)){end();}
+								
+								//Pol zurück
+								//k.changePol(j, 3);
+								if(addSteps(j, 3, 1)){end();}
+								
+								//k.changePol(i, ((doTurn+2)%4));
+								if(addSteps(i, ((doTurn+2)%4), 1)){end();}
+							}
 							
-							//Kugel hin
-							//k.turnKugel(pr, hpTurn);
-							if(addSteps(pr, 1, 3)){end();}
 							
-							//Wechsel
-							//k.changePol(pol1, goStep);
-							if(addSteps(pol1, goStep, 1)){end();}
-							
-							//Kugel zurück
-							//k.turnKugel(pr, ((hpTurn+2)%4));
-							if(addSteps(pr, ((1+2)%4), 3)){end();}
-							
-							//Pol zurück
-							//k.changePol(j, 3);
-							if(addSteps(j, 3, 1)){end();}
-							
-						//	k.changePol(i, ((doTurn+2)%4));
-							if(addSteps(i, ((doTurn+2)%4), 1)){end();}
 						}
 						
 						
 						
 					}else{
-					//	System.out.println("Error");
+						System.out.println("Error");
 					}
 					
-					
+					//System.out.println("Anz Steps: "+k.step);
 					
 					
 					
 				}else{
-					//System.out.println("Gegenüber oder gelöst");
+				//	System.out.println("Gegenüber oder gelöst");
 				}
 			}
 		}
-		
+		//System.out.println("Done with CrossOver");
 	}
 	/**Welcher Pol ist gegenüber
 	 * @param pol

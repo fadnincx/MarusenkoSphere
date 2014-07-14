@@ -102,10 +102,13 @@ public class Manager {
 	 * Füllt die Kugel gemäss String s
 	 * @param s : Kugel als String 
 	 */
-	protected void fillSphere(String s){
-		k.FillKugelFromString(s);
+	protected void fillSphere(String s, boolean solving){
+		k.FillKugelFromString(s, solving);
 		updateList();
 		doQuetoEnd = false;
+	}
+	protected void fillSphere(String s){
+		fillSphere(s, true);
 	}
 	/**
 	 * Updatet die Stats Liste im ControlPanel
@@ -137,6 +140,12 @@ public class Manager {
 		updateList();
 	}
 	protected void changeToMode(int i){
+		if(displayMode==1){
+			if(isSphereAllowed()){
+				k.resetStep();
+				fillSphere(k.getSphere());
+			}
+		}
 		displayMode = i;
 		cp.updateMode(displayMode);
 		System.out.println("Mode: "+displayMode);
@@ -197,13 +206,52 @@ public class Manager {
 	protected void rendernDrehen(float y, float x, float z, int mode){
 		switch(mode){
 		case 0: 
-			rendern.drehen(x,y,z);
+			//rendern.drehen(x,y,z);
+			advancedDrehen(x, y, z);
 			break;
 		case 1:
 			rendern.setDrehen(x,y,z);
 			break;
 		}
 	}
+	protected void advancedDrehen(float x, float y, float z){
+		float[] oldDrehen = rendern.getDrehen(); 
+		double drehenX = oldDrehen[0];
+		double drehenY = oldDrehen[1];
+		double drehenZ = oldDrehen[2];
+		
+		
+		//Für X
+		drehenY+=Math.abs(Math.sin(Math.toRadians(drehenY)))*x*40;
+		drehenZ+=Math.abs(Math.sin(Math.toRadians(drehenZ)))*x*40;
+		drehenX+=x*40;
+		
+		
+		
+		
+		//Für Y
+		
+		drehenX+=Math.abs(Math.sin(Math.toRadians(drehenX)))*y*40;
+		drehenZ+=Math.abs(Math.sin(Math.toRadians(drehenZ)))*y*40;
+		drehenY+=y*40;
+		
+		
+		
+		/*drehenX+=x*40;
+		drehenY+=y*40;
+		drehenZ+=z*40;*/
+		
+		drehenX%=360;
+		drehenY%=360;
+		drehenZ%=360;
+		
+		
+		System.out.println("X: "+drehenX+" Y: "+drehenY+" Z: "+drehenZ);
+		
+		
+		rendern.setDrehen((float)drehenX,(float)drehenY,(float)drehenZ);
+	}
+	
 	protected void editSphereTri(int n){
 		k.tri[n] = selectedColor;
 		updateSphere();
