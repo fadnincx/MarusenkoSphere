@@ -20,28 +20,31 @@ public class Kugel{
 	//Aktueller Status
 	public int[] tri = new int[24]; //Array für die Dreiecke (Triangles)
 	public int[] con = new int[8]; //Array für die Verbindungsstücke (Connectors)
-	public String drehung = "000";
-	public String oldDrehung = "000";
-	public int drehRichtung = 1;
-	public double standRot = 0.0;
-	protected int oldStep = 0;
+	//public String drehung = "000";
+	//public String oldDrehung = "000";
+	//public int drehRichtung = 1;
+	//public double standRot = 0.0;
+	//public boolean drehDouble = false;
+	//protected int oldStep = 0;
 	//Für ganzer Lösungsweg
 	public ArrayList<String> SolvingList = new ArrayList<String>(); //Arraylist mit dem Lösungsweg
 	protected int step = 0; //Wo in der Liste ist der Aktuelle Status
-	
+	public DrehungsManager dm;
 	
 	
 	/**
 	 * Konstruktor des Kugel Objekt, generiert gleich die erste Kugel, damit es nirgends zu fehlern, wegen nicht gesetzten Variablen kommt
 	 */
 	public Kugel(){
+		dm = new DrehungsManager();
 		//FillKugelRandom();
 		FillKugelFromStringWithoutSolvingList("00000000000000000000000000000000n0n000");
 	}
 	
 	/**
 	 * Setzte die Kugel gemäss eines Inputstrings
-	 * @param s
+	 * @param s : Inputstring
+	 * @param solving : ob Kugel gelöst werden soll
 	 */
 	public void FillKugelFromString(String s,boolean solving){
 		//Führe die Funktion ohne lösen der Kugel durch
@@ -54,12 +57,21 @@ public class Kugel{
 			SolvingList.add(getSphere()+"n0n000");
 		}
 	}
+	/**
+	 * Setzte Kugel gemäss Inputstring mit Lösen
+	 * @param s : Inputstring
+	 */
 	public void FillKugelFromString(String s){
 		//Führe die Funktion ohne lösen der Kugel durch
 		FillKugelFromStringWithoutSolvingList(s);
 		//Löse die Kugel
 		UpdateSolvingList();
 	}
+	/**
+	 * Drehung aus dem String bekommen und als int-Array zurückgeben
+	 * @param s
+	 * @return
+	 */
 	protected int[] SplitDrehungFromSphere(String s){
 		s = SplitDrehungFromSphereAsS(s);
 		int[] i = new int[3];
@@ -70,21 +82,41 @@ public class Kugel{
 		}
 		return i;
 	}
+	/**
+	 * Drehung aus dem String bekommen und als String zurückgeben
+	 * @param s
+	 * @return
+	 */
 	protected String SplitDrehungFromSphereAsS(String s){
 		s = s.trim();
 		String[] sp = s.split("n");
 		return sp[2];
 	}
+	/**Drehung aus dem String bekommen und als int zurückgeben
+	 * @param s
+	 * @return
+	 */
 	protected int SplitDrehungFromSphereAsI(String s){
 		System.out.println(s);
 		s = SplitDrehungFromSphereAsS(s);
 		return Integer.parseInt(s);
 	}
+	/**
+	 * Bekomme Kugel ohne Drehung und Step
+	 * @param s
+	 * @return
+	 */
 	protected String SphereWithoutDrehungAndStep(String s){
 		s = s.trim();
 		String[] sp = s.split("n");
 		return sp[0];
 	}
+	/**
+	 * Bekomme die 4 Werte eines Pols aus dem String als int-Array
+	 * @param s
+	 * @param Pol
+	 * @return
+	 */
 	protected int[] GetPolFromSphereString(String s, int Pol){
 		int[] i = new int[4];
 		i[0] = Integer.parseInt(s.substring(((Pol*4+0)+8),((Pol*4+0)+9)));
@@ -93,6 +125,7 @@ public class Kugel{
 		i[3] = Integer.parseInt(s.substring(((Pol*4+3)+8),((Pol*4+3)+9)));
 		return i;
 	}
+	
 	/**
 	 * Setzt die Kugel gemäss eines Inputstrings ohne Lösen der Kugel, bzw ohne überschreiben des Lösungsweges
 	 * @param s
@@ -110,17 +143,16 @@ public class Kugel{
 			for(int i = 0; i<24;i++){
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
 			}
-			
-			
-			oldDrehung = drehung;
-			oldStep = step;
+			dm.setNewDrehung(s,SolvingList);
+			//oldDrehung = drehung;
+			//oldStep = step;
 			
 			//Update den Step
 			step = Integer.parseInt(sp[1]);
-
+/*
 			drehung = sp[2];
 			
-			
+			drehDouble = false;
 			if(Integer.parseInt(drehung.substring(1, 2)) == 0){
 				standRot = 0.0;
 				drehRichtung = 1;
@@ -132,6 +164,7 @@ public class Kugel{
 			if(Integer.parseInt(drehung.substring(1, 2)) == 2){
 				standRot = 180.0;
 				drehRichtung = 1;
+				drehDouble = true;
 			}else
 			if(Integer.parseInt(drehung.substring(1, 2)) == 3){
 				standRot = 90.0;
@@ -140,7 +173,7 @@ public class Kugel{
 				standRot = 0.0;
 				drehRichtung = 1;
 			}
-			
+			*/
 			System.out.println(s);
 		//	System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung+" Sphere: "+s);
 		}else if(sp[0].length()==32){
@@ -150,10 +183,11 @@ public class Kugel{
 			for(int i = 0; i<24;i++){
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
 			}
+			dm.setNewDrehung(sp[0]+"n0n000",SolvingList);
 			step=0;
-			drehung="000";
+		/*	drehung="000";
 			standRot = 0.0;
-			drehRichtung = 1;
+			drehRichtung = 1;*/
 		}else{
 			Log.ErrorLog("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
 		}
@@ -244,9 +278,9 @@ public class Kugel{
 	 * Getter-Methode für den OldStep
 	 * @return
 	 */
-	public int getOldStep(){
+	/*public int getOldStep(){
 		return this.oldStep;
-	}
+	}*/
 	
 	
 	/**
@@ -482,7 +516,7 @@ public class Kugel{
 	}
 	
 	/**
-	 * Gibt den i-ten con des tri[p] zurück --> Wird benütigt, für die Grob Sortierung
+	 * Gibt den i-ten con des tri[p] zurück --> Wird benötigt, für die Grob Sortierung
 	 * @param p : tri[p] für con
 	 * @param i : den i-ten Pol
 	 * @return index von con
@@ -609,5 +643,27 @@ public class Kugel{
 				return -1;
 		}//#End switch con
 		
+	}
+	protected int[] conToPos(int con){
+		switch(con){
+		case 0:
+			return new int[]{11,15,18};
+		case 1:
+			return new int[]{3,12,19};
+		case 2:
+			return new int[]{0,4,16};
+		case 3:
+			return new int[]{7,8,17};
+		case 4:
+			return new int[]{10,14,22};
+		case 5:
+			return new int[]{2,13,23};
+		case 6:
+			return new int[]{1,5,20};
+		case 7:
+			return new int[]{6,9,21};
+		default:
+			return new int[]{-1,-1,-1};
+		}
 	}
 }

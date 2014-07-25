@@ -1,6 +1,6 @@
 package marusenkoSphereGUI;
 /**
- * Queue - Manager : Ist für das Abarbeiten des Queue, welches die änderungsbefehle  enthält, zuständig
+ * Queue - Manager : Ist für das Abarbeiten des Queue, welches die Änderungsbefehle  enthält, zuständig
  * @author marcel
  *
  */
@@ -15,7 +15,7 @@ public class QueueManager {
 		//Setzte die Variable, dass Queue weiter gehen soll auf false
 		Manager.doQueue = false;
 		
-		//Wenn die Variable bis zum Ende l�sen wahr ist
+		//Wenn die Variable bis zum Ende lösen wahr ist
 		if(Manager.doQuetoEnd){
 			
 			//Wenn am Ende Angekommen, dann setze die Variable auf false
@@ -24,23 +24,23 @@ public class QueueManager {
 			}
 			
 			//Gehe einen Schritt weiter
-			m.oneStep();
+			m.addOneStep();
 		}else
-			//Wenn das Queue noch nicht leer ist, dann f�hre die Aktion aus
+			//Wenn das Queue noch nicht leer ist, dann führe die Aktion aus
 		if(m.toDoQueue.size()>0){
 			
-			//Bekomme den String aus dem Queue und l�sche ihn zugleich
+			//Bekomme den String aus dem Queue und lösche ihn zugleich
 			String s = m.toDoQueue.poll();
 			
-			//Gehe nach weiter oder zur�ck
+			//Gehe nach weiter oder zurück
 			switch(s){
 			case "x":
 				//Weiter gehen
-				m.oneStep();
+				m.addOneStep();
 				break;
 			case "y":
-				//Zur�ck gehen
-				m.backStep();
+				//Zurück gehen
+				m.subOneStep();
 				break;
 			}
 		}

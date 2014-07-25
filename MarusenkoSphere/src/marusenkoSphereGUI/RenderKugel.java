@@ -49,25 +49,27 @@ public class RenderKugel {
         GL11.glBegin(GL11.GL_TRIANGLES);
         
         //Variable, um welchen Pol gedreht wird
-        int drehePol = 0;
+        int drehePol = k.dm.getDrehPol();
         
         //Variable, ob die Halbe Kugel oder nur der Pol gedreht wird 
-        int dreheMode = 0;
+        int dreheMode = k.dm.getDrehModus();
         
         
         //Wenn Zurück geht, wird andere Animation geladen als wenn vorwärts.
         //Wenn es sprünge hat, dann wird keine Animation angezeigt
-        if(k.getOldStep()-1==k.getStep()){
-        	drehePol = Integer.parseInt(k.oldDrehung.substring(0, 1));
-            dreheMode = Integer.parseInt(k.oldDrehung.substring(2, 3));
+        //Zurück
+       /* if(k.getOldStep()-1==k.getStep()){
+        	drehePol = Integer.parseInt(k.dm.getOldDrehung().substring(0, 1));
+            dreheMode = Integer.parseInt(k.dm.getOldDrehung().substring(2, 3));
 		}else
+		//Vorwärts
 		if(k.getOldStep()+1==k.getStep()){
-			drehePol = Integer.parseInt(k.drehung.substring(0, 1));
-	        dreheMode = Integer.parseInt(k.drehung.substring(2, 3));
+			drehePol = Integer.parseInt(k.dm.getDrehung().substring(0, 1));
+	        dreheMode = Integer.parseInt(k.dm.getDrehung().substring(2, 3));
 		}else{
 			drehePol = 0;
 	        dreheMode = 0;
-		}
+		}*/
         
         
 		//Invertierungs Variabel auf x, y und z Achse --> für Negativ auf -1 ändern
@@ -107,7 +109,7 @@ public class RenderKugel {
 		int addNeg = 1;
 		
 		
-		if(k.standRot>0){
+		if(k.dm.bleibendeDrehung()>0){
 			if(dreheMode==1){
 				switch(drehePol){
 					case 0:  z1 = true; neg =  1; break;
@@ -129,13 +131,15 @@ public class RenderKugel {
 				}
 			}
 		}
-       
+       /**ToDo:*/
+		
 		//Variabel definiert die Rotationsgeschwindikeit
-        double rot = Manager.getRotationSpeed();
+        //double rot = Manager.getRotationSpeed();
+		double rotation = k.dm.getRotationForFrame();
         
         //Wie genau die Kugel gerendert wird --> In wie gross/klein die Dreiecke sind
-        int renderSteps = 5;//Nur 1, 2, 5, 10
-        int renderStepsZ = 5;//Nur 1, 2, 5, 10
+        int renderSteps = 10;//Nur 1, 2, 5, 10
+        int renderStepsZ = 10;//Nur 1, 2, 5, 10
         
         //Berechnungen welche nur einmal ausgeführt werden müssen
         
@@ -189,182 +193,182 @@ public class RenderKugel {
 			case 0:
 				ix = 1; iy = 1; iz = 1;
 				px = 0; py = 1; pz = 2;
-				if(z1){  drehz=k.standRot-rot; }else
-				if(x3){  drehx=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }
+				if(z1){  drehz=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(y3){  drehy=rotation; }
 				break;
 			case 1:
 				ix = 1; iy =-1; iz = 1;
 				px = 0; py = 1; pz = 2;
-				if(z1){  drehz=k.standRot-rot; }else
-				if(x3){  drehx=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }
+				if(z1){  drehz=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(my3){ drehy=rotation; }
 				break;
 			case 2:
 				ix =-1; iy =-1; iz = 1;
 				px = 0; py = 1; pz = 2;
-				if(z1){  drehz=k.standRot-rot; }else
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }
+				if(z1){  drehz=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(my3){ drehy=rotation; }
 				break;
 			case 3:
 				ix =-1; iy = 1; iz = 1;
 				px = 0; py = 1; pz = 2;
-				if(z1){  drehz=k.standRot-rot; }else
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }
+				if(z1){  drehz=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(y3){  drehy=rotation; }
 				break;
 			//
 			case 4:
 				ix = 1; iy = 1; iz = 1;
 				px = 2; py = 0; pz = 1;
-				if(x1){  drehx=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }
+				if(x1){  drehx=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(y3){  drehy=rotation; }
 				break;
 			case 5:
 				ix = 1; iy = -1; iz =1;
 				px = 2; py = 0; pz = 1;
-				if(x1){  drehx=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }
+				if(x1){  drehx=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(my3){ drehy=rotation; }
 				break;
 			case 6:
 				ix = 1; iy =-1; iz =-1;
 				px = 2; py = 0; pz = 1;
-				if(x1){  drehx=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }
+				if(x1){  drehx=rotation; }else
+				if(mz3){ drehz=rotation; }else
+				if(my3){ drehy=rotation; }
 				break;
 			case 7:
 				ix = 1; iy =1; iz = -1;
 				px = 2; py = 0; pz = 1;
-				if(x1){  drehx=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }
+				if(x1){  drehx=rotation; }else
+				if(mz3){ drehz=rotation; }else
+				if(y3){  drehy=rotation; }
 				break;
 			//
 			case 8:
 				ix = 1; iy = 1; iz =-1;
 				px = 0; py = 1; pz = 2;
-				if(mz1){ drehz=k.standRot-rot; }else
-				if(x3){  drehx=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }
+				if(mz1){ drehz=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(y3){  drehy=rotation; }
 				break;
 			case 9:
 				ix = 1; iy =-1; iz =-1;
 				px = 0; py = 1; pz = 2;
-				if(mz1){ drehz=k.standRot-rot; }else
-				if(x3){  drehx=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }
+				if(mz1){ drehz=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(my3){ drehy=rotation; }
 				break;
 			case 10:
 				ix =-1; iy =-1; iz =-1;
 				px = 0; py = 1; pz = 2;
-				if(mz1){ drehz=k.standRot-rot; }else
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }
+				if(mz1){ drehz=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(my3){ drehy=rotation; }
 				break;
 			case 11:
 				ix =-1; iy = 1; iz =-1;
 				px = 0; py = 1; pz = 2;
-				if(mz1){ drehz=k.standRot-rot; }else
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }
+				if(mz1){ drehz=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(y3){  drehy=rotation; }
 				break;
 			//
 			case 12:
 				ix =-1; iy = 1; iz = 1;
 				px = 2; py = 1; pz = 0;
-				if(mx1){ drehx=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }
+				if(mx1){ drehx=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(y3){  drehy=rotation; }
 				break;
 			case 13:
 				ix =-1; iy =-1; iz = 1;
 				px = 2; py = 1; pz = 0;
-				if(mx1){ drehx=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }
+				if(mx1){ drehx=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(my3){ drehy=rotation; }
 				break;
 			case 14:
 				ix =-1; iy =-1; iz =-1;
 				px = 2; py = 1; pz = 0;
-				if(mx1){ drehx=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }
+				if(mx1){ drehx=rotation; }else
+				if(mz3){ drehz=rotation; }else
+				if(my3){ drehy=rotation; }
 				break;
 			case 15:
 				ix =-1; iy = 1; iz =-1;
 				px = 2; py = 1; pz = 0;
-				if(mx1){ drehx=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }
+				if(mx1){ drehx=rotation; }else
+				if(mz3){ drehz=rotation; }else
+				if(y3){  drehy=rotation; }
 				break;
 			//
 			case 16:
 				ix = 1; iy = 1; iz = 1;
 				px = 0; py = 2; pz = 1;
-				if(y1){  drehy=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }else
-				if(x3){  drehx=k.standRot-rot; }
+				if(y1){  drehy=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(x3){  drehx=rotation; }
 				break;
 			case 17:
 				ix = 1; iy = 1; iz =-1;
 				px = 0; py = 2; pz = 1;
-				if(y1){  drehy=k.standRot-rot; }else
-				if(x3){  drehx=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }
+				if(y1){  drehy=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(mz3){ drehz=rotation; }
 				break;
 			case 18:
 				ix =-1; iy = 1; iz =-1;
 				px = 0; py = 2; pz = 1;
-				if(y1){  drehy=k.standRot-rot; }else
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }
+				if(y1){  drehy=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(mz3){ drehz=rotation; }
 				break;
 			case 19:
 				ix =-1; iy = 1; iz = 1;
 				px = 0; py = 2; pz = 1;
-				if(y1){  drehy=k.standRot-rot; }else
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }
+				if(y1){  drehy=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(z3){  drehz=rotation; }
 				break;
 			//
 			case 20:
 				ix = 1; iy =-1; iz = 1;
 				px = 0; py = 2; pz = 1;
-				if(my1){ drehy=k.standRot-rot; }else
-				if(x3){  drehx=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }
+				if(my1){ drehy=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(z3){  drehz=rotation; }
 				break;
 			case 21:
 				ix = 1; iy =-1; iz =-1;
 				px = 0; py = 2; pz = 1;
-				if(my1){ drehy=k.standRot-rot; }else
-				if(x3){  drehx=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }
+				if(my1){ drehy=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(mz3){ drehz=rotation; }
 				break;
 			case 22:
 				ix =-1; iy =-1; iz =-1;
 				px = 0; py = 2; pz = 1;
-				if(my1){ drehy=k.standRot-rot; }else
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }
+				if(my1){ drehy=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(mz3){ drehz=rotation; }
 				break;
 			case 23:
 				ix =-1; iy =-1; iz = 1;
 				px = 0; py = 2; pz = 1;
-				if(my1){ drehy=k.standRot-rot; }else
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }
+				if(my1){ drehy=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(z3){  drehz=rotation; }
 				break;
 			}
 			
 			//Füge alle Negationsvariablen zusammen
-			drehx*=k.drehRichtung;
-			drehy*=k.drehRichtung;
-			drehz*=k.drehRichtung;
+			drehx*=k.dm.getDrehRichtung();
+			drehy*=k.dm.getDrehRichtung();
+			drehz*=k.dm.getDrehRichtung();
 			drehx*=neg;
 			drehy*=neg;
 			drehz*=neg;
@@ -373,11 +377,11 @@ public class RenderKugel {
 			drehz*=addNeg;
 			
 			//Wenn Zurück gedreht wird, dann nocheinmal das ganze Retour ablaufen lassen
-			if(k.getOldStep()>k.getStep()){
+			/*if(k.getOldStep()>k.getStep()){
 				drehx*=-1;
 				drehy*=-1;
 				drehz*=-1;
-			}
+			}*/
 			
 			//Die x-Mal gleich Verwendeten Sinus/Cosinus in Variable speichern --> Ist effizienter als jedesmal Trigonometrie.sin() abzurufen
 			double[][] sinCos = new double[3][2];
@@ -450,65 +454,65 @@ public class RenderKugel {
 			case 0:
 				ix = -1; iy = 1; iz = -1;
 				px = 0; py = 1; pz = 2; dn = 1;
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }
+				if(mx3){ drehx=rotation; }else
+				if(y3){  drehy=rotation; }else
+				if(mz3){ drehz=rotation; }
 				break;
 			case 1:
 				ix = -1; iy = 1; iz = 1;
 				px = 0; py = 1; pz = 2;	 dn = -1;
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }
+				if(mx3){ drehx=rotation; }else
+				if(y3){  drehy=rotation; }else
+				if(z3){  drehz=rotation; }
 				break;
 			case 2:
 				ix = 1; iy = 1; iz = 1;
 				px = 0; py = 1; pz = 2; dn = 1;
-				if(x3){  drehx=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }
+				if(x3){  drehx=rotation; }else
+				if(y3){  drehy=rotation; }else
+				if(z3){  drehz=rotation; }
 				break;
 			case 3:
 				ix = 1; iy = 1; iz = -1;
 				px = 0; py = 1; pz = 2; dn = -1;
-				if(x3){  drehx=k.standRot-rot; }else
-				if(y3){  drehy=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }
+				if(x3){  drehx=rotation; }else
+				if(y3){  drehy=rotation; }else
+				if(mz3){ drehz=rotation; }
 				break;
 			case 4:
 				ix = -1; iy = -1; iz = -1;
 				px = 0; py = 1; pz = 2; dn = -1;
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }
+				if(mx3){ drehx=rotation; }else
+				if(my3){ drehy=rotation; }else
+				if(mz3){ drehz=rotation; }
 				break;
 			case 5:
 				ix = -1; iy = -1; iz = 1;
 				px = 0; py = 1; pz = 2; dn = 1;
-				if(mx3){ drehx=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }
+				if(mx3){ drehx=rotation; }else
+				if(my3){ drehy=rotation; }else
+				if(z3){  drehz=rotation; }
 				break;
 			case 6:
 				ix = 1; iy = -1; iz = 1;
 				px = 0; py = 1; pz = 2; dn = -1;
-				if(x3){  drehx=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }else
-				if(z3){  drehz=k.standRot-rot; }
+				if(x3){  drehx=rotation; }else
+				if(my3){ drehy=rotation; }else
+				if(z3){  drehz=rotation; }
 				break;
 			case 7:
 				ix = 1; iy = -1; iz = -1;
 				px = 0; py = 1; pz = 2;	dn = 1;
-				if(x3){  drehx=k.standRot-rot; }else
-				if(my3){ drehy=k.standRot-rot; }else
-				if(mz3){ drehz=k.standRot-rot; }
+				if(x3){  drehx=rotation; }else
+				if(my3){ drehy=rotation; }else
+				if(mz3){ drehz=rotation; }
 				break;	
 			}
 			
 			//Negativiere je nach Drehrichtung
-			drehx*=k.drehRichtung;
-			drehy*=k.drehRichtung;
-			drehz*=k.drehRichtung;
+			drehx*=k.dm.getDrehRichtung();
+			drehy*=k.dm.getDrehRichtung();
+			drehz*=k.dm.getDrehRichtung();
 			
 			//Zusätzliche Negationsvariable
 			drehx*=dn;
@@ -516,11 +520,11 @@ public class RenderKugel {
 			drehz*=dn;
 	
 			//Wenn zurück geben, dann in andere Richtung drehen
-			if(k.getOldStep()>k.getStep()){
+			/*if(k.getOldStep()>k.getStep()){
 				drehx*=-1;
 				drehy*=-1;
 				drehz*=-1;
-			}
+			}*/
 			
 			//Schreibe die oft benötigten Trigonometrischen Funktionen in Array --> Effizienter als jedesmal Trigonometrie.sin() abzurufen			
 			double[][] sinCos = new double[3][2];
@@ -681,182 +685,182 @@ public class RenderKugel {
     			case 0:
     				ix = 1; iy = 1; iz = 1;
     				px = 0; py = 1; pz = 2;
-    				if(z1){  drehz=k.standRot-rot; }else
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }
+    				if(z1){  drehz=rotation; }else
+    				if(x3){  drehx=rotation; }else
+    				if(y3){  drehy=rotation; }
     				break;
     			case 1:
     				ix = 1; iy =-1; iz = 1;
     				px = 0; py = 1; pz = 2;
-    				if(z1){  drehz=k.standRot-rot; }else
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }
+    				if(z1){  drehz=rotation; }else
+    				if(x3){  drehx=rotation; }else
+    				if(my3){ drehy=rotation; }
     				break;
     			case 2:
     				ix =-1; iy =-1; iz = 1;
     				px = 0; py = 1; pz = 2;
-    				if(z1){  drehz=k.standRot-rot; }else
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }
+    				if(z1){  drehz=rotation; }else
+    				if(mx3){ drehx=rotation; }else
+    				if(my3){ drehy=rotation; }
     				break;
     			case 3:
     				ix =-1; iy = 1; iz = 1;
     				px = 0; py = 1; pz = 2;
-    				if(z1){  drehz=k.standRot-rot; }else
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }
+    				if(z1){  drehz=rotation; }else
+    				if(mx3){ drehx=rotation; }else
+    				if(y3){  drehy=rotation; }
     				break;
     			//
     			case 4:
     				ix = 1; iy = 1; iz = 1;
     				px = 2; py = 0; pz = 1;
-    				if(x1){  drehx=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }
+    				if(x1){  drehx=rotation; }else
+    				if(z3){  drehz=rotation; }else
+    				if(y3){  drehy=rotation; }
     				break;
     			case 5:
     				ix = 1; iy = -1; iz =1;
     				px = 2; py = 0; pz = 1;
-    				if(x1){  drehx=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }
+    				if(x1){  drehx=rotation; }else
+    				if(z3){  drehz=rotation; }else
+    				if(my3){ drehy=rotation; }
     				break;
     			case 6:
     				ix = 1; iy =-1; iz =-1;
     				px = 2; py = 0; pz = 1;
-    				if(x1){  drehx=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }
+    				if(x1){  drehx=rotation; }else
+    				if(mz3){ drehz=rotation; }else
+    				if(my3){ drehy=rotation; }
     				break;
     			case 7:
     				ix = 1; iy =1; iz = -1;
     				px = 2; py = 0; pz = 1;
-    				if(x1){  drehx=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }
+    				if(x1){  drehx=rotation; }else
+    				if(mz3){ drehz=rotation; }else
+    				if(y3){  drehy=rotation; }
     				break;
     			//
     			case 8:
     				ix = 1; iy = 1; iz =-1;
     				px = 0; py = 1; pz = 2;
-    				if(mz1){ drehz=k.standRot-rot; }else
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }
+    				if(mz1){ drehz=rotation; }else
+    				if(x3){  drehx=rotation; }else
+    				if(y3){  drehy=rotation; }
     				break;
     			case 9:
     				ix = 1; iy =-1; iz =-1;
     				px = 0; py = 1; pz = 2;
-    				if(mz1){ drehz=k.standRot-rot; }else
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }
+    				if(mz1){ drehz=rotation; }else
+    				if(x3){  drehx=rotation; }else
+    				if(my3){ drehy=rotation; }
     				break;
     			case 10:
     				ix =-1; iy =-1; iz =-1;
     				px = 0; py = 1; pz = 2;
-    				if(mz1){ drehz=k.standRot-rot; }else
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }
+    				if(mz1){ drehz=rotation; }else
+    				if(mx3){ drehx=rotation; }else
+    				if(my3){ drehy=rotation; }
     				break;
     			case 11:
     				ix =-1; iy = 1; iz =-1;
     				px = 0; py = 1; pz = 2;
-    				if(mz1){ drehz=k.standRot-rot; }else
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }
+    				if(mz1){ drehz=rotation; }else
+    				if(mx3){ drehx=rotation; }else
+    				if(y3){  drehy=rotation; }
     				break;
     			//
     			case 12:
     				ix =-1; iy = 1; iz = 1;
     				px = 2; py = 1; pz = 0;
-    				if(mx1){ drehx=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }
+    				if(mx1){ drehx=rotation; }else
+    				if(z3){  drehz=rotation; }else
+    				if(y3){  drehy=rotation; }
     				break;
     			case 13:
     				ix =-1; iy =-1; iz = 1;
     				px = 2; py = 1; pz = 0;
-    				if(mx1){ drehx=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }
+    				if(mx1){ drehx=rotation; }else
+    				if(z3){  drehz=rotation; }else
+    				if(my3){ drehy=rotation; }
     				break;
     			case 14:
     				ix =-1; iy =-1; iz =-1;
     				px = 2; py = 1; pz = 0;
-    				if(mx1){ drehx=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }
+    				if(mx1){ drehx=rotation; }else
+    				if(mz3){ drehz=rotation; }else
+    				if(my3){ drehy=rotation; }
     				break;
     			case 15:
     				ix =-1; iy = 1; iz =-1;
     				px = 2; py = 1; pz = 0;
-    				if(mx1){ drehx=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }
+    				if(mx1){ drehx=rotation; }else
+    				if(mz3){ drehz=rotation; }else
+    				if(y3){  drehy=rotation; }
     				break;
     			//
     			case 16:
     				ix = 1; iy = 1; iz = 1;
     				px = 0; py = 2; pz = 1;
-    				if(y1){  drehy=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }else
-    				if(x3){  drehx=k.standRot-rot; }
+    				if(y1){  drehy=rotation; }else
+    				if(z3){  drehz=rotation; }else
+    				if(x3){  drehx=rotation; }
     				break;
     			case 17:
     				ix = 1; iy = 1; iz =-1;
     				px = 0; py = 2; pz = 1;
-    				if(y1){  drehy=k.standRot-rot; }else
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }
+    				if(y1){  drehy=rotation; }else
+    				if(x3){  drehx=rotation; }else
+    				if(mz3){ drehz=rotation; }
     				break;
     			case 18:
     				ix =-1; iy = 1; iz =-1;
     				px = 0; py = 2; pz = 1;
-    				if(y1){  drehy=k.standRot-rot; }else
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }
+    				if(y1){  drehy=rotation; }else
+    				if(mx3){ drehx=rotation; }else
+    				if(mz3){ drehz=rotation; }
     				break;
     			case 19:
     				ix =-1; iy = 1; iz = 1;
     				px = 0; py = 2; pz = 1;
-    				if(y1){  drehy=k.standRot-rot; }else
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }
+    				if(y1){  drehy=rotation; }else
+    				if(mx3){ drehx=rotation; }else
+    				if(z3){  drehz=rotation; }
     				break;
     			//
     			case 20:
     				ix = 1; iy =-1; iz = 1;
     				px = 0; py = 2; pz = 1;
-    				if(my1){ drehy=k.standRot-rot; }else
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }
+    				if(my1){ drehy=rotation; }else
+    				if(x3){  drehx=rotation; }else
+    				if(z3){  drehz=rotation; }
     				break;
     			case 21:
     				ix = 1; iy =-1; iz =-1;
     				px = 0; py = 2; pz = 1;
-    				if(my1){ drehy=k.standRot-rot; }else
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }
+    				if(my1){ drehy=rotation; }else
+    				if(x3){  drehx=rotation; }else
+    				if(mz3){ drehz=rotation; }
     				break;
     			case 22:
     				ix =-1; iy =-1; iz =-1;
     				px = 0; py = 2; pz = 1;
-    				if(my1){ drehy=k.standRot-rot; }else
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }
+    				if(my1){ drehy=rotation; }else
+    				if(mx3){ drehx=rotation; }else
+    				if(mz3){ drehz=rotation; }
     				break;
     			case 23:
     				ix =-1; iy =-1; iz = 1;
     				px = 0; py = 2; pz = 1;
-    				if(my1){ drehy=k.standRot-rot; }else
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }
+    				if(my1){ drehy=rotation; }else
+    				if(mx3){ drehx=rotation; }else
+    				if(z3){  drehz=rotation; }
     				break;
     			}
         		
         		//Füge alle Negationsvariablen zusammen
-    			drehx*=k.drehRichtung;
-    			drehy*=k.drehRichtung;
-    			drehz*=k.drehRichtung;
+    			drehx*=k.dm.getDrehRichtung();
+    			drehy*=k.dm.getDrehRichtung();
+    			drehz*=k.dm.getDrehRichtung();
     			drehx*=neg;
     			drehy*=neg;
     			drehz*=neg;
@@ -865,11 +869,11 @@ public class RenderKugel {
     			drehz*=addNeg;
     			
     			//Wenn Zurück gedreht wird, dann nocheinmal das ganze Retour ablaufen lassen
-    			if(k.getOldStep()>k.getStep()){
+    			/*if(k.getOldStep()>k.getStep()){
     				drehx*=-1;
     				drehy*=-1;
     				drehz*=-1;
-    			}
+    			}*/
         		
         		//Die x-Mal gleich Verwendeten Sinus/Cosinus in Variable speichern --> Ist effizienter als jedesmal Trigonometrie.sin() abzurufen
     			double[][] sinCos = new double[3][2];
@@ -926,58 +930,58 @@ public class RenderKugel {
     			case 0:
     				ix = -1; iy = 1; iz = -1;
     				px = 0; py = 1; pz = 2; dn = 1;
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }
+    				if(mx3){ drehx=rotation; }else
+    				if(y3){  drehy=rotation; }else
+    				if(mz3){ drehz=rotation; }
     				break;
     			case 1:
     				ix = -1; iy = 1; iz = 1;
     				px = 0; py = 1; pz = 2;	 dn = -1;
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }
+    				if(mx3){ drehx=rotation; }else
+    				if(y3){  drehy=rotation; }else
+    				if(z3){  drehz=rotation; }
     				break;
     			case 2:
     				ix = 1; iy = 1; iz = 1;
     				px = 0; py = 1; pz = 2; dn = 1;
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }
+    				if(x3){  drehx=rotation; }else
+    				if(y3){  drehy=rotation; }else
+    				if(z3){  drehz=rotation; }
     				break;
     			case 3:
     				ix = 1; iy = 1; iz = -1;
     				px = 0; py = 1; pz = 2; dn = -1;
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(y3){  drehy=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }
+    				if(x3){  drehx=rotation; }else
+    				if(y3){  drehy=rotation; }else
+    				if(mz3){ drehz=rotation; }
     				break;
     			case 4:
     				ix = -1; iy = -1; iz = -1;
     				px = 0; py = 1; pz = 2; dn = -1;
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }
+    				if(mx3){ drehx=rotation; }else
+    				if(my3){ drehy=rotation; }else
+    				if(mz3){ drehz=rotation; }
     				break;
     			case 5:
     				ix = -1; iy = -1; iz = 1;
     				px = 0; py = 1; pz = 2; dn = 1;
-    				if(mx3){ drehx=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }
+    				if(mx3){ drehx=rotation; }else
+    				if(my3){ drehy=rotation; }else
+    				if(z3){  drehz=rotation; }
     				break;
     			case 6:
     				ix = 1; iy = -1; iz = 1;
     				px = 0; py = 1; pz = 2; dn = -1;
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }else
-    				if(z3){  drehz=k.standRot-rot; }
+    				if(x3){  drehx=rotation; }else
+    				if(my3){ drehy=rotation; }else
+    				if(z3){  drehz=rotation; }
     				break;
     			case 7:
     				ix = 1; iy = -1; iz = -1;
     				px = 0; py = 1; pz = 2;	dn = 1;
-    				if(x3){  drehx=k.standRot-rot; }else
-    				if(my3){ drehy=k.standRot-rot; }else
-    				if(mz3){ drehz=k.standRot-rot; }
+    				if(x3){  drehx=rotation; }else
+    				if(my3){ drehy=rotation; }else
+    				if(mz3){ drehz=rotation; }
     				break;	
     			}
     			
@@ -1032,8 +1036,8 @@ public class RenderKugel {
         
         
         
-        if(k.standRot>0){
-        	k.standRot = k.standRot-rot;
+        if(k.dm.bleibendeDrehung()>0){
+        	k.dm.setAktuelleDrehung(rotation);
         }else{
         	Manager.doQueue = true;
         }

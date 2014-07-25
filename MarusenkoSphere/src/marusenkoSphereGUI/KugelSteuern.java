@@ -18,9 +18,19 @@ public class KugelSteuern {
 	    	m.exitProgramm();
 	    }
 	    //Zu Editor wechseln/zurück wenn E gedrückt, zusätzlich 100ms blockieren, damit nicht doppelt passiert
+	    if(Keyboard.isKeyDown(Keyboard.KEY_K)) {
+	    	if(!m.BlockedKey.contains("k")){
+	    		m.changeToMode(0);
+	    		//System.out.println("k");
+		    	m.BlockedKey.add("k");
+		    	m.update(100);
+		    	m.BlockedKey.remove("k");
+	    	}
+	    }
+	    //Zu Editor wechseln/zurück wenn E gedrückt, zusätzlich 100ms blockieren, damit nicht doppelt passiert
 	    if(Keyboard.isKeyDown(Keyboard.KEY_E)) {
 	    	if(!m.BlockedKey.contains("e")){
-	    		m.changeModeEdior();
+	    		m.changeToMode(1);
 	    		//System.out.println("e");
 		    	m.BlockedKey.add("e");
 		    	m.update(100);
@@ -30,7 +40,7 @@ public class KugelSteuern {
 	   //Zu Devpanel wechseln/zurück wenn D gedrückt, zusätzlich 100ms blockieren, damit nicht doppelt passiert
 	    if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
 	    	if(!m.BlockedKey.contains("d")){
-	    		m.enableDevPanel();
+	    		m.changeToMode(2);;
 	    		//System.out.println("D");
 		    	m.BlockedKey.add("d");
 		    	m.update(100);
@@ -111,7 +121,7 @@ public class KugelSteuern {
 	    		double[] mousePosIn3D = Editor.isMouseIn3D(x,y);
 	    		
 	    		//Wenn die Tiefe Z = 0 ist, dann ist dort ein Objekt--> also Muss Aktion statt finden
-	    		if(mousePosIn3D[2]==0){
+	    		if(mousePosIn3D[2]<=4){
 	    			
 	    			//Objekt auf welchem die Maus ist
 	    			int objekt = Editor.onWhichField(mousePosIn3D[0],mousePosIn3D[1]);

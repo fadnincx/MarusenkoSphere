@@ -133,6 +133,7 @@ public class Rendern {
     public void updateFPS() {
     	if (getTime() - lastFPS > 1000) {
     		Display.setTitle(windowTitle+" - FPS: " + fps);
+    		Manager.fps = fps;
     		fps = 0;
     		lastFPS += 1000;
     	}

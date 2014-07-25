@@ -14,9 +14,9 @@ public class Manager {
 	private ControlPanel cp;
 	protected ArrayList<String> BlockedKey = new ArrayList<String>();
 	protected int displayMode = 0; //0 = Kugel, 1 = Editor, 2 = dev
-	private int oldDisplayMode = 0; //0 = Kugel, 1 = Editor, 2 = dev
 	private int selectedColor = 0;
 	protected static double rotationSpeed = 3.0;
+	protected static double fps = 30;
 	protected Queue<String> toDoQueue = new LinkedList<String>();
 	protected static boolean doQueue = false;
 	protected static boolean doQuetoEnd = false;
@@ -101,6 +101,7 @@ public class Manager {
 	/**
 	 * Füllt die Kugel gemäss String s
 	 * @param s : Kugel als String 
+	 * @param solving : Soll Kugel gelöst werden
 	 */
 	protected void fillSphere(String s, boolean solving){
 		k.FillKugelFromString(s, solving);
@@ -117,27 +118,24 @@ public class Manager {
 		cp.updateKugelState(k.getStep(), SetToState.getSolvingLength(k.SolvingList)-1);
 	}
 	/**
+	 * Zu Position in Lösungsweg gehen
+	 * @param i
+	 */
+	protected void goToStep(int i){
+		k = SetToState.getKugelFromArrayList(k,i);
+		updateList();
+	}
+	/**
 	 * Geht im Lösungsprozess eine Position weiter
 	 */
-	protected void oneStep(){
-		k = SetToState.getKugelFromArrayList(k,k.getStep()+1);
-		updateList();
+	protected void addOneStep(){
+		 goToStep(k.getStep()+1);
 	}
 	/**
 	 * Geht im Lösungsprozess eine Position zurück
 	 */
-	protected void backStep(){
-		k = SetToState.getKugelFromArrayList(k,k.getStep()-1);
-		 updateList();
-	}
-	/**
-	 * Geht im Lösungsprozess zur gegebenen Position
-	 * @param s
-	 */
-	protected void setPos(String s){
-		int i = Integer.parseInt(s);
-		k = SetToState.getKugelFromArrayList(k,i);
-		updateList();
+	protected void subOneStep(){
+		goToStep(k.getStep()-1);
 	}
 	protected void changeToMode(int i){
 		if(displayMode==1){
@@ -150,40 +148,6 @@ public class Manager {
 		cp.updateMode(displayMode);
 		System.out.println("Mode: "+displayMode);
 	}
-	protected void changeModeEdior(){
-		if(isSphereAllowed()){
-			displayMode++;
-			displayMode%=2;
-			cp.updateMode(displayMode);
-			System.out.println("Mode: "+displayMode);
-		}
-		if(displayMode==0){
-			k.resetStep();
-			fillSphere(k.getSphere());
-		}
-	}
-	protected void enableDevPanel(){
-		
-		switch(displayMode){
-		case 2:
-			displayMode=oldDisplayMode;
-			if(oldDisplayMode != displayMode){
-				oldDisplayMode = displayMode;
-			}
-			cp.updateMode(displayMode);
-			System.out.println("Mode: "+displayMode+" Old: "+oldDisplayMode);
-			break;
-		default:
-			if(oldDisplayMode != displayMode){
-				oldDisplayMode = displayMode;
-			}
-			displayMode=2;
-			cp.updateMode(displayMode);
-			System.out.println("Mode: "+displayMode+" Old: "+oldDisplayMode);
-			break;
-		}
-
-	}
 	protected int getSelectedColor(){
 		return selectedColor;
 	}
@@ -193,10 +157,12 @@ public class Manager {
 	protected void getRotationSpeedfromCp(){
 		rotationSpeed = cp.getRotationSpeed()/10;
 	}
-	protected static double getRotationSpeed(){
+	public static double getRotationSpeed(){
 		return rotationSpeed;
 	}
-	
+	public static double getFPS(){
+		return fps;
+	}
 	/**
 	 * Nimmt das ändern der Drehung der Kugel vor
 	 * @param x
@@ -206,8 +172,8 @@ public class Manager {
 	protected void rendernDrehen(float y, float x, float z, int mode){
 		switch(mode){
 		case 0: 
-			//rendern.drehen(x,y,z);
-			advancedDrehen(x, y, z);
+			rendern.drehen(x,y,z);
+			//advancedDrehen(x, y, z);
 			break;
 		case 1:
 			rendern.setDrehen(x,y,z);

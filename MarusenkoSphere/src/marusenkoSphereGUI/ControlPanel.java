@@ -478,7 +478,7 @@ public class ControlPanel implements ActionListener{
 	    	}
         }else if (z.getSource() == bt_goPos){
         	//Zu Position springen --> String to Int erfolg im Manager
-        	m.setPos(txt_goPos.getText());
+        	m.goToStep(Integer.parseInt(txt_goPos.getText()));
         }else if (z.getSource() == bt_color_0){
         	//Ausgewählte Farbe wählen
         	m.changeSelectedColor(0);
