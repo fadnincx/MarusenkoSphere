@@ -25,39 +25,26 @@ import org.lwjgl.util.glu.GLU;
  */
 
 public class Rendern {
-	/**
-	 * Definiert den Titel des Fenster
-	 */
+	
+	//Definiert den Titel des Fenster
 	private final String windowTitle = "MarusenkoSphere";
-
-	/**
-	 * Definiert wie die Kugel gedreht dargestellt wird
-	 */
-    private float rtriy;                 
-    private float rtrix;
-    private float rtriz;
     
-    
+    protected CameraController cm = new CameraController();
 
     
-    /**
-     * Definiert DisplayMode ==> Verantwortlich, wie Fenster mit Farbmodus etc. ist
-     */
+    //Definiert DisplayMode ==> Verantwortlich, wie Fenster mit Farbmodus etc. ist
     private DisplayMode displayMode;
     
-    /**
-     * Definiert die Kugel, welche dargestellt wird    
-     */
+    //Definiert die Kugel, welche dargestellt wird    
     protected Kugel k;
 
-    protected int mode = 0;
+    //In welchem Modus gerendert wird
+    private int mode = 0;
     
-    
-    //fps
-    
-    long lastFrame;
-    int fps;
-    long lastFPS;
+    //Variabeln für die FPS berechnungen
+    private long lastFrame;
+    private int fps;
+    private long lastFPS;
 
     /**
      * Konstruktor des Rendern-Objekts
@@ -85,7 +72,7 @@ public class Rendern {
      * Bei nicht Support Wird hier schon eine Exception geworfen und das Programm beendet
      * --> Tritt bekanntermassen nur auf, wenn Grafikkartentreiber nicht richtig installiert und mit JAR-Splice Zusatz-Option nicht hinzugef�gt wurde
      */
-    protected void run() {
+    private void run() {
         try {
             init();
         }
@@ -99,38 +86,48 @@ public class Rendern {
     /**
      * Funktion welche das Fenster updatet
      */
-    protected void doing(){
+    private void doing(){
     	switch(mode){
     	case 1:
     		//Editor
-    		Editor.renderEditor(k, rtrix, rtriy, rtriz);
+    		Editor.renderEditor(k);
     		break;
     	default:
     		//Rendere die Kugel mit der externen Funktion
-    		
-    		GLU.gluLookAt(rtrix, rtrix, rtrix, rtrix, rtrix, rtrix, rtrix, rtrix, rtrix);
-        	RenderKugel.render(k, rtrix, rtriy, rtriz); 
+        	RenderKugel.render(k,cm); 
     		break;
     	}
     	updateFPS();
-    	//Display.setTitle("FPS: " + fps);
-    	
     	//Fixiere Frame rate auf 60fps (Kugel wird maximal 60 mal pro Sekunde neu gerendert)
     	Display.sync(60);
     	
     	//Update die Dartellung auf dem Display
         Display.update();
     }
-    public long getTime() {
+    /**
+     * Gibt die Zeit in Millisekunden zurück
+     * @return
+     */
+    private long getTime() {
     	return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
-    public int getDelta() {
+    /**
+     * Gibt den Zeit unterschiede zwischen dem letzten und dem jetztigen Frame an
+     * @return
+     */
+    private int getDelta() {
     	long time = getTime();
     	int delta = (int) (time - lastFrame);
     	lastFrame = time;
     	return delta;
     }
-    public void updateFPS() {
+    /**
+     * Updated die Framerate
+     * Setzt den Titel neu und updatet FPS im Manager für die Berechnung 
+     * der Drehgeschwindigkeit
+     */
+    private void updateFPS() {
+    	//Wenn eine Sekunde vergangen
     	if (getTime() - lastFPS > 1000) {
     		Display.setTitle(windowTitle+" - FPS: " + fps);
     		Manager.fps = fps;
@@ -145,41 +142,25 @@ public class Rendern {
     protected void end(){
     	cleanup();
     }
-    
-   
 
-    
+    /**
+     * Gibt die Farbe als float-Array zurück
+     * @param n
+     * @return
+     */
     protected static float[] getColorFloat(int n){
-    	float[] color = new float[3];
     	switch(n){
-    	case 0:
-    		color[0] = 1.0f; color[1] = 1.0f; color[2] = 1.0f;
-    		break;
-    	case 1:
-    		color[0] = 1.0f; color[1] = 1.0f; color[2] = 0.0f;
-    		break;	
-    	case 2:
-    		color[0] = 1.0f; color[1] = 0.6f; color[2] = 0.0f;
-    		break;
-    	case 3:
-    		color[0] = 0.0f; color[1] = 0.0f; color[2] = 1.0f;
-    		break;	
-    	case 4:
-    		color[0] = 1.0f; color[1] = 0.0f; color[2] = 0.0f; 
-    		break;
-    	case 5:
-    		color[0] = 0.0f; color[1] = 1.0f; color[2] = 1.0f;
-    		break;	
-    	case 6:
-    		color[0] = 1.0f; color[1] = 0.0f; color[2] = 1.0f;
-    		break;
-    	case 7:
-    		color[0] = 0.0f; color[1] = 1.0f; color[2] = 0.0f;    
-    		break;	
-    	case 8:
-    		color[0] = 0.0f; color[1] = 0.0f; color[2] = 0.0f;  
+    	case 0: return new float[] {1.0f,1.0f,1.0f};
+    	case 1: return new float[] {1.0f,1.0f,0.0f};
+    	case 2: return new float[] {1.0f,0.6f,0.0f};
+    	case 3: return new float[] {0.0f,0.0f,1.0f};	
+    	case 4: return new float[] {1.0f,0.0f,0.0f};
+    	case 5: return new float[] {0.0f,1.0f,1.0f};
+    	case 6: return new float[] {1.0f,0.0f,1.0f};
+    	case 7: return new float[] {0.0f,1.0f,0.0f};	
+    	case 8: return new float[] {0.0f,0.0f,0.0f};
+    	default:return new float[] {0.0f,0.0f,0.0f};
     	}
-    	return color;
     }
     /**
      * Funktion welche die Farbe setzt, mit welcher die Dreiecke gerendert werden 
@@ -189,6 +170,12 @@ public class Rendern {
     	float[] color = getColorFloat(n);
     	GL11.glColor4f(color[0],color[1],color[2], 1.0f);
     }
+    /**
+     * Gibt einen Wert einer Farbe zurück
+     * @param n
+     * @param a
+     * @return
+     */
     protected static float getColorFloat(int n,int a){
     	float[] color = getColorFloat(n);
     	return color[a];
@@ -198,15 +185,13 @@ public class Rendern {
      */
     private void createWindow() throws Exception {
     	try{
-    	/**
-    	 * Suche nach allen verfügbaren Moden mit welchen das Fenster dargestellt werden kann
-    	 */
+    	//Suche nach allen verfügbaren Moden mit welchen das Fenster
+    	//dargestellt werden kann
     		
         DisplayMode d[] = Display.getAvailableDisplayModes();
         
-        /**
-         * Suche den richtigen Modus richtige heraus        
-         */
+        //Suche den richtigen Modus richtige heraus        
+        //Bevorzuge 32Bit farbtiefe
         for (int i = 0; i < d.length; i++) {
             if (d[i].getWidth() == 640
                 && d[i].getHeight() == 480
@@ -215,6 +200,7 @@ public class Rendern {
                 break;
             }
         }
+        //Wenn 32Bit nicht verfügbar, dann 24Bit nehmen
         if(displayMode == null){
         	for (int i = 0; i < d.length; i++) {
                 if (d[i].getWidth() == 640
@@ -225,6 +211,7 @@ public class Rendern {
                 }
             }
         }
+        //Für ganz Schlechte Bildschirme noch 16Bit
         if(displayMode == null){
         	for (int i = 0; i < d.length; i++) {
                 if (d[i].getWidth() == 640
@@ -236,54 +223,36 @@ public class Rendern {
             }
         }
         
-        
-
-        /**
-         * Versuche das Icon für das Fenster zu laden
-         */
+        //Versuche das Icon für das Fenster zu laden
         try {
-        	/**
-        	 * Erstelle ein ByteBuffer array für alle verfügbaren icons
-        	 */
+        	//Erstelle ein ByteBuffer array für alle verfügbaren icons
             ByteBuffer[] icons = new ByteBuffer[1];
             
-            /**
-             * Defniniere welche Icons geladen werden, inklusive der gr�sse
-             */
+            //Defniniere welche Icons geladen werden, inklusive der grösse
             icons[0] = loadIcon("/img/icon_16.png", 16, 16);
             //icons[1] = loadIcon("/img/icon_32.png", 32, 32);
             //icons[2] = loadIcon("/img/icon_64.png", 64, 64);
             //icons[3] = loadIcon("/img/icon_128.png", 128, 128);
             
-            /**
-             * Setzte die Icons           
-             */
+            //Setzte die Icons           
             Display.setIcon(icons);
             
             
-        /**
-         * Werfe eine Exception, wenn ein Fehler dabei passiert!    
-         */
+        //Werfe eine Exception, wenn ein Fehler dabei passiert!    
         } catch (IOException e) {
            e.printStackTrace();
         }
 
-        /**
-         * Setzte den DisplayMode und den Fenstertitel
-         */
-        
-        
+        //Setzte den DisplayMode und den Fenstertitel       
         Display.setDisplayMode(displayMode);
         Display.setTitle(windowTitle);
         
-        /**
-         * Erstelle Fenster mit den voreingestellten Einstellungen
-         */
+        //Erstelle Fenster mit den voreingestellten Einstellungen
         try{
         	Display.create(new PixelFormat(0, 8, 0, 4));
         	//Display.create();
         }catch(LWJGLException ex){
-        	System.out.println("Kein Antialiasing M�glich!");
+        	System.out.println("Kein Antialiasing Möglich!");
         	Display.create();
         }
         Display.setVSyncEnabled(true);
@@ -306,45 +275,32 @@ public class Rendern {
      */
     private ByteBuffer loadIcon(String filename, int width, int height) throws IOException {
     	
-    	/**
-    	 * Erstelle ein Buffered Image aus der Datei
-    	 */
+    	//Erstelle ein Buffered Image aus der Datei
     	BufferedImage image = ImageIO.read(this.getClass().getResourceAsStream(filename));
     	
-        /**
-         * Wandle das Bild in ein ByteArray um
-         * 
-         * erstelle ein Array welches genügend gross für die voreingestellte grösse des Bildes ist
-         * breite*höhe*4 (die 4 ist f�r rot, grün, blau und alpha)
-         * 
-         */
+        //Wandle das Bild in ein ByteArray um
+        //erstelle ein Array welches genügend gross für die voreingestellte 
+    	//grösse des Bildes ist
+        //breite*höhe*4 (die 4 ist für rot, grün, blau und alpha)
     
         byte[] imageBytes = new byte[width * height * 4];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-            	/**
-            	 * Frage den Pixel an entsprechende Position ab um es anschliessend in das Array zu schreiben
-            	 * 
-            	 */
+            	
+            	//Frage den Pixel an entsprechende Position ab um es anschliessend in das Array zu schreiben
                 int pixel = image.getRGB(j, i);
                 
-                /**
-                 * Rot, Grün und Blau in das Array schreiben 
-                 */
+                //Rot, Grün und Blau in das Array schreiben 
                 for (int k = 0; k < 3; k++){
                     imageBytes[(i*16+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
                 }
                 
-                /**
-                 * Alpha (transparenz) in das Array schreiben
-                 */
+                //Alpha (transparenz) in das Array schreiben
                 imageBytes[(i*16+j)*4 + 3] = (byte)(((pixel>>(3)*8))&255);
             }
         }
         
-        /**
-         * Wandle das Byte Arre in ein ByteBuffer um und gebe ihn zurück
-         */
+        //Wandle das Byte Arre in ein ByteBuffer um und gebe ihn zurück
         return ByteBuffer.wrap(imageBytes);
     }
     
@@ -380,20 +336,15 @@ public class Rendern {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         
-        /**
-         * Definie die Projektions Matrix
-         * sowie das zurücksetzen dieser Matrix
-         */
+        //Definie die Projektions Matrix, sowie das zurücksetzen dieser Matrix
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
      
         
         //Die Perspektive Berechnen mit hilfe von GLU
-        GLU.gluPerspective(
-          45.0f,
-          (float) displayMode.getWidth() / (float) displayMode.getHeight(),
-          0.1f,
-          100.0f);
+        GLU.gluPerspective(45.0f,
+        		(float) displayMode.getWidth() / (float) displayMode.getHeight(),
+          0.1f,100.0f);
         
         //Den Matrixmodus wählen
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -403,40 +354,8 @@ public class Rendern {
         GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
         GL11.glEnable(GL11.GL_BLEND);
         
-       //Definiere die Rotation der Kugel zu begin auf 0.0 in allen Achsen (x, y und z)
-        rtrix=20.0f;
-        rtriy=45.0f; 
-        rtriz=20.0f;
+    }
 
-    }
-    
-    /**
-     * Funktion, welche die Variabeln ändern, um wie viel die Kugel gedreht wird 
-     */
-    protected void drehen(float x, float y, float z){
-    	rtrix += x*40;
-    	rtriy += y*40;
-    	rtriz += z*40;
-    	//System.out.println(rtrix+" "+rtriy+" "+rtriz);
-    }
-    protected float[] getDrehen(){
-    	float[] drehen = new float[3];
-    	drehen[0] = rtrix;
-    	drehen[1] = rtriy;
-    	drehen[2] = rtriz;
-    	return drehen;
-    }
-    
-    /**
-     * Funktion, welche die Variabeln setzt, auf wie viel die Kugel gedret ist 
-     */
-    protected void setDrehen(float x, float y, float z){
-    	rtrix = x;
-    	rtriy = y;
-    	rtriz = z;
-    }
-   
-    
     /**
      * Funktion welche beim Beenden Aufgerufen wird, ist relativ wichtig, damit Speicher wieder freigegeben wird 
      */

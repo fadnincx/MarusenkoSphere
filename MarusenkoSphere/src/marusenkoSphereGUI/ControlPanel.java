@@ -121,7 +121,7 @@ public class ControlPanel implements ActionListener{
 	private int y;
 	
 	/**
-	 * Konstruktor welcher das Manager-Objekt initialisiert und ein neues Fenster erstellen l�sst
+	 * Konstruktor welcher das Manager-Objekt initialisiert und ein neues Fenster erstellen lässt
 	 * @param m : Manager
 	 */
 	public ControlPanel(Manager m, int mode){
@@ -441,22 +441,22 @@ public class ControlPanel implements ActionListener{
         	m.fillSphere(in, checkSolving.isSelected());
         }else if (z.getSource() == bt_up){
         	//Kugel nach oben drehen
-        	m.rendernDrehen(0.0f,-0.2f,0.0f,0);
+        	m.rendernDrehen(0.0f,-1.0f,0.0f,0);
         }else if (z.getSource() == bt_right){
         	//Kugel nach rechts drehen
-        	m.rendernDrehen(+0.2f,0.0f,0.0f,0);
+        	m.rendernDrehen(+1.0f,0.0f,0.0f,0);
         }else if (z.getSource() == bt_left){
         	//Kugel nach links drehen
-        	m.rendernDrehen(-0.2f,0.0f,0.0f,0);
+        	m.rendernDrehen(-1.0f,0.0f,0.0f,0);
         }else if (z.getSource() == bt_down){
         	//Kugel nach unten drehen
-        	m.rendernDrehen(0.0f,+0.2f,0.0f,0);
+        	m.rendernDrehen(0.0f,+1.0f,0.0f,0);
         }else if (z.getSource() == bt_reset_view){
         	// rtrix=20.0f;
            //  rtriy=45.0f; 
              //rtriz=20.0f;
         	//Drehen zurück setzen
-        	m.rendernDrehen(45.0f,20.0f,20.0f,1);
+        	m.rendernDrehen(45.0f,20.0f,0.0f,1);
         }else if (z.getSource() == bt_reset2){
         	//Drehen zurück setzen
         	m.rendernDrehen(0f,0f,0f,1);

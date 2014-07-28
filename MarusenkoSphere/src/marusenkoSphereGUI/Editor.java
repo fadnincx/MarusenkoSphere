@@ -20,12 +20,9 @@ public class Editor {
 	/**
 	 * Funktion welche den Editor Rendert
 	 * @param k
-	 * @param rx
-	 * @param ry
-	 * @param rz
 	 * @return
 	 */
-	protected static boolean renderEditor(Kugel k,float rx, float ry, float rz){
+	protected static boolean renderEditor(Kugel k){
 		/**
     	 * Auskommentieren, damit Flächen der Kugel nicht gefüllt werden
     	 * 
@@ -43,12 +40,7 @@ public class Editor {
         //Verschiebe die 0/0 Position zum Rendern, damit Kugel ganz sichtbar wird
         GL11.glTranslatef(0.0f,0.0f,-13.0f);
         
-        //Zum Drehen --> Normalerweise auskommentiert, kann zum Debugging aktiviert werden
-        //GL11.glRotatef(ry,0.0f,1.0f,0.0f);
-        //GL11.glRotatef(rx,1.0f,0.0f,0.0f);
-        //GL11.glRotatef(rz,0.0f,0.0f,1.0f);
-        
-        //Starte das Zeichnen der einzelnen Fl�chen der Kugel
+        //Starte das Zeichnen der einzelnen Flächen der Kugel
         GL11.glBegin(GL11.GL_TRIANGLES);
         
         
@@ -149,7 +141,7 @@ public class Editor {
         }
         
         
-        //Rendern der Verbindungsst�cke
+        //Rendern der Verbindungsstücke
         for(int i = 0; i<8; i++){
         	//Zentraler Punkt
         	double zx = 0.5;
@@ -196,7 +188,6 @@ public class Editor {
         		
         	}
         	zx = (((x2-x1)/2)+x1);
-        	//-7.5 -4.5 / -1.5 / 1.5 / 4.5 / 7.5
         	zy *= iy;
         	
         	
@@ -219,8 +210,9 @@ public class Editor {
 		
         return true;
 	}
+	
 	/**
-	 * Methode um aus den 2D-Pixel Koordinaten der Maus die Koordinaten in der 3-D Welt bekommen
+	 * Methode um aus den 2D-Pixel Koordinaten der Maus die Koordinaten in der 3D-Welt bekommen
 	 * @param x : Maus Position in x Richtung
 	 * @param y : Maus Position in y Richtung
 	 * @return : double[3] mit x, y und z Koordinate in 3D-Welt
@@ -235,10 +227,6 @@ public class Editor {
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
 		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
 		
-		/*GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, model);
-		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
-		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);*/
-		
 		FloatBuffer z = BufferUtils.createFloatBuffer(1);
 		GL11.glReadPixels((int) x, (int) y, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, z);
 		
@@ -247,19 +235,14 @@ public class Editor {
 		GLU.gluUnProject(x, y, z.get(0), model, projection, viewport, pos);
 		
 		//System.out.println("X: "+pos.get(0)+" Y: "+pos.get(1)+" Z: "+pos.get(2));
-		
-		double[] r = new double[3];
-		r[0] = pos.get(0);
-		r[1] = pos.get(1);
-		r[2] = pos.get(2);
 
-		return r;
+		return new double[] {pos.get(0),pos.get(1),pos.get(2)};
 	}
 	/**
 	 * Methode die aus den x/y-Koordinaten sagt, auf welches Feld geklickt wurden
 	 * @param x : x-Achse
 	 * @param y : y-Achse
-	 * @return : 0-23 Dreieck - 24-31 Verbindungsst�cke als (0-7)+24
+	 * @return : 0-23 Dreieck - 24-31 Verbindungsstücke als (0-7)+24
 	 */
 	protected static int onWhichField(double x, double y){
 		if(isInCircle(0,0,1,x,y)){
@@ -349,20 +332,14 @@ public class Editor {
 								
 		return -1;
 	}
-	
-	protected int onWitchConnector(double x, double y){
-		return -1;
-	}
-	
-	
-	
+		
 	/**
 	 * Funktion die Prüft, Ob die Position(X/Y) innerhalb des Kreises an Position(X/Y) mit gegebenem Radius befindet
 	 * @param CircleX : Position Kreismitte auf X-Achse
 	 * @param CircleY : Position Kreismitte auf Y-Achse
 	 * @param CircleRadius : Radius des Kreises
-	 * @param PositionX : Position welche zu Pr�fen ist auf X-Achse
-	 * @param PositionY : Position welche zu Pr�fen ist auf Y-Achse
+	 * @param PositionX : Position welche zu Prüfen ist auf X-Achse
+	 * @param PositionY : Position welche zu Prüfen ist auf Y-Achse
 	 * @return
 	 */
 	private static boolean isInCircle(double CircleX, double CircleY, double CircleRadius, double PositionX, double PositionY){
@@ -425,6 +402,16 @@ public class Editor {
 		return false;
 	}	
 
+	/**
+	 * Prüft mit hilfe der Dreiecksfunktion, ob ein Punki in einem Rechteck liegt.
+	 * @param RectangleX1 : Punkt 1 x
+	 * @param RectangleY1 : Punkt 2 x
+	 * @param RectangleX2 : Punkt diagonal zu 1 x
+	 * @param RectangleY2 : Punkt diagonal zu 1 y
+	 * @param PositionX   : Position x
+	 * @param PositionY   : Position y
+	 * @return
+	 */
 	private static boolean isInRectangle(double RectangleX1, double RectangleY1, double RectangleX2, double RectangleY2, double PositionX, double PositionY){
 		if(isInTriangle(RectangleX1,RectangleY1,RectangleX2,RectangleY2,RectangleX1,RectangleY2,PositionX,PositionY)||
 				isInTriangle(RectangleX1,RectangleY1,RectangleX2,RectangleY2,RectangleX2,RectangleY1,PositionX,PositionY)){

@@ -9,7 +9,7 @@ import marusenkoSphereKugel.Kugel;
 
 public class Manager {
 
-	public Kugel k;
+	protected Kugel k;
 	private Rendern rendern;
 	private ControlPanel cp;
 	protected ArrayList<String> BlockedKey = new ArrayList<String>();
@@ -30,20 +30,19 @@ public class Manager {
 	public Manager(Kugel k){
 		//übernehme Kugel von der Main-Datei
 		this.k = k;
-		
 		//Berechne die Trigonimetrischen Funktionen bereits hier, damit diese später schon berechnet sind
 		Trigonometrie.CalcTrigonometrie();
+		//Fülle Kugel zufällig
+		k.FillKugelRandom(); 
+		//Initialisiere die Fenster (KugelRendern und ControlPanel)
 		try{
 			rendern = new Rendern(k,displayMode);
 			cp = new ControlPanel(this,displayMode);
 		}catch(Exception e){
 			e.printStackTrace();
-		}
-		//Initialisiere die Fenster (KugelRendern und ControlPanel)
+		}	
 		
-		
-		//Fülle Kugel zufällig
-		fillSphere();
+		cp.updateKugelState(k.getStep(), k.SolvingList.size()-1);
 		//In Endlosschleife auf Tastatureingabe warten
 		while(true){
 			KugelSteuern.Input(this);
@@ -115,7 +114,7 @@ public class Manager {
 	 * Updatet die Stats Liste im ControlPanel
 	 */
 	protected void updateList(){
-		cp.updateKugelState(k.getStep(), SetToState.getSolvingLength(k.SolvingList)-1);
+		cp.updateKugelState(k.getStep(), k.SolvingList.size()-1);
 	}
 	/**
 	 * Zu Position in Lösungsweg gehen
@@ -138,6 +137,7 @@ public class Manager {
 		goToStep(k.getStep()-1);
 	}
 	protected void changeToMode(int i){
+		//Wenn der Editor angezeigt wird, dann prüfen ob kugel richtig ist und neu gelöst werden soll
 		if(displayMode==1){
 			if(isSphereAllowed()){
 				k.resetStep();
@@ -146,7 +146,7 @@ public class Manager {
 		}
 		displayMode = i;
 		cp.updateMode(displayMode);
-		System.out.println("Mode: "+displayMode);
+		//System.out.println("Mode: "+displayMode);
 	}
 	protected int getSelectedColor(){
 		return selectedColor;
@@ -172,50 +172,23 @@ public class Manager {
 	protected void rendernDrehen(float y, float x, float z, int mode){
 		switch(mode){
 		case 0: 
-			rendern.drehen(x,y,z);
-			//advancedDrehen(x, y, z);
+			if(x>=0.1f){
+				rendern.cm.TurnUp(x*4);
+			}
+			if(x<=-0.1f){
+				rendern.cm.TurnDown(x*4);
+			}
+			if(y>=-0.1f){
+				rendern.cm.TurnLeft(y*4);
+			}
+			if(y<=0.1f){
+				rendern.cm.TurnRight(y*4);
+			}
 			break;
 		case 1:
-			rendern.setDrehen(x,y,z);
+			rendern.cm.SetToStartPosition();
 			break;
 		}
-	}
-	protected void advancedDrehen(float x, float y, float z){
-		float[] oldDrehen = rendern.getDrehen(); 
-		double drehenX = oldDrehen[0];
-		double drehenY = oldDrehen[1];
-		double drehenZ = oldDrehen[2];
-		
-		
-		//Für X
-		drehenY+=Math.abs(Math.sin(Math.toRadians(drehenY)))*x*40;
-		drehenZ+=Math.abs(Math.sin(Math.toRadians(drehenZ)))*x*40;
-		drehenX+=x*40;
-		
-		
-		
-		
-		//Für Y
-		
-		drehenX+=Math.abs(Math.sin(Math.toRadians(drehenX)))*y*40;
-		drehenZ+=Math.abs(Math.sin(Math.toRadians(drehenZ)))*y*40;
-		drehenY+=y*40;
-		
-		
-		
-		/*drehenX+=x*40;
-		drehenY+=y*40;
-		drehenZ+=z*40;*/
-		
-		drehenX%=360;
-		drehenY%=360;
-		drehenZ%=360;
-		
-		
-		System.out.println("X: "+drehenX+" Y: "+drehenY+" Z: "+drehenZ);
-		
-		
-		rendern.setDrehen((float)drehenX,(float)drehenY,(float)drehenZ);
 	}
 	
 	protected void editSphereTri(int n){

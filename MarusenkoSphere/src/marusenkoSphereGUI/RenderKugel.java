@@ -16,12 +16,10 @@ public class RenderKugel {
 	 * Version 3: Mit Animation
 	 * 
 	 * @param k : Kugel
-	 * @param rx : Rotation auf x-Achse
-	 * @param ry : Rotation auf y-Achse
-	 * @param rz : Rotation auf z-Achse
+	 * @param cm : CameraManager für die Kamera
 	 * @return : true wenn Erfolgreich
 	 */
-	protected static boolean render(Kugel k,float rx, float ry, float rz) {
+	protected static boolean render(Kugel k, CameraController cm) {
     	/**
     	 * Auskommentieren, damit Flächen der Kugel nicht gefält werden
     	 * 
@@ -36,15 +34,9 @@ public class RenderKugel {
         //Setze die Position zum Rendern zurück 
         GL11.glLoadIdentity();
 
-        //Verschiebe die 0/0/0 Position zum Rendern, damit Kugel ganz sichtbar wird
-        GL11.glTranslatef(0.0f,0.0f,-4.0f);
+        //Kamera verschiebungen Machen
+        cm.lookThrough();
         
-        //Drehe die Kugel gemäss den Variabeln auf der x,y und z Achse
-        GL11.glRotatef(ry,0.0f,1.0f,0.0f);
-        GL11.glRotatef(rx,1.0f,0.0f,0.0f);
-        GL11.glRotatef(rz,0.0f,0.0f,1.0f);
-        
-
         //Starte das Zeichnen der einzelnen Flächen der Kugel als Dreiecke
         GL11.glBegin(GL11.GL_TRIANGLES);
         
@@ -53,24 +45,6 @@ public class RenderKugel {
         
         //Variable, ob die Halbe Kugel oder nur der Pol gedreht wird 
         int dreheMode = k.dm.getDrehModus();
-        
-        
-        //Wenn Zurück geht, wird andere Animation geladen als wenn vorwärts.
-        //Wenn es sprünge hat, dann wird keine Animation angezeigt
-        //Zurück
-       /* if(k.getOldStep()-1==k.getStep()){
-        	drehePol = Integer.parseInt(k.dm.getOldDrehung().substring(0, 1));
-            dreheMode = Integer.parseInt(k.dm.getOldDrehung().substring(2, 3));
-		}else
-		//Vorwärts
-		if(k.getOldStep()+1==k.getStep()){
-			drehePol = Integer.parseInt(k.dm.getDrehung().substring(0, 1));
-	        dreheMode = Integer.parseInt(k.dm.getDrehung().substring(2, 3));
-		}else{
-			drehePol = 0;
-	        dreheMode = 0;
-		}*/
-        
         
 		//Invertierungs Variabel auf x, y und z Achse --> für Negativ auf -1 ändern
 		int ix = 1;
@@ -86,27 +60,18 @@ public class RenderKugel {
 		// x = Positive Seite der X-Achse,  y = Positive Seite der Y-Achse,  z = Positive Seite der Z-Achse
 		//mx = Negative Seite der X-Achse, my = Negative Seite der Y-Achse, mz = Negative Seite der Z-Achse
 		// 1 = Nur der Pol wird gedreht, 3 = die halbe Kugel wird gedreht 
-		boolean x1 = false;
-		boolean x3 = false;
-		boolean mx1 = false;
-		boolean mx3 = false;
-		boolean y1 = false;
-		boolean y3 = false;
-		boolean my1 = false;
-		boolean my3 = false;
-		boolean z1 = false;
-		boolean z3 = false;
-		boolean mz1 = false;
-		boolean mz3 = false;
+		boolean x1 = false;  boolean x3 = false;
+		boolean mx1 = false; boolean mx3 = false;
+		boolean y1 = false;  boolean y3 = false;
+		boolean my1 = false; boolean my3 = false;
+		boolean z1 = false;  boolean z3 = false;
+		boolean mz1 = false; boolean mz3 = false;
 		
 		//Variablen welche Sagen in Welchem Winkel eine Seite gedreht ist
-		double drehx = 0.0;
-		double drehy = 0.0;
-		double drehz = 0.0;
+		double drehx = 0.0; double drehy = 0.0; double drehz = 0.0;
 		
 		//Zusätzliche Negativierungs Variablen, damit alle in die richtige Richtung drehen
-		int neg = 1;
-		int addNeg = 1;
+		int neg = 1; int addNeg = 1;
 		
 		
 		if(k.dm.bleibendeDrehung()>0){
@@ -131,10 +96,8 @@ public class RenderKugel {
 				}
 			}
 		}
-       /**ToDo:*/
 		
 		//Variabel definiert die Rotationsgeschwindikeit
-        //double rot = Manager.getRotationSpeed();
 		double rotation = k.dm.getRotationForFrame();
         
         //Wie genau die Kugel gerendert wird --> In wie gross/klein die Dreiecke sind
@@ -375,14 +338,7 @@ public class RenderKugel {
 			drehx*=addNeg;
 			drehy*=addNeg;
 			drehz*=addNeg;
-			
-			//Wenn Zurück gedreht wird, dann nocheinmal das ganze Retour ablaufen lassen
-			/*if(k.getOldStep()>k.getStep()){
-				drehx*=-1;
-				drehy*=-1;
-				drehz*=-1;
-			}*/
-			
+						
 			//Die x-Mal gleich Verwendeten Sinus/Cosinus in Variable speichern --> Ist effizienter als jedesmal Trigonometrie.sin() abzurufen
 			double[][] sinCos = new double[3][2];
 			sinCos[0][0] = Trigonometrie.sin(drehx);
@@ -518,13 +474,6 @@ public class RenderKugel {
 			drehx*=dn;
 			drehy*=dn;
 			drehz*=dn;
-	
-			//Wenn zurück geben, dann in andere Richtung drehen
-			/*if(k.getOldStep()>k.getStep()){
-				drehx*=-1;
-				drehy*=-1;
-				drehz*=-1;
-			}*/
 			
 			//Schreibe die oft benötigten Trigonometrischen Funktionen in Array --> Effizienter als jedesmal Trigonometrie.sin() abzurufen			
 			double[][] sinCos = new double[3][2];
@@ -867,13 +816,6 @@ public class RenderKugel {
     			drehx*=addNeg;
     			drehy*=addNeg;
     			drehz*=addNeg;
-    			
-    			//Wenn Zurück gedreht wird, dann nocheinmal das ganze Retour ablaufen lassen
-    			/*if(k.getOldStep()>k.getStep()){
-    				drehx*=-1;
-    				drehy*=-1;
-    				drehz*=-1;
-    			}*/
         		
         		//Die x-Mal gleich Verwendeten Sinus/Cosinus in Variable speichern --> Ist effizienter als jedesmal Trigonometrie.sin() abzurufen
     			double[][] sinCos = new double[3][2];
@@ -913,129 +855,9 @@ public class RenderKugel {
     				
         		}
         		
-        	}
-        	/*
-        	for(int i = 0; i<8; i++){
-        		
-        		//Setzet Drehung zurück auf 0
-    			drehx = 0;
-    			drehy = 0;
-    			drehz = 0;
-    			
-    			//Negations Variable
-    			int dn = 1;
-    			
-    			//Definiere die Variabeln und die Farbe für jedes Zwischenstück individuell
-    			switch(i){
-    			case 0:
-    				ix = -1; iy = 1; iz = -1;
-    				px = 0; py = 1; pz = 2; dn = 1;
-    				if(mx3){ drehx=rotation; }else
-    				if(y3){  drehy=rotation; }else
-    				if(mz3){ drehz=rotation; }
-    				break;
-    			case 1:
-    				ix = -1; iy = 1; iz = 1;
-    				px = 0; py = 1; pz = 2;	 dn = -1;
-    				if(mx3){ drehx=rotation; }else
-    				if(y3){  drehy=rotation; }else
-    				if(z3){  drehz=rotation; }
-    				break;
-    			case 2:
-    				ix = 1; iy = 1; iz = 1;
-    				px = 0; py = 1; pz = 2; dn = 1;
-    				if(x3){  drehx=rotation; }else
-    				if(y3){  drehy=rotation; }else
-    				if(z3){  drehz=rotation; }
-    				break;
-    			case 3:
-    				ix = 1; iy = 1; iz = -1;
-    				px = 0; py = 1; pz = 2; dn = -1;
-    				if(x3){  drehx=rotation; }else
-    				if(y3){  drehy=rotation; }else
-    				if(mz3){ drehz=rotation; }
-    				break;
-    			case 4:
-    				ix = -1; iy = -1; iz = -1;
-    				px = 0; py = 1; pz = 2; dn = -1;
-    				if(mx3){ drehx=rotation; }else
-    				if(my3){ drehy=rotation; }else
-    				if(mz3){ drehz=rotation; }
-    				break;
-    			case 5:
-    				ix = -1; iy = -1; iz = 1;
-    				px = 0; py = 1; pz = 2; dn = 1;
-    				if(mx3){ drehx=rotation; }else
-    				if(my3){ drehy=rotation; }else
-    				if(z3){  drehz=rotation; }
-    				break;
-    			case 6:
-    				ix = 1; iy = -1; iz = 1;
-    				px = 0; py = 1; pz = 2; dn = -1;
-    				if(x3){  drehx=rotation; }else
-    				if(my3){ drehy=rotation; }else
-    				if(z3){  drehz=rotation; }
-    				break;
-    			case 7:
-    				ix = 1; iy = -1; iz = -1;
-    				px = 0; py = 1; pz = 2;	dn = 1;
-    				if(x3){  drehx=rotation; }else
-    				if(my3){ drehy=rotation; }else
-    				if(mz3){ drehz=rotation; }
-    				break;	
-    			}
-    			
-    			//Negativiere je nach Drehrichtung
-    			drehx*=k.drehRichtung;
-    			drehy*=k.drehRichtung;
-    			drehz*=k.drehRichtung;
-    			
-    			//Zusätzliche Negationsvariable
-    			drehx*=dn;
-    			drehy*=dn;
-    			drehz*=dn;
-    	
-    			//Wenn zurück geben, dann in andere Richtung drehen
-    			if(k.getOldStep()>k.getStep()){
-    				drehx*=-1;
-    				drehy*=-1;
-    				drehz*=-1;
-    			}
-    			
-    			//Schreibe die oft benötigten Trigonometrischen Funktionen in Array --> Effizienter als jedesmal Trigonometrie.sin() abzurufen			
-    			double[][] sinCos = new double[3][2];
-    			sinCos[0][0] = Trigonometrie.sin(drehx);
-    			sinCos[0][1] = Trigonometrie.cos(drehx);
-    			sinCos[1][0] = Trigonometrie.sin(drehy);
-    			sinCos[1][1] = Trigonometrie.cos(drehy);
-    			sinCos[2][0] = Trigonometrie.sin(drehz);
-    			sinCos[2][1] = Trigonometrie.cos(drehz);
-        		
-        		
-        		GL11.glVertex3d(
-						((((ix*preCalcLines[2][0][px]*sinCos[2][1])+(iy*preCalcLines[2][0][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[2][0][pz]*sinCos[1][0])), 
-						((((iy*preCalcLines[2][0][py]*sinCos[2][1])-(ix*preCalcLines[2][0][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[2][0][pz]*sinCos[0][0])), 
-						((((iz*preCalcLines[2][0][pz]*sinCos[1][1])+(ix*preCalcLines[2][0][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[2][0][py]*sinCos[0][0]))
-								);
-				GL11.glVertex3d(
-						((((ix*preCalcLines[2][1][px+3]*sinCos[2][1])+(iy*preCalcLines[2][1][py+3]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[2][1][pz+3]*sinCos[1][0])), 
-						((((iy*preCalcLines[2][1][py+3]*sinCos[2][1])-(ix*preCalcLines[2][1][px+3]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[2][1][pz+3]*sinCos[0][0])), 
-						((((iz*preCalcLines[2][1][pz+3]*sinCos[1][1])+(ix*preCalcLines[2][1][px+3]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[2][1][py+3]*sinCos[0][0]))
-								);
-        		
-        	}
-        	
-        */
-        
+        	}        
         GL11.glEnd();
-        
-        
-        
-        
-        
-        
-        
-        
+
         if(k.dm.bleibendeDrehung()>0){
         	k.dm.setAktuelleDrehung(rotation);
         }else{

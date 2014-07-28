@@ -1,7 +1,5 @@
 package marusenkoSphereGUI;
 
-import java.util.ArrayList;
-
 import marusenkoSphereKugel.Kugel;
 
 /**
@@ -16,7 +14,7 @@ public class SetToState {
 	 * @return
 	 */
 	public static Kugel getKugelFromArrayList(Kugel k){
-		return getKugelFromArrayList(k, getSolvingLength(k.SolvingList)-1);
+		return getKugelFromArrayList(k, k.SolvingList.size()-1);
 	}
 	
 	/**
@@ -28,23 +26,14 @@ public class SetToState {
 	public static Kugel getKugelFromArrayList(Kugel k, int step){
 		if(step<=0){
 			step = 0;
-		}else if(step>=getSolvingLength(k.SolvingList)){
-			step = getSolvingLength(k.SolvingList)-1;
+		}else if(step>=k.SolvingList.size()){
+			step = k.SolvingList.size()-1;
 		}
-		if(Manager.doQuetoEnd&&step==getSolvingLength(k.SolvingList)){
+		if(Manager.doQuetoEnd&&step==k.SolvingList.size()-1){
 			Manager.doQuetoEnd = false;
 		}
 		k.FillKugelFromStringWithoutSolvingList(k.SolvingList.get(step));
 		return k;
-	}
-	
-	/**
-	 * Gibt zurück, wie lange der Lösungsweg der Kugel ist
-	 * @param solvingList
-	 * @return
-	 */
-	public static int getSolvingLength(ArrayList<String> solvingList){
-		return solvingList.size();
 	}
 	
 }
