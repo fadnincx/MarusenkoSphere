@@ -7,9 +7,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
-
-
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -130,13 +127,18 @@ public class ControlPanel implements ActionListener{
 		this.m = m;
 		
 		//Erstelle neues Fenster
-		createFrame();
+		try {
+			createFrame();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * Funktion zum Erstellen eines Neuen Fensters
+	 * @throws IOException 
 	 */
-	private void createFrame(){
+	private void createFrame() throws IOException{
 		//Neues Toolkit Objekt erstellen, wird gebraucht um an die Bildschirmaufläsung zu kommen
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Dimension screenSize = tk.getScreenSize();
@@ -148,6 +150,12 @@ public class ControlPanel implements ActionListener{
 		//Berechne die Verschiebung des Fensters
 		x=(WIDTH/2)+337;
 		y=(HEIGHT/2)-240;
+		
+		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
+		
+		controlp.setIconImage(icon);
+		editorp.setIconImage(icon);
+		devp.setIconImage(icon);
 		
 		//Setzte die Grösse des Controlpanels
 		controlp.setSize(350, 510);

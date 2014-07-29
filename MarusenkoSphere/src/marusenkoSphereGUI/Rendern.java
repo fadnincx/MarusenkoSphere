@@ -226,13 +226,13 @@ public class Rendern {
         //Versuche das Icon für das Fenster zu laden
         try {
         	//Erstelle ein ByteBuffer array für alle verfügbaren icons
-            ByteBuffer[] icons = new ByteBuffer[1];
+            ByteBuffer[] icons = new ByteBuffer[4];
             
             //Defniniere welche Icons geladen werden, inklusive der grösse
             icons[0] = loadIcon("/img/icon_16.png", 16, 16);
-            //icons[1] = loadIcon("/img/icon_32.png", 32, 32);
-            //icons[2] = loadIcon("/img/icon_64.png", 64, 64);
-            //icons[3] = loadIcon("/img/icon_128.png", 128, 128);
+            icons[1] = loadIcon("/img/icon_32.png", 32, 32);
+            icons[2] = loadIcon("/img/icon_64.png", 64, 64);
+            icons[3] = loadIcon("/img/icon_128.png", 128, 128);
             
             //Setzte die Icons           
             Display.setIcon(icons);
@@ -292,11 +292,11 @@ public class Rendern {
                 
                 //Rot, Grün und Blau in das Array schreiben 
                 for (int k = 0; k < 3; k++){
-                    imageBytes[(i*16+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
+                    imageBytes[(i*height+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
                 }
                 
                 //Alpha (transparenz) in das Array schreiben
-                imageBytes[(i*16+j)*4 + 3] = (byte)(((pixel>>(3)*8))&255);
+                imageBytes[(i*height+j)*4 + 3] = (byte)(((pixel>>(3)*8))&255);
             }
         }
         

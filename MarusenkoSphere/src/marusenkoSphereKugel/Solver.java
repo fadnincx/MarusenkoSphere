@@ -139,7 +139,7 @@ public class Solver {
 				}
 			}
 		}
-		System.out.println("End Phase 1 bei "+k.step+" Schritten");
+		//System.out.println("End Phase 1 bei "+k.step+" Schritten");
 		return strategieOnePhaseTwo();
 		
 		//return solvingWay;

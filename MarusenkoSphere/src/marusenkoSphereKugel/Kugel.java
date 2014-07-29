@@ -97,7 +97,7 @@ public class Kugel{
 	 * @return
 	 */
 	protected int SplitDrehungFromSphereAsI(String s){
-		System.out.println(s);
+		//System.out.println(s);
 		s = SplitDrehungFromSphereAsS(s);
 		return Integer.parseInt(s);
 	}
@@ -174,7 +174,7 @@ public class Kugel{
 				drehRichtung = 1;
 			}
 			*/
-			System.out.println(s);
+			//System.out.println(s);
 		//	System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung+" Sphere: "+s);
 		}else if(sp[0].length()==32){
 			for(int i = 0; i<8;i++){
@@ -329,9 +329,9 @@ public class Kugel{
 		//Die SolvingList ist das Resultat eines neuen Objekts Solver und dessen Methode solve mit dieser Kugel als Argument 
 		this.SolvingList = new Solver().solve(this);
 		//Setzte die Kugel in den Zustand zu beginn
-		System.out.println(SolvingList.toString());
+		//System.out.println(SolvingList.toString());
 		FillKugelFromStringWithoutSolvingList(SolvingList.get(0));
-		System.out.println(getSphere());
+		//System.out.println(getSphere());
 	}
 	
 	
