@@ -13,37 +13,31 @@ public class QueueManager {
 	public static void Queue(Manager m){
 		
 		//Setzte die Variable, dass Queue weiter gehen soll auf false
-		Manager.doQueue = false;
+		Manager.setAnimationFinished(false);
 		
 		//Wenn die Variable bis zum Ende lösen wahr ist
-		if(Manager.doQuetoEnd){
-			
-			//Wenn am Ende Angekommen, dann setze die Variable auf false
-			if(m.k.getStep()>=m.k.getMaxStep()){
-				Manager.doQuetoEnd = false;
-			}
-			
+		if(Manager.getRunAnimationToEnd()){
+
 			//Gehe einen Schritt weiter
 			m.addOneStep();
 		}else
 			//Wenn das Queue noch nicht leer ist, dann führe die Aktion aus
-		if(m.toDoQueue.size()>0){
+		if(m.isElementInSolvingQueue()){
 			
 			//Bekomme den String aus dem Queue und lösche ihn zugleich
-			String s = m.toDoQueue.poll();
+			char s = m.pollElementFromSolvingQueue();
 			
 			//Gehe nach weiter oder zurück
 			switch(s){
-			case "x":
-				//Weiter gehen
+			case 'x':
+				//Einen Schritt weiter gehen
 				m.addOneStep();
 				break;
-			case "y":
-				//Zurück gehen
+			case 'y':
+				//Einen Schritt zurück gehen
 				m.subOneStep();
 				break;
 			}
 		}
-		
 	}
 }

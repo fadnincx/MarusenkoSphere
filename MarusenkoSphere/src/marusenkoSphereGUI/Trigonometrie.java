@@ -7,7 +7,7 @@ package marusenkoSphereGUI;
 
 public class Trigonometrie {
 	
-	//Array mit den Werten [0 = Sinus, 1 = Cosinus][Grad von 0-260]
+	//Array mit den Werten [0 = Sinus, 1 = Cosinus][Grad von 0-359]
 	public static double[][] trigonometrie = new double[2][360];
 	
 	//Variable die Speichert, ob die Werte schon berechnet wurden
@@ -18,7 +18,7 @@ public class Trigonometrie {
 	 */
 	public static void CalcTrigonometrie(){
 		
-		//Gege für alle Grad von 0-359 durch und speichere Werte
+		//Gehe für alle Grad von 0-359 durch und speichere Werte
 		for(int i = 0; i<360; i++){
 			trigonometrie[0][i] = Math.sin(Math.toRadians(i));
 			trigonometrie[1][i] = Math.cos(Math.toRadians(i));
@@ -37,18 +37,19 @@ public class Trigonometrie {
 		
 		//Wenn noch nicht berechnet, dann berechne jetzt
 		if(!isCalc){CalcTrigonometrie();}
+		
 		//+360, damit sicher aller Werte positiv --> Negative Array Indizes gibt es nicht
 		alpha+=360;
+		
 		//Modulo 360, damit Wert zwischen 0 und 395
 		alpha%=360;
-		//Gibt den Wert aus dem Array zur�ck --> Winkel wird noch zu einem Integer konvertiert, sollte jedoch schon vorher eine ganz Zahl sein.
+		
+		//Gibt den Wert aus dem Array zurück --> Winkel wird noch zu einem Integer konvertiert, sollte jedoch schon vorher eine ganz Zahl sein.
 		return trigonometrie[SinCos][(int) alpha];
 	}
 	
 	/**
 	 * Gibt den Sinus aus dem berechneten Array aus
-	 * @param alpha : Winkel in Grad
-	 * @return
 	 */
 	public static double sin(double alpha){
 		return getValue(alpha, 0);
@@ -56,8 +57,6 @@ public class Trigonometrie {
 	
 	/**
 	 * Gibt den Sinus aus dem berechneten Array aus
-	 * @param alpha
-	 * @return
 	 */
 	public static double cos(double alpha){
 		return getValue(alpha, 1);

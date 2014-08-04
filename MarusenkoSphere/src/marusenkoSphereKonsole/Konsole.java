@@ -5,9 +5,9 @@ import marusenkoSphere.Log;
 import marusenkoSphereKugel.Kugel;
 
 /**
- * Wird von der Main-Datei aufgerufen, wenn mit der Konsole gestartet wird...
+ * Konsolen-Klasse
  * 
- * Sehr primitive Methode um möglichst viele Kugeln zu lösen
+ * Sehr primitive Methode um möglichst viele Kugeln zu lösen und Statistik zu führen
  *
  */
 @SuppressWarnings("unused")

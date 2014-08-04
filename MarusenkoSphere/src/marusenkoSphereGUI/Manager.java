@@ -7,123 +7,192 @@ import java.util.Queue;
 
 import marusenkoSphereKugel.Kugel;
 
+/**
+ * Manager-Klasse
+ * 
+ * Übernimmt die ganze Verwaltung und Koordination der Grafischen Oberfläche
+ *
+ */
 public class Manager {
 
-	protected Kugel k;
+	//Kugel die dargestellt wird
+	private Kugel k;
+	
+	// Das Render Fenster
 	private Rendern rendern;
+	
+	//Das Controlpanel
 	private ControlPanel cp;
-	protected ArrayList<String> BlockedKey = new ArrayList<String>();
-	protected int displayMode = 0; //0 = Kugel, 1 = Editor, 2 = dev
+	
+	//Eine ArrayList mit Tasten die Blockiert sind
+	//Verhindert, das durch normalen Tastenanschlag mehrere Aktionen ausgeführt werden
+	protected ArrayList<Character> blockedKey = new ArrayList<Character>();
+	
+	//Eine ArrayList in der "virtuell" Tasten gedrückt werden um mit den Buttons im Controlpanel die Tastatur zu ersetzen 
+	protected ArrayList<Character> pressedKey = new ArrayList<Character>();
+	
+	//Gibt an, was dargestellt wird
+	//0 = Kugel, 1 = Editor, 2 = Dev
+	private int displayMode = 0; 
+	
+	//Gibt an, welche Farbe im Editor ausgewählt ist
 	private int selectedColor = 0;
-	protected static double rotationSpeed = 3.0;
-	protected static double fps = 30;
-	protected Queue<String> toDoQueue = new LinkedList<String>();
-	protected static boolean doQueue = false;
-	protected static boolean doQuetoEnd = false;
+	
+	//Gibt den die Animationsgeschwindigkeit an
+	private static double animationSpeed = 3.0;
+	
+	//Gibt  die Framerate an
+	private static double fps = 60;
+	
+	//Das Queue mit was gemacht werden soll
+	// X = Schritt weiter, Y = Schritt zurück
+	private Queue<Character> solvingQueue = new LinkedList<Character>();
+	
+	//Wenn eine Animation fertig ist, dann ist Variabel true
+	private static boolean animationFinished = false;
+	
+	//Wenn lösen aktiv, dann nicht nach Queue, sondern bis zum ende lösen
+	private static boolean runAnimationToEnd = false;
+	
+	private int stepWhenGoesToEditor = 0;
 	
 	/**
 	 * Manager zum Lösen Verwalten der GUI und lösen der Kugel
 	 * @param k : Kugel zum lösen
-	 * @param d : DebugLog
-	 * @param l : ErrorLog
 	 */
 	public Manager(Kugel k){
-		//übernehme Kugel von der Main-Datei
+		
+		//Übernehme Kugel von der Main-Datei
 		this.k = k;
+		
 		//Berechne die Trigonimetrischen Funktionen bereits hier, damit diese später schon berechnet sind
 		Trigonometrie.CalcTrigonometrie();
+		
 		//Fülle Kugel zufällig
 		k.FillKugelRandom(); 
-		//Initialisiere die Fenster (KugelRendern und ControlPanel)
+		
+		
+		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
+		//Sonst wirf eine Exception
 		try{
-			rendern = new Rendern(k,displayMode);
-			cp = new ControlPanel(this,displayMode);
+			rendern = new Rendern(k);
+			cp = new ControlPanel(this);
 		}catch(Exception e){
 			e.printStackTrace();
 		}	
 		
-		cp.updateKugelState(k.getStep(), k.SolvingList.size()-1);
-		//In Endlosschleife auf Tastatureingabe warten
+		//Update die Anzeigt bezüglich der Anzahl Schritten 
+		updateControlpanelInformations();
+		
+		
+		//Methode loop starten
+		loop();
+	}
+	
+	/**
+	 * Funktion, welche endlos wiederholt wird
+	 */
+	private void loop(){
 		while(true){
-			KugelSteuern.Input(this);
+			//Frage die Tastatur und Mauseingaben ab
+			KeyboardMouseManager.Input(this);
+			
+			//Rendere die Aktuelle Kugel
+			rendern.updateKugel(k,displayMode);
+			
+			//Die aktuell im Controlpanel eingestellte Animationsgeschwindigkeit abrufen
+			animationSpeed = cp.getAnimationSpeed()/10;
+			
+			//Wenn aktuelle Animation fertig ist, dann QueueManager aufrufen
+			if(animationFinished){
+				QueueManager.Queue(this);
+		    }
+			
+		}
+		  
+	}
+	/**
+	 * Wartet bis die gegebene Anzahl Millisekunden verstrichen sind
+	 */
+	protected void sleep(long time){
+		try{
+			Thread.sleep(time);
+		}catch(InterruptedException e){
+			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Wartet bis time Millisekunden verstrichen sind
-	 * @param time
+	 * Ändert die Variable, dass die Kugel bis zum ende Gelöst wird
 	 */
-	protected void update(long time){
-		//setze Startzeit
-		long startTime = System.nanoTime();
-		//Vergangene Zeit = jetzt - Startzeit
-		long estimatedTime = System.nanoTime() - startTime;
-		//Time * 1'000'000 da alles in Nanosekunden und nich in Millisekunden wie Input
-		time*=1000000;
-		//Gehe durch bis Zeit verstrichen sit
-		while(estimatedTime<time){
-			//Frage den Input ab --> Zeitvertreib
-			//KugelSteuern.Input(this);
-			//Vergangene Zeit nachführen
-			estimatedTime = System.nanoTime() - startTime;
-		}
+	protected void changeRunAnimationToEnd(){
+		runAnimationToEnd = !runAnimationToEnd;
 	}
-	/**
-	 * Setzt die Kugel des Managers neu, und führt anschliessend alle Updatefunktionen aus
-	 * @param k
-	 */
-	protected void updateKugel(Kugel k){
-		this.k = k;
-		updateList();
-		renderKugel();
-	}
-	/**
-	 * Startet das Rendern der Kugel
-	 */
-	protected void renderKugel(){
-		rendern.updateKugel(k,displayMode);
-	}
-	/**
-	 * Zeit die Gelöste Kugel an
-	 */
-	protected void startSolve(){
-		doQuetoEnd = !doQuetoEnd;
-	}
+	
 	/**
 	 * Füllt die Kugel zufällig
 	 */
 	protected void fillSphere(){
-		doQuetoEnd = false;
+		//Stop, falls die Kugel zum Ende gelöst wird
+		runAnimationToEnd = false;
+		
+		//Füllt die Kugel zufällig
 	    k.FillKugelRandom();
-		updateList();   
+	    
+	    //Updated das Controlpanel
+	    updateControlpanelInformations();   
 	}
+	
 	/**
-	 * Füllt die Kugel gemäss String s
+	 * Füllt die Kugel vom DevPanel gemäss String
 	 * @param s : Kugel als String 
 	 * @param solving : Soll Kugel gelöst werden
 	 */
-	protected void fillSphere(String s, boolean solving){
+	protected void fillSphereFromDevString(String s, boolean solving){
+		//Updated das Controlpanel
+		runAnimationToEnd = false;
+		
+		//Fülle die Kugel gemäss String
 		k.FillKugelFromString(s, solving);
-		updateList();
-		doQuetoEnd = false;
+		
+		//Update Controlpanel
+		updateControlpanelInformations();	
 	}
-	protected void fillSphere(String s){
-		fillSphere(s, true);
-	}
+	
 	/**
-	 * Updatet die Stats Liste im ControlPanel
+	 * Updatet die Werte über die Kugel im Controlpanel
 	 */
-	protected void updateList(){
-		cp.updateKugelState(k.getStep(), k.SolvingList.size()-1);
+	protected void updateControlpanelInformations(){
+		cp.updateSphereInfos(k.getStep(), k.SolvingList.size()-1);
 	}
+	
 	/**
-	 * Zu Position in Lösungsweg gehen
-	 * @param i
+	 * Zu Position X in Lösungsweg gehen
 	 */
-	protected void goToStep(int i){
-		k = SetToState.getKugelFromArrayList(k,i);
-		updateList();
+	protected void goToStep(int x){
+		setKugelToPositionFromArrayList(x);
+		updateControlpanelInformations();
 	}
+	
+	/**
+	 * Gibt die Kugel zur Gegebenen Step zurück
+	 */
+	private void setKugelToPositionFromArrayList(int step){
+		//Prüfe, dass sich der gewünschte Step im Rahmen des erlaubten befindet
+		if(step<=0){
+			step = 0;
+		}else if(step>=k.SolvingList.size()){
+			step = k.SolvingList.size()-1;
+		}
+		//Wenn Kugel am Ende ist, dann runAnimationToEnd auf false setzen
+		if(runAnimationToEnd&&step==k.SolvingList.size()-1){
+			runAnimationToEnd = false;
+		}
+		//Setze Kugel
+		k.setKugelToStateFromList(step);
+	}
+	
+	
 	/**
 	 * Geht im Lösungsprozess eine Position weiter
 	 */
@@ -136,93 +205,206 @@ public class Manager {
 	protected void subOneStep(){
 		goToStep(k.getStep()-1);
 	}
+	
+	/**
+	 * Wechselt den Modus, was angezeigt wird
+	 *  0 = Kugel, 1 = Editor, 2 = Dev
+	 */
 	protected void changeToMode(int i){
-		//Wenn der Editor angezeigt wird, dann prüfen ob kugel richtig ist und neu gelöst werden soll
+		//Wenn der Editor angezeigt wurde, dann prüfen ob kugel korrekt und ob übernommen werden kann
 		if(displayMode==1){
+			
+			//Wenn Kugel korrekt, dann übernehmen
 			if(isSphereAllowed()){
 				k.resetStep();
-				fillSphere(k.getSphere());
+				k.FillKugelFromString(k.getSphere());
+			}else{
+				
+				//Wenn nicht, dann zu ursprünglicher Kugel zurück kehren
+				goToStep(stepWhenGoesToEditor);
 			}
 		}
+		
+		//Wenn neu der Editor
+		if(i==1){
+			
+			//Setzte Step, damit im nachhinein wieder zu diesem zurück gekehrt werden kann
+			stepWhenGoesToEditor = k.getStep();
+		}
+		
+		//Ändere den Modus
 		displayMode = i;
+		
+		//Teile dem Controlpanel mit, dass der Modus gewechselt wurde
 		cp.updateMode(displayMode);
-		//System.out.println("Mode: "+displayMode);
 	}
+	
+	/**
+	 * Gibt die im Editor ausgewählte Farbe zurück
+	 */
 	protected int getSelectedColor(){
 		return selectedColor;
 	}
+	
+	/**
+	 * Wechselt die ausgewählte Farbe des Editors zu Nummer n
+	 */
 	protected void changeSelectedColor(int n){
-		this.selectedColor = n;
+		selectedColor = n;
 	}
-	protected void getRotationSpeedfromCp(){
-		rotationSpeed = cp.getRotationSpeed()/10;
+	
+	/**
+	 *Gibt die aktuelle Animationsgeschwindigkeit zurück, welche im Controlpanel eingestellt ist
+	 */
+	public static double getAnimationsSpeed(){
+		return animationSpeed;
 	}
-	public static double getRotationSpeed(){
-		return rotationSpeed;
-	}
+	
+	/**
+	 * Gibt die aktuelle Bildfrequenz zurück
+	 */
 	public static double getFPS(){
 		return fps;
 	}
+	
 	/**
-	 * Nimmt das ändern der Drehung der Kugel vor
-	 * @param x
-	 * @param y
-	 * @param mode
+	 * Gibt den aktuellen DisplayModus zurück
 	 */
-	protected void rendernDrehen(float y, float x, float z, int mode){
-		switch(mode){
-		case 0: 
-			if(x>=0.1f){
-				rendern.cm.TurnUp(x*4);
-			}
-			if(x<=-0.1f){
-				rendern.cm.TurnDown(x*4);
-			}
-			if(y>=-0.1f){
-				rendern.cm.TurnLeft(y*4);
-			}
-			if(y<=0.1f){
-				rendern.cm.TurnRight(y*4);
-			}
-			break;
-		case 1:
-			rendern.cm.SetToStartPosition();
-			break;
-		}
+	protected int getDisplayMode(){
+		return displayMode;
+	}
+
+	/**
+	 * Gibt zurück, ob die Kugel bis zum Ende gelöst werden soll
+	 */
+	protected static boolean getRunAnimationToEnd(){
+		return runAnimationToEnd;
 	}
 	
+	/**
+	 * Gibt zurück, ob die aktuelle Animation beendet ist
+	 */
+	protected static boolean getAnimationFinished(){
+		return animationFinished;
+	}
+	
+	/**
+	 * Ändert den Status zur aktuellen Animation
+	 */
+	protected static void setAnimationFinished(boolean set){
+		animationFinished = set;
+	}
+	
+	/**
+	 * Setzt die aktuelle Bildfrequenz
+	 */
+	protected static void setFPS(int newFPS){
+		fps = newFPS;
+	}
+	
+	/**
+	 * Fügt ein char zum solvingQueue hinzu
+	 * x = Schritt weiter, y = Schritt zurück
+	 */
+	protected void addToSolvingQueue(char s){
+		solvingQueue.offer(s);
+	}
+	
+	/**
+	 * Gibt zurück, ob sich ein Element im SolvingQueue befindet
+	 */
+	protected boolean isElementInSolvingQueue(){
+		return solvingQueue.size()>0 ? true:false;
+	}
+	
+	/**
+	 * Fragt das erste Element im SolvingQueue ab und löscht es
+	 */
+	protected char pollElementFromSolvingQueue(){
+		return solvingQueue.poll();
+	}
+	
+	/**
+	 * Ändert den Rotationswinkel
+	 * Veränderung in x und y Richtung angeben
+	 */
+	protected void changeRotationAngle(double x, double y){
+		rendern.cm.turnRotationAngle(x, y);
+	}
+	
+	/**
+	 * Setzt die Rotationswinkel auf die Startposition zurück
+	 */
+	protected void resetRotationAngle(){
+		rendern.cm.setToStartPosition();
+	}
+	
+	/**
+	 * Methode für Editor zum Verändern der Dreiecke der Kugel
+	 */
 	protected void editSphereTri(int n){
+		//Ändern des Dreieckes
 		k.tri[n] = selectedColor;
-		updateSphere();
+		
+		//Aktuallisiere den Status im Controlpanel bezüglich legalität der Kugel
+		updateInformationToLegalityOfSphere();
 	}
+	
+	/**
+	 * Methode für Editor zum Verändern der Verbindungsstücke der Kugel
+	 */
 	protected void editSphereCon(int n){
+		//Ändern des Verbindungsstück
 		k.con[n] = selectedColor;
-		updateSphere();
+		
+		//Aktuallisiere den Status im Controlpanel bezüglich legalität der Kugel
+		updateInformationToLegalityOfSphere();
 	}
-	private void updateSphere(){
-		cp.updateAllowKugel(isSphereAllowed());
+	
+	/**
+	 * Aktuallisiere den Status im Controlpanel bezüglich legalität der Kugel
+	 */
+	private void updateInformationToLegalityOfSphere(){
+		cp.updateInfoIsSphereAllowed(isSphereAllowed());
 	}
+	
+	/**
+	 * Prüfe, ob Kugel legal ist
+	 */
 	private boolean isSphereAllowed(){
+		//Erstelle Array für alle aktuellen Tris
 		int[] checkTri = new int[24];
+		
+		//Erstelle Array für alle aktuellen Cons
 		int[] checkCon = new int[8];
-		int[] referenceTri = new int [24];
-		int[] referenceCon = new int[8];
+		
+		//Erstelle Referenz Array für Tri
+		int[] referenceTri = new int[] {0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7};
+		
+		//Erstelle Referenz Array für Con
+		int[] referenceCon = new int[] {0,1,2,3,4,5,6,7};
+		
+		//Fülle das TriArray mit aktuellen Werten
 		for(int i = 0; i<24;i++){
 			checkTri[i] = k.tri[i];
-			referenceTri[i] = i/3;
 		}
+		
+		//Fülle das ConArray mit aktuellen Werten
 		for(int i = 0; i<8;i++){
 			checkCon[i] = k.con[i];
-			referenceCon[i] = i;
 		}
+		
+		//Sortiere die aktuellen Arrays, damit sie einfach verglichen werden können
 		Arrays.sort(checkTri);
 		Arrays.sort(checkCon);
-		if(Arrays.equals(checkTri,referenceTri)&&Arrays.equals(checkCon,referenceCon)){
-			return true;
-		}
-		return false;
+		
+		return Arrays.equals(checkTri,referenceTri)&&Arrays.equals(checkCon,referenceCon);
 	}
-	public void exitProgramm(){
+	
+	/**
+	 * Wenn das Programm beendet werden soll
+	 */
+	protected void exitProgramm(){
 		rendern.end();
 	}
 	

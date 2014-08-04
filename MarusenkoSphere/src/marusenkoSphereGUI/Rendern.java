@@ -1,5 +1,6 @@
 package marusenkoSphereGUI;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,7 +17,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
-
 /**
  * Rendern-Datei
  * 
@@ -29,9 +29,9 @@ public class Rendern {
 	//Definiert den Titel des Fenster
 	private final String windowTitle = "MarusenkoSphere";
     
+	//Den CameraController für die Kameradrehungen
     protected CameraController cm = new CameraController();
 
-    
     //Definiert DisplayMode ==> Verantwortlich, wie Fenster mit Farbmodus etc. ist
     private DisplayMode displayMode;
     
@@ -39,10 +39,9 @@ public class Rendern {
     protected Kugel k;
 
     //In welchem Modus gerendert wird
-    private int mode = 0;
+    private int renderMode = 0;
     
-    //Variabeln für die FPS berechnungen
-    private long lastFrame;
+    //Variabeln für die FPS Berechnungen
     private int fps;
     private long lastFPS;
 
@@ -51,9 +50,10 @@ public class Rendern {
      * 
      * Option kugel wird auch als aktuelle Kugel des Rendern-Objekts definiert
      */
-    protected Rendern(Kugel kugel, int mode){
-    	this.mode = mode;
-    	this.k = kugel;
+    protected Rendern(Kugel kugel){
+    	//Setze die Kugel als eigene
+    	k = kugel;
+    	
     	//Starte das Rendern
     	run();
     }
@@ -62,15 +62,16 @@ public class Rendern {
      * Funktion zum Updaten der Kugel
      */
     protected void updateKugel(Kugel kugel, int mode){
-    	this.mode = mode;
-    	this.k = kugel;
+    	renderMode = mode;
+    	k = kugel;
     	doing();
     }
+    
     /**
      * Funktion welche versucht das Fenster zum Darstellen zu starten
      * 
      * Bei nicht Support Wird hier schon eine Exception geworfen und das Programm beendet
-     * --> Tritt bekanntermassen nur auf, wenn Grafikkartentreiber nicht richtig installiert und mit JAR-Splice Zusatz-Option nicht hinzugef�gt wurde
+     * --> Tritt bekanntermassen nur auf, wenn Grafikkartentreiber nicht richtig installiert und mit JAR-Splice Zusatz-Option nicht hinzugefügt wurde
      */
     private void run() {
         try {
@@ -79,17 +80,16 @@ public class Rendern {
         catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
-        }
-       
+        }  
     }
     
     /**
      * Funktion welche das Fenster updatet
      */
     private void doing(){
-    	switch(mode){
+    	switch(renderMode){
     	case 1:
-    		//Editor
+    		//Editor rendern
     		Editor.renderEditor(k);
     		break;
     	default:
@@ -97,45 +97,40 @@ public class Rendern {
         	RenderKugel.render(k,cm); 
     		break;
     	}
+    	//Die Framerate aktuallisieren
     	updateFPS();
+    	
     	//Fixiere Frame rate auf 60fps (Kugel wird maximal 60 mal pro Sekunde neu gerendert)
     	Display.sync(60);
     	
-    	//Update die Dartellung auf dem Display
+    	//Update die Darstellung auf dem Display
         Display.update();
     }
+    
     /**
-     * Gibt die Zeit in Millisekunden zurück
+     * Gibt die aktuelle Zeit in Millisekunden zurück
      * @return
      */
     private long getTime() {
     	return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
-    /**
-     * Gibt den Zeit unterschiede zwischen dem letzten und dem jetztigen Frame an
-     * @return
-     */
-    private int getDelta() {
-    	long time = getTime();
-    	int delta = (int) (time - lastFrame);
-    	lastFrame = time;
-    	return delta;
-    }
+
+    
     /**
      * Updated die Framerate
-     * Setzt den Titel neu und updatet FPS im Manager für die Berechnung 
-     * der Drehgeschwindigkeit
+     * Updatet FPS im Manager für die Berechnung der Animationsgeschwindigkeit
      */
     private void updateFPS() {
     	//Wenn eine Sekunde vergangen
     	if (getTime() - lastFPS > 1000) {
-    		Display.setTitle(windowTitle+" - FPS: " + fps);
-    		Manager.fps = fps;
+    		//Setze die Framerate im Manager
+    		Manager.setFPS(fps);
     		fps = 0;
     		lastFPS += 1000;
     	}
     	fps++;
     }
+    
     /**
      * Beendet das Rendern und schliesst das Fenster
      */
@@ -144,9 +139,7 @@ public class Rendern {
     }
 
     /**
-     * Gibt die Farbe als float-Array zurück
-     * @param n
-     * @return
+     * Gibt die Farbe n als float-Array zurück
      */
     protected static float[] getColorFloat(int n){
     	switch(n){
@@ -162,116 +155,121 @@ public class Rendern {
     	default:return new float[] {0.0f,0.0f,0.0f};
     	}
     }
+    
     /**
-     * Funktion welche die Farbe setzt, mit welcher die Dreiecke gerendert werden 
+     * Funktion welche die Farbe für OpenGL setzt, mit welcher die Dreiecke gerendert werden 
      * @param n : Farbcode
      */
     protected static void setColor(int n){
     	float[] color = getColorFloat(n);
     	GL11.glColor4f(color[0],color[1],color[2], 1.0f);
     }
+    
     /**
-     * Gibt einen Wert einer Farbe zurück
-     * @param n
-     * @param a
-     * @return
+     * Funktion gibt eine AWT-Color zurück für das Editor-Controlpanel
      */
-    protected static float getColorFloat(int n,int a){
+    protected static Color getColorColor(int n){
     	float[] color = getColorFloat(n);
-    	return color[a];
+    	return new Color(color[0],color[1],color[2], 1.0f);
     }
+    
+    
     /**
      * Funktion zum erstellen des Fensters
      */
     private void createWindow() throws Exception {
     	try{
-    	//Suche nach allen verfügbaren Moden mit welchen das Fenster
-    	//dargestellt werden kann
-    		
-        DisplayMode d[] = Display.getAvailableDisplayModes();
-        
-        //Suche den richtigen Modus richtige heraus        
-        //Bevorzuge 32Bit farbtiefe
-        for (int i = 0; i < d.length; i++) {
-            if (d[i].getWidth() == 640
-                && d[i].getHeight() == 480
-                && d[i].getBitsPerPixel() == 32) {
-                displayMode = d[i];
-                break;
-            }
-        }
-        //Wenn 32Bit nicht verfügbar, dann 24Bit nehmen
-        if(displayMode == null){
-        	for (int i = 0; i < d.length; i++) {
-                if (d[i].getWidth() == 640
-                    && d[i].getHeight() == 480
-                    && d[i].getBitsPerPixel() == 24) {
-                    displayMode = d[i];
-                    break;
-                }
-            }
-        }
-        //Für ganz Schlechte Bildschirme noch 16Bit
-        if(displayMode == null){
-        	for (int i = 0; i < d.length; i++) {
-                if (d[i].getWidth() == 640
-                    && d[i].getHeight() == 480
-                    && d[i].getBitsPerPixel() == 16) {
-                    displayMode = d[i];
-                    break;
-                }
-            }
-        }
-        
-        //Versuche das Icon für das Fenster zu laden
-        try {
-        	//Erstelle ein ByteBuffer array für alle verfügbaren icons
-            ByteBuffer[] icons = new ByteBuffer[4];
-            
-            //Defniniere welche Icons geladen werden, inklusive der grösse
-            icons[0] = loadIcon("/img/icon_16.png", 16, 16);
-            icons[1] = loadIcon("/img/icon_32.png", 32, 32);
-            icons[2] = loadIcon("/img/icon_64.png", 64, 64);
-            icons[3] = loadIcon("/img/icon_128.png", 128, 128);
-            
-            //Setzte die Icons           
-            Display.setIcon(icons);
-            
-            
-        //Werfe eine Exception, wenn ein Fehler dabei passiert!    
-        } catch (IOException e) {
-           e.printStackTrace();
-        }
-
-        //Setzte den DisplayMode und den Fenstertitel       
-        Display.setDisplayMode(displayMode);
-        Display.setTitle(windowTitle);
-        
-        //Erstelle Fenster mit den voreingestellten Einstellungen
-        try{
-        	Display.create(new PixelFormat(0, 8, 0, 4));
-        	//Display.create();
-        }catch(LWJGLException ex){
-        	System.out.println("Kein Antialiasing Möglich!");
-        	Display.create();
-        }
-        Display.setVSyncEnabled(true);
+	    	//Suche nach allen verfügbaren Modien mit welchen das Fenster
+	    	//dargestellt werden kann
+	    		
+	        DisplayMode d[] = Display.getAvailableDisplayModes();
+	        
+	        //Suche den richtigen Modus richtige heraus    
+	        
+	        //Bevorzuge 32Bit farbtiefe
+	        for (int i = 0; i < d.length; i++) {
+	            if (d[i].getWidth() == 640
+	                && d[i].getHeight() == 480
+	                && d[i].getBitsPerPixel() == 32) {
+	                displayMode = d[i];
+	                break;
+	            }
+	        }
+	        //Wenn 32Bit nicht verfügbar, dann 24Bit nehmen
+	        if(displayMode == null){
+	        	for (int i = 0; i < d.length; i++) {
+	                if (d[i].getWidth() == 640
+	                    && d[i].getHeight() == 480
+	                    && d[i].getBitsPerPixel() == 24) {
+	                    displayMode = d[i];
+	                    break;
+	                }
+	            }
+	        }
+	        //Für ganz Schlechte Bildschirme noch 16Bit
+	        if(displayMode == null){
+	        	for (int i = 0; i < d.length; i++) {
+	                if (d[i].getWidth() == 640
+	                    && d[i].getHeight() == 480
+	                    && d[i].getBitsPerPixel() == 16) {
+	                    displayMode = d[i];
+	                    break;
+	                }
+	            }
+	        }
+	        
+	        //Versuche das Icon für das Fenster zu laden
+	        try {
+	        	//Erstelle ein ByteBuffer array für alle verfügbaren icons
+	            ByteBuffer[] icons = new ByteBuffer[4];
+	            
+	            //Defniniere welche Icons geladen werden, inklusive der Grösse
+	            //LWJGL wählt dann je nach Betriebssystem die beste Option 
+	            icons[0] = loadIcon("/img/icon_16.png", 16, 16);
+	            icons[1] = loadIcon("/img/icon_32.png", 32, 32);
+	            icons[2] = loadIcon("/img/icon_64.png", 64, 64);
+	            icons[3] = loadIcon("/img/icon_128.png", 128, 128);
+	            
+	            //Setzte die Icons           
+	            Display.setIcon(icons);
+	            
+	            
+	        //Werfe eine Exception, wenn ein Fehler dabei passiert!    
+	        } catch (IOException e) {
+	           e.printStackTrace();
+	        }
+	
+	        //Setzte den DisplayMode und den Fenstertitel       
+	        Display.setDisplayMode(displayMode);
+	        Display.setTitle(windowTitle);
+	        
+	        //Erstelle Fenster mit den voreingestellten Einstellungen
+	        try{
+	        	//Versuche es mit Antialiasing
+	        	Display.create(new PixelFormat(0, 8, 0, 4));
+	        }catch(LWJGLException ex){
+	        	//Wennn nicht möglich, dann gibt die Meldung aus und starte ohne
+	        	System.out.println("Kein Antialiasing Möglich!");
+	        	Display.create();
+	        }
+	        //VSync aktivieren
+	        Display.setVSyncEnabled(true);
+	        
     	}catch(LWJGLException e){
+    		//Wenn Fehler beim Initialisieren des Fensters passiert, dann sofort Programm beenden
     		e.printStackTrace();
     		System.exit(0);
     	}
-    	getDelta();
     	lastFPS = getTime();
     }
     
     /**
      * Funktion, welche für das laden des Icons und umwandeln zu einem Bytebuffer verantwortlich ist
      * 
-     * 
      * @param filename : gibt den Dateinamen an, welche Datei geladen wird
      * @param width : breite der Datei, welche geladen werden wird
      * @param height : höhe der Datei, welche geladen werden wird
-     * @return : gibt den ByteBuffer zur�ck
+     * @return : gibt den ByteBuffer zurück
      */
     private ByteBuffer loadIcon(String filename, int width, int height) throws IOException {
     	
@@ -279,24 +277,23 @@ public class Rendern {
     	BufferedImage image = ImageIO.read(this.getClass().getResourceAsStream(filename));
     	
         //Wandle das Bild in ein ByteArray um
-        //erstelle ein Array welches genügend gross für die voreingestellte 
-    	//grösse des Bildes ist
+        //erstelle ein Array welches genügend gross für die voreingestellte grösse des Bildes ist
         //breite*höhe*4 (die 4 ist für rot, grün, blau und alpha)
     
         byte[] imageBytes = new byte[width * height * 4];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
             	
-            	//Frage den Pixel an entsprechende Position ab um es anschliessend in das Array zu schreiben
+            	//Frage Image an entsprechende Position ab um es anschliessend in das Array zu schreiben
                 int pixel = image.getRGB(j, i);
                 
                 //Rot, Grün und Blau in das Array schreiben 
                 for (int k = 0; k < 3; k++){
-                    imageBytes[(i*height+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
+                    imageBytes[(i*width+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
                 }
                 
                 //Alpha (transparenz) in das Array schreiben
-                imageBytes[(i*height+j)*4 + 3] = (byte)(((pixel>>(3)*8))&255);
+                imageBytes[(i*width+j)*4 + 3] = (byte)(((pixel>>(3)*8))&255);
             }
         }
         
@@ -327,26 +324,19 @@ public class Rendern {
         //Definiere den Hintergrund auf ein helles Grau
         GL11.glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
        
-        /**
-         * Definiert wie viel beim ClearDepth durchgeführt wurde
-         * und Aktiviere den DepthTest
-         * sowie welchert Type von DepthTest durchgeführt wird
-         */
+        
         GL11.glClearDepth(1.0);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
-        
-        //Definie die Projektions Matrix, sowie das zurücksetzen dieser Matrix
+     
+        //Setzte aktive Matrix auf Projection und lade sie
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
      
+        //Die Perspektive Berechnen mit Hilfe von GLU
+        GLU.gluPerspective(45.0f, (float) (displayMode.getWidth() / displayMode.getHeight()),0.1f,100.0f);
         
-        //Die Perspektive Berechnen mit hilfe von GLU
-        GLU.gluPerspective(45.0f,
-        		(float) displayMode.getWidth() / (float) displayMode.getHeight(),
-          0.1f,100.0f);
-        
-        //Den Matrixmodus wählen
+        //Setze aktive Matrix auf Modelview
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
         //Verbessere die Berechnungen der Perspektive
@@ -357,7 +347,7 @@ public class Rendern {
     }
 
     /**
-     * Funktion welche beim Beenden Aufgerufen wird, ist relativ wichtig, damit Speicher wieder freigegeben wird 
+     * Funktion welche beim Beenden Aufgerufen wird, ist wichtig, damit Speicher wieder freigegeben wird 
      */
     private static void cleanup() {
         Display.destroy();

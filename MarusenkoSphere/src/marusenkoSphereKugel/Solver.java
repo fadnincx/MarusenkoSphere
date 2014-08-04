@@ -72,7 +72,6 @@ public class Solver {
 			Log.ErrorLog(solvingWay.get(0));
 			Log.ErrorLog("Zuviele Schritte nötig!!!");
 			k.step-=10000;
-			Thread.getAllStackTraces();
 			return true;
 		}
 		//Füge Kugel zum Lösungsprozess hinzu
@@ -90,11 +89,552 @@ public class Solver {
 	public ArrayList<String> solve(Kugel kugel){
 		//Nimmt die übergebene Kugel zum lösen
 		this.k = kugel;
+		String firstSphere = k.getSphere();
+		ArrayList<String> bestSolvingWay = new ArrayList<String>();
+		for(int i = 0; i<10000; i++){
+			bestSolvingWay.add("preSet");
+		}
+		int anzahlStrategien = 2;
+		for(int i = 0; i<anzahlStrategien; i++){
+			k.FillKugelFromString(firstSphere, false);
+			ArrayList<String> AL = strategieChooser(i);
+			if(AL.size()<bestSolvingWay.size()){
+				bestSolvingWay = AL;
+			}
+			solvingWay = new ArrayList<String>();
+		}
 		
-		return strategieOne();
+		return bestSolvingWay;
 		
 		
 	}//#END solve(Kugel kugel)
+	private ArrayList<String> strategieChooser(int strategie){
+		switch(strategie){
+			case 0:
+				return strategieStandard();
+				
+			case 1:
+				return strategieOne();
+			default:
+				return null;
+		}
+		
+	}
+	private ArrayList<String> strategieStandard(){
+		//Die Ursprüngliche Kugel speichern
+		solvingWay.add(k.getSphere());
+		//Gehe für alle Pole Durch
+		//Damit Pol 4 vor 3 gelöst wird
+		int[] pol = {0,1,4,2,3,5};
+		for(int z = 0; z<1;z++){
+		
+			for(int i = 0; i<6; i++){
+				//Wenn Pol nicht gelöst ist, dann weiter
+				if(!SolveCheck.isPolSolved(pol[i], k)){
+					/*boolean ok[] = {false, false, false, false};
+					int anzahlSolved = 0;
+					//Prüfen, welche Teile bereits gelöst sind
+					for(int j = 0; j<4; j++){
+						if(SolveCheck.isPositionSolved(pol[i]*4+j,k)){
+							ok[j]=true;
+							anzahlSolved++;
+						}
+					}
+					//Wenn 3 gelöst sind, dann muss 1. hälfte gelöst werden
+					/*if(anzahlSolved==3){
+						int falsePosition = -1;
+						for(int j = 0; j<4; j++){
+							if(!ok[j]){
+								falsePosition = j;
+							}
+						}
+						if(strategieStandardAreThis2Possible(pol[i]*4+falsePosition, pol[i]*4+((falsePosition+1)%4))){
+							//Lösen mit nummer Plus 
+							strategieStandardSolv2Positions(pol[i]*4+falsePosition, pol[i]*4+((falsePosition+1)%4));
+						}else
+						if(strategieStandardAreThis2Possible(pol[i]*4+falsePosition, pol[i]*4+((falsePosition+3)%4))){
+							//Lösen mit nummer minus
+							strategieStandardSolv2Positions(pol[i]*4+falsePosition, pol[i]*4+((falsePosition+3)%4));
+						}
+	
+						
+					}else
+					//Wenn 2 gelöst sind, dann muss je nach dem 1 oder 2 hälften gelöst werden
+					if(anzahlSolved==2){
+						//nur einer lösen
+						if(ok[0]&&ok[1]&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
+							strategieStandardSolv2Positions(pol[i]*4+2, pol[i]*4+3);
+						}else
+						if(ok[2]&&ok[3]&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)){
+							strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+1);
+						}else
+						if(ok[0]&&ok[3]&&strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)){
+							strategieStandardSolv2Positions(pol[i]*4+1, pol[i]*4+2);
+						}else
+						if(ok[1]&&ok[2]&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
+							strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+3);
+						}
+						//beide lösen
+						else{
+							if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
+								strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+1);
+								strategieStandardSolv2Positions(pol[i]*4+2, pol[i]*4+3);
+							}else
+							if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
+								strategieStandardSolv2Positions(pol[i]*4+1, pol[i]*4+2);
+								strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+3);
+							}
+						}
+					}
+					//2 Hälften müssen gelöst werden
+					else{*/
+						if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
+							strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+1);
+							strategieStandardSolv2Positions(pol[i]*4+2, pol[i]*4+3);
+						}else
+						if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
+							strategieStandardSolv2Positions(pol[i]*4+1, pol[i]*4+2);
+							strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+3);
+						}else{
+							//System.out.println("Error no Possibles");
+						}
+					//}
+				}else{
+					//System.out.println("Pol "+i+" gelöst");
+				}
+			}
+		}
+		boolean doStrategiePhase1 = false;
+		for(int i = 0; i<6; i++){
+			if(!checkPoleEndPhase1(i)){
+				doStrategiePhase1 = true;
+			}
+		}
+		if(doStrategiePhase1){
+			strategieOne();
+		}
+		
+		return strategieOnePhaseTwo();
+		//return solvingWay;
+	}
+	private void strategieStandardSolv2Positions(int pos1, int pos2){
+		//Wenn möglich
+		if(strategieStandardAreThis2Possible(pos1,pos2)){
+			//Die Beiden Pole für die Beiden Positionen abfragen
+			int[] pole1 = getPoleForPosition(pos1);
+			int[] pole2 = getPoleForPosition(pos2);
+			//Pol auf dem beide sind
+			int pol = pos1/4;
+			//Array mit möglichen Polen
+			int[] poleMoeglich = new int[2]; 
+			int[] neededColors = new int[] {k.con[k.findCons(pos1)],k.con[k.findCons(pos2)]};
+			boolean everSame = false;
+			for(int i = 0; i<2; i++){
+				boolean same = false;
+				int notSame = -1;
+				for(int j = 0; j<2;j++){
+					if(pole1[i]==pole2[j]){
+						same = true;
+					}else{
+						notSame = j;
+					}
+				}
+				if(!same){
+					poleMoeglich[0]=pole1[i];
+					poleMoeglich[1]=pole2[notSame];
+					everSame = true;
+				}
+			}
+			//System.out.println("Pos1 "+pos1+" Pos2 "+pos2+"--> Pole Möglich: "+poleMoeglich[0]+"; "+poleMoeglich[1]);
+			int poleToDo = -1;
+			int anzNeededColors = -1;
+			if(everSame){
+				for(int i = 0; i<2; i++){
+					if(!SolveCheck.isPolSolved(poleMoeglich[i], k)){
+						int aktAnzNeeded = 0;
+						boolean p1Found = false; 
+						boolean p2Found = false;
+						for(int j = 0; j<4; j++){
+							if(k.tri[poleMoeglich[i]*4+j]==neededColors[0]&&!p1Found){
+								aktAnzNeeded++;
+								p1Found = true;
+							}
+							if(k.tri[poleMoeglich[i]*4+j]==neededColors[1]&&!p2Found){
+								aktAnzNeeded++;
+								p2Found = true;
+							}
+						}
+						if(aktAnzNeeded>anzNeededColors){
+							poleToDo = poleMoeglich[i];
+							anzNeededColors = aktAnzNeeded;	
+						}
+						
+						
+					}
+				}
+				//System.out.println("Pol "+poleMoeglich[0]+": Farben "+k.tri[poleMoeglich[0]*4]+";"+k.tri[poleMoeglich[0]*4+1]+";"+k.tri[poleMoeglich[0]*4+2]+";"+k.tri[poleMoeglich[0]*4+3]);
+				//System.out.println("Pol "+poleMoeglich[1]+": Farben "+k.tri[poleMoeglich[1]*4]+";"+k.tri[poleMoeglich[1]*4+1]+";"+k.tri[poleMoeglich[1]*4+2]+";"+k.tri[poleMoeglich[1]*4+3]);
+				//System.out.println("Pol ToDo: "+poleToDo+" Farben: "+neededColors[0]+";"+neededColors[1]);
+			}else{
+				//System.out.println("Error bei Pol zu teilung");
+			}
+			if(poleToDo!=-1){
+				//Die Farben auf den Pol kriegen
+				strategieStandardGetOnPole(poleToDo, neededColors[0],neededColors[1]);	
+				
+				
+				int posOnPol = strategieStandardGetPosOnPol(pos1, pos2, poleToDo);
+				int polRechts = strategieStandardGetPolRechts(pos1, pos2, poleToDo);
+				if(polRechts == -1){
+					//System.out.println("Error - PolRechts = -1");	
+				}
+				if(posOnPol == -1){
+					//System.out.println("Error - PosOnPol = -1");
+				}
+				//System.out.println("PolRechts "+polRechts+" posOnPol "+posOnPol);
+				//System.out.println();
+				
+				
+				int[] optionens = strategieStandartGetTurnOpt(pos1, pos2, poleToDo);
+				//Farbe eins auf Bereitschaft drehen
+				
+				int[] colors = new int[]{neededColors[0],neededColors[1]};
+				
+				if(neededColors[0]==k.con[k.findCons(pos2)]&&neededColors[1]==k.con[k.findCons(pos1)]){
+					int temp = neededColors[0];
+					neededColors[0] = neededColors[1];
+					neededColors[1] = temp;
+				}
+				
+				
+				if(optionens[2]==2){
+					colors[0] = neededColors[1];
+					colors[1] = neededColors[0];
+				}
+				
+				
+				
+				for(int i = 0; i<4; i++){
+					if(k.tri[posOnPol]!=colors[0]){
+						addSteps(poleToDo, 1, 1);
+					}
+				}
+				addSteps(polRechts, optionens[0], 3);
+				addSteps(pol, optionens[1], 1);
+				addSteps(polRechts, 4-optionens[0], 3);
+				
+
+				//Farbe eins auf Bereitschaft drehen
+				for(int i = 0; i<4; i++){
+					if(k.tri[posOnPol]!=colors[1]){
+						addSteps(poleToDo, 1, 1);
+					}
+				}
+				addSteps(polRechts, optionens[0], 3);
+				addSteps(pol, optionens[1], 1);
+				addSteps(polRechts, 4-optionens[0], 3);
+				
+			}else{
+			//	System.out.println("Error: ToDo Pol = -1");
+			}
+			
+			
+			
+			
+		}else{
+			//System.out.println("Error-NotPossible in Solve2Positions");
+		}
+	}
+	private int[] strategieStandartGetTurnOpt(int pol1Pos1, int pol1Pos2, int pol2){
+		int pol1 = pol1Pos1/4;
+		ArrayList<Integer> ali = new ArrayList<Integer>();
+		ali.add(pol1Pos1);
+		ali.add(pol1Pos2);
+		switch(pol1){
+		case 0:
+			switch(pol2){
+				case 1: return (ali.contains(0)&&ali.contains(3)) ? new int[]{1,3,1}: new int[]{3,1,1};
+				case 3: return (ali.contains(0)&&ali.contains(3)) ? new int[]{3,1,2}: new int[]{1,3,2};
+				case 4: return (ali.contains(0)&&ali.contains(1)) ? new int[]{3,1,1}: new int[]{1,3,2};
+				case 5: return (ali.contains(0)&&ali.contains(1)) ? new int[]{1,3,2}: new int[]{3,1,1};
+				default: return new int[]{0,0,0};
+			}
+		case 1:
+			switch(pol2){
+				case 0: return (ali.contains(4)&&ali.contains(7)) ? new int[]{3,1,1}: new int[]{1,3,1};
+				case 2: return (ali.contains(4)&&ali.contains(7)) ? new int[]{1,3,2}: new int[]{3,1,2};
+				case 4: return (ali.contains(4)&&ali.contains(5)) ? new int[]{1,3,1}: new int[]{3,1,2};
+				case 5: return (ali.contains(4)&&ali.contains(5)) ? new int[]{3,1,2}: new int[]{1,3,1};
+				default: return new int[]{0,0,0};
+			}
+		case 2:
+			switch(pol2){
+				case 1: return (ali.contains(8)&&ali.contains(11)) ? new int[]{3,1,1}: new int[]{1,3,1};
+				case 3: return (ali.contains(8)&&ali.contains(11)) ? new int[]{1,3,2}: new int[]{3,1,2};
+				case 4: return (ali.contains(8)&&ali.contains(9)) ? new int[]{1,3,1}: new int[]{3,1,2};
+				case 5: return (ali.contains(8)&&ali.contains(9)) ? new int[]{3,1,2}: new int[]{1,3,1};
+				default: return new int[]{0,0,0};
+			}
+		case 3:
+			switch(pol2){
+				case 0: return (ali.contains(12)&&ali.contains(15)) ? new int[]{1,3,1}: new int[]{3,1,2};
+				case 2: return (ali.contains(12)&&ali.contains(15)) ? new int[]{3,1,2}: new int[]{1,3,1};
+				case 4: return (ali.contains(12)&&ali.contains(13)) ? new int[]{3,1,1}: new int[]{1,3,2};
+				case 5: return (ali.contains(12)&&ali.contains(13)) ? new int[]{1,3,2}: new int[]{3,1,1};
+				default: return new int[]{0,0,0};
+			}
+		case 4:
+			switch(pol2){
+				case 0: return (ali.contains(16)&&ali.contains(17)) ? new int[]{1,3,1}: new int[]{3,1,2};
+				case 1: return (ali.contains(16)&&ali.contains(19)) ? new int[]{3,1,1}: new int[]{1,3,1};
+				case 2: return (ali.contains(16)&&ali.contains(17)) ? new int[]{3,1,2}: new int[]{1,3,1};
+				case 3: return (ali.contains(16)&&ali.contains(19)) ? new int[]{1,3,2}: new int[]{3,1,2};
+				default: return new int[]{0,0,0};
+			}
+		case 5:
+			switch(pol2){
+			case 0: return (ali.contains(20)&&ali.contains(21)) ? new int[]{3,1,1}: new int[]{1,3,2};
+			case 1: return (ali.contains(20)&&ali.contains(23)) ? new int[]{1,3,1}: new int[]{3,1,1};
+			case 2: return (ali.contains(20)&&ali.contains(21)) ? new int[]{1,3,2}: new int[]{3,1,1};
+			case 3: return (ali.contains(20)&&ali.contains(23)) ? new int[]{3,1,2}: new int[]{1,3,2};
+			default: return new int[]{0,0,0};
+			}
+		default:
+			return new int[]{0,0,0};
+		}
+	}
+	private int strategieStandardGetPosOnPol(int pol1Pos1, int pol1Pos2, int pol2){
+		int pol1 = pol1Pos1/4;
+		ArrayList<Integer> ali = new ArrayList<Integer>();
+		ali.add(pol1Pos1);
+		ali.add(pol1Pos2);
+		switch(pol1){
+		case 0:
+			switch(pol2){
+				case 1: return (ali.contains(0)&&ali.contains(3)) ? 5:4;
+				case 3: return (ali.contains(0)&&ali.contains(3)) ? 13:12;
+				case 4: return (ali.contains(0)&&ali.contains(1)) ? 19:16; 
+				case 5: return (ali.contains(0)&&ali.contains(1)) ? 23:20;
+				default: return -1;
+			}
+		case 1:
+			switch(pol2){
+				case 0: return (ali.contains(4)&&ali.contains(7)) ? 1:0;
+				case 2: return (ali.contains(4)&&ali.contains(7)) ? 9:8;
+				case 4: return (ali.contains(4)&&ali.contains(5)) ? 17:16;
+				case 5: return (ali.contains(4)&&ali.contains(5)) ? 21:20;
+				default: return -1;
+			}
+		case 2:
+			switch(pol2){
+				case 1: return (ali.contains(8)&&ali.contains(11)) ? 6:7;
+				case 3: return (ali.contains(8)&&ali.contains(11)) ? 14:15;
+				case 4: return (ali.contains(8)&&ali.contains(9)) ? 18:17;
+				case 5: return (ali.contains(8)&&ali.contains(9)) ? 22:21;
+				default: return -1;
+			}
+		case 3:
+			switch(pol2){
+				case 0: return (ali.contains(12)&&ali.contains(15)) ? 2:3;
+				case 2: return (ali.contains(12)&&ali.contains(15)) ? 10:11;
+				case 4: return (ali.contains(12)&&ali.contains(13)) ? 18:19;
+				case 5: return (ali.contains(12)&&ali.contains(13)) ? 22:23;
+				default: return -1;
+			}
+		case 4:
+			switch(pol2){
+				case 0: return (ali.contains(16)&&ali.contains(17)) ? 3:0;
+				case 1: return (ali.contains(16)&&ali.contains(19)) ? 7:4;
+				case 2: return (ali.contains(16)&&ali.contains(17)) ? 11:8;
+				case 3: return (ali.contains(16)&&ali.contains(19)) ? 15:12;
+				default: return -1;
+			}
+		case 5:
+			switch(pol2){
+			case 0: return (ali.contains(20)&&ali.contains(21)) ? 2:1;
+			case 1: return (ali.contains(20)&&ali.contains(23)) ? 6:5;
+			case 2: return (ali.contains(20)&&ali.contains(21)) ? 10:9;
+			case 3: return (ali.contains(20)&&ali.contains(23)) ? 14:13;
+			default: return -1;
+			}
+		default:
+			return -1;
+		}
+	}
+	private int strategieStandardGetPolRechts(int pol1Pos1, int pol1Pos2, int pol2){
+		int pol1 = pol1Pos1/4;
+		ArrayList<Integer> ali = new ArrayList<Integer>();
+		ali.add(pol1Pos1);
+		ali.add(pol1Pos2);
+		switch(pol1){
+		case 0:
+			switch(pol2){
+				case 1: case 3: return (ali.contains(0)&&ali.contains(3)) ? 5:4;
+				case 4: case 5: return (ali.contains(0)&&ali.contains(1)) ? 3:1; 
+				default: return -1;
+			}
+		case 1:
+			switch(pol2){
+				case 0: case 2: return (ali.contains(4)&&ali.contains(7)) ? 5:4;
+				case 4: case 5: return (ali.contains(4)&&ali.contains(5)) ? 2:0;
+				default: return -1;
+			}
+		case 2:
+			switch(pol2){
+				case 1: case 3: return (ali.contains(8)&&ali.contains(11)) ? 5:4;
+				case 4: case 5: return (ali.contains(8)&&ali.contains(9)) ? 3:1;
+				default: return -1;
+			}
+		case 3:
+			switch(pol2){
+				case 0: case 2: return (ali.contains(12)&&ali.contains(15)) ? 5:4;
+				case 4: case 5: return (ali.contains(12)&&ali.contains(13)) ? 2:0;
+				default: return -1;
+			}
+		case 4:
+			switch(pol2){
+				case 0: case 2: return (ali.contains(16)&&ali.contains(17)) ? 3:1;
+				case 1: case 3: return (ali.contains(16)&&ali.contains(19)) ? 2:0;
+				default: return -1;
+			}
+		case 5:
+			switch(pol2){
+			case 0: case 2: return (ali.contains(20)&&ali.contains(21)) ? 3:1;
+			case 1: case 3: return (ali.contains(20)&&ali.contains(23)) ? 2:0;
+			default: return -1;
+			}
+		default:
+			return -1;
+		}
+	}
+	private void strategieStandardGetOnPole(int pol, int color1, int color2){
+		boolean[] okPole = new boolean[6];
+		for(int i = 0; i<6; i++){
+			okPole[i] = SolveCheck.isPolSolved(i, k) ? true : false;
+		}
+		boolean color1OnPole = false;
+		boolean color2OnPole = false;
+		int color1Pos = -1;
+		int color2Pos = -1;
+		for(int i = 0; i<4; i++){
+			if(k.tri[pol*4+i]==color1&&!color1OnPole){
+				color1OnPole = true;
+				color1Pos = i;
+			}
+			if(k.tri[pol*4+i]==color2&&!color2OnPole){
+				color2OnPole = true;
+				color2Pos = i;
+			}
+		}
+		if(color1Pos==-1){
+			for(int i = 0; i<4; i++){
+				boolean done = false;
+				if(i!=color2Pos&&!done){
+					color1Pos = i;
+				}
+			}
+		}
+
+		//System.out.println("Status: "+color1OnPole+";"+color2OnPole);
+		for(int i = 0; i<6; i++){
+			//Wenn noch einen ungelösten anderen Pol ist, dann lösen
+			if(!okPole[i]){
+				//Für beide schauen, dass auf uhrsprungspol kommen...
+				if(!color1OnPole){
+					for(int j = 0; j<4; j++){
+						if(k.tri[i*4+j]==color1){
+							//, 
+							Solve1Phase(pol*4+color1Pos, i*4+j);
+							color1OnPole = true;
+						}
+					}
+				}
+			}
+		}
+		color1Pos = -1;
+		color2Pos = -1;
+		for(int i = 0; i<4; i++){
+			if(k.tri[pol*4+i]==color1&&!color1OnPole){
+				color1OnPole = true;
+				color1Pos = i;
+			}
+			if(k.tri[pol*4+i]==color2&&!color2OnPole){
+				color2OnPole = true;
+				color2Pos = i;
+			}
+		}
+		if(color2Pos==-1){
+			for(int i = 0; i<4; i++){
+				boolean done = false;
+				if(i!=color1Pos&&!done){
+					color2Pos = i;
+				}
+			}
+		}
+		for(int i = 0; i<6; i++){
+			//Wenn noch einen ungelösten anderen Pol ist, dann lösen
+			if(i!=pol&&i!=k.gegenPol(pol)&&!okPole[i]){
+				//Für beide schauen, dass auf uhrsprungspol kommen...
+				if(!color2OnPole){
+					for(int j = 0; j<4; j++){
+						if(k.tri[i*4+j]==color2){
+							Solve1Phase(pol*4+color2Pos, i*4+j);
+							color2OnPole = true;
+						}
+					}
+				}
+			}
+		}
+		//System.out.println("StatusEnde: "+color1OnPole+";"+color2OnPole);
+		//.out.println("Pol "+pol+": Farben "+k.tri[pol*4]+";"+k.tri[pol*4+1]+";"+k.tri[pol*4+2]+";"+k.tri[pol*4+3]);
+	}
+	private boolean strategieStandardAreThis2Possible(int pos1, int pos2){
+		int[] pole1 = getPoleForPosition(pos1);
+		int[] pole2 = getPoleForPosition(pos2);
+		int[] poleMoeglich = new int[2]; 
+		boolean everSame = false;
+		for(int i = 0; i<2; i++){
+			boolean same = false;
+			int notSame = -1;
+			for(int j = 0; j<2;j++){
+				if(pole1[i]==pole2[j]){
+					same = true;
+				}else{
+					notSame = j;
+				}
+			}
+			if(!same){
+				poleMoeglich[0]=pole1[i];
+				poleMoeglich[1]=pole2[notSame];
+				everSame = true;
+			}
+		}
+		if(everSame){
+			for(int i = 0; i<2; i++){
+				if(!SolveCheck.isPolSolved(poleMoeglich[i], k)){
+					return true;
+				}
+			}
+		}	
+		return false;
+	}
+	private int[] getPoleForPosition(int pos){
+		switch(pos){
+		case 16:case 20:return new int[]{0,1};
+		case 19:case 23:return new int[]{0,3};
+		case 4: case 12:return new int[]{0,4};
+		case 5: case 13:return new int[]{0,5};
+		case 17:case 21:return new int[]{1,2};
+		case 0: case 8: return new int[]{1,4};
+		case 1: case 9: return new int[]{1,5};
+		case 18:case 22:return new int[]{2,3};
+		case 7: case 15:return new int[]{2,4};
+		case 6: case 14:return new int[]{2,5};
+		case 3: case 11:return new int[]{3,4};
+		case 2: case 10:return new int[]{3,5};
+		default: return new int[]{-1,-1};
+		}
+	}
 	private ArrayList<String> strategieOne(){
 
 		
@@ -125,7 +665,7 @@ public class Solver {
 					recheck = true;
 					//Wechle die Positionen von i und dem mit findPos gefundenen Dreieck
 					if(findPos(i)==-1){
-						System.out.println("Achtung Abbruch des Lösen");
+						Log.ErrorLog("Achtung Abbruch des Lösen");
 						return solvingWay;
 					}
 					//consLog(i+" "+findPos(i));
@@ -186,7 +726,8 @@ public class Solver {
 			
 		//Gib die gelöste Kugel zurück
 		
-		return advancedTurnMinimizer(RemoveUnusedSteps(solvingWay));
+		return advancedStepRemover(advancedTurnMinimizer(RemoveUnusedSteps(solvingWay)));
+		//return RemoveUnusedSteps(solvingWay);
 	}
 	
 	private int getAnzFalseInArray(boolean[] array){
@@ -1371,7 +1912,7 @@ public class Solver {
 	}
 	private ArrayList<String> advancedTurnMinimizer(ArrayList<String> arrayList){
 		for(int i = 0; i<6;i++){
-			int lastTurnPos = 0;
+			int lastTurnPos = -1;
 			int[] lastPos = new int[4];
 			int anz = 0;
 			Arrays.fill(lastPos,-1);
@@ -1381,19 +1922,29 @@ public class Solver {
 				int[] akt = k.GetPolFromSphereString(arrayList.get(j),i);
 				Arrays.sort(akt);
 				Arrays.sort(lastPos);
-				if(aktOpt[0]==i&&aktOpt[2]==1&&Arrays.equals(akt,lastPos)){
-					anz+=aktOpt[1];
-					anz%=4;
-					arrayList.set(j, k.SphereWithoutDrehungAndStep(arrayList.get(j))+"n"+j+"n"+aktOpt[0]+""+(anz)+""+aktOpt[2]);
-					arrayList.remove(lastTurnPos);
-					lastPos = k.GetPolFromSphereString(arrayList.get(j),i);
-				}else
-				if(aktOpt[0]==i&&aktOpt[2]==1&&lastTurnPos==-1){
-					lastTurnPos = j;
-					anz+=aktOpt[1];
-					lastPos = k.GetPolFromSphereString(arrayList.get(j),i);
-				}else
-				if(aktOpt[0]==1&&aktOpt[2]==1){
+				//Wenn aktueller Pol = i; Modus = 1
+				if(aktOpt[0]==i&&aktOpt[2]==1){
+					if(Arrays.equals(akt,lastPos)){
+						anz+=aktOpt[1];
+						anz%=4;
+						arrayList.set(j, k.SphereWithoutDrehungAndStep(arrayList.get(j))+"n"+j+"n"+aktOpt[0]+""+(anz)+""+aktOpt[2]);
+						arrayList.remove(lastTurnPos);
+						lastPos = k.GetPolFromSphereString(arrayList.get(j),i);
+						j-=3;
+						lastTurnPos =-1;
+						anz = 0;
+						Arrays.fill(lastPos,-1);
+					}else
+					if(lastTurnPos==-1){
+						lastTurnPos = j;
+						anz+=aktOpt[1];
+						lastPos = k.GetPolFromSphereString(arrayList.get(j),i);
+					}else{
+						lastTurnPos =-1;
+						anz = 0;
+						Arrays.fill(lastPos,-1);
+					}
+				}else{
 					lastTurnPos =-1;
 					anz = 0;
 					Arrays.fill(lastPos,-1);
@@ -1405,6 +1956,29 @@ public class Solver {
 			arrayList.set(i,k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+k.SplitDrehungFromSphereAsS(arrayList.get(i)));
 			//System.out.println(arrayList.get(i));
 		}
+		return arrayList;
+	}
+	private ArrayList<String> advancedStepRemover(ArrayList<String> arrayList){
+		for(int i = 0; i<arrayList.size()-2;i++){
+			String sphere = k.SphereWithoutDrehungAndStep(arrayList.get(i));
+			for(int j = i+1; j<arrayList.size()-1;j++){
+				if(sphere==k.SphereWithoutDrehungAndStep(arrayList.get(j))){
+					for(int l = j; l>i; l--){
+						arrayList.remove(l);
+					}
+				}
+			}
+		}
+		for(int i = 0; i<arrayList.size();i++){
+			//Neu Nummerieren...
+			arrayList.set(i,k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+k.SplitDrehungFromSphereAsS(arrayList.get(i)));
+			//System.out.println(arrayList.get(i));
+		}
+	
+		
+		
+		
+		
 		return arrayList;
 	}
 }

@@ -9,7 +9,7 @@ import marusenkoSphereGUI.Manager;
  * weden von der RenderKugel-Klasse übernommen
  *
  */
-public class DrehungsManager {
+public class AnimationsManager {
 	
 	//Um welchen Pol gedreht wird
 	private int drehungsPol;
@@ -38,7 +38,7 @@ public class DrehungsManager {
 	/**
 	 * Die Variablen werden initialisiert
 	 */
-	public DrehungsManager(){
+	public AnimationsManager(){
 		drehungsPol = 0;
 		drehungsRichtung = 1;
 		gesamteDrehung = 0;
@@ -121,7 +121,7 @@ public class DrehungsManager {
 	 * Rufe die aktuell eingestellte Geschwindigkeit vom Manager ab
 	 */
 	private void getSollRotationVonManager(){
-		sollRotationsGeschwindigkeit = Manager.getRotationSpeed();
+		sollRotationsGeschwindigkeit = Manager.getAnimationsSpeed();
 	}
 	/**
 	 * Rufe die aktuelle Framerate vom Manager ab

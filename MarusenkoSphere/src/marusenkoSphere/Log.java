@@ -24,26 +24,23 @@ public class Log {
 	/**
 	 * Die Konstante mit dem Speicherpfad für die Logs
 	 */
-	//public static final String LOG_PATH = "/home/marcel/marusenkoLog";
 	public static final String LOG_PATH = "D:/marusenkoLog";
 	
 	/**
 	 * Schreibe ErrorLog zu Datei
-	 * @param error
 	 */
 	public static void ErrorLog(String error){
 		LogFile(error,LOG_PATH+"/error.log");
 		System.out.println("!!!Error!!!  "+error);
 	}
+	
 	/**
 	 * Schreibe DebugLog zu Datei
-	 * @param debug
 	 */
 	public static void DebugLog(String debug){
 		LogFile(debug,LOG_PATH+"/debug.log");
 		System.out.println("Debug, "+debug);
 	}
-	
 	
 	/**
 	 * Schreibe den Log in die Datei
@@ -79,25 +76,26 @@ public class Log {
 		try {
 			//FileReader get logFile
 			fileR = new FileReader(logfile);
+			
 			//übergebe an einen BufferedReader
-			@SuppressWarnings("resource")
 			BufferedReader reader = new BufferedReader(fileR);
 		    String line = "";
+		    
 		    //Gehe Zeile für Zeile durch und schreibe in die Outputvariable out
 		    while ((line = reader.readLine()) != null) {
 		    	out += line + "\n";
 		    }
-		}catch(Exception e){
-			throw new RuntimeException(e);
-		}finally{
-			//Wenn möglich FileReader wieder schliessen
-			if(file != null) {
+		    
+		    //Wenn möglich FileReader wieder schliessen
+		    if(file != null) {
 				try{
 					fileR.close();
 				}catch(IOException e){
 					// Ignoriere Fehler beim Schliessen des FileReaders
 				}
 		    }
+		}catch(Exception e){
+			throw new RuntimeException(e);
 		}
 		
 		//Datum generieren

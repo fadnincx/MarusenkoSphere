@@ -20,23 +20,17 @@ public class Kugel{
 	//Aktueller Status
 	public int[] tri = new int[24]; //Array für die Dreiecke (Triangles)
 	public int[] con = new int[8]; //Array für die Verbindungsstücke (Connectors)
-	//public String drehung = "000";
-	//public String oldDrehung = "000";
-	//public int drehRichtung = 1;
-	//public double standRot = 0.0;
-	//public boolean drehDouble = false;
-	//protected int oldStep = 0;
 	//Für ganzer Lösungsweg
 	public ArrayList<String> SolvingList = new ArrayList<String>(); //Arraylist mit dem Lösungsweg
 	protected int step = 0; //Wo in der Liste ist der Aktuelle Status
-	public DrehungsManager dm;
+	public AnimationsManager am;
 	
 	
 	/**
 	 * Konstruktor des Kugel Objekt, generiert gleich die erste Kugel, damit es nirgends zu fehlern, wegen nicht gesetzten Variablen kommt
 	 */
 	public Kugel(){
-		dm = new DrehungsManager();
+		am = new AnimationsManager();
 		//FillKugelRandom();
 		FillKugelFromStringWithoutSolvingList("00000000000000000000000000000000n0n000");
 	}
@@ -125,12 +119,14 @@ public class Kugel{
 		i[3] = Integer.parseInt(s.substring(((Pol*4+3)+8),((Pol*4+3)+9)));
 		return i;
 	}
-	
+	public void setKugelToStateFromList(int step){
+		FillKugelFromStringWithoutSolvingList(SolvingList.get(step));
+	}
 	/**
 	 * Setzt die Kugel gemäss eines Inputstrings ohne Lösen der Kugel, bzw ohne überschreiben des Lösungsweges
 	 * @param s
 	 */
-	public void FillKugelFromStringWithoutSolvingList(String s){
+	private void FillKugelFromStringWithoutSolvingList(String s){
 		s = s.trim();
 		//Teile den String bei "n" auf ("n" ist das Trennzeichen im String)
 		String[] sp = s.split("n");
@@ -143,38 +139,12 @@ public class Kugel{
 			for(int i = 0; i<24;i++){
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
 			}
-			dm.setNewDrehung(s,SolvingList);
+			am.setNewDrehung(s,SolvingList);
 			//oldDrehung = drehung;
 			//oldStep = step;
 			
 			//Update den Step
 			step = Integer.parseInt(sp[1]);
-/*
-			drehung = sp[2];
-			
-			drehDouble = false;
-			if(Integer.parseInt(drehung.substring(1, 2)) == 0){
-				standRot = 0.0;
-				drehRichtung = 1;
-			}else
-			if(Integer.parseInt(drehung.substring(1, 2)) == 1){
-				standRot = 90.0;
-				drehRichtung = 1;
-			}else
-			if(Integer.parseInt(drehung.substring(1, 2)) == 2){
-				standRot = 180.0;
-				drehRichtung = 1;
-				drehDouble = true;
-			}else
-			if(Integer.parseInt(drehung.substring(1, 2)) == 3){
-				standRot = 90.0;
-				drehRichtung = -1;
-			}else{
-				standRot = 0.0;
-				drehRichtung = 1;
-			}
-			*/
-			//System.out.println(s);
 		//	System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung+" Sphere: "+s);
 		}else if(sp[0].length()==32){
 			for(int i = 0; i<8;i++){
@@ -183,7 +153,7 @@ public class Kugel{
 			for(int i = 0; i<24;i++){
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
 			}
-			dm.setNewDrehung(sp[0]+"n0n000",SolvingList);
+			am.setNewDrehung(sp[0]+"n0n000",SolvingList);
 			step=0;
 		/*	drehung="000";
 			standRot = 0.0;
@@ -275,32 +245,11 @@ public class Kugel{
 		this.step = 0;
 	}
 	/**
-	 * Getter-Methode für den OldStep
-	 * @return
-	 */
-	/*public int getOldStep(){
-		return this.oldStep;
-	}*/
-	
-	
-	/**
 	 * Methode, welche die Kugel als String ausgibt
 	 * @return
 	 */
 	public String getSphere(){
-		//Output = leer
-		String out = "";
-		//Füge die Zahlenwerte der Verbindungsstücke ein
-		for(int i = 0; i<8;i++){
-			out+=con[i];
-		}
-		//Füge die Zahlenwerte der Pole ein
-		for(int i = 0; i<24;i++){
-			out+=tri[i];
-		}
-		//Füge "n" als Trennzeichen hinzu, sowie den Step
-		out += "n"+step+"n000";
-		return out;
+		return getSphere("000");
 	}
 	/**
 	 * Methode, welche die Kugel als String ausgibt mit zusätzlicher Drehung
@@ -382,24 +331,12 @@ public class Kugel{
 	private void turn3Ring(int pole){
 		//Die Tri's in der Unten gegebenen Reihenfolge mit der cPol funktion durch wechseln 
 		switch(pole){	
-		case 0:
-			change8Tri(19, 16, 4, 5, 20, 23, 13, 12);
-			break;
-		case 1:
-			change8Tri(16, 17, 8, 9, 21, 20, 1, 0);
-			break;
-		case 2:
-			change8Tri(17, 18, 15, 14, 22, 21, 6, 7);
-			break;
-		case 3:
-			change8Tri(18, 19, 3, 2, 23, 22, 10, 11);
-			break;
-		case 4:
-			change8Tri(3, 0, 15, 12, 8, 11, 4, 7);
-			break;
-		case 5:
-			change8Tri(2, 1, 5, 6, 9, 10, 14, 13);
-			break;
+		case 0: change8Tri(19, 16, 4, 5, 20, 23, 13, 12); break;
+		case 1: change8Tri(16, 17, 8, 9, 21, 20, 1, 0);   break;
+		case 2: change8Tri(17, 18, 15, 14, 22, 21, 6, 7); break;
+		case 3: change8Tri(18, 19, 3, 2, 23, 22, 10, 11); break;
+		case 4: change8Tri(3, 0, 15, 12, 8, 11, 4, 7);    break;
+		case 5: change8Tri(2, 1, 5, 6, 9, 10, 14, 13);    break;
 		}	
 	}
 	
@@ -409,24 +346,12 @@ public class Kugel{
 	 */
 	private void turn2Ring(int pole){
 		switch(pole){
-		case 0:
-			change4Con(1,2,6,5);
-			break;
-		case 1:
-			change4Con(2,3,7,6);
-			break;
-		case 2:
-			change4Con(3,0,4,7);
-			break;
-		case 3:
-			change4Con(0,1,5,4);
-			break;
-		case 4:
-			change4Con(0,3,2,1);
-			break;
-		case 5:
-			change4Con(4,5,6,7);
-			break;
+		case 0: change4Con(1,2,6,5); break;
+		case 1: change4Con(2,3,7,6); break;
+		case 2: change4Con(3,0,4,7); break;
+		case 3: change4Con(0,1,5,4); break;
+		case 4: change4Con(0,3,2,1); break;
+		case 5: change4Con(4,5,6,7); break;
 		}	
 	}
 	
@@ -494,7 +419,7 @@ public class Kugel{
 	 * @param anz : um welche Anzahl soll gedreht werden
 	 */
 	protected  void changePol(int polNr, int anz){
-		for(int i = 0; i<anz;i++){
+		for(int i = 0; i<anz;i++){			
 			if((polNr==1||polNr==2||polNr==4)){
 				change4Tri(4*polNr+3,4*polNr+2,4*polNr+1,4*polNr);
 			}else{
@@ -646,24 +571,26 @@ public class Kugel{
 	}
 	protected int[] conToPos(int con){
 		switch(con){
-		case 0:
-			return new int[]{11,15,18};
-		case 1:
-			return new int[]{3,12,19};
-		case 2:
-			return new int[]{0,4,16};
-		case 3:
-			return new int[]{7,8,17};
-		case 4:
-			return new int[]{10,14,22};
-		case 5:
-			return new int[]{2,13,23};
-		case 6:
-			return new int[]{1,5,20};
-		case 7:
-			return new int[]{6,9,21};
-		default:
-			return new int[]{-1,-1,-1};
+		case 0: return new int[]{11,15,18};
+		case 1: return new int[]{3,12,19};
+		case 2: return new int[]{0,4,16};
+		case 3: return new int[]{7,8,17};
+		case 4: return new int[]{10,14,22};
+		case 5: return new int[]{2,13,23};
+		case 6: return new int[]{1,5,20};
+		case 7: return new int[]{6,9,21};
+		default: return new int[]{-1,-1,-1};
+		}
+	}
+	protected int gegenPol(int pol){
+		switch(pol){
+		case 0: return 2;
+		case 1: return 3;
+		case 2: return 0;
+		case 3: return 1;
+		case 4: return 5;
+		case 5: return 4;
+		default: return -1;
 		}
 	}
 }

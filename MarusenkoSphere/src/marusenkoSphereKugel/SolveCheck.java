@@ -54,11 +54,7 @@ public class SolveCheck {
 				anzKorr++;
 			}
 		}
-		if(anzKorr==4){
-			return true;
-		}else{
-			return false;
-		}
+		return anzKorr==4 ? true : false;
 	}
 	
 	
