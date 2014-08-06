@@ -10,7 +10,7 @@ public class QueueManager {
 	 * Statische Funktion um einen Schritt im Queue weiter zu gehen
 	 * @param m  : Manager, an welcher die änderungsbefehle geschickt werden müssen
 	 */
-	public static void Queue(Manager m){
+	protected static void Queue(Manager m){
 		
 		//Setzte die Variable, dass Queue weiter gehen soll auf false
 		Manager.setAnimationFinished(false);

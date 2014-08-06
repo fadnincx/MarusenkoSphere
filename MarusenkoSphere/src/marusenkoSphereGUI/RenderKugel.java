@@ -41,10 +41,10 @@ public class RenderKugel {
         GL11.glBegin(GL11.GL_TRIANGLES);
         
         //Variable, um welchen Pol gedreht wird
-        int drehePol = k.am.getDrehPol();
+        int drehePol = k.animationManager.getDrehPol();
         
         //Variable, ob die Halbe Kugel oder nur der Pol gedreht wird 
-        int dreheMode = k.am.getDrehModus();
+        int dreheMode = k.animationManager.getDrehModus();
         
 		//Invertierungs Variabel auf x, y und z Achse --> für Negativ auf -1 ändern
 		int ix = 1;
@@ -73,8 +73,10 @@ public class RenderKugel {
 		//Zusätzliche Negativierungs Variablen, damit alle in die richtige Richtung drehen
 		int neg = 1; int addNeg = 1;
 		
+		//Variabel definiert die Rotationsgeschwindikeit
+		double rotation = k.animationManager.getRotationForFrame();
 		
-		if(k.am.bleibendeDrehung()>0){
+		if(rotation>0){
 			if(dreheMode==1){
 				switch(drehePol){
 					case 0:  z1 = true; neg =  1; break;
@@ -97,8 +99,7 @@ public class RenderKugel {
 			}
 		}
 		
-		//Variabel definiert die Rotationsgeschwindikeit
-		double rotation = k.am.getRotationForFrame();
+		
         
         //Wie genau die Kugel gerendert wird --> In wie gross/klein die Dreiecke sind
         int renderSteps = 10;//Nur 1, 2, 5, 10
@@ -329,9 +330,9 @@ public class RenderKugel {
 			}
 			
 			//Füge alle Negationsvariablen zusammen
-			drehx*=k.am.getDrehRichtung();
-			drehy*=k.am.getDrehRichtung();
-			drehz*=k.am.getDrehRichtung();
+			drehx*=k.animationManager.getDrehRichtung();
+			drehy*=k.animationManager.getDrehRichtung();
+			drehz*=k.animationManager.getDrehRichtung();
 			drehx*=neg;
 			drehy*=neg;
 			drehz*=neg;
@@ -466,9 +467,9 @@ public class RenderKugel {
 			}
 			
 			//Negativiere je nach Drehrichtung
-			drehx*=k.am.getDrehRichtung();
-			drehy*=k.am.getDrehRichtung();
-			drehz*=k.am.getDrehRichtung();
+			drehx*=k.animationManager.getDrehRichtung();
+			drehy*=k.animationManager.getDrehRichtung();
+			drehz*=k.animationManager.getDrehRichtung();
 			
 			//Zusätzliche Negationsvariable
 			drehx*=dn;
@@ -807,9 +808,9 @@ public class RenderKugel {
     			}
         		
         		//Füge alle Negationsvariablen zusammen
-    			drehx*=k.am.getDrehRichtung();
-    			drehy*=k.am.getDrehRichtung();
-    			drehz*=k.am.getDrehRichtung();
+    			drehx*=k.animationManager.getDrehRichtung();
+    			drehy*=k.animationManager.getDrehRichtung();
+    			drehz*=k.animationManager.getDrehRichtung();
     			drehx*=neg;
     			drehy*=neg;
     			drehz*=neg;
@@ -858,11 +859,11 @@ public class RenderKugel {
         	}        
         GL11.glEnd();
 
-        if(k.am.bleibendeDrehung()>0){
+       /* if(k.am.bleibendeDrehung()>0){
         	k.am.setAktuelleDrehung(rotation);
         }else{
         	Manager.setAnimationFinished(true);
-        }
+        }*/
         
         //Gib true zurück, wenn hier ankommt, dann alles Erfolgreich
         return true;

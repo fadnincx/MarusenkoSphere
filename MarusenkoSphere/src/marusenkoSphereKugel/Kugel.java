@@ -3,8 +3,6 @@ package marusenkoSphereKugel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-
-import marusenkoSphere.Log;
 /**
  * Kugel-Datei
  * 
@@ -12,163 +10,144 @@ import marusenkoSphere.Log;
  * 
  */
 public class Kugel{
+	
+	//Array mit dem aktuellen Status von allen Dreiecken (Triangles)
+	public int[] tri = new int[24];
+	
+	//Array mit dem aktuellen Status von allen Verbindungsstücken (Connectors)
+	public int[] con = new int[8];
+	
+	//ArrayList, welche den gesamten Lösungsweg beinhaltet
+	private ArrayList<String> solvingList = new ArrayList<String>(); //Arraylist mit dem Lösungsweg
+	
+	//Variable mit der Info, bei welcher Position im SolvingArray wir stehen (NICHT INDEX!!!)
+	protected int step = 0;
+	
+	//Der AnimationsManager für die Animationen
+	public AnimationsManager animationManager;
+	
 	/**
-	 * tri ==> Array, welches die Dreiecke der Pole beinhaltet
-	 * con ==> Array, welches die Verbindungsstücke beinhaltet
-	 */
-	
-	//Aktueller Status
-	public int[] tri = new int[24]; //Array für die Dreiecke (Triangles)
-	public int[] con = new int[8]; //Array für die Verbindungsstücke (Connectors)
-	//Für ganzer Lösungsweg
-	public ArrayList<String> SolvingList = new ArrayList<String>(); //Arraylist mit dem Lösungsweg
-	protected int step = 0; //Wo in der Liste ist der Aktuelle Status
-	public AnimationsManager am;
-	
-	
-	/**
-	 * Konstruktor des Kugel Objekt, generiert gleich die erste Kugel, damit es nirgends zu fehlern, wegen nicht gesetzten Variablen kommt
+	 * Initialisiert den AnimationsManager und füllt die Kugel mit einer gelösten Kugel, ohne diese zu lösen
 	 */
 	public Kugel(){
-		am = new AnimationsManager();
-		//FillKugelRandom();
-		FillKugelFromStringWithoutSolvingList("00000000000000000000000000000000n0n000");
+		
+		//Initialisieren des Animationsmanager
+		animationManager = new AnimationsManager();
+		
+		//gelöste Kugel füllen
+		SetSphereToString("61023457054105722736143602615734n0n000");
 	}
 	
 	/**
-	 * Setzte die Kugel gemäss eines Inputstrings
-	 * @param s : Inputstring
+	 * Setzte die Kugel gemäss eines Debugstrings
 	 * @param solving : ob Kugel gelöst werden soll
 	 */
-	public void FillKugelFromString(String s,boolean solving){
+	public void FillKugelFromDebugString(String s,boolean solving){
+		
 		//Führe die Funktion ohne lösen der Kugel durch
-		FillKugelFromStringWithoutSolvingList(s);
+		SetSphereToString(s);
+		
+		//Wenn gelöst werden soll
 		if(solving){
+			
 			//Löse die Kugel
 			UpdateSolvingList();
-		}else{
-			SolvingList.clear();
-			SolvingList.add(getSphere()+"n0n000");
-		}
-	}
-	/**
-	 * Setzte Kugel gemäss Inputstring mit Lösen
-	 * @param s : Inputstring
-	 */
-	public void FillKugelFromString(String s){
-		//Führe die Funktion ohne lösen der Kugel durch
-		FillKugelFromStringWithoutSolvingList(s);
-		//Löse die Kugel
-		UpdateSolvingList();
-	}
-	/**
-	 * Drehung aus dem String bekommen und als int-Array zurückgeben
-	 * @param s
-	 * @return
-	 */
-	protected int[] SplitDrehungFromSphere(String s){
-		s = SplitDrehungFromSphereAsS(s);
-		int[] i = new int[3];
-		if(s.length()==3){
-			i[0] = Integer.parseInt(s.substring(0,1));
-			i[1] = Integer.parseInt(s.substring(1,2));
-			i[2] = Integer.parseInt(s.substring(2,3));
-		}
-		return i;
-	}
-	/**
-	 * Drehung aus dem String bekommen und als String zurückgeben
-	 * @param s
-	 * @return
-	 */
-	protected String SplitDrehungFromSphereAsS(String s){
-		s = s.trim();
-		String[] sp = s.split("n");
-		return sp[2];
-	}
-	/**Drehung aus dem String bekommen und als int zurückgeben
-	 * @param s
-	 * @return
-	 */
-	protected int SplitDrehungFromSphereAsI(String s){
-		//System.out.println(s);
-		s = SplitDrehungFromSphereAsS(s);
-		return Integer.parseInt(s);
-	}
-	/**
-	 * Bekomme Kugel ohne Drehung und Step
-	 * @param s
-	 * @return
-	 */
-	protected String SphereWithoutDrehungAndStep(String s){
-		s = s.trim();
-		String[] sp = s.split("n");
-		return sp[0];
-	}
-	/**
-	 * Bekomme die 4 Werte eines Pols aus dem String als int-Array
-	 * @param s
-	 * @param Pol
-	 * @return
-	 */
-	protected int[] GetPolFromSphereString(String s, int Pol){
-		int[] i = new int[4];
-		i[0] = Integer.parseInt(s.substring(((Pol*4+0)+8),((Pol*4+0)+9)));
-		i[1] = Integer.parseInt(s.substring(((Pol*4+1)+8),((Pol*4+1)+9)));
-		i[2] = Integer.parseInt(s.substring(((Pol*4+2)+8),((Pol*4+2)+9)));
-		i[3] = Integer.parseInt(s.substring(((Pol*4+3)+8),((Pol*4+3)+9)));
-		return i;
-	}
-	public void setKugelToStateFromList(int step){
-		FillKugelFromStringWithoutSolvingList(SolvingList.get(step));
-	}
-	/**
-	 * Setzt die Kugel gemäss eines Inputstrings ohne Lösen der Kugel, bzw ohne überschreiben des Lösungsweges
-	 * @param s
-	 */
-	private void FillKugelFromStringWithoutSolvingList(String s){
-		s = s.trim();
-		//Teile den String bei "n" auf ("n" ist das Trennzeichen im String)
-		String[] sp = s.split("n");
-		//Prüfe ob String der erwarteten Form entspricht, ansonsten ErrorLog
-		if(sp[0].length()==32&&sp.length==3&&sp[2].length()==3){
-			//Setzte die Arrays gemäss dem String
-			for(int i = 0; i<8;i++){
-				con[i]=Integer.parseInt(s.substring(i, i+1));
-			}
-			for(int i = 0; i<24;i++){
-				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
-			}
-			am.setNewDrehung(s,SolvingList);
-			//oldDrehung = drehung;
-			//oldStep = step;
 			
-			//Update den Step
-			step = Integer.parseInt(sp[1]);
-		//	System.out.println("Old: "+oldStep+" Now: "+step+" Drehung: "+drehung+" Rot: "+standRot+ " Anz: "+drehung.substring(1, 2)+" Richtung: "+drehRichtung+" Sphere: "+s);
-		}else if(sp[0].length()==32){
-			for(int i = 0; i<8;i++){
-				con[i]=Integer.parseInt(s.substring(i, i+1));
-			}
-			for(int i = 0; i<24;i++){
-				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
-			}
-			am.setNewDrehung(sp[0]+"n0n000",SolvingList);
-			step=0;
-		/*	drehung="000";
-			standRot = 0.0;
-			drehRichtung = 1;*/
+		//Sonst lösche gesammte solvingList und füge nur aktuelle Kugel hinzu
 		}else{
-			Log.ErrorLog("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
+			solvingList.clear();
+			solvingList.add(getSphere()+"n0n000");
 		}
+	}
+	
+	/**
+	 * Übernimmt die Kugel aus dem Editor
+	 */
+	public void FillKugelFromEditor(){
+		resetStep();
+		FillKugelFromDebugString(getSphere(),true);
 	}
 
 	/**
+	 * Übernimmt die Kugel aus der ArrayList zur gegebenen Step
+	 */
+	public void setKugelToStateFromList(int step){
+		SetSphereToString(solvingList.get(step));
+	}
+	
+	/**
+	 * Setzt den aktuellen Kugelstatus zum gegebenen String s
+	 */
+	private void SetSphereToString(String s){
+		
+		//Trim den String um allfällige leerzeichen ab zu trennen
+		s = s.trim();
+		
+		//Teile den String bei "n" auf ("n" ist das Trennzeichen im String)
+		String[] sp = s.split("n");
+		
+		//Prüfe ob String der erwarteten Form entspricht, ansonsten ErrorLog
+		//3 Sedimente, 1. 32 Zeichen Kugel, 2. Step, 3. 3Stelliger Drehcode 
+		if(sp[0].length()==32&&sp.length==3&&sp[2].length()==3){
+			
+			//Setzte den aktuellen Status gemäss String
+			for(int i = 0; i<8;i++){
+				con[i]=Integer.parseInt(s.substring(i, i+1));
+			}
+			for(int i = 0; i<24;i++){
+				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
+			}
+			
+			//Gib dem AnimationsManager die neue Drehung
+			animationManager.setNewDrehung(s,solvingList);
+			
+			//Den Step aktuallisieren
+			step = Integer.parseInt(sp[1]);
+		
+			
+		//Wenn der String nicht die erwartete Form hat
+		}else{
+			
+			//Ausgeben, dass String nicht in ordnung ist, jedoch nichts weiters
+			System.out.println("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
+		}
+	}
+
+	public void mixRandom(){
+		Random rml = new Random();
+		Random rmPol = new Random();
+		Random rmMode = new Random();
+		Random rmStep = new Random();
+		int l = 1;
+		
+		while(l!=0){
+			//Sehr lange Mischen
+			l = rml.nextInt(10000);
+			
+			int pol = rmPol.nextInt(6);//(0-5)
+			int mode = rmMode.nextInt(2);//(0-1)
+			int step = rmStep.nextInt(4);//(0-3)
+			
+			
+			switch(mode){
+			case 0:
+				changePol(pol, step);
+				break;
+			case 1:
+				turnKugel(pol, step);
+				break;
+			}
+			
+			
+		}
+		
+	}
+	/**
 	 * Funktion zum zufälligen Füllen der Kugel mit realistischen Werten
 	 */
-	public void FillKugelRandom(){
+	public void FillRandom(){
 		
-		//Objekt rm als Zufallsobjekt, auswelcher dann die Zusatzzahl generiert wird
+		//Objekt rm als Zufallsobjekt, aus welchem dann die Zusatzzahl generiert wird
 		Random rm = new Random();
 		
 		//Alle Verbingungsstücke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben
@@ -236,7 +215,7 @@ public class Kugel{
 	 * Getter-Methode für die Maximale Anzahl an Schritten
 	 */
 	public int getMaxStep(){
-		return SolvingList.size()-1;
+		return solvingList.size()-1;
 	}
 	/**
 	 * Resetet den Step zu 0 --> für nach dem Kugel manuell eingegeben wurde
@@ -250,6 +229,9 @@ public class Kugel{
 	 */
 	public String getSphere(){
 		return getSphere("000");
+	}
+	public int getSolvingListSize(){
+		return solvingList.size();
 	}
 	/**
 	 * Methode, welche die Kugel als String ausgibt mit zusätzlicher Drehung
@@ -276,10 +258,10 @@ public class Kugel{
 	 */
 	private void UpdateSolvingList(){
 		//Die SolvingList ist das Resultat eines neuen Objekts Solver und dessen Methode solve mit dieser Kugel als Argument 
-		this.SolvingList = new Solver().solve(this);
+		this.solvingList = new Solver().solve(this);
 		//Setzte die Kugel in den Zustand zu beginn
 		//System.out.println(SolvingList.toString());
-		FillKugelFromStringWithoutSolvingList(SolvingList.get(0));
+		SetSphereToString(solvingList.get(0));
 		//System.out.println(getSphere());
 	}
 	

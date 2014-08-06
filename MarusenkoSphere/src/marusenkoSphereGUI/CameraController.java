@@ -17,7 +17,7 @@ public class CameraController {
 	/**
 	 * Funktion wird während des Renderprozesses aufgerufen um die Kugel entsprechend zu drehen
 	 */
-	public void lookThrough(){
+	protected void lookThrough(){
 		//Verschiebe die Weltkoordinaten in Z-Richtung
 		GL11.glTranslatef(0.0f,0.0f,-4.0f);
 		
@@ -27,7 +27,7 @@ public class CameraController {
 	    GL11.glRotatef(rotation.z,0.0f,0.0f,1.0f);
 	}
 
-	public void turnRotationAngle(double angleX, double angleY){
+	protected void turnRotationAngle(double angleX, double angleY){
 		rotation.x+=angleX;
 		rotation.y+=angleY;
 	}
@@ -35,7 +35,7 @@ public class CameraController {
 	/**
 	 * Setzte die Drehungen zurück in die Startposition
 	 */
-	public void setToStartPosition(){
+	protected void setToStartPosition(){
 		rotation.x = 20;
 		rotation.y = 45;
 		rotation.z = 0;

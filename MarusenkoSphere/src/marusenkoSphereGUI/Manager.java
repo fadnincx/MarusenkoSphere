@@ -69,7 +69,7 @@ public class Manager {
 		Trigonometrie.CalcTrigonometrie();
 		
 		//Fülle Kugel zufällig
-		k.FillKugelRandom(); 
+		k.FillRandom(); 
 		
 		
 		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
@@ -101,7 +101,7 @@ public class Manager {
 			rendern.updateKugel(k,displayMode);
 			
 			//Die aktuell im Controlpanel eingestellte Animationsgeschwindigkeit abrufen
-			animationSpeed = cp.getAnimationSpeed()/10;
+			animationSpeed = cp.getAnimationSpeed()/30;
 			
 			//Wenn aktuelle Animation fertig ist, dann QueueManager aufrufen
 			if(animationFinished){
@@ -137,8 +137,10 @@ public class Manager {
 		runAnimationToEnd = false;
 		
 		//Füllt die Kugel zufällig
-	    k.FillKugelRandom();
-	    
+	    //k.FillRandom();
+	    k.mixRandom();
+		
+		
 	    //Updated das Controlpanel
 	    updateControlpanelInformations();   
 	}
@@ -153,7 +155,7 @@ public class Manager {
 		runAnimationToEnd = false;
 		
 		//Fülle die Kugel gemäss String
-		k.FillKugelFromString(s, solving);
+		k.FillKugelFromDebugString(s, solving);
 		
 		//Update Controlpanel
 		updateControlpanelInformations();	
@@ -163,7 +165,7 @@ public class Manager {
 	 * Updatet die Werte über die Kugel im Controlpanel
 	 */
 	protected void updateControlpanelInformations(){
-		cp.updateSphereInfos(k.getStep(), k.SolvingList.size()-1);
+		cp.updateSphereInfos(k.getStep(), k.getSolvingListSize()-1);
 	}
 	
 	/**
@@ -181,11 +183,11 @@ public class Manager {
 		//Prüfe, dass sich der gewünschte Step im Rahmen des erlaubten befindet
 		if(step<=0){
 			step = 0;
-		}else if(step>=k.SolvingList.size()){
-			step = k.SolvingList.size()-1;
+		}else if(step>=k.getSolvingListSize()){
+			step = k.getSolvingListSize()-1;
 		}
 		//Wenn Kugel am Ende ist, dann runAnimationToEnd auf false setzen
-		if(runAnimationToEnd&&step==k.SolvingList.size()-1){
+		if(runAnimationToEnd&&step==k.getSolvingListSize()-1){
 			runAnimationToEnd = false;
 		}
 		//Setze Kugel
@@ -216,8 +218,8 @@ public class Manager {
 			
 			//Wenn Kugel korrekt, dann übernehmen
 			if(isSphereAllowed()){
-				k.resetStep();
-				k.FillKugelFromString(k.getSphere());
+				k.FillKugelFromEditor();
+				updateControlpanelInformations();
 			}else{
 				
 				//Wenn nicht, dann zu ursprünglicher Kugel zurück kehren
@@ -291,7 +293,7 @@ public class Manager {
 	/**
 	 * Ändert den Status zur aktuellen Animation
 	 */
-	protected static void setAnimationFinished(boolean set){
+	public static void setAnimationFinished(boolean set){
 		animationFinished = set;
 	}
 	

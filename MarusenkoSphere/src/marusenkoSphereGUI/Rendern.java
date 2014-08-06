@@ -334,7 +334,7 @@ public class Rendern {
         GL11.glLoadIdentity();
      
         //Die Perspektive Berechnen mit Hilfe von GLU
-        GLU.gluPerspective(45.0f, (float) (displayMode.getWidth() / displayMode.getHeight()),0.1f,100.0f);
+        GLU.gluPerspective(45.0f,((float)displayMode.getWidth() /(float) displayMode.getHeight()),0.1f,100.0f);
         
         //Setze aktive Matrix auf Modelview
         GL11.glMatrixMode(GL11.GL_MODELVIEW);

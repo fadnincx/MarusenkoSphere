@@ -96,7 +96,7 @@ public class Solver {
 		}
 		int anzahlStrategien = 2;
 		for(int i = 0; i<anzahlStrategien; i++){
-			k.FillKugelFromString(firstSphere, false);
+			k.FillKugelFromDebugString(firstSphere, false);
 			ArrayList<String> AL = strategieChooser(i);
 			if(AL.size()<bestSolvingWay.size()){
 				bestSolvingWay = AL;
@@ -1493,8 +1493,8 @@ public class Solver {
 		if(arrayList.size()>1){
 			for(int i = 0; i<arrayList.size()-2;i++){
 				//Nehme die Drehungen der nächsten beiden Stadien
-				int[] dreh1 = k.SplitDrehungFromSphere(arrayList.get(i));
-				int[] dreh2 = k.SplitDrehungFromSphere(arrayList.get(i+1));
+				int[] dreh1 = SphereUtils.SplitDrehungFromSphere(arrayList.get(i));
+				int[] dreh2 = SphereUtils.SplitDrehungFromSphere(arrayList.get(i+1));
 				//Wenn auf gleichem Pol im Gleichen Modus gedreht wird
 				if((dreh1[0]==dreh2[0])&&(dreh1[2]==dreh2[2])){
 					//Beide drehungen Addieren und Modulo 4 nehmen
@@ -1502,7 +1502,7 @@ public class Solver {
 					anz%=4;
 					//Wenn Anzahl nicht gleich 0 dann ersetzte erstes Element mit neuer Drehung und lösche zweites
 					if(anz!=0){
-						arrayList.set(i, k.SphereWithoutDrehungAndStep(arrayList.get(i+1))+"n"+i+"n"+dreh1[0]+""+(anz)+""+dreh1[2]);
+						arrayList.set(i, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i+1))+"n"+i+"n"+dreh1[0]+""+(anz)+""+dreh1[2]);
 						arrayList.remove(i+1);
 					}else{
 						//Wenn Anzahl = 0, dann lösche beide
@@ -1513,15 +1513,15 @@ public class Solver {
 					i-=2;
 				}else{
 					//Wenn nicht auf gleichem Pol, bzw Modus, korrigiere den Step, da dieser nun verschoben ist
-					arrayList.set(i, k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+dreh1[0]+dreh1[1]+dreh1[2]);
+					arrayList.set(i, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+dreh1[0]+dreh1[1]+dreh1[2]);
 				}
 			}
 
 			//Korrigiere auch die Letzte Kugel, wegen dem i und i+1 ist es nicht mögluch dies in der Schlaufe zu tun
-			int[] dreh = k.SplitDrehungFromSphere(arrayList.get(arrayList.size()-2));
-			arrayList.set(arrayList.size()-2, k.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-2))+"n"+(arrayList.size()-2)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
-			dreh = k.SplitDrehungFromSphere(arrayList.get(arrayList.size()-1));
-			arrayList.set(arrayList.size()-1, k.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-1))+"n"+(arrayList.size()-1)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
+			int[] dreh = SphereUtils.SplitDrehungFromSphere(arrayList.get(arrayList.size()-2));
+			arrayList.set(arrayList.size()-2, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-2))+"n"+(arrayList.size()-2)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
+			dreh = SphereUtils.SplitDrehungFromSphere(arrayList.get(arrayList.size()-1));
+			arrayList.set(arrayList.size()-1, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-1))+"n"+(arrayList.size()-1)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
 		}
 		
 		//Gib arraylist zurück
@@ -1918,8 +1918,8 @@ public class Solver {
 			Arrays.fill(lastPos,-1);
 			for(int j = 0; j<arrayList.size()-1;j++){
 				//pol, anz, modus
-				int[] aktOpt = k.SplitDrehungFromSphere(arrayList.get(j));
-				int[] akt = k.GetPolFromSphereString(arrayList.get(j),i);
+				int[] aktOpt = SphereUtils.SplitDrehungFromSphere(arrayList.get(j));
+				int[] akt = SphereUtils.GetPolFromSphereString(arrayList.get(j),i);
 				Arrays.sort(akt);
 				Arrays.sort(lastPos);
 				//Wenn aktueller Pol = i; Modus = 1
@@ -1927,9 +1927,9 @@ public class Solver {
 					if(Arrays.equals(akt,lastPos)){
 						anz+=aktOpt[1];
 						anz%=4;
-						arrayList.set(j, k.SphereWithoutDrehungAndStep(arrayList.get(j))+"n"+j+"n"+aktOpt[0]+""+(anz)+""+aktOpt[2]);
+						arrayList.set(j, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(j))+"n"+j+"n"+aktOpt[0]+""+(anz)+""+aktOpt[2]);
 						arrayList.remove(lastTurnPos);
-						lastPos = k.GetPolFromSphereString(arrayList.get(j),i);
+						lastPos = SphereUtils.GetPolFromSphereString(arrayList.get(j),i);
 						j-=3;
 						lastTurnPos =-1;
 						anz = 0;
@@ -1938,7 +1938,7 @@ public class Solver {
 					if(lastTurnPos==-1){
 						lastTurnPos = j;
 						anz+=aktOpt[1];
-						lastPos = k.GetPolFromSphereString(arrayList.get(j),i);
+						lastPos = SphereUtils.GetPolFromSphereString(arrayList.get(j),i);
 					}else{
 						lastTurnPos =-1;
 						anz = 0;
@@ -1953,16 +1953,16 @@ public class Solver {
 		}
 		for(int i = 0; i<arrayList.size();i++){
 			//Neu Nummerieren...
-			arrayList.set(i,k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+k.SplitDrehungFromSphereAsS(arrayList.get(i)));
+			arrayList.set(i,SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+SphereUtils.SplitDrehungFromSphereAsS(arrayList.get(i)));
 			//System.out.println(arrayList.get(i));
 		}
 		return arrayList;
 	}
 	private ArrayList<String> advancedStepRemover(ArrayList<String> arrayList){
 		for(int i = 0; i<arrayList.size()-2;i++){
-			String sphere = k.SphereWithoutDrehungAndStep(arrayList.get(i));
+			String sphere = SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i));
 			for(int j = i+1; j<arrayList.size()-1;j++){
-				if(sphere==k.SphereWithoutDrehungAndStep(arrayList.get(j))){
+				if(sphere==SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(j))){
 					for(int l = j; l>i; l--){
 						arrayList.remove(l);
 					}
@@ -1971,7 +1971,7 @@ public class Solver {
 		}
 		for(int i = 0; i<arrayList.size();i++){
 			//Neu Nummerieren...
-			arrayList.set(i,k.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+k.SplitDrehungFromSphereAsS(arrayList.get(i)));
+			arrayList.set(i,SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+SphereUtils.SplitDrehungFromSphereAsS(arrayList.get(i)));
 			//System.out.println(arrayList.get(i));
 		}
 	
@@ -1981,4 +1981,6 @@ public class Solver {
 		
 		return arrayList;
 	}
+	
+
 }

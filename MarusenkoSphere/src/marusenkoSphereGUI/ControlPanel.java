@@ -119,7 +119,7 @@ public class ControlPanel implements ActionListener{
 	/**
 	 * Konstruktor welcher das Manager-Objekt initialisiert und ein neues Fenster erstellen lässt
 	 */
-	public ControlPanel(Manager m){
+	protected ControlPanel(Manager m){
 		//Übernehme den Manager
 		this.m = m;
 		
@@ -412,7 +412,7 @@ public class ControlPanel implements ActionListener{
 	/**
 	 * Funktion zum die aktuell ausgewählete Animationsgeschwindigkeit abrufen
 	 */
-	public double getAnimationSpeed(){
+	protected double getAnimationSpeed(){
 		return cpSliderAnimationSpeed.getValue();
 	}
 	
@@ -420,7 +420,7 @@ public class ControlPanel implements ActionListener{
 	 * Funktion zum wechseln des anzeige Modus
 	 * @param mode
 	 */
-	public void updateMode(int mode){
+	protected void updateMode(int mode){
 		
 		//Setze alle Fenster auf unsichtbar
 		editorPanel.setVisible(false);
@@ -445,7 +445,7 @@ public class ControlPanel implements ActionListener{
 	/**
 	 * Funktion zum aktuallisieren der Infos über die Kugel
 	 */
-	public void updateSphereInfos(int aktuellePosition, int fertigBeiPosition){
+	protected void updateSphereInfos(int aktuellePosition, int fertigBeiPosition){
 		//Setzte Text neu fürs Controlpanel
 		cpLabelSphereStepNow.setText("Anzahl Schritte: "+aktuellePosition);
 		cpLabelSphereStepMax.setText("Gelöst bei Schritte: "+fertigBeiPosition);
@@ -467,7 +467,7 @@ public class ControlPanel implements ActionListener{
 	 * Updated im Editor die Info bezüglich der legalität der Kugel
 	 * @param isOk
 	 */
-	public void updateInfoIsSphereAllowed(boolean isOk){
+	protected void updateInfoIsSphereAllowed(boolean isOk){
 		if(isOk){
 			editLabelIsSphereLegal.setText("Die Kugel enthält keine Fehler");
 		}else{
@@ -537,7 +537,15 @@ public class ControlPanel implements ActionListener{
         //Ist der Button um an eine Position zu springe gedrückt?	
         }else if (z.getSource() == cpButtonGoToPosition){
         	//Versuche in Integer um zu wandeln und dann zu Position zu springen
-        	m.goToStep(Integer.parseInt(cpTextFieldGoToPosition.getText()));
+        	try{
+        		int pos = Integer.parseInt(cpTextFieldGoToPosition.getText());
+        		m.goToStep(pos);
+        	
+        	//Bei Fehler
+        	}catch(Exception e){
+        		//Ignorieren
+        	}
+        	
         	
         //Ist Im Editor die Farbe 0 ausgewählt?	
         }else if (z.getSource() == editButtonColor0){

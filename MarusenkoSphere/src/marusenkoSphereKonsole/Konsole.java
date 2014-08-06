@@ -36,7 +36,7 @@ public class Konsole {
 		//Gehe maximale Anzahl schlaufen durch ((2^63)-1) 
 		for(long i = 0;i<9223372036854775807L;i++){
 			//fülle Kugel neu, wobei sie sofort auch gelöst wird
-			k.FillKugelRandom();
+			k.FillRandom();
 			int aktAnz = k.getMaxStep();
 			if(aktAnz>max){
 				max=aktAnz;

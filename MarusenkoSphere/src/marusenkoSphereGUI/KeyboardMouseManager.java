@@ -13,7 +13,7 @@ import org.lwjgl.opengl.Display;
  */
 public class KeyboardMouseManager {
 
-	public static void Input(Manager m){	
+	protected static void Input(Manager m){	
 		
 		//Programm beenden, wenn Esc gedrückt wurde oder wenn Fenster geschlossen wird
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)||Display.isCloseRequested()) {
