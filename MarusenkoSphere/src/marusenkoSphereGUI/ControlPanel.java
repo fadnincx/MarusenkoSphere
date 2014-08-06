@@ -16,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Diese Klasse ist für die Darstellung des 2. Fensters, des Kontolpanels zuständig
@@ -261,6 +263,13 @@ public class ControlPanel implements ActionListener{
     	cpSliderAnimationSpeed.setExtent(0); //der Zeiger verspringt jedesmal 0 Einheiten
     	cpSliderAnimationSpeed.setPaintLabels(false);  //Zahlen werden nicht angezeigt
     	cpSliderAnimationSpeed.setPaintTicks(false);    //Striche werden nicht angezeigt
+    	cpSliderAnimationSpeed.addChangeListener(new ChangeListener() {
+    	      public void stateChanged(ChangeEvent evt) {
+    	          Manager.setAnimationSpeed(cpSliderAnimationSpeed.getValue());
+    	        }
+    	      });
+    	
+    	
     	
     	
     	//Füge jedes Objekt dem Controlpanel hinzu
@@ -407,13 +416,6 @@ public class ControlPanel implements ActionListener{
         
     	//das DevPanel neu zeichnen
         devPanel.repaint();
-	}
-
-	/**
-	 * Funktion zum die aktuell ausgewählete Animationsgeschwindigkeit abrufen
-	 */
-	protected double getAnimationSpeed(){
-		return cpSliderAnimationSpeed.getValue();
 	}
 	
 	/**

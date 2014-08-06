@@ -93,6 +93,8 @@ public class Manager {
 	 * Funktion, welche endlos wiederholt wird
 	 */
 	private void loop(){
+		
+		
 		while(true){
 			//Frage die Tastatur und Mauseingaben ab
 			KeyboardMouseManager.Input(this);
@@ -101,7 +103,7 @@ public class Manager {
 			rendern.updateKugel(k,displayMode);
 			
 			//Die aktuell im Controlpanel eingestellte Animationsgeschwindigkeit abrufen
-			animationSpeed = cp.getAnimationSpeed()/30;
+			//animationSpeed = cp.getAnimationSpeed()/30;
 			
 			//Wenn aktuelle Animation fertig ist, dann QueueManager aufrufen
 			if(animationFinished){
@@ -261,6 +263,12 @@ public class Manager {
 	public static double getAnimationsSpeed(){
 		return animationSpeed;
 	}
+	
+	protected static void setAnimationSpeed(double value){
+		animationSpeed = value/30;
+	}
+	
+	
 	
 	/**
 	 * Gibt die aktuelle Bildfrequenz zurück

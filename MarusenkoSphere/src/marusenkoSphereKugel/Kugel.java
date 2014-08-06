@@ -64,7 +64,7 @@ public class Kugel{
 	 * Übernimmt die Kugel aus dem Editor
 	 */
 	public void FillKugelFromEditor(){
-		resetStep();
+		//resetStep();
 		FillKugelFromDebugString(getSphere(),true);
 	}
 

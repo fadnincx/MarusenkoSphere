@@ -180,9 +180,11 @@ public class KeyboardMouseManager {
 	    			int objekt = Editor.onWhichField(mousePosIn3D[0],mousePosIn3D[1]);
 	    			
 	    			//Wenn objekt < 24 ist, dann ist es ein Dreieck sonst ein Verbindungsstück
-	    			if(objekt<24){
+	    					
+	    			if(objekt>=0&&objekt<24){
 	    				m.editSphereTri(objekt);
-	    			}else{
+	    			}else
+	    			if(objekt>=0&&objekt<32){
 	    				m.editSphereCon(objekt-24);
 	    			}
 	    		}

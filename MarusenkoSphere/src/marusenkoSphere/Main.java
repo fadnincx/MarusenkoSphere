@@ -17,8 +17,8 @@ public class Main {
 
 	public static void main(String[] args){		 
 
-		//Wenn Argument "ng" (NoGUI) übergeben worden ist, dann mit keiner GUI starten 
-		konsole = args[0]=="ng" ? true:false;
+		//Wenn Argument "ng" (NoGUI) übergeben worden ist, dann mit keiner GUI starten
+			konsole = args.length>0&&args[0]=="ng" ? true:false;
 		
 		//Erstelle eine neues Kugel Objekt  
 		Kugel k = new Kugel();

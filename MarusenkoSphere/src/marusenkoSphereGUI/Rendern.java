@@ -123,6 +123,7 @@ public class Rendern {
     private void updateFPS() {
     	//Wenn eine Sekunde vergangen
     	if (getTime() - lastFPS > 1000) {
+    		Display.setTitle(windowTitle+" - "+fps);
     		//Setze die Framerate im Manager
     		Manager.setFPS(fps);
     		fps = 0;
