@@ -37,7 +37,7 @@ public class Konsole {
 		for(long i = 0;i<9223372036854775807L;i++){
 			//fülle Kugel neu, wobei sie sofort auch gelöst wird
 			k.FillRandom();
-			int aktAnz = k.getMaxStep();
+			int aktAnz = k.getSolvingListSize()-1;
 			if(aktAnz>max){
 				max=aktAnz;
 			}else if(aktAnz<min){

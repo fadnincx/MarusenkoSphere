@@ -13,48 +13,30 @@ import marusenkoSphere.Log;
  */
 public class Solver {
 
-	/**
-    * Definiert die Kugel, welche gelöst wird   
-    */
-	protected Kugel k;
+	//Kugel welche gelöst wird
+	private Kugel k;
+	
+	//Zeigt, welche Felder schon gelöst sind
 	protected boolean[] ok = new boolean[24];
-	private final boolean consLog = false;
-	private boolean end = false;
+	
+	//ArrayList mit Lösungsweg
 	private ArrayList<String> solvingWay = new ArrayList<String>();
 	
+	//Kugel die zu lösen ist
+	private String sphereToSolve;
+	
 	/**
-	 * Initialisiert das Solver-Objekt
-	 * @param k
+	 * Bei initialisieren des Objekts nichts tun
 	 */
 	public Solver(){}
 	
-	/**
-	 * Gibt den genauen Log in der Konsole aus, wenn entsprechenden Variabel true gesetzt ist
-	 * Zum Debuggen --> Genau schauen, wann was macht
-	 * 
-	 * Zusätzlich wird noch in DebugLog geschrieben
-	 * @param s
-	 */
-	private void consLog(String s){
-		if(consLog){
-			System.out.println(s);
-			Log.DebugLog(s);
-		}
-	}
-	
-	/**
-	 * Beendet das lösen --> Wenn zuviele Schritte braucht, was heissen muss, dass in Schlaufe fest hängt und Programm einen Fehler hat
-	 */
-	private void end(){
-		end = true;
-	}
 	
 	/**
 	 * Fügt eine Kugeln zum Lösungsprozess hinzu
-	 * @return : true, wenn Lösen Abgebrochen werden soll
 	 */
-	
-	private boolean addSteps(int pol, int anz, int modus){
+	private void addSteps(int pol, int anz, int modus){
+		
+		//Vollziehe die Drehung auf der Kugel
 		switch(modus){
 		case 1:
 			k.changePol(pol, anz);
@@ -64,170 +46,157 @@ public class Solver {
 		break;
 		}
 		
-		
 		//Erhöhe den Step
 		k.step++;
-		//Wenn Step zu gross, breche Ab und Gebe Error aus
-		if(k.step>10000){
-			Log.ErrorLog(solvingWay.get(0));
-			Log.ErrorLog("Zuviele Schritte nötig!!!");
-			k.step-=10000;
-			return true;
-		}
-		//Füge Kugel zum Lösungsprozess hinzu
+		
+		//Die Aktion zur Lösungs-ArrayList hinzufügen
 		solvingWay.add(k.getSphere(""+pol+anz+modus));
-		//System.out.println(k.getSphere(""+pol+anz+modus));
-		return false;
+		
 	}
 	
 	
 	/**
-	 * Hauptfunktion welche für das lösen der Kugel verantwortlich ist
-	 * @param k : Kugel welche gelöst werden soll
-	 * @return : gibt ArrayList mit Lösungsweg zurück
+	 * Gibt ArrayList mit Lösungsweg zum lösen der Kugel zurück
 	 */
-	public ArrayList<String> solve(Kugel kugel){
-		//Nimmt die übergebene Kugel zum lösen
-		this.k = kugel;
-		String firstSphere = k.getSphere();
+	protected ArrayList<String> solve(Kugel kugel){
+		
+		//Übernimmt die gegebene Kugel zum lösen
+		k = kugel;
+		
+		//Speichert die Kugel als ausgangspunkt, damit diese nach den verschiedenen Strategien
+		//zurück gesetzt werden kann
+		sphereToSolve = k.getSphere("000");
+		
+		//Erstelle eine neue ArrayList, in welcher der schnellste Lösungsweg gespeichert wird
 		ArrayList<String> bestSolvingWay = new ArrayList<String>();
+		
+		//Fülle die ersten 10000 Stellen mit dem Begriff "preSet", damit dies nicht der schnellste Weg ist eine Kugel zu lösen
 		for(int i = 0; i<10000; i++){
 			bestSolvingWay.add("preSet");
 		}
+		
+		//Anzahl Strategien, die durch gegangen werden
 		int anzahlStrategien = 2;
+		
+		//Gehe alle Strategien durch
 		for(int i = 0; i<anzahlStrategien; i++){
-			k.FillKugelFromDebugString(firstSphere, false);
+			
+			//Setzte die Kugel zurück in die Startposition
+			k.fillKugelFromDebugString(sphereToSolve, false);
+			
+			//Setzte die StartKugel als erste Kugel
+			solvingWay.add(k.getSphere("000"));
+			
+			//Erstelle Temporäre ArrayList mit der Lösung der Entsprechenden Strategie
 			ArrayList<String> AL = strategieChooser(i);
+			
+			//Wenn die Lösung schneller ist, dann setze Strategie als neue bestSolvingWay
 			if(AL.size()<bestSolvingWay.size()){
 				bestSolvingWay = AL;
 			}
+			
+			//Setzte solvingWay zurück, damit nächste Strategie damit die Kugel lösen kann
 			solvingWay = new ArrayList<String>();
+			
 		}
+		//Verkleinert die bestSolvingWay auf das benötigte
+		bestSolvingWay.trimToSize();
 		
+		//Gib den schnellsten Lösungsweg zurück
 		return bestSolvingWay;
 		
 		
-	}//#END solve(Kugel kugel)
+	}
+	
+	/**
+	 * startet die gewählte Strategie und gibt das Resulat zurück
+	 */
 	private ArrayList<String> strategieChooser(int strategie){
+		
+		//Switch für die Strategie Nummer
 		switch(strategie){
+		
+			//Strategie 0
 			case 0:
 				return strategieStandard();
-				
+		
+			//Strategie 1
 			case 1:
 				return strategieOne();
+			
+			//Wenn nichts davon ist, gib null zurück;
 			default:
 				return null;
 		}
 		
 	}
-	private ArrayList<String> strategieStandard(){
-		//Die Ursprüngliche Kugel speichern
-		solvingWay.add(k.getSphere());
-		//Gehe für alle Pole Durch
-		//Damit Pol 4 vor 3 gelöst wird
-		int[] pol = {0,1,4,2,3,5};
-		for(int z = 0; z<1;z++){
-		
-			for(int i = 0; i<6; i++){
-				//Wenn Pol nicht gelöst ist, dann weiter
-				if(!SolveCheck.isPolSolved(pol[i], k)){
-					/*boolean ok[] = {false, false, false, false};
-					int anzahlSolved = 0;
-					//Prüfen, welche Teile bereits gelöst sind
-					for(int j = 0; j<4; j++){
-						if(SolveCheck.isPositionSolved(pol[i]*4+j,k)){
-							ok[j]=true;
-							anzahlSolved++;
-						}
-					}
-					//Wenn 3 gelöst sind, dann muss 1. hälfte gelöst werden
-					/*if(anzahlSolved==3){
-						int falsePosition = -1;
-						for(int j = 0; j<4; j++){
-							if(!ok[j]){
-								falsePosition = j;
-							}
-						}
-						if(strategieStandardAreThis2Possible(pol[i]*4+falsePosition, pol[i]*4+((falsePosition+1)%4))){
-							//Lösen mit nummer Plus 
-							strategieStandardSolv2Positions(pol[i]*4+falsePosition, pol[i]*4+((falsePosition+1)%4));
-						}else
-						if(strategieStandardAreThis2Possible(pol[i]*4+falsePosition, pol[i]*4+((falsePosition+3)%4))){
-							//Lösen mit nummer minus
-							strategieStandardSolv2Positions(pol[i]*4+falsePosition, pol[i]*4+((falsePosition+3)%4));
-						}
 	
-						
-					}else
-					//Wenn 2 gelöst sind, dann muss je nach dem 1 oder 2 hälften gelöst werden
-					if(anzahlSolved==2){
-						//nur einer lösen
-						if(ok[0]&&ok[1]&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
-							strategieStandardSolv2Positions(pol[i]*4+2, pol[i]*4+3);
-						}else
-						if(ok[2]&&ok[3]&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)){
-							strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+1);
-						}else
-						if(ok[0]&&ok[3]&&strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)){
-							strategieStandardSolv2Positions(pol[i]*4+1, pol[i]*4+2);
-						}else
-						if(ok[1]&&ok[2]&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
-							strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+3);
-						}
-						//beide lösen
-						else{
-							if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
-								strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+1);
-								strategieStandardSolv2Positions(pol[i]*4+2, pol[i]*4+3);
-							}else
-							if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
-								strategieStandardSolv2Positions(pol[i]*4+1, pol[i]*4+2);
-								strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+3);
-							}
-						}
-					}
-					//2 Hälften müssen gelöst werden
-					else{*/
-						if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
-							strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+1);
-							strategieStandardSolv2Positions(pol[i]*4+2, pol[i]*4+3);
-						}else
-						if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
-							strategieStandardSolv2Positions(pol[i]*4+1, pol[i]*4+2);
-							strategieStandardSolv2Positions(pol[i]*4+0, pol[i]*4+3);
-						}else{
-							//System.out.println("Error no Possibles");
-						}
-					//}
-				}else{
-					//System.out.println("Pol "+i+" gelöst");
+	/**
+	 * Löst die Kugel gemäss der Standard-Taktik
+	 */
+	private ArrayList<String> strategieStandard(){
+				
+		//Array mit der Reihenfolge der Pole
+		int[] pol = {0,1,4,2,3,5};
+		
+		//Gehe alle Pole durch
+		for(int i = 0; i<6; i++){
+			
+			//Wenn der aktuele Pol nicht gelöst ist, dann lösen
+			if(!SolveCheck.isPolSolved(pol[i], k)){
+				
+				
+				//Prüfe, auf welche Seite gelöst werden soll
+				if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
+					strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+1);
+					strategieStandardSolve2Positions(pol[i]*4+2, pol[i]*4+3);
+				}else
+				if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
+					strategieStandardSolve2Positions(pol[i]*4+1, pol[i]*4+2);
+					strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+3);
 				}
+				
 			}
 		}
+		
+		//Prüfe, ob alle Positionen korrekt gelöst sind
 		boolean doStrategiePhase1 = false;
 		for(int i = 0; i<6; i++){
 			if(!checkPoleEndPhase1(i)){
 				doStrategiePhase1 = true;
 			}
 		}
+		//Wenn nicht dann löse fertig
 		if(doStrategiePhase1){
 			strategieOne();
 		}
 		
+		//Löse den Letzten Pol und gibt die Kugel zurück
 		return strategieOnePhaseTwo();
-		//return solvingWay;
 	}
-	private void strategieStandardSolv2Positions(int pos1, int pos2){
-		//Wenn möglich
+	
+	/**
+	 * Löst 2 Positionen gemäss der Standart-Taktik
+	 */
+	private void strategieStandardSolve2Positions(int pos1, int pos2){
+		
+		//Sofern dies möglich ist
 		if(strategieStandardAreThis2Possible(pos1,pos2)){
-			//Die Beiden Pole für die Beiden Positionen abfragen
+			
+			//Für beide Positionen die Angrenzenden Pole abfragen
 			int[] pole1 = getPoleForPosition(pos1);
 			int[] pole2 = getPoleForPosition(pos2);
-			//Pol auf dem beide sind
+			
+			//Pol auf dem beide sind speichern
 			int pol = pos1/4;
-			//Array mit möglichen Polen
+			
+			//Array mit möglichen Polen --> Pol an den nur einer Grenz
 			int[] poleMoeglich = new int[2]; 
-			int[] neededColors = new int[] {k.con[k.findCons(pos1)],k.con[k.findCons(pos2)]};
+			
+			//Farben, welche an diesen Positionen benötigt werden
+			int[] neededColors = new int[] {k.con[SphereUtils.findCorrectConIndexFromTri(pos1)],k.con[SphereUtils.findCorrectConIndexFromTri(pos2)]};
+			
+			
 			boolean everSame = false;
 			for(int i = 0; i<2; i++){
 				boolean same = false;
@@ -300,7 +269,7 @@ public class Solver {
 				
 				int[] colors = new int[]{neededColors[0],neededColors[1]};
 				
-				if(neededColors[0]==k.con[k.findCons(pos2)]&&neededColors[1]==k.con[k.findCons(pos1)]){
+				if(neededColors[0]==k.con[SphereUtils.findCorrectConIndexFromTri(pos2)]&&neededColors[1]==k.con[SphereUtils.findCorrectConIndexFromTri(pos1)]){
 					int temp = neededColors[0];
 					neededColors[0] = neededColors[1];
 					neededColors[1] = temp;
@@ -573,7 +542,7 @@ public class Solver {
 		}
 		for(int i = 0; i<6; i++){
 			//Wenn noch einen ungelösten anderen Pol ist, dann lösen
-			if(i!=pol&&i!=k.gegenPol(pol)&&!okPole[i]){
+			if(i!=pol&&!okPole[i]){//i!=SphereUtils.gegenPol(pol)&&
 				//Für beide schauen, dass auf uhrsprungspol kommen...
 				if(!color2OnPole){
 					for(int j = 0; j<4; j++){
@@ -636,12 +605,6 @@ public class Solver {
 		}
 	}
 	private ArrayList<String> strategieOne(){
-
-		
-		
-		//Füge die Ausgangskugel als erste Kugel hinzu
-		solvingWay.add(k.getSphere());
-		//solvingWay.add(k.getSphere());
 		
 		//Array "ok" mit false füllen
 		Arrays.fill(ok, false); 
@@ -671,7 +634,6 @@ public class Solver {
 					//consLog(i+" "+findPos(i));
 					Solve1Phase(i,findPos(i));
 					//Abbrechen, falls gefordert
-					if(end){return solvingWay;}
 					checkIfP1IsOK();
 					if(getAnzFalseInArray(ok)==2){
 						solveLast();
@@ -690,7 +652,6 @@ public class Solver {
 		 * 
 		 * Löst die Kugel zu ende
 		 */
-		consLog("Phase 2");
 		//Array ok erneut zurück auf false setzen
 		Arrays.fill(ok, false); 
 		
@@ -713,11 +674,8 @@ public class Solver {
 					//Wenn Pol noch nicht gelöst, löse ihn
 					if(!SolveCheck.isPolSolved(i,k)){		
 						solvePol(i);
-						//Wenn zulang --> Fehler dann breche ab!
-						if(end){return solvingWay;}
 					}
 				}
-				consLog("Sphere not solved");
 			}	
 		}else{
 			System.out.println("Nicht korrekte Kugel!!!");
@@ -778,7 +736,7 @@ public class Solver {
 			//Array mit daten aus Kugel füllen
 			for(int j = 0; j<4; j++){	 
 				//Wert von con, Index wird gesucht zu tri Index Pol*4 + Position in Pol
-				cons[j] = k.con[k.findCons(i*4+j)];
+				cons[j] = k.con[SphereUtils.findCorrectConIndexFromTri(i*4+j)];
 				//Alle sind zu beginn noch benutzbar
 				allowCons[j] = true;
 				//Wert von tri bei Index Pol*4 + Position in Pol
@@ -904,24 +862,23 @@ public class Solver {
 		
 		
 /*		*/int urPol = p/4;
-		consLog("UrPol: "+urPol);
 		
 		//Finde den richtigen Connector für p
 		int con = findCon(p);
-		consLog("Con: "+p+" - "+con);
+		int[] polPos = SphereUtils.conToPos(con);
+		
 		
 		//Gehe für die drei müglichen Pole durch
 		for(int i = 0; i<3; i++){
 			
 			//Finde die entsprechende PolNr
-			int polNr = k.con2pol(con, i);
-			consLog("Con-Pol: "+con+" - "+polNr);
+			//int polNr = SphereUtils.con2pol(con, i);
+			int polNr = polPos[i]/4;
 
 			//Wenn Phase 1 bei diesem Pol noch nicht abgeschlossen wurde dann kommt er in frage und wird weiter untersucht
 			if(!checkPoleEndPhase1(polNr)&&urPol!=polNr){
 				
 				//Bei dem Pol wird jede Stelle durch gegeangen
-				consLog(polNr+" Pol nicht gelöst");
 				for(int j = 0; j<4; j++){
 					
 					//Prüfe, ob Position noch nicht korrekt ist und dass die beiden Farben nicht Identisch sind
@@ -931,8 +888,6 @@ public class Solver {
 						return polNr*4+j;
 					}
 				}
-			}else{
-				consLog(polNr+"Pol gelöst!");
 			}
 		}
 		
@@ -956,7 +911,7 @@ public class Solver {
 		//Fülle Arrays mit Daten aus Kugel
 		for(int i = 0; i<4; i++){
 			tris[i]=k.tri[polNr*4+i];
-			cons[i]=k.con[k.findCons(polNr*4+i)];
+			cons[i]=k.con[SphereUtils.findCorrectConIndexFromTri(polNr*4+i)];
 		}
 		/**
 		 * Sortiere die Arrays
@@ -989,7 +944,7 @@ public class Solver {
 		}
 		
 		//Wenn keine übereinstimmung gefunden werden konnte dann gibt -1 zurück
-		System.out.println(k.getSphere());
+		System.out.println(k.getSphere("000"));
 		return -1;
 	}
 	
@@ -1134,8 +1089,6 @@ public class Solver {
 				
 				//Austauschen
 				change1Phase(pol1,polRechts,opt1);
-			}else{
-				consLog("Zukleines PolR "+p1+":"+pol1+" "+p2+":"+pol2);
 			}
 		}
 	}
@@ -1156,7 +1109,7 @@ public class Solver {
 			}
 		}
 		//Solange Pol nicht gelöst, noch einen Anlauf wagen 
-		while(!SolveCheck.isPolSolved(polNr,k)&&!end){
+		while(!SolveCheck.isPolSolved(polNr,k)){
 			//Gehe jede Position durch
 			for(int i = 0; i<4; i++){
 				//Wenn noch nicht korrekt
@@ -1165,7 +1118,7 @@ public class Solver {
 					//Finde den Farbwert der Position heraus
 					int tri = polNr*4+i;
 					//Finde das dazu gehörige Verbindungsteil heraus
-					int con = k.findCons(tri);
+					int con = SphereUtils.findCorrectConIndexFromTri(tri);
 					//Finde Dreieck mit welchem getauscht werden muss und tausche dann
 					for(int j = 0; j<4; j++){
 						if(k.tri[polNr*4+j]==k.con[con]&&j!=i){
@@ -1224,7 +1177,7 @@ public class Solver {
 					change2PolPositions(p1,p2,turn);
 				}else{
 					//Wenns definitiv nicht geht Error ausgeben
-					Log.ErrorLog(k.getSphere()+" \n Error - Muss sonst lösen - P1: "+p1+"; P2: "+p2);
+					Log.ErrorLog(k.getSphere("000")+" \n Error - Muss sonst lösen - P1: "+p1+"; P2: "+p2);
 					change2Positions(p1, p2);
 				}
 			}
@@ -1348,7 +1301,7 @@ public class Solver {
 			p2 = temp;
 		}
 		//Prüfe ob das so ist und es die Lösung bringt...
-		if(p1+2 == p2&&(k.con[k.findCons(p1)]==k.tri[p2]||k.con[k.findCons(p2)]==k.tri[p1])){
+		if(p1+2 == p2&&(k.con[SphereUtils.findCorrectConIndexFromTri(p1)]==k.tri[p2]||k.con[SphereUtils.findCorrectConIndexFromTri(p2)]==k.tri[p1])){
 			return true;
 		}
 		//Ansonsten gibt false zurück
@@ -1363,54 +1316,54 @@ public class Solver {
 	 */
 	private void change2Pol(int pol,int polO, int polR){
 	//	k.turnKugel(polR, 3);
-		if(addSteps(polR, 3, 3)){end();}
+		addSteps(polR, 3, 3);
 		//k.changePol(polO, 3);
-		if(addSteps(polO, 3, 1)){end();}
+		addSteps(polO, 3, 1);
 		//k.turnKugel(polR, 1);
-		if(addSteps(polR, 1, 3)){end();}
+		addSteps(polR, 1, 3);
 		//k.changePol(polO, 3);
-		if(addSteps(polO, 3, 1)){end();}
+		addSteps(polO, 3, 1);
 		//k.turnKugel(polR, 3);
-		if(addSteps(polR, 3, 3)){end();}
+		addSteps(polR, 3, 3);
 		//k.changePol(polO, 1);
-		if(addSteps(polO, 1, 1)){end();}
+		addSteps(polO, 1, 1);
 		//k.turnKugel(polR, 1);
-		if(addSteps(polR, 1, 3)){end();}
+		addSteps(polR, 1, 3);
 		//k.changePol(polO, 3);
-		if(addSteps(polO, 3, 1)){end();}
+		addSteps(polO, 3, 1);
 		//k.turnKugel(polR, 3);
-		if(addSteps(polR, 3, 3)){end();}
+		addSteps(polR, 3, 3);
 		//k.changePol(polO, 3);
-		if(addSteps(polO, 3, 1)){end();}
+		addSteps(polO, 3, 1);
 		//k.turnKugel(polR, 1);
-		if(addSteps(polR, 1, 3)){end();}
+		addSteps(polR, 1, 3);
 		
 		//k.changePol(pol, 1);
-		if(addSteps(pol, 1, 1)){end();}
+		addSteps(pol, 1, 1);
 		//k.turnKugel(polR, 3);
-		if(addSteps(polR, 3, 3)){end();}
+		addSteps(polR, 3, 3);
 		//k.changePol(polO, 3);
-		if(addSteps(polO, 3, 1)){end();}
+		addSteps(polO, 3, 1);
 		//k.turnKugel(polR, 1);
-		if(addSteps(polR, 1, 3)){end();}
+		addSteps(polR, 1, 3);
 		//k.changePol(polO, 3);
-		if(addSteps(polO, 3, 1)){end();}
+		addSteps(polO, 3, 1);
 		//k.turnKugel(polR, 3);
-		if(addSteps(polR, 3, 3)){end();}
+		addSteps(polR, 3, 3);
 		//k.changePol(polO, 1);
-		if(addSteps(polO, 1, 1)){end();}
+		addSteps(polO, 1, 1);
 		//k.turnKugel(polR, 1);
-		if(addSteps(polR, 1, 3)){end();}
+		addSteps(polR, 1, 3);
 		//k.changePol(polO, 3);
-		if(addSteps(polO, 3, 1)){end();}
+		addSteps(polO, 3, 1);
 		//k.turnKugel(polR, 3);
-		if(addSteps(polR, 3, 3)){end();}
+		addSteps(polR, 3, 3);
 		//k.changePol(polO, 3);
-		if(addSteps(polO, 3, 1)){end();}
+		addSteps(polO, 3, 1);
 		//k.turnKugel(polR, 1);
-		if(addSteps(polR, 1, 3)){end();}
+		addSteps(polR, 1, 3);
 	//	k.changePol(pol, 2);
-		if(addSteps(pol, 2, 1)){end();}
+		addSteps(pol, 2, 1);
 	}
 	
 	/**
@@ -1476,7 +1429,7 @@ public class Solver {
     	//Prüfe ob Pol gelöst ist ansonsten drehe Pol bis gelöst
     	while(!SolveCheck.isPolSolved(pol,k)&&end<4){
     		//k.changePol(pol, 1);
-    		if(addSteps(pol, 1, 1)){end();}
+    		addSteps(pol, 1, 1);
     		end++;
     	}
 		
@@ -1493,8 +1446,8 @@ public class Solver {
 		if(arrayList.size()>1){
 			for(int i = 0; i<arrayList.size()-2;i++){
 				//Nehme die Drehungen der nächsten beiden Stadien
-				int[] dreh1 = SphereUtils.SplitDrehungFromSphere(arrayList.get(i));
-				int[] dreh2 = SphereUtils.SplitDrehungFromSphere(arrayList.get(i+1));
+				int[] dreh1 = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(i));
+				int[] dreh2 = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(i+1));
 				//Wenn auf gleichem Pol im Gleichen Modus gedreht wird
 				if((dreh1[0]==dreh2[0])&&(dreh1[2]==dreh2[2])){
 					//Beide drehungen Addieren und Modulo 4 nehmen
@@ -1502,7 +1455,7 @@ public class Solver {
 					anz%=4;
 					//Wenn Anzahl nicht gleich 0 dann ersetzte erstes Element mit neuer Drehung und lösche zweites
 					if(anz!=0){
-						arrayList.set(i, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i+1))+"n"+i+"n"+dreh1[0]+""+(anz)+""+dreh1[2]);
+						arrayList.set(i, SphereUtils.getPureSphereCode(arrayList.get(i+1))+"n"+i+"n"+dreh1[0]+""+(anz)+""+dreh1[2]);
 						arrayList.remove(i+1);
 					}else{
 						//Wenn Anzahl = 0, dann lösche beide
@@ -1513,15 +1466,15 @@ public class Solver {
 					i-=2;
 				}else{
 					//Wenn nicht auf gleichem Pol, bzw Modus, korrigiere den Step, da dieser nun verschoben ist
-					arrayList.set(i, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+dreh1[0]+dreh1[1]+dreh1[2]);
+					arrayList.set(i, SphereUtils.getPureSphereCode(arrayList.get(i))+"n"+i+"n"+dreh1[0]+dreh1[1]+dreh1[2]);
 				}
 			}
 
 			//Korrigiere auch die Letzte Kugel, wegen dem i und i+1 ist es nicht mögluch dies in der Schlaufe zu tun
-			int[] dreh = SphereUtils.SplitDrehungFromSphere(arrayList.get(arrayList.size()-2));
-			arrayList.set(arrayList.size()-2, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-2))+"n"+(arrayList.size()-2)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
-			dreh = SphereUtils.SplitDrehungFromSphere(arrayList.get(arrayList.size()-1));
-			arrayList.set(arrayList.size()-1, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(arrayList.size()-1))+"n"+(arrayList.size()-1)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
+			int[] dreh = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(arrayList.size()-2));
+			arrayList.set(arrayList.size()-2, SphereUtils.getPureSphereCode(arrayList.get(arrayList.size()-2))+"n"+(arrayList.size()-2)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
+			dreh = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(arrayList.size()-1));
+			arrayList.set(arrayList.size()-1, SphereUtils.getPureSphereCode(arrayList.get(arrayList.size()-1))+"n"+(arrayList.size()-1)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
 		}
 		
 		//Gib arraylist zurück
@@ -1538,13 +1491,13 @@ public class Solver {
 			int jetzt_anz = 0;
 			int[] cons = new int[4];
 			for(int j = 0; j<4; j++){
-				cons[j] = k.con[k.findCons(i*4+j)];
+				cons[j] = k.con[SphereUtils.findCorrectConIndexFromTri(i*4+j)];
 			}
 			for(int j = 0; j<4; j++){
 				jetzt_anz = 0;
 				for(int l = 0; l<4;l++){
-					//int conIndex = (j+l)%4;
-					if(k.tri[(i*4)+l]==k.con[k.findCons((i*4+l),j)]){
+					int conIndex = (j+l)%4;
+					if(k.tri[(i*4)+l]==k.con[SphereUtils.findCorrectConIndexFromTri((i*4+conIndex))]){
 						jetzt_anz++;
 					}
 				}
@@ -1555,7 +1508,7 @@ public class Solver {
 			}
 			if(best>0){
 			//	k.changePol(i, best);
-				if(addSteps(i, best, 1)){end();}
+				addSteps(i, best, 1);
 			}
 		}
 	}
@@ -1661,7 +1614,7 @@ public class Solver {
 									goStep = 1;
 								}else{
 									//k.changePol(i, 1);
-									if(addSteps(i, 1, 1)){end();}
+									addSteps(i, 1, 1);
 								}
 							}
 						//	System.out.println("Anz Steps nach 1: "+k.step);
@@ -1681,7 +1634,7 @@ public class Solver {
 									isCorrect = true;
 								}else{
 									//k.changePol(j, 1);
-									if(addSteps(j, 1, 1)){end();}
+									addSteps(j, 1, 1);
 								}
 							}
 						//	System.out.println("Anz Steps nach 2: "+k.step);
@@ -1689,29 +1642,29 @@ public class Solver {
 							if(!doNothing){
 								//Pol zurecht drehen
 								//k.changePol(i, doTurn);
-								if(addSteps(i, doTurn, 1)){end();}
+								addSteps(i, doTurn, 1);
 								
 								//k.changePol(j, 1);
-								if(addSteps(j, 1, 1)){end();}
+								addSteps(j, 1, 1);
 								
 								//Kugel hin
 								//k.turnKugel(pr, hpTurn);
-								if(addSteps(pr, 1, 3)){end();}
+								addSteps(pr, 1, 3);
 								
 								//Wechsel
 								//k.changePol(pol1, goStep);
-								if(addSteps(pol1, goStep, 1)){end();}
+								addSteps(pol1, goStep, 1);
 								
 								//Kugel zurück
 								//k.turnKugel(pr, ((hpTurn+2)%4));
-								if(addSteps(pr, ((1+2)%4), 3)){end();}
+								addSteps(pr, ((1+2)%4), 3);
 								
 								//Pol zurück
 								//k.changePol(j, 3);
-								if(addSteps(j, 3, 1)){end();}
+								addSteps(j, 3, 1);
 								
 								//k.changePol(i, ((doTurn+2)%4));
-								if(addSteps(i, ((doTurn+2)%4), 1)){end();}
+								addSteps(i, ((doTurn+2)%4), 1);
 							}
 							
 							
@@ -1918,8 +1871,8 @@ public class Solver {
 			Arrays.fill(lastPos,-1);
 			for(int j = 0; j<arrayList.size()-1;j++){
 				//pol, anz, modus
-				int[] aktOpt = SphereUtils.SplitDrehungFromSphere(arrayList.get(j));
-				int[] akt = SphereUtils.GetPolFromSphereString(arrayList.get(j),i);
+				int[] aktOpt = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(j));
+				int[] akt = SphereUtils.extractPolFromStringReturnAsIntArray(arrayList.get(j),i);
 				Arrays.sort(akt);
 				Arrays.sort(lastPos);
 				//Wenn aktueller Pol = i; Modus = 1
@@ -1927,9 +1880,9 @@ public class Solver {
 					if(Arrays.equals(akt,lastPos)){
 						anz+=aktOpt[1];
 						anz%=4;
-						arrayList.set(j, SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(j))+"n"+j+"n"+aktOpt[0]+""+(anz)+""+aktOpt[2]);
+						arrayList.set(j, SphereUtils.getPureSphereCode(arrayList.get(j))+"n"+j+"n"+aktOpt[0]+""+(anz)+""+aktOpt[2]);
 						arrayList.remove(lastTurnPos);
-						lastPos = SphereUtils.GetPolFromSphereString(arrayList.get(j),i);
+						lastPos = SphereUtils.extractPolFromStringReturnAsIntArray(arrayList.get(j),i);
 						j-=3;
 						lastTurnPos =-1;
 						anz = 0;
@@ -1938,7 +1891,7 @@ public class Solver {
 					if(lastTurnPos==-1){
 						lastTurnPos = j;
 						anz+=aktOpt[1];
-						lastPos = SphereUtils.GetPolFromSphereString(arrayList.get(j),i);
+						lastPos = SphereUtils.extractPolFromStringReturnAsIntArray(arrayList.get(j),i);
 					}else{
 						lastTurnPos =-1;
 						anz = 0;
@@ -1953,16 +1906,16 @@ public class Solver {
 		}
 		for(int i = 0; i<arrayList.size();i++){
 			//Neu Nummerieren...
-			arrayList.set(i,SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+SphereUtils.SplitDrehungFromSphereAsS(arrayList.get(i)));
+			arrayList.set(i,SphereUtils.getPureSphereCode(arrayList.get(i))+"n"+i+"n"+SphereUtils.getDrehungFromStringAsString(arrayList.get(i)));
 			//System.out.println(arrayList.get(i));
 		}
 		return arrayList;
 	}
 	private ArrayList<String> advancedStepRemover(ArrayList<String> arrayList){
 		for(int i = 0; i<arrayList.size()-2;i++){
-			String sphere = SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i));
+			String sphere = SphereUtils.getPureSphereCode(arrayList.get(i));
 			for(int j = i+1; j<arrayList.size()-1;j++){
-				if(sphere==SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(j))){
+				if(sphere==SphereUtils.getPureSphereCode(arrayList.get(j))){
 					for(int l = j; l>i; l--){
 						arrayList.remove(l);
 					}
@@ -1971,7 +1924,7 @@ public class Solver {
 		}
 		for(int i = 0; i<arrayList.size();i++){
 			//Neu Nummerieren...
-			arrayList.set(i,SphereUtils.SphereWithoutDrehungAndStep(arrayList.get(i))+"n"+i+"n"+SphereUtils.SplitDrehungFromSphereAsS(arrayList.get(i)));
+			arrayList.set(i,SphereUtils.getPureSphereCode(arrayList.get(i))+"n"+i+"n"+SphereUtils.getDrehungFromStringAsString(arrayList.get(i)));
 			//System.out.println(arrayList.get(i));
 		}
 	

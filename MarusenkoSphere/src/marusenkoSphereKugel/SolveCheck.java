@@ -68,7 +68,7 @@ public class SolveCheck {
 		 * Prüfe, ob tri mit con stimmt	
 		 * wenn ja, Return true	
 		 */
-		if(k.tri[p]==k.con[k.findCons(p)]){
+		if(k.tri[p]==k.con[SphereUtils.findCorrectConIndexFromTri(p)]){
 			return true;
 		}
 		/**

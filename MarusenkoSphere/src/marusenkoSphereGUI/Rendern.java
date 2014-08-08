@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+import marusenkoSphere.Settings;
 import marusenkoSphereKugel.Kugel;
 
 import org.lwjgl.LWJGLException;
@@ -123,7 +124,11 @@ public class Rendern {
     private void updateFPS() {
     	//Wenn eine Sekunde vergangen
     	if (getTime() - lastFPS > 1000) {
-    		Display.setTitle(windowTitle+" - "+fps);
+    		
+    		//Wenn der Globale Debugmodus eingeschalten ist, dann im Titel die Framerate anzeigen
+    		if(Settings.DEBUGMODE){
+    			Display.setTitle(windowTitle+" - "+fps);
+    		}
     		//Setze die Framerate im Manager
     		Manager.setFPS(fps);
     		fps = 0;

@@ -13,12 +13,12 @@ import marusenkoSphereKugel.Kugel;
  */
 public class Main {
 	
-	private static boolean konsole = false;
+	private static boolean konsole = Settings.STARTKONSOLE;
 
 	public static void main(String[] args){		 
 
 		//Wenn Argument "ng" (NoGUI) übergeben worden ist, dann mit keiner GUI starten
-			konsole = args.length>0&&args[0]=="ng" ? true:false;
+			konsole = ((args.length>0&&args[0]=="ng")||konsole) ? true:false;
 		
 		//Erstelle eine neues Kugel Objekt  
 		Kugel k = new Kugel();

@@ -28,9 +28,6 @@ public class Manager {
 	//Verhindert, das durch normalen Tastenanschlag mehrere Aktionen ausgeführt werden
 	protected ArrayList<Character> blockedKey = new ArrayList<Character>();
 	
-	//Eine ArrayList in der "virtuell" Tasten gedrückt werden um mit den Buttons im Controlpanel die Tastatur zu ersetzen 
-	protected ArrayList<Character> pressedKey = new ArrayList<Character>();
-	
 	//Gibt an, was dargestellt wird
 	//0 = Kugel, 1 = Editor, 2 = Dev
 	private int displayMode = 0; 
@@ -39,7 +36,7 @@ public class Manager {
 	private int selectedColor = 0;
 	
 	//Gibt den die Animationsgeschwindigkeit an
-	private static double animationSpeed = 3.0;
+	private static double animationSpeed = 1.0;
 	
 	//Gibt  die Framerate an
 	private static double fps = 60;
@@ -85,6 +82,7 @@ public class Manager {
 		updateControlpanelInformations();
 		
 		
+		
 		//Methode loop starten
 		loop();
 	}
@@ -101,9 +99,6 @@ public class Manager {
 			
 			//Rendere die Aktuelle Kugel
 			rendern.updateKugel(k,displayMode);
-			
-			//Die aktuell im Controlpanel eingestellte Animationsgeschwindigkeit abrufen
-			//animationSpeed = cp.getAnimationSpeed()/30;
 			
 			//Wenn aktuelle Animation fertig ist, dann QueueManager aufrufen
 			if(animationFinished){
@@ -139,7 +134,6 @@ public class Manager {
 		runAnimationToEnd = false;
 		
 		//Füllt die Kugel zufällig
-	    //k.FillRandom();
 	    k.mixRandom();
 		
 		
@@ -157,7 +151,7 @@ public class Manager {
 		runAnimationToEnd = false;
 		
 		//Fülle die Kugel gemäss String
-		k.FillKugelFromDebugString(s, solving);
+		k.fillKugelFromDebugString(s, solving);
 		
 		//Update Controlpanel
 		updateControlpanelInformations();	
@@ -220,7 +214,7 @@ public class Manager {
 			
 			//Wenn Kugel korrekt, dann übernehmen
 			if(isSphereAllowed()){
-				k.FillKugelFromEditor();
+				k.sphereFromEditor();
 				updateControlpanelInformations();
 			}else{
 				

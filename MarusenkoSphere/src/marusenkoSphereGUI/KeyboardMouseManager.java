@@ -1,6 +1,8 @@
 package marusenkoSphereGUI;
 
 
+import java.util.LinkedList;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -12,7 +14,10 @@ import org.lwjgl.opengl.Display;
  *
  */
 public class KeyboardMouseManager {
-
+	
+	//Eine ArrayList in der "virtuell" Tasten gedrückt werden um mit den Buttons im Controlpanel die Tastatur zu ersetzen 
+	protected static LinkedList<Character> pressedKey = new LinkedList<Character>();
+	
 	protected static void Input(Manager m){	
 		
 		//Programm beenden, wenn Esc gedrückt wurde oder wenn Fenster geschlossen wird
@@ -21,7 +26,7 @@ public class KeyboardMouseManager {
 	    }
 		
 	    //Zu Kugel wechseln wenn K gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
-	    if(Keyboard.isKeyDown(Keyboard.KEY_K)||m.pressedKey.contains('k')) {
+	    if(Keyboard.isKeyDown(Keyboard.KEY_K)||pressedKey.contains('k')) {
 	    	//Wenn K nicht blockiert ist
 	    	if(!m.blockedKey.contains("k")){
 	    		//K blockieren
@@ -36,7 +41,7 @@ public class KeyboardMouseManager {
 	    }
 	    
 	    //Zu Editor wechseln wenn E gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
-	    if(Keyboard.isKeyDown(Keyboard.KEY_E)||m.pressedKey.contains('e')) {
+	    if(Keyboard.isKeyDown(Keyboard.KEY_E)||pressedKey.contains('e')) {
 	    	//Wenn E nicht blockiert
 	    	if(!m.blockedKey.contains("e")){
 	    		//E blockieren
@@ -51,7 +56,7 @@ public class KeyboardMouseManager {
 	    }
 	    
 	    //Zu Devpanel wechsel wenn D gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
-	    if(Keyboard.isKeyDown(Keyboard.KEY_D)||m.pressedKey.contains('d')) {
+	    if(Keyboard.isKeyDown(Keyboard.KEY_D)||pressedKey.contains('d')) {
 	    	//Wenn D nicht blockiert
 	    	if(!m.blockedKey.contains("d")){
 	    		//D blockieren
@@ -93,7 +98,7 @@ public class KeyboardMouseManager {
 		    }
 		    
 		    //Animation zum lösen der Kugel bis am Schluss starten, wenn L gedrückt ist, zusätzlich L 100ms blockieren,  damit nicht mehrere Anschläge in einem gemacht werden
-		    if(Keyboard.isKeyDown(Keyboard.KEY_L)||m.pressedKey.contains('l')){	
+		    if(Keyboard.isKeyDown(Keyboard.KEY_L)||pressedKey.contains('l')){	
 		    	//Wenn L nicht blockiert
 				if(!m.blockedKey.contains("l")){
 					//L blockieren
@@ -108,7 +113,7 @@ public class KeyboardMouseManager {
 			}
 		    
 		    //Kugel neu füllen, wenn S gedrückt ist, zusätzlich 200ms blockieren,  damit nicht mehrere Anschläge in einem gemacht werden
-		    if(Keyboard.isKeyDown(Keyboard.KEY_S)||m.pressedKey.contains('s')) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_S)||pressedKey.contains('s')) {
 		    	//Wenn S nicht blockiert
 		    	if(!m.blockedKey.contains("s")){
 		    		//S blockieren
@@ -123,7 +128,7 @@ public class KeyboardMouseManager {
 		    }
 		    
 		    //Einen Schritt weiter gehen, wenn X gedrückt, zusätzlich 100ms blockieren,  damit nicht mehrere Anschläge in einem gemacht werden
-		    if(Keyboard.isKeyDown(Keyboard.KEY_X)||m.pressedKey.contains('x')) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_X)||pressedKey.contains('x')) {
 		    	//Wenn X nicht blockiert
 		    	if(!m.blockedKey.contains("x")){
 		    		//X blockieren
@@ -139,7 +144,7 @@ public class KeyboardMouseManager {
 		    }
 		    
 		    //Einen Schritt zurück gehen, wenn Y gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
-		    if(Keyboard.isKeyDown(Keyboard.KEY_Y)||m.pressedKey.contains('y')) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_Y)||pressedKey.contains('y')) {
 		    	//Wenn Y nicht blockiert
 		    	if(!m.blockedKey.contains("y")){
 		    		//Y blockieren
@@ -190,6 +195,6 @@ public class KeyboardMouseManager {
 	    		}
 	    	}
 	    }
-	m.pressedKey.clear();
+	pressedKey.clear();
 	}
 }

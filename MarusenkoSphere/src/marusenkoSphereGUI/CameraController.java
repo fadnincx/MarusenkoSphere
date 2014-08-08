@@ -13,6 +13,7 @@ public class CameraController {
 	
 	//Vektor mit den 3 Winkeln um die Rotiert wird
 	private Vector3f rotation = new Vector3f(20,45,00);	
+	private double fps = 60;
 	
 	/**
 	 * Funktion wird während des Renderprozesses aufgerufen um die Kugel entsprechend zu drehen
@@ -27,9 +28,17 @@ public class CameraController {
 	    GL11.glRotatef(rotation.z,0.0f,0.0f,1.0f);
 	}
 
+	/**
+	 * Funktion welche aufgerufen wird, um den Drehwinkel zu ändern
+	 */
 	protected void turnRotationAngle(double angleX, double angleY){
-		rotation.x+=angleX;
-		rotation.y+=angleY;
+		
+		//die aktuelle Bildfrequenz wird abgerufen
+		getFPSVonManager();
+		
+		//die Drehung wird framerate bereiniget umgesetzt
+		rotation.x+=angleX*(60/fps);
+		rotation.y+=angleY*(60/fps);
 	}
 	
 	/**
@@ -39,6 +48,13 @@ public class CameraController {
 		rotation.x = 20;
 		rotation.y = 45;
 		rotation.z = 0;
+	}
+	
+	/**
+	 * Rufe die aktuelle Framerate vom Manager ab
+	 */
+	private void getFPSVonManager(){
+		fps = Manager.getFPS();
 	}
 	
 	

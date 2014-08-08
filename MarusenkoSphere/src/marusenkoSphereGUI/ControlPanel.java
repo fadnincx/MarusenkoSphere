@@ -263,15 +263,17 @@ public class ControlPanel implements ActionListener{
     	cpSliderAnimationSpeed.setExtent(0); //der Zeiger verspringt jedesmal 0 Einheiten
     	cpSliderAnimationSpeed.setPaintLabels(false);  //Zahlen werden nicht angezeigt
     	cpSliderAnimationSpeed.setPaintTicks(false);    //Striche werden nicht angezeigt
+    	
+    	//Zusätzlich wird ein ChangeListener hinzugefügt, damit der Wert im Manager geändert werden kann
     	cpSliderAnimationSpeed.addChangeListener(new ChangeListener() {
     	      public void stateChanged(ChangeEvent evt) {
+    	    	  
+    	    	  //Statische Variable im Manager ändern
     	          Manager.setAnimationSpeed(cpSliderAnimationSpeed.getValue());
+    	          
     	        }
     	      });
-    	
-    	
-    	
-    	
+    	  	
     	//Füge jedes Objekt dem Controlpanel hinzu
     	controlPanel.add(cpButtonFillSphere);
     	controlPanel.add(cpButtonSolve);
@@ -488,12 +490,12 @@ public class ControlPanel implements ActionListener{
 		//Ist der Button zum Kugel neu mischen gedrückt?
 		if (z.getSource() == cpButtonFillSphere){
 			//S als KeyBoard Input hinzufügen
-			m.pressedKey.add('s');
+			KeyboardMouseManager.pressedKey.add('s');
 		
 		//Ist der Button zum start der Animation gedrückt?
         }else if (z.getSource() == cpButtonSolve){
         	//L als KeyBoard Input hinzufügen
-        	m.pressedKey.add('l');
+        	KeyboardMouseManager.pressedKey.add('l');
         	
         //Ist der Button zum übernehmen des DebuggingStrings gedrückt?
         }else if (z.getSource() == devButtonSphereDebugStringInput){
@@ -529,12 +531,12 @@ public class ControlPanel implements ActionListener{
         //Ist der Button zum im Lösungsweg einen Schritt weiter zu gehen gedrückt?	
         }else if (z.getSource() == cpButtonAddOneStep){
         	//X als KeyBoard Input hinzufügen
-			m.pressedKey.add('x');
+			KeyboardMouseManager.pressedKey.add('x');
         	
 		//Ist der Button zum im Lösungseg einen Schritt zurück zu gehen gedrückt?	
         }else if (z.getSource() == cpButtonSubOneStep){
         	//Y als KeyBoard Input hinzufügen
-        	m.pressedKey.add('y');
+        	KeyboardMouseManager.pressedKey.add('y');
 
         //Ist der Button um an eine Position zu springe gedrückt?	
         }else if (z.getSource() == cpButtonGoToPosition){
@@ -608,17 +610,17 @@ public class ControlPanel implements ActionListener{
         //Ist der Button gedrück um in den Dev-Modus zu wechseln?        	
         }else if (z.getSource() == cpChangeDev || z.getSource() == editChangeDev){
         	//D als KeyBoard Input hinzufügen
-        	m.pressedKey.add('d');
+        	KeyboardMouseManager.pressedKey.add('d');
         	
         //Ist der Button gedrückt um in den Editor-Modus zu wechseln?	
         }else if (z.getSource() == cpChangeEditor|| z.getSource() == devChangeEditor){
         	//E als KeyBoard Input hinzufügen
-        	m.pressedKey.add('e');
+        	KeyboardMouseManager.pressedKey.add('e');
         	
         //Ist der Button gedrückt um in den Normalen-Modus zu wechseln?	
         }else if (z.getSource() == devChangeSphere|| z.getSource() == editChangeSphere){
         	//K als KeyBoard Input hinzufügen
-        	m.pressedKey.add('k');
+        	KeyboardMouseManager.pressedKey.add('k');
         }
 		
 		

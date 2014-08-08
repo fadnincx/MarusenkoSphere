@@ -1,5 +1,6 @@
 package marusenkoSphereGUI;
 
+import marusenkoSphere.Settings;
 import marusenkoSphereKugel.Kugel;
 
 import org.lwjgl.opengl.GL11;
@@ -102,8 +103,8 @@ public class RenderKugel {
 		
         
         //Wie genau die Kugel gerendert wird --> In wie gross/klein die Dreiecke sind
-        int renderSteps = 10;//Nur 1, 2, 5, 10
-        int renderStepsZ = 10;//Nur 1, 2, 5, 10
+        int renderSteps = Settings.KUGELRENDERRASTER;//Nur 1, 2, 5, 10
+        int renderStepsZ = Settings.KUGELRENDERRASTER;//Nur 1, 2, 5, 10
         
         //Berechnungen welche nur einmal ausgeführt werden müssen
         
