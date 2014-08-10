@@ -12,7 +12,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class CameraController {
 	
 	//Vektor mit den 3 Winkeln um die Rotiert wird
-	private Vector3f rotation = new Vector3f(20,45,00);	
+	private Vector3f rotation = new Vector3f(0,0,0);	
 	private double fps = 60;
 	
 	/**
@@ -45,8 +45,8 @@ public class CameraController {
 	 * Setzte die Drehungen zurück in die Startposition
 	 */
 	protected void setToStartPosition(){
-		rotation.x = 20;
-		rotation.y = 45;
+		rotation.x = 00;
+		rotation.y = 0;
 		rotation.z = 0;
 	}
 	

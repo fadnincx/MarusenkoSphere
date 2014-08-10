@@ -52,23 +52,22 @@ public class Manager {
 	private static boolean runAnimationToEnd = false;
 	
 	private int stepWhenGoesToEditor = 0;
-	
+
 	/**
 	 * Manager zum Lösen Verwalten der GUI und lösen der Kugel
 	 * @param k : Kugel zum lösen
 	 */
 	public Manager(Kugel k){
-		
+		System.out.println("Started Manager");
 		//Übernehme Kugel von der Main-Datei
 		this.k = k;
-		
+		System.out.println("Start Calc Trigonometrie");
 		//Berechne die Trigonimetrischen Funktionen bereits hier, damit diese später schon berechnet sind
 		Trigonometrie.CalcTrigonometrie();
-		
+		System.out.println("Fill Kugel Random");
 		//Fülle Kugel zufällig
-		k.FillRandom(); 
-		
-		
+		k.FillRandom(); 	
+		System.out.println("Open Window");
 		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
 		//Sonst wirf eine Exception
 		try{
@@ -94,11 +93,13 @@ public class Manager {
 		
 		
 		while(true){
+			
 			//Frage die Tastatur und Mauseingaben ab
 			KeyboardMouseManager.Input(this);
 			
 			//Rendere die Aktuelle Kugel
 			rendern.updateKugel(k,displayMode);
+			//rendern.updateVariables(k, displayMode);
 			
 			//Wenn aktuelle Animation fertig ist, dann QueueManager aufrufen
 			if(animationFinished){
@@ -295,7 +296,7 @@ public class Manager {
 	/**
 	 * Ändert den Status zur aktuellen Animation
 	 */
-	public static void setAnimationFinished(boolean set){
+	public  static void setAnimationFinished(boolean set){
 		animationFinished = set;
 	}
 	
@@ -409,7 +410,8 @@ public class Manager {
 	 * Wenn das Programm beendet werden soll
 	 */
 	protected void exitProgramm(){
-		rendern.end();
+		//rendern.end();
+		 System.exit(0);
 	}
 	
 }

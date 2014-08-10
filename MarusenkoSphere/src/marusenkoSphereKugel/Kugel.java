@@ -91,6 +91,9 @@ public class Kugel{
 		//3 Sedimente, 1. 32 Zeichen Kugel, 2. Step, 3. 3Stelliger Drehcode 
 		if(sp[0].length()==32&&sp.length==3&&sp[2].length()==3){
 			
+			//Gib dem AnimationsManager die neue Drehung
+			animationManager.setNewDrehung(s,solvingList);
+			
 			//Setzte den aktuellen Status gemäss String
 			for(int i = 0; i<8;i++){
 				con[i]=Integer.parseInt(s.substring(i, i+1));
@@ -98,9 +101,6 @@ public class Kugel{
 			for(int i = 0; i<24;i++){
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
 			}
-			
-			//Gib dem AnimationsManager die neue Drehung
-			animationManager.setNewDrehung(s,solvingList);
 			
 			//Den Step aktuallisieren
 			step = Integer.parseInt(sp[1]);

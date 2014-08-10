@@ -76,7 +76,9 @@ public class Solver {
 		}
 		
 		//Anzahl Strategien, die durch gegangen werden
-		int anzahlStrategien = 2;
+		int anzahlStrategien = 1;
+		
+		int besteStrategie = -1;
 		
 		//Gehe alle Strategien durch
 		for(int i = 0; i<anzahlStrategien; i++){
@@ -90,17 +92,37 @@ public class Solver {
 			//Erstelle Temporäre ArrayList mit der Lösung der Entsprechenden Strategie
 			ArrayList<String> AL = strategieChooser(i);
 			
+			//Entferne unnötige Schritte
+			RemoveUnusedSteps(AL);
+			
 			//Wenn die Lösung schneller ist, dann setze Strategie als neue bestSolvingWay
 			if(AL.size()<bestSolvingWay.size()){
 				bestSolvingWay = AL;
+				besteStrategie = i;
 			}
 			
 			//Setzte solvingWay zurück, damit nächste Strategie damit die Kugel lösen kann
 			solvingWay = new ArrayList<String>();
 			
 		}
+		
+		//Die Anzahl an Schritten im bestSolvingWay
+		int bestSolvingWayAnz = bestSolvingWay.size();
+		
+		//Gehe für alle durch
+		for(int i = 0; i<bestSolvingWayAnz; i++){
+			
+			//Korrigiere den Step, welcher durch viele Manipulationen inzwischen korrupt ist
+			bestSolvingWay.set(i, SphereUtils.getPureSphereCode(bestSolvingWay.get(i))+"n"+i+"n"+SphereUtils.getDrehungFromStringAsString(bestSolvingWay.get(i)));
+			
+		}
+		
 		//Verkleinert die bestSolvingWay auf das benötigte
 		bestSolvingWay.trimToSize();
+		
+		//Print, welche Strategie beste ist
+		String[] strategienName = new String[]{"StrategieStandard","StrategieOne"};
+		System.out.println("Die Kugel wurde mit der "+strategienName[besteStrategie]+" erfolgreich gelöst");
 		
 		//Gib den schnellsten Lösungsweg zurück
 		return bestSolvingWay;
@@ -123,8 +145,8 @@ public class Solver {
 			//Strategie 1
 			case 1:
 				return strategieOne();
-			
-			//Wenn nichts davon ist, gib null zurück;
+				
+			//Wenn ungültige Strategie abgefragt wird, dann gib null zurück
 			default:
 				return null;
 		}
@@ -159,20 +181,9 @@ public class Solver {
 			}
 		}
 		
-		//Prüfe, ob alle Positionen korrekt gelöst sind
-		boolean doStrategiePhase1 = false;
-		for(int i = 0; i<6; i++){
-			if(!checkPoleEndPhase1(i)){
-				doStrategiePhase1 = true;
-			}
-		}
-		//Wenn nicht dann löse fertig
-		if(doStrategiePhase1){
-			strategieOne();
-		}
-		
 		//Löse den Letzten Pol und gibt die Kugel zurück
-		return strategieOnePhaseTwo();
+		//return strategieOne();
+		return solvingWay;
 	}
 	
 	/**
@@ -184,8 +195,8 @@ public class Solver {
 		if(strategieStandardAreThis2Possible(pos1,pos2)){
 			
 			//Für beide Positionen die Angrenzenden Pole abfragen
-			int[] pole1 = getPoleForPosition(pos1);
-			int[] pole2 = getPoleForPosition(pos2);
+			int[] pole1 = SphereUtils.getPoleForPosition(pos1);
+			int[] pole2 = SphereUtils.getPoleForPosition(pos2);
 			
 			//Pol auf dem beide sind speichern
 			int pol = pos1/4;
@@ -196,462 +207,560 @@ public class Solver {
 			//Farben, welche an diesen Positionen benötigt werden
 			int[] neededColors = new int[] {k.con[SphereUtils.findCorrectConIndexFromTri(pos1)],k.con[SphereUtils.findCorrectConIndexFromTri(pos2)]};
 			
-			
+			//Variable um zu fragen, ob die beiden positionen überhaupt einen gemeinsamen Nachbarspol haben (Voraussetzung)
 			boolean everSame = false;
+			
+			//Gehe bei der ersten Position alle durch
 			for(int i = 0; i<2; i++){
+				
+				//Variable mit dem aktuellen Status
 				boolean same = false;
+				
+				//Variable um bei ungleichheit die Nummer zu speichern
 				int notSame = -1;
+				
+				//Gehe bei der 2 Position alle durch
 				for(int j = 0; j<2;j++){
+					
+					//Wenn die beiden gleich sind
 					if(pole1[i]==pole2[j]){
+						
+						//setzte aktuelle variable auf true
 						same = true;
+						
+					//Ansonsten	
 					}else{
+						
+						//Speichere die aktuelle Nummer
 						notSame = j;
 					}
+					
 				}
+				
+				//Wenn same falsch ist
 				if(!same){
+					
+					//Die möglichen Pole speichern
 					poleMoeglich[0]=pole1[i];
 					poleMoeglich[1]=pole2[notSame];
+					
+					//Variable auf true setzten, damit grundvoraussetzung gegeben ist
 					everSame = true;
 				}
+				
 			}
-			//System.out.println("Pos1 "+pos1+" Pos2 "+pos2+"--> Pole Möglich: "+poleMoeglich[0]+"; "+poleMoeglich[1]);
+			
+			
+			//Pol, mit dem der wechsel wirklich ausgeführt wird
 			int poleToDo = -1;
+			
+			//Die Anzahl farben, welche auf diesen Pol verschoben werden müssen
 			int anzNeededColors = -1;
+			
+			//ist grundvoraussetzung gebenen
 			if(everSame){
+				
+				//Gehe die beiden Pole durch
 				for(int i = 0; i<2; i++){
+					
+					//Wenn ein Pol noch nicht gelöst ist
 					if(!SolveCheck.isPolSolved(poleMoeglich[i], k)){
+						
+						//Die benötigte Anzahl  = 0
 						int aktAnzNeeded = 0;
+						
+						//Farbe für Position 1 gefunden
 						boolean p1Found = false; 
+						
+						//Farbe für Position 2 gefunden
 						boolean p2Found = false;
+						
+						//Gehe die 4 Positionen eines Pol durch
 						for(int j = 0; j<4; j++){
+							
+							//Wenn die Farbe für Position 1 gefunden
 							if(k.tri[poleMoeglich[i]*4+j]==neededColors[0]&&!p1Found){
+								
+								//Anzahl ++
 								aktAnzNeeded++;
+								
+								//Position 1 gefunden = wahr
 								p1Found = true;
+								
 							}
+							
+							//Wenn die Farbe für Position 2 gefunden
 							if(k.tri[poleMoeglich[i]*4+j]==neededColors[1]&&!p2Found){
+								
+								//Anzahl ++
 								aktAnzNeeded++;
+								
+								//Position 2 gefunden = wahr
 								p2Found = true;
+								
 							}
+							
 						}
+						
+						//Wenn der Pol besser ist, als der vorhergehende
 						if(aktAnzNeeded>anzNeededColors){
+							
+							//Pol, auf welchem durch geführt wird setzten
 							poleToDo = poleMoeglich[i];
+							
+							//Anzahl farben setzten
 							anzNeededColors = aktAnzNeeded;	
 						}
 						
+					}
+					
+				}
+				
+			}
+
+			//Wenn ein Pol gefunden wurde
+			if(poleToDo!=-1){
+				
+				//Die Farben auf den Pol kriegen, sofern sie noch nicht vorhanden sind
+				strategieStandardGetOnPole(poleToDo, neededColors[0], neededColors[1]);	
+				
+				//Bekomme die Position, auf welche die Farben verschoben werden müssen, um zu passen
+				int posOnPol = SphereUtils.strategieStandardGetPosOnPol(pos1, pos2, poleToDo);
+				
+				//Bekomme den Pol mit welchem gedreht wird
+				int polDrehung = SphereUtils.strategieStandardGetPolForDrehung(pos1, pos2, poleToDo);
+				
+				//Bekomme die weiteren Optionen, mit welchen gedreht wird
+				int[] optionens = SphereUtils.strategieStandartGetTurnOpt(pos1, pos2, poleToDo);
+				
+				//Prüfe, dass der Index 0 zu Position 1 und Index 1 zu Position 2 passt, ansonsten die beiden Positionen tauschen
+				if(neededColors[0]==k.con[SphereUtils.findCorrectConIndexFromTri(pos2)]&&neededColors[1]==k.con[SphereUtils.findCorrectConIndexFromTri(pos1)]){
+					
+					//Dreieckstausch --> Variabel 1 in temp
+					int temp = neededColors[0];
+					
+					//Variable1 mit 2 überschreiben
+					neededColors[0] = neededColors[1];
+					
+					//Variable2 mit temp überschreiben
+					neededColors[1] = temp;
+					
+				}
+				
+				
+				//Speichert die benötigten Farben im Array
+				//Wenn optiones[2]==2 ist, dann müssen die Werte in umgekehrter Reihenfolge übernommen werden
+				int[] colors = (optionens[2]==2) ? new int[]{neededColors[1],neededColors[0]} : new int[]{neededColors[0],neededColors[1]};
+
+				//Gehe maximal 4 mal durch 
+				for(int i = 0; i<4; i++){
+					
+					//Wenn die benötigte Farbe nicht an der benötigten Position ist
+					if(k.tri[posOnPol]!=colors[0]){
+						
+						//Drehe den Pol eins weiter
+						addSteps(poleToDo, 1, 1);
 						
 					}
-				}
-				//System.out.println("Pol "+poleMoeglich[0]+": Farben "+k.tri[poleMoeglich[0]*4]+";"+k.tri[poleMoeglich[0]*4+1]+";"+k.tri[poleMoeglich[0]*4+2]+";"+k.tri[poleMoeglich[0]*4+3]);
-				//System.out.println("Pol "+poleMoeglich[1]+": Farben "+k.tri[poleMoeglich[1]*4]+";"+k.tri[poleMoeglich[1]*4+1]+";"+k.tri[poleMoeglich[1]*4+2]+";"+k.tri[poleMoeglich[1]*4+3]);
-				//System.out.println("Pol ToDo: "+poleToDo+" Farben: "+neededColors[0]+";"+neededColors[1]);
-			}else{
-				//System.out.println("Error bei Pol zu teilung");
-			}
-			if(poleToDo!=-1){
-				//Die Farben auf den Pol kriegen
-				strategieStandardGetOnPole(poleToDo, neededColors[0],neededColors[1]);	
-				
-				
-				int posOnPol = strategieStandardGetPosOnPol(pos1, pos2, poleToDo);
-				int polRechts = strategieStandardGetPolRechts(pos1, pos2, poleToDo);
-				if(polRechts == -1){
-					//System.out.println("Error - PolRechts = -1");	
-				}
-				if(posOnPol == -1){
-					//System.out.println("Error - PosOnPol = -1");
-				}
-				//System.out.println("PolRechts "+polRechts+" posOnPol "+posOnPol);
-				//System.out.println();
-				
-				
-				int[] optionens = strategieStandartGetTurnOpt(pos1, pos2, poleToDo);
-				//Farbe eins auf Bereitschaft drehen
-				
-				int[] colors = new int[]{neededColors[0],neededColors[1]};
-				
-				if(neededColors[0]==k.con[SphereUtils.findCorrectConIndexFromTri(pos2)]&&neededColors[1]==k.con[SphereUtils.findCorrectConIndexFromTri(pos1)]){
-					int temp = neededColors[0];
-					neededColors[0] = neededColors[1];
-					neededColors[1] = temp;
+					
 				}
 				
+				//Drehe die Halbe Kugel
+				addSteps(polDrehung, optionens[0], 3);
 				
-				if(optionens[2]==2){
-					colors[0] = neededColors[1];
-					colors[1] = neededColors[0];
-				}
-				
-				
-				
-				for(int i = 0; i<4; i++){
-					if(k.tri[posOnPol]!=colors[0]){
-						addSteps(poleToDo, 1, 1);
-					}
-				}
-				addSteps(polRechts, optionens[0], 3);
+				//Drehe den Pol, um die erste Farbe an die Position der 2 zu verschieben
 				addSteps(pol, optionens[1], 1);
-				addSteps(polRechts, 4-optionens[0], 3);
+				
+				//Drehe die Halbe Kugel zurück
+				addSteps(polDrehung, 4-optionens[0], 3);
 				
 
-				//Farbe eins auf Bereitschaft drehen
+				//Gehe maximal 4 mal durch
 				for(int i = 0; i<4; i++){
+					
+					//Wenn die benötigte Farbe nicht and der benötigten Position ist
 					if(k.tri[posOnPol]!=colors[1]){
+						
+						//Drehe den Pol eins weiter
 						addSteps(poleToDo, 1, 1);
+						
 					}
+					
 				}
-				addSteps(polRechts, optionens[0], 3);
-				addSteps(pol, optionens[1], 1);
-				addSteps(polRechts, 4-optionens[0], 3);
 				
-			}else{
-			//	System.out.println("Error: ToDo Pol = -1");
+				//Drehe die Halbe Kugel
+				addSteps(polDrehung, optionens[0], 3);
+				
+				//Drehe den Pol, um beide Farben an die korrekte Position zu verschieben
+				addSteps(pol, optionens[1], 1);
+				
+				//Drehe die Halbe Kugel zurück
+				addSteps(polDrehung, 4-optionens[0], 3);
+					
 			}
-			
-			
-			
-			
-		}else{
-			//System.out.println("Error-NotPossible in Solve2Positions");
+	
 		}
+		
 	}
-	private int[] strategieStandartGetTurnOpt(int pol1Pos1, int pol1Pos2, int pol2){
-		int pol1 = pol1Pos1/4;
-		ArrayList<Integer> ali = new ArrayList<Integer>();
-		ali.add(pol1Pos1);
-		ali.add(pol1Pos2);
-		switch(pol1){
-		case 0:
-			switch(pol2){
-				case 1: return (ali.contains(0)&&ali.contains(3)) ? new int[]{1,3,1}: new int[]{3,1,1};
-				case 3: return (ali.contains(0)&&ali.contains(3)) ? new int[]{3,1,2}: new int[]{1,3,2};
-				case 4: return (ali.contains(0)&&ali.contains(1)) ? new int[]{3,1,1}: new int[]{1,3,2};
-				case 5: return (ali.contains(0)&&ali.contains(1)) ? new int[]{1,3,2}: new int[]{3,1,1};
-				default: return new int[]{0,0,0};
-			}
-		case 1:
-			switch(pol2){
-				case 0: return (ali.contains(4)&&ali.contains(7)) ? new int[]{3,1,1}: new int[]{1,3,1};
-				case 2: return (ali.contains(4)&&ali.contains(7)) ? new int[]{1,3,2}: new int[]{3,1,2};
-				case 4: return (ali.contains(4)&&ali.contains(5)) ? new int[]{1,3,1}: new int[]{3,1,2};
-				case 5: return (ali.contains(4)&&ali.contains(5)) ? new int[]{3,1,2}: new int[]{1,3,1};
-				default: return new int[]{0,0,0};
-			}
-		case 2:
-			switch(pol2){
-				case 1: return (ali.contains(8)&&ali.contains(11)) ? new int[]{3,1,1}: new int[]{1,3,1};
-				case 3: return (ali.contains(8)&&ali.contains(11)) ? new int[]{1,3,2}: new int[]{3,1,2};
-				case 4: return (ali.contains(8)&&ali.contains(9)) ? new int[]{1,3,1}: new int[]{3,1,2};
-				case 5: return (ali.contains(8)&&ali.contains(9)) ? new int[]{3,1,2}: new int[]{1,3,1};
-				default: return new int[]{0,0,0};
-			}
-		case 3:
-			switch(pol2){
-				case 0: return (ali.contains(12)&&ali.contains(15)) ? new int[]{1,3,1}: new int[]{3,1,2};
-				case 2: return (ali.contains(12)&&ali.contains(15)) ? new int[]{3,1,2}: new int[]{1,3,1};
-				case 4: return (ali.contains(12)&&ali.contains(13)) ? new int[]{3,1,1}: new int[]{1,3,2};
-				case 5: return (ali.contains(12)&&ali.contains(13)) ? new int[]{1,3,2}: new int[]{3,1,1};
-				default: return new int[]{0,0,0};
-			}
-		case 4:
-			switch(pol2){
-				case 0: return (ali.contains(16)&&ali.contains(17)) ? new int[]{1,3,1}: new int[]{3,1,2};
-				case 1: return (ali.contains(16)&&ali.contains(19)) ? new int[]{3,1,1}: new int[]{1,3,1};
-				case 2: return (ali.contains(16)&&ali.contains(17)) ? new int[]{3,1,2}: new int[]{1,3,1};
-				case 3: return (ali.contains(16)&&ali.contains(19)) ? new int[]{1,3,2}: new int[]{3,1,2};
-				default: return new int[]{0,0,0};
-			}
-		case 5:
-			switch(pol2){
-			case 0: return (ali.contains(20)&&ali.contains(21)) ? new int[]{3,1,1}: new int[]{1,3,2};
-			case 1: return (ali.contains(20)&&ali.contains(23)) ? new int[]{1,3,1}: new int[]{3,1,1};
-			case 2: return (ali.contains(20)&&ali.contains(21)) ? new int[]{1,3,2}: new int[]{3,1,1};
-			case 3: return (ali.contains(20)&&ali.contains(23)) ? new int[]{3,1,2}: new int[]{1,3,2};
-			default: return new int[]{0,0,0};
-			}
-		default:
-			return new int[]{0,0,0};
-		}
-	}
-	private int strategieStandardGetPosOnPol(int pol1Pos1, int pol1Pos2, int pol2){
-		int pol1 = pol1Pos1/4;
-		ArrayList<Integer> ali = new ArrayList<Integer>();
-		ali.add(pol1Pos1);
-		ali.add(pol1Pos2);
-		switch(pol1){
-		case 0:
-			switch(pol2){
-				case 1: return (ali.contains(0)&&ali.contains(3)) ? 5:4;
-				case 3: return (ali.contains(0)&&ali.contains(3)) ? 13:12;
-				case 4: return (ali.contains(0)&&ali.contains(1)) ? 19:16; 
-				case 5: return (ali.contains(0)&&ali.contains(1)) ? 23:20;
-				default: return -1;
-			}
-		case 1:
-			switch(pol2){
-				case 0: return (ali.contains(4)&&ali.contains(7)) ? 1:0;
-				case 2: return (ali.contains(4)&&ali.contains(7)) ? 9:8;
-				case 4: return (ali.contains(4)&&ali.contains(5)) ? 17:16;
-				case 5: return (ali.contains(4)&&ali.contains(5)) ? 21:20;
-				default: return -1;
-			}
-		case 2:
-			switch(pol2){
-				case 1: return (ali.contains(8)&&ali.contains(11)) ? 6:7;
-				case 3: return (ali.contains(8)&&ali.contains(11)) ? 14:15;
-				case 4: return (ali.contains(8)&&ali.contains(9)) ? 18:17;
-				case 5: return (ali.contains(8)&&ali.contains(9)) ? 22:21;
-				default: return -1;
-			}
-		case 3:
-			switch(pol2){
-				case 0: return (ali.contains(12)&&ali.contains(15)) ? 2:3;
-				case 2: return (ali.contains(12)&&ali.contains(15)) ? 10:11;
-				case 4: return (ali.contains(12)&&ali.contains(13)) ? 18:19;
-				case 5: return (ali.contains(12)&&ali.contains(13)) ? 22:23;
-				default: return -1;
-			}
-		case 4:
-			switch(pol2){
-				case 0: return (ali.contains(16)&&ali.contains(17)) ? 3:0;
-				case 1: return (ali.contains(16)&&ali.contains(19)) ? 7:4;
-				case 2: return (ali.contains(16)&&ali.contains(17)) ? 11:8;
-				case 3: return (ali.contains(16)&&ali.contains(19)) ? 15:12;
-				default: return -1;
-			}
-		case 5:
-			switch(pol2){
-			case 0: return (ali.contains(20)&&ali.contains(21)) ? 2:1;
-			case 1: return (ali.contains(20)&&ali.contains(23)) ? 6:5;
-			case 2: return (ali.contains(20)&&ali.contains(21)) ? 10:9;
-			case 3: return (ali.contains(20)&&ali.contains(23)) ? 14:13;
-			default: return -1;
-			}
-		default:
-			return -1;
-		}
-	}
-	private int strategieStandardGetPolRechts(int pol1Pos1, int pol1Pos2, int pol2){
-		int pol1 = pol1Pos1/4;
-		ArrayList<Integer> ali = new ArrayList<Integer>();
-		ali.add(pol1Pos1);
-		ali.add(pol1Pos2);
-		switch(pol1){
-		case 0:
-			switch(pol2){
-				case 1: case 3: return (ali.contains(0)&&ali.contains(3)) ? 5:4;
-				case 4: case 5: return (ali.contains(0)&&ali.contains(1)) ? 3:1; 
-				default: return -1;
-			}
-		case 1:
-			switch(pol2){
-				case 0: case 2: return (ali.contains(4)&&ali.contains(7)) ? 5:4;
-				case 4: case 5: return (ali.contains(4)&&ali.contains(5)) ? 2:0;
-				default: return -1;
-			}
-		case 2:
-			switch(pol2){
-				case 1: case 3: return (ali.contains(8)&&ali.contains(11)) ? 5:4;
-				case 4: case 5: return (ali.contains(8)&&ali.contains(9)) ? 3:1;
-				default: return -1;
-			}
-		case 3:
-			switch(pol2){
-				case 0: case 2: return (ali.contains(12)&&ali.contains(15)) ? 5:4;
-				case 4: case 5: return (ali.contains(12)&&ali.contains(13)) ? 2:0;
-				default: return -1;
-			}
-		case 4:
-			switch(pol2){
-				case 0: case 2: return (ali.contains(16)&&ali.contains(17)) ? 3:1;
-				case 1: case 3: return (ali.contains(16)&&ali.contains(19)) ? 2:0;
-				default: return -1;
-			}
-		case 5:
-			switch(pol2){
-			case 0: case 2: return (ali.contains(20)&&ali.contains(21)) ? 3:1;
-			case 1: case 3: return (ali.contains(20)&&ali.contains(23)) ? 2:0;
-			default: return -1;
-			}
-		default:
-			return -1;
-		}
-	}
+	
+	/**
+	 * Die beiden mitgegebenen Farben auf den gegebenen Pol kriegen
+	 */
 	private void strategieStandardGetOnPole(int pol, int color1, int color2){
+		
+		//Array mit dem Status, welche Pole bereits gelöst sind
 		boolean[] okPole = new boolean[6];
+		
+		//Fülle das Array --> gehe für alle Pole durch
 		for(int i = 0; i<6; i++){
+			
+			//Wenn Pol gelöst ist, dann soll er wahr gesetzt werden, sonst falsch
 			okPole[i] = SolveCheck.isPolSolved(i, k) ? true : false;
+			
 		}
+		
+		//Variable, Farbe für Position 1 ist auf dem Pol vorhanden
 		boolean color1OnPole = false;
+		
+		//Variable, Farbe für Position 2 ist auf dem Pol vorhanden
 		boolean color2OnPole = false;
+		
+		//Variable, Position mit der Farbe für Position 1
 		int color1Pos = -1;
+		
+		//Variable, Position mit der Farbe für Position 2
 		int color2Pos = -1;
+		
+		//Gehe für alle 4 Positionen durch
 		for(int i = 0; i<4; i++){
+			
+			//Ist die Farbe für Position 1 vorhanden?
 			if(k.tri[pol*4+i]==color1&&!color1OnPole){
+				
+				//Variable, Farbe für Position 1 vorhanden auf wahr setzen
 				color1OnPole = true;
+				
+				//Aktuelle Position speichern
 				color1Pos = i;
+				
 			}
+			
+			//Ist die Farbe für Position 2 vorhanden?
 			if(k.tri[pol*4+i]==color2&&!color2OnPole){
+				
+				//Variable, Farbe für Position 2 vorhanden auf wahr setzen
 				color2OnPole = true;
+				
+				//Aktuelle Position speichern
 				color2Pos = i;
+				
 			}
+			
 		}
+		
+		//Wenn die Farbe für Position 1 nicht auf dem Pol vorhanden ist
 		if(color1Pos==-1){
+			
+			//Gehe alle Positionen durch
 			for(int i = 0; i<4; i++){
-				boolean done = false;
-				if(i!=color2Pos&&!done){
+				
+				//Position gefunden auf falsch
+				boolean pFound = false;
+				
+				//Wenn nicht bereits die Position für Farbe 2 und Position nocht nicht gefunden
+				if(i!=color2Pos&&!pFound){
+					
+					//Als Position von Farbe 1 speichern
 					color1Pos = i;
+					
 				}
+				
 			}
+			
 		}
-
-		//System.out.println("Status: "+color1OnPole+";"+color2OnPole);
+		
+		//Gehe alle 1 Pole durch
 		for(int i = 0; i<6; i++){
-			//Wenn noch einen ungelösten anderen Pol ist, dann lösen
-			if(!okPole[i]){
-				//Für beide schauen, dass auf uhrsprungspol kommen...
-				if(!color1OnPole){
-					for(int j = 0; j<4; j++){
-						if(k.tri[i*4+j]==color1){
-							//, 
-							Solve1Phase(pol*4+color1Pos, i*4+j);
-							color1OnPole = true;
-						}
+			
+			//Wenn der Pol noch nicht gelöst ist und Farbe 1 noch nicht gefunden
+			if(!okPole[i]&&!color1OnPole){
+				
+				//Gehe alle Positioinen durch
+				for(int j = 0; j<4; j++){
+					
+					//Wenn die Farbe 1 gefunden
+					if(k.tri[i*4+j]==color1){
+						
+						//Verschiebe auf die vorherbestimmte Postion  
+						change2Positions(pol*4+color1Pos, i*4+j);
+						
+						//Setzte Variable auf wahr, dass Position für Farbe 1 gelöst ist
+						color1OnPole = true;
+						
 					}
+					
 				}
+				
 			}
+			
 		}
+		
+		//Setze die Positionen der Farben zurück
 		color1Pos = -1;
 		color2Pos = -1;
+		
+		//Gehe alle Positionen des pols erneut durch
 		for(int i = 0; i<4; i++){
+			
+			//Wenn Farbe 1 gefunden
 			if(k.tri[pol*4+i]==color1&&!color1OnPole){
+				
+				//Variable für Farbe 1 auf wahr
 				color1OnPole = true;
+				
+				//Position speichern
 				color1Pos = i;
+				
 			}
+			
+			//Wenn Farbe 2 gefunden
 			if(k.tri[pol*4+i]==color2&&!color2OnPole){
+				
+				//Variable für Farbe 2 auf wahr
 				color2OnPole = true;
+				
+				//Position speichern
 				color2Pos = i;
+				
 			}
+			
 		}
+		
+		//Wenn Farbe 2 noch nicht gefunden
 		if(color2Pos==-1){
+			
+			//Gehe alle Positionen durch
 			for(int i = 0; i<4; i++){
-				boolean done = false;
-				if(i!=color1Pos&&!done){
+				
+				//Position gefunden auf falsch
+				boolean pFound = false;
+				
+				//Wenn nicht bereits die Position für Farbe 1 und Position nocht nicht gefunden
+				if(i!=color1Pos&&!pFound){
+					
+					//Als Position von Farbe 2 speichern
 					color2Pos = i;
+					
 				}
+				
 			}
+			
 		}
+		
+		//Gehe alle 6 Pole durch
 		for(int i = 0; i<6; i++){
-			//Wenn noch einen ungelösten anderen Pol ist, dann lösen
-			if(i!=pol&&!okPole[i]){//i!=SphereUtils.gegenPol(pol)&&
-				//Für beide schauen, dass auf uhrsprungspol kommen...
-				if(!color2OnPole){
-					for(int j = 0; j<4; j++){
-						if(k.tri[i*4+j]==color2){
-							Solve1Phase(pol*4+color2Pos, i*4+j);
-							color2OnPole = true;
-						}
+			
+			//Wenn der Pol noch nicht gelöst ist und Farbe 2 noch nicht gefunden
+			if(!okPole[i]&&!color2OnPole){
+				
+				//Gehe alle Positioinen durch
+				for(int j = 0; j<4; j++){
+					
+					//Wenn Farbe 2 gefunden
+					if(k.tri[i*4+j]==color2){
+						
+						//Verschiebe auf die vorherbestimmte Position
+						change2Positions(pol*4+color2Pos, i*4+j);
+						
+						//Setzte Variable auf wahr, dass Position für Farbe 2 gelöst ist
+						color2OnPole = true;
 					}
+					
 				}
+				
 			}
+			
 		}
-		//System.out.println("StatusEnde: "+color1OnPole+";"+color2OnPole);
-		//.out.println("Pol "+pol+": Farben "+k.tri[pol*4]+";"+k.tri[pol*4+1]+";"+k.tri[pol*4+2]+";"+k.tri[pol*4+3]);
 	}
+	
+	/**
+	 * Gibt zurück, ob das wechseln der beiden Positionen möglich ist
+	 */
 	private boolean strategieStandardAreThis2Possible(int pos1, int pos2){
-		int[] pole1 = getPoleForPosition(pos1);
-		int[] pole2 = getPoleForPosition(pos2);
+		
+		//Bekomme die beiden Pole, welche an die Position grenzen
+		int[] pole1 = SphereUtils.getPoleForPosition(pos1);
+		
+		//Bekomme die beiden Pole, welche an die Position grenzen
+		int[] pole2 = SphereUtils.getPoleForPosition(pos2);
+		
+		//Variable mit den beiden möglichen Polen
 		int[] poleMoeglich = new int[2]; 
+		
+		//Variable um zu fragen, ob die beiden positionen überhaupt einen gemeinsamen Nachbarspol haben (Voraussetzung)
 		boolean everSame = false;
+		
+		
+		//Gehe bei der ersten Position alle durch
 		for(int i = 0; i<2; i++){
+			
+			//Variable mit dem aktuellen Status
 			boolean same = false;
+			
+			//Variable um bei ungleichheit die Nummer zu speichern
 			int notSame = -1;
+			
+			//Gehe bei der 2 Position alle durch
 			for(int j = 0; j<2;j++){
+				
+				//Wenn die beiden gleich sind
 				if(pole1[i]==pole2[j]){
+					
+					//setzte aktuelle variable auf true
 					same = true;
+					
+				//Ansonsten	
 				}else{
+					
+					//Speichere die aktuelle Nummer
 					notSame = j;
 				}
+				
 			}
+			
+			//Wenn same falsch ist
 			if(!same){
+				
+				//Die möglichen Pole speichern
 				poleMoeglich[0]=pole1[i];
 				poleMoeglich[1]=pole2[notSame];
+				
+				//Variable auf true setzten, damit grundvoraussetzung gegeben ist
 				everSame = true;
 			}
+			
 		}
+		//ist grundvoraussetzung gebenen
 		if(everSame){
+			
+			//Gehe die beiden Pole durch
 			for(int i = 0; i<2; i++){
+				
+				//Wenn ein Pol noch nicht gelöst ist
 				if(!SolveCheck.isPolSolved(poleMoeglich[i], k)){
+					
+					//Dann gibt wahr zurück
 					return true;
+					
 				}
+				
 			}
+			
 		}	
+		
+		//Ansonsten gib falsch zurück
 		return false;
+		
 	}
-	private int[] getPoleForPosition(int pos){
-		switch(pos){
-		case 16:case 20:return new int[]{0,1};
-		case 19:case 23:return new int[]{0,3};
-		case 4: case 12:return new int[]{0,4};
-		case 5: case 13:return new int[]{0,5};
-		case 17:case 21:return new int[]{1,2};
-		case 0: case 8: return new int[]{1,4};
-		case 1: case 9: return new int[]{1,5};
-		case 18:case 22:return new int[]{2,3};
-		case 7: case 15:return new int[]{2,4};
-		case 6: case 14:return new int[]{2,5};
-		case 3: case 11:return new int[]{3,4};
-		case 2: case 10:return new int[]{3,5};
-		default: return new int[]{-1,-1};
-		}
-	}
+	
+	/**
+	 * Übernimmt das lösen der Kugel gemäss Strategie One
+	 */
 	private ArrayList<String> strategieOne(){
 		
-		//Array "ok" mit false füllen
+		//Array ok ganz mit false füllen
 		Arrays.fill(ok, false); 
+		
+		//Array mit korrekten Werten füllen
+		strategieOnecheckIfPositionOnKorrektPole();
 
-		/**
-		 * Phase 1
-		 * 
-		 * Geht solange, bis alle Dreiecke auf dem richtigen Pol sind , also Phase 1 abgeschlossen
-		 */
+		//Solange bis Array ok ganz true ist
 		while(!SolveCheck.ArrayIsFullyOk(ok)){
+			
+			//Variable zum erneut Prüfen = true
 			boolean recheck = true;
+			
+			//Gehe alle 24 Positionen durch
 			for(int i = 0; i<24; i++){
+				
 				//Wenn recheck gefordert checke erneut
 				if(recheck){
+					
+					//recheck auf falsch setzten
 					recheck = false;
-					checkIfP1IsOK();
+					
+					//erneut Prüfen
+					strategieOnecheckIfPositionOnKorrektPole();
+					
 				}
+				
 				//Wenn Position noch nicht gelöst
 				if(!ok[i]){
-					//Recheck gefordert
+					
+					//Recheck gefordert, weil etwas geändert wird
 					recheck = true;
-					//Wechle die Positionen von i und dem mit findPos gefundenen Dreieck
-					if(findPos(i)==-1){
+					
+					//Wenn keine Position gefunden wird, welche zum lösen dient, dann breche das Lösen ab und melde Error
+					if(strategieOneFindPositionToSolve(i)==-1){
 						Log.ErrorLog("Achtung Abbruch des Lösen");
 						return solvingWay;
 					}
-					//consLog(i+" "+findPos(i));
-					Solve1Phase(i,findPos(i));
-					//Abbrechen, falls gefordert
-					checkIfP1IsOK();
-					if(getAnzFalseInArray(ok)==2){
-						solveLast();
+					
+					//Wechle die Positionen von i und dem mit findPos gefundenen Position
+					change2Positions(i,strategieOneFindPositionToSolve(i));
+					
+					//Prüfe erneut
+					strategieOnecheckIfPositionOnKorrektPole();
+					
+					//wenn nur noch 2 Positionen nicht gelöst sind, dann Sonderfall ausführen
+					if(SphereUtils.getAnzFalseInArray(ok)==2){
+						
+						//Variable für die 1 Position
+						int pos1 = -1;
+						
+						//Variable für die 2. Position
+						int pos2 = -1;
+						
+						//Variable ob Position 1 gefunden wurde
+						boolean setOne = false;
+						
+						//Gehe alle 24 Positionen durch
+						for(int j = 0; j<24; j++){
+							
+							//Wenn Position nocht nicht gelöst
+							if(!ok[j]){
+								
+								//Wenn Position 1 noch nicht gesetzt
+								if(!setOne){
+									
+									//Position 1 setzten
+									pos1 = j;
+									
+									//Variable, das Position 1 gesetzt wurden auf wahr stellen
+									setOne = true;
+									
+								//Ansonsten	
+								}else{
+									
+									//Position 2 setzten
+									pos2 = j;
+									
+								}	
+								
+							}
+							
+						}
+						
+						//Löse die beiden Positionen
+						change2Positions(pos1, pos2);
+						
 					}
+					
 				}
+				
 			}
+			
 		}
-		//System.out.println("End Phase 1 bei "+k.step+" Schritten");
-		return strategieOnePhaseTwo();
-		
-		//return solvingWay;
-	}
-	private ArrayList<String> strategieOnePhaseTwo(){
-		/**
-		 * Phase 2
-		 * 
-		 * Löst die Kugel zu ende
-		 */
 		//Array ok erneut zurück auf false setzen
 		Arrays.fill(ok, false); 
 		
@@ -659,10 +768,29 @@ public class Solver {
 		turnPolToOptinalPosition();
 
 		//Pol schneller lösen
-		solveFasterOverCross();
+		for(int i = 0; i<24;i++){
+			int polI = i/4;
+			int[] pos = SphereUtils.crossOverPos(i);			
+			int j = polI*4+(((i%4)+1)%4);
+			int pol2 = pos[0]/4;
+			
+			if(k.tri[i]==k.tri[pos[0]]&&k.tri[j]==k.tri[pos[1]]&&k.tri[i]==k.con[SphereUtils.findCorrectConIndexFromTri(j)]&&k.tri[j]==k.con[SphereUtils.findCorrectConIndexFromTri(i)]){
+				int polDrehen = SphereUtils.getCrossOverPol(i);
+				addSteps(polI, 1, 1);
+				addSteps(pol2, 1, 1);
+				addSteps(polDrehen, 1, 3);
+				addSteps(polI, 2, 1);
+				addSteps(polDrehen, 3, 3);
+				addSteps(polI, 3, 1);
+				addSteps(pol2, 3, 1);
+			}
+			
+		}
 		
 		//Prüfe ob Kugel noch Korrekt ist, oder ob es einen Fehler gibt
-		checkIfP1IsOK();
+		strategieOnecheckIfPositionOnKorrektPole();
+		
+		//Wenn keinen Fehler gefunden
 		if(SolveCheck.ArrayIsFullyOk(ok)){
 			
 			//So lange die Kugel nicht gelöst ist...
@@ -673,54 +801,73 @@ public class Solver {
 					
 					//Wenn Pol noch nicht gelöst, löse ihn
 					if(!SolveCheck.isPolSolved(i,k)){		
-						solvePol(i);
+						
+						//Array mit werten, ob eine Position schon gelöst wurde, oder nicht
+						boolean[] pOk = new boolean[4];
+						
+						//Gehe für jede Position durch
+						for(int j = 0; j<4; j++){
+							
+							
+							pOk[j] = SolveCheck.isPositionSolved(i*4+j,k);
+							
+						}
+						
+						//Solange Pol nicht gelöst, noch einen Anlauf wagen 
+						while(!SolveCheck.isPolSolved(i,k)){
+							
+							//Gehe jede Position durch
+							for(int j = 0; j<4; j++){
+								
+								//Wenn noch nicht korrekt
+								if(!pOk[j]){
+									
+									//Finde das Verbindungsstück mit der selben Farbe heraus
+									int con = SphereUtils.findCorrectConIndexFromTri(i*4+j);
+									
+									//Gehe für alle Positionen durch
+									for(int l = 0; l<4; l++){
+										
+										//Wenn das Dreieck gefunden wurde, mit welchem getauscht werden muss
+										if(k.tri[i*4+l]==k.con[con]&&l!=j){
+											
+											//Tausche die beiden Positionen
+											change2PositionsOnOnePol(i*4+j, i*4+l);
+										}
+										
+									}
+									
+									//Gehe alle Positionen durch
+									for(int l = 0; l<4; l++){
+										
+										//Ist Position gelöst? Antwort in Array speichern
+										pOk[l] = SolveCheck.isPositionSolved(i*4+l,k);
+										
+									}
+									
+								}
+								
+							}
+							
+						}
+						
 					}
+					
 				}
+				
 			}	
-		}else{
-			System.out.println("Nicht korrekte Kugel!!!");
 			
 		}
-			
-		//Gib die gelöste Kugel zurück
 		
-		return advancedStepRemover(advancedTurnMinimizer(RemoveUnusedSteps(solvingWay)));
-		//return RemoveUnusedSteps(solvingWay);
-	}
-	
-	private int getAnzFalseInArray(boolean[] array){
-		int anz = array.length;
-		int r = 0;
-		for(int i = 0; i<anz; i++){
-			if(!array[i]){
-				r++;
-			}
-		}
-		return r;
-	}
-	private boolean solveLast(){
-		int pos1 = -1;
-		int pos2 = -1;
-		boolean setOne = false;
-		for(int i = 0; i<24; i++){
-			if(!ok[i]){
-				if(!setOne){
-					pos1 = i;
-					setOne = true;
-				}else{
-					pos2 = i;
-				}	
-			}
-		}
-		Solve1Phase(pos1, pos2);
-		
-		return true;
+		//Kugel zurück geben wobei noch unnötige schritte entfehrt werden
+		return solvingWay;
 	}
 	
 	/**
-	 * Prüft in Phase1, welche Dreiecke OK sind und welche nicht
+	 * Prüft welche Positionen auf dem korrekten Pol sind
 	 */
-	private void checkIfP1IsOK(){
+	private void strategieOnecheckIfPositionOnKorrektPole(){
+		
 		// Gehe alle Pole durch
 		for(int i = 0; i<6; i++){
 			/**
@@ -728,155 +875,92 @@ public class Solver {
 			 * int[4] tris ==> Array in dem die 4 Tri eines Pols gespeichert werden
 			 * boolean[4] allowCons ==> Ist bei entsprechendem Index true, wenn Con noch nicht verbraucht ist
 			 */
+			//Array mit den 4 Farbwerten der Verbindungsstücke
 			int[] cons = new int[4];
-			//Arrays.fill(cons, -1); 
+			
+			//Array mit Werten, welche Farbe schon gebraucht wurde und welche nicht
 			boolean[] allowCons = new boolean[4];
+			
+			//Array mit den 4 Farbwerten der Dreiecken
 			int[] tris = new int[4];
 
-			//Array mit daten aus Kugel füllen
+			
+			//Arrays mit Daten aus Kugel füllen
 			for(int j = 0; j<4; j++){	 
-				//Wert von con, Index wird gesucht zu tri Index Pol*4 + Position in Pol
+				
+				//den Farbwert des passenden Con vom Index des Tri
 				cons[j] = k.con[SphereUtils.findCorrectConIndexFromTri(i*4+j)];
-				//Alle sind zu beginn noch benutzbar
+				
+				//Alle Farben sind zu begin noch erlaubt
 				allowCons[j] = true;
+				
 				//Wert von tri bei Index Pol*4 + Position in Pol
 				tris[j] = k.tri[i*4+j];
+				
 			}
+			
 			//Gehe nun die 4 Position eines Pols durch
 			for(int j = 0; j<4; j++){
-				//boolean set sagt, ob Position schon neu gesetzt wurde
+				
+				//Variable mit info, ob Position schon neu gesetzt wurde
 				boolean set = false;
+				
 				//Prüfe für alle zur Verfügung stehenden cons ob sie passen
 				for(int k = 0; k<4; k++){
-					/**
-					 * Wenn Position noch nicht neu gesetzt wurde
-					 * UND
-					 * Wenn Con noch erlaubt ist
-					 * UND
-					 * Wenn tri und con übereinstimmen
-					 * 
-					 * Dann setzte ok bei entsprechender Position = true
-					 * Dann setzte allowCons bei entsprechender Position = false
-					 * Dann setzte set = true, damit nicht erneut gesetzt wird
-					 */
+					
+					//Wenn Position noch nicht gesetzt wurde
+					//Wenn die Farbe noch erlaubt ist
+					//Wenn die beiden Farben übereinstimmen
 					if(!set&&allowCons[k]&&tris[j]==cons[k]){
+						
+						//Setzte die Position im Array ok auf wahr
 						ok[i*4+j] = true;
+						
+						//Streiche die Farbe von der Liste der erlaubten
 						allowCons[k] = false;
+						
+						//Auf true wechseln, dass Position schon gesetzt wurde
 						set = true;
+						
 					}
+					
 				}
 				
-				//Wenn Position jetzt noch nicht neu gesetzt wurde, dann ist Dreieck falsch und somit muss ok = false gesetzt werden
+				//Wenn Position jetzt noch nicht neu gesetzt wurde, dann gehört das Dreieck nicht auf diesen Pol
 				if(!set){
+					
+					//Setzte die Position im Array ok auf falsch
 					ok[i*4+j] = false;
 				}
+				
 			}
+			
 		}
+		
 	}
 		
 	/**
-	 * Funktion zum Finden der Position, an welche gewechselt werden muss
-	 * @param p : Index welcher an jetziger Stelle falsch ist, welcher also verschoben werden will
-	 * @return : gibt Index aus, mit welchem gewechselt werden soll
+	 * Gibt zurück mit welchem Index die Position gelöst werden kann
 	 */
-	private int findPos(int p){
+	private int strategieOneFindPositionToSolve(int p){
 		
-	/*	//Pol auf welchem der Falsche liegt
+		//Den Pol, auf welchem die gegebene Position liegt
 		int urPol = p/4;
 		
-		//Verbindungsstück an der stelle des Falschen
-		int urCon = k.findCons(p);
-		int zielCon = findCon(p);
-		int[] posPol = new int[3];
-		//System.out.println("Con = "+zielCon);
-		int[]posPos = k.conToPos(zielCon);
-		posPol[0] = posPos[0]/4;
-		posPol[1] = posPos[1]/4;
-		posPol[2] = posPos[2]/4;
-		
-		
-	//	System.out.println("Pos: "+p+"("+k.tri[p]+") Con: "+zielCon+"("+k.con[zielCon]+") Pol: "+posPol[0]+", "+posPol[1]+", "+posPol[2]);
-		
-		//Bewerte die einzelnen Positionen
-		
-		int[][] posBewertung = new int[3][4];
-		
-		//Wenn Pol Ursprung, dann minus 1000
-		for(int i = 0; i<3; i++){
-			if(checkPoleEndPhase1(posPol[i])||urPol==posPol[i]){//checkPoleEndPhase1(posPol[i])||
-				posBewertung[i][0] -= 1000; posBewertung[i][1] -= 1000; 
-				posBewertung[i][2] -= 1000; posBewertung[i][3] -= 1000; 
-			}
-		}
-		//Check durch gehen
-		checkIfP1IsOK();
-		
-		//Wenn Position die Farbe des Ursprung hat, dann +100
-		//Wenn Position noch nicht gelöst, dann + 5
-		//Wenn Position nicht auf korrektem Pol, dann +20
-		for(int i = 0; i<3; i++){
-			for(int j = 0; j<4; j++){
-				if(((posPol[i])*4)+j==posPol[0]||
-						((posPol[i])*4)+j==posPol[1]||
-						((posPol[i])*4)+j==posPol[2]){
-					posBewertung[i][j] += 100;
-				}
-				if(ok[((posPol[i])*4)+j]){
-					posBewertung[i][j] -= 300;
-				}
-				if(k.tri[(posPol[i])*4+j]==k.tri[p]){
-					posBewertung[i][j] -= 300;
-				}
-				if(k.con[urCon]==k.tri[((posPol[i])*4)+j]){
-					posBewertung[i][j] += 100;
-				}
-				if(!ok[((posPol[i])*4)+j]){
-					posBewertung[i][j] +=50;
-				}
-			}
-		}
-		
-		//Finde den Besten Tauschpartner
-		
-		int besterPartnerPunkte = 0;
-		int besterPartnerPos = -1;
-		
-		for(int i = 0; i<3; i++){
-			for(int j = 0; j<4; j++){
-				if(posBewertung[i][j]>besterPartnerPunkte){
-					besterPartnerPunkte = posBewertung[i][j];
-					besterPartnerPos = (i*4)+j;
-				}
-			}
-		}
-	//	System.out.println("Bester Punkte "+besterPartnerPunkte+", Tri "+besterPartnerPos);
-	//	System.out.println(k.getSphere());
-	//	System.out.println(Arrays.deepToString(posBewertung));
-	//	System.out.println(Arrays.toString(ok));
-		return besterPartnerPos;
-		
-	
-		
-		
-		
-		
-		
-/*		*/int urPol = p/4;
-		
 		//Finde den richtigen Connector für p
-		int con = findCon(p);
+		int con = strategieOneReturnIndexOfConInSameColor(p);
+		
+		//Gibt die 3 möglichen Positionen des gefundenen Cons zurück
 		int[] polPos = SphereUtils.conToPos(con);
 		
-		
-		//Gehe für die drei müglichen Pole durch
+		//Gehe für die drei möglichen Pole durch
 		for(int i = 0; i<3; i++){
 			
-			//Finde die entsprechende PolNr
-			//int polNr = SphereUtils.con2pol(con, i);
+			//PolNr = Position / 4
 			int polNr = polPos[i]/4;
 
 			//Wenn Phase 1 bei diesem Pol noch nicht abgeschlossen wurde dann kommt er in frage und wird weiter untersucht
-			if(!checkPoleEndPhase1(polNr)&&urPol!=polNr){
+			if(!strategieOneCheckPoleHasAllColors(polNr)&&urPol!=polNr){
 				
 				//Bei dem Pol wird jede Stelle durch gegeangen
 				for(int j = 0; j<4; j++){
@@ -887,155 +971,123 @@ public class Solver {
 						//Gibt den Tri index zurück, damit zwischen diesen Beiden gewechselt werden kann
 						return polNr*4+j;
 					}
+					
 				}
+				
 			}
+			
 		}
 		
-		//Gibt -1 zurück, wenn kein Erfolg --> Sollte nicht auftreten
-		return -1;/**/
+		//Bei einem Fehler gib -1 zurück
+		return -1;
+		
 	}
 	
 	/**
-	 * Prüft, ob Pol mit Phase 1 fertig ist
-	 * @param polNr : Pol welcher geprüft werden soll
-	 * @return : true wenn fertig, sonst false
+	 * Gibt true zurück, wenn ein Pol alle benötigten Farben beinhaltet
 	 */
-	private boolean checkPoleEndPhase1(int polNr){
-		/**
-		 * Erstelle Arrays
-		 * tris[4] enthält alle Tri eines Pols
-		 * cons[4] enthält alle Con eines Pols 
-		 */
+	private boolean strategieOneCheckPoleHasAllColors(int polNr){
+		
+		//Array mit den Werten für tri
 		int[] tris = new int[4];
+		
+		//Array mit den Werten von con
 		int[] cons = new int[4];
+		
 		//Fülle Arrays mit Daten aus Kugel
 		for(int i = 0; i<4; i++){
 			tris[i]=k.tri[polNr*4+i];
 			cons[i]=k.con[SphereUtils.findCorrectConIndexFromTri(polNr*4+i)];
 		}
-		/**
-		 * Sortiere die Arrays
-		 * 
-		 * Anschliessen prüfen, ob die Array identisch sind
-		 * Je nach Ergebnis true oder false zurück geben
-		 */
+
+		//Sortiere die Arrays
 		Arrays.sort(tris);
 		Arrays.sort(cons);
-		if(Arrays.equals(tris,cons)){
-			return true;
-		}
-		return false;
+		
+		//Wenn die Arrays gleich sind, dann gib true zurück, sonst false
+		return Arrays.equals(tris, cons) ? true:false;
+		
 	}
 	
 	/**
-	 * Connector in entsprechender Farbe suchen
-	 * @param p : Index von tri entsprechender Farbe
-	 * @return : gibt Connector Index aus bei Erfolg, bei Misserfolg -1
+	 * Gibt den Index des Conns mit der selben Farbe wie die gegebene Position zurück
 	 */
-	private int findCon(int p){
+	private int strategieOneReturnIndexOfConInSameColor(int p){
 		
 		//Gehe alle 8 Connector durch
 		for(int i = 0; i<8; i++){
 			
-			//Wenn Tri = Con dann gibt den Con Index zurüück
+			//Wenn die Farbe des gegebenen Tri gleich der Farbe des Con
 			if(k.con[i]==k.tri[p]){
+				
+				//Gib den Index des Con zurück
 				return i;
+				
 			}
+			
 		}
 		
-		//Wenn keine übereinstimmung gefunden werden konnte dann gibt -1 zurück
-		System.out.println(k.getSphere("000"));
+		//Wenn die Kugel kein Verbindungsstück dieser Farbe enthält, dann gib -1 zurück
 		return -1;
 	}
 	
 	/**
-	 * Notfall Funktion, damit Solver nicht abbricht, sollte nicht aufgerufen werden
-	 * 
-	 * Gibt einen Error aus! 
+	 * Dreht eine Farbe an eine bestimmte Position auf dem Pol
+	 */
+	private void strategieOneTurnColorToPositionOnPol(int p, int zielPos){
+
+		//Bekomme den Pol
+		int pol = p/4;
+		
+		//Speichere die Farbe
+		int color = k.tri[p];
+		
+		//Gehe maximal 4 mal durch
+		for(int i = 0; i<4;i++){
+			
+			//Wenn Farbe noch nicht stimmt
+			if(k.tri[pol*4+zielPos]!=color){
+				
+				//Eins weiter drehen
+				addSteps(pol,1,1);
+				
+			}
+			
+		}
+		
+	}
+		
+	/**
+	 * Wechselt die beiden gegebenen Positionen
 	 */
 	private void change2Positions(int p1, int p2){
 		
-		//überprüft p1 und p2 auf Korrektheit ==> zugross, bzw zuklein werden ausgefiltert
-		if(p1>=0&&p2>=0&&p1<=23&&p2<=23){
-			/*int temp = k.tri[p1];
-			k.tri[p1] = k.tri[p2];
-			k.tri[p2] = temp;
-			*/
-			Log.ErrorLog("Missbrauch von Funktion change2Position");
-		}
-	}
-	/**
-	 * Korrektur Funktion zum Drehen eines Pols, damit alle Pole mit einer Funktion in eine Einheitliche Richtung gedreht werden können
-	 * @param polNr
-	 * @param pos
-	 * @return
-	 */
-	private int posPlus(int polNr, int pos){
-		if(polNr==1||polNr==2||polNr==4){
-			pos+=1;
-			return pos%4;
+		//Überprüft die Positionen auf legale werte --> Min 0, Max 23	--> nicht den selben wert
+		if(p1>=0&&p2>=0&&p1<=23&&p2<=23&&p1!=p2){
 			
-		}else{
-			 pos+=3;
-			 return pos%4;
-		}
-	}
-	/**
-	 * Dreht einen Pol inklusive Korrektur
-	 * @param p
-	 * @param position
-	 */
-	private void turnTo(int p, int position){
-		int pol = p/4;
-		int pos = p%4;
-		while(pos!=position){
-			//k.changePol(pol, 1);
-			addSteps(pol,1,1);
-			pos = posPlus(pol,pos);
-		}
-	}
-	
-	/**
-	 * Wechsle 2 Stücke in Phase 1 und füge Schritte dem Lösungsweg hinzu;
-	 * @param pol1
-	 * @param polRechts
-	 * @param s
-	 */
-	private void change1Phase(int pol1,int polRechts,int s){
-		//k.turnKugel(polRechts, s);
-		addSteps(polRechts, s, 3);
-		//k.changePol(pol1, 1);
-		addSteps(pol1, 1, 1);
-		//k.turnKugel(polRechts, 4-s);
-		addSteps(polRechts, 4-s, 3);
-	}
-	
-	/**
-	 * Nimmt das wechseln von 2 Positionen für Phase 1 vor
-	 * @param p1
-	 * @param p2
-	 */
-	private void Solve1Phase(int p1, int p2){
-		
-		//überprüft p1 und p2 auf Korrektheit ==> zugross, bzw zuklein werden ausgefiltert
-		if(p1>=0&&p2>=0&&p1<=23&&p2<=23){
-			
-			//Wechsle so, dass p1 kleiner als p2
+			//Wenn p1 grösser als p2
 			if(p1>p2){
+				
+				//Variablen tauschen
 				int temp = p1;
 				p1 = p2;
 				p2 = temp;
-			}
-			//p1 kleiner als p2
-			
-			//Den Pol von p1 und p2 in Variabel schreiben
-			int pol1 = p1/4;
-			int pol2 = p2/4;
 				
-			//Finde den Rechten Pol heraus
-			int polRechts = change2PolPositionPR(pol1,pol2);
+			}
+			
+			//Pol von p1 speichern
+			int pol1 = p1/4;
+			
+			//Pol von p2 speichern
+			int pol2 = p2/4;
+		
+			
+			//Finde den Pol heraus um welchen gedreht wird
+			int drehPol = SphereUtils.change2PolPositionPR(pol1,pol2);
+			
 			//Wenn gefunden
-			if(polRechts>=0){
+			if(drehPol >= 0){
+				
 				//Variabel zur End Positionsbestimmung festlegen und mit Werten füllen, so dass nichts geändert wird 
 				int pos1 = p1%4;
 				int pos2 = p2%4;
@@ -1082,858 +1134,279 @@ public class Solver {
 				}//#END switch pol1
 				
 				//Pol 1 zu korrekter Position drehen 			
-				turnTo(p1,pos1);
+				strategieOneTurnColorToPositionOnPol(p1,pos1);
 				
 				//Pol 2 zu korrekter Position drehen
-				turnTo(p2,pos2);
+				strategieOneTurnColorToPositionOnPol(p2,pos2);
 				
 				//Austauschen
-				change1Phase(pol1,polRechts,opt1);
-			}
-		}
-	}
-	
-	/**
-	 * Funktion zum lösen eines Pols
-	 * @param polNr
-	 */
-	private void solvePol(int polNr){
-		
-		//Gehe für jede Position durch, ob gelöst oder nicht und speichere in Variable
-		boolean[] pOk = new boolean[4];
-		for(int i = 0; i<4; i++){
-			if(SolveCheck.isPositionSolved(polNr*4+i,k)){
-				pOk[i] = true;
+				
+				addSteps(drehPol, opt1, 3);
+				addSteps(pol1, 1, 1);
+				addSteps(drehPol, 4-opt1, 3);
+				
+			//Wenn keinen Pol gefunden	
 			}else{
-				pOk[i] = false;
-			}
-		}
-		//Solange Pol nicht gelöst, noch einen Anlauf wagen 
-		while(!SolveCheck.isPolSolved(polNr,k)){
-			//Gehe jede Position durch
-			for(int i = 0; i<4; i++){
-				//Wenn noch nicht korrekt
-				if(!pOk[i]){
-					//System.out.println("Pos "+i+" nicht gelöst");
-					//Finde den Farbwert der Position heraus
-					int tri = polNr*4+i;
-					//Finde das dazu gehörige Verbindungsteil heraus
-					int con = SphereUtils.findCorrectConIndexFromTri(tri);
-					//Finde Dreieck mit welchem getauscht werden muss und tausche dann
-					for(int j = 0; j<4; j++){
-						if(k.tri[polNr*4+j]==k.con[con]&&j!=i){
-							change2PolPositions(tri, polNr*4+j);
-						}
-					}
-					//Erneut prüfen, ob Pol gelöst
-					for(int j = 0; j<4; j++){
-						if(SolveCheck.isPositionSolved(polNr*4+j,k)){
-							pOk[j] = true;
-						}else{
-							pOk[j] = false;
-						}
-					}
+				
+				//Prüfe ob Positionen auf dem Selben Pol sind
+				if(pol1==pol2){
+					
+					//Wenn ja, dann entsprechende Funktion aufrufen
+					change2PositionsOnOnePol(p1,p2);
+					
 				}
+				
 			}
 			
 		}
+		
 	}
-	
+		
 	/**
 	 * Tauscht 2 Positionen in der 2. Phase
-	 * @param p1
-	 * @param p2
 	 */
-	private void change2PolPositions(int p1, int p2){
-		change2PolPositions(p1,p2,0);
-	}
-	/**
-	 * Tauscht 2 Positionen in der 2. Phase inklusive Runde
-	 * @param p1
-	 * @param p2
-	 * @param turn
-	 */
-	private void change2PolPositions(int p1, int p2, int turn){
-		//Pol in Variable schreiben
-		int pol = p1/4;
-		//Pol Oben ermitteln
-		int polO = change2PolPositionsD2(p1, p2);
-		//Pol Rechts ermitteln
-		int polR = change2PolPositionPR(pol, polO);
-		//Sofern dies geht wechsle gemäss Schema
-		if(polO != -1){
-			change2Pol(pol,polO,polR);	
-		}else{
-			//Löst Speziallfälle --> 
+	private void change2PositionsOnOnePol(int p1, int p2){
+		
+		//Wenn Position 1 grösser als Position 2
+		if(p1>p2){
 			
-			//Prüft ob übers Kreuz gelöst werden muss --> dann tue das
-			if(isPolGegenUber(p1,p2)){
-				solvePolGegenuber(p1,p2);
-			}else{
-				//Sonst Pol einmal drehen und dann erneut versuchen
-				if(turn<4){
-					//k.changePol(p1/4, 1);
-					turn++;
-					change2PolPositions(p1,p2,turn);
-				}else{
-					//Wenns definitiv nicht geht Error ausgeben
-					Log.ErrorLog(k.getSphere("000")+" \n Error - Muss sonst lösen - P1: "+p1+"; P2: "+p2);
-					change2Positions(p1, p2);
+			//Speichere Position 1 als Temp
+			int temp = p1;
+			
+			//Überschriebe Position 1 mit Position 2
+			p1 = p2;
+			
+			//Überschreibe Position 2 mit Temp
+			p2 = temp;
+			
+		}
+		
+		//Speichere den Pol auf dem sich beide befinden
+		int pol = p1/4;
+		
+		//Prüfen, ob sich die beiden neben einander Befinden, oder nicht
+		switch(p2-p1){
+		// TODO --> Kommentierung
+		case 1: case 3:
+			int polOben = -1;
+			int polRechts = -1;
+			if((p1==12&&p2==13)||(p1==16&&p2==19)||(p1==4&&p2==5)||(p1==20&&p2==23)){
+				polOben=0;
+			}else
+			if((p1==0&&p2==1)||(p1==8&&p2==9)||(p1==16&&p2==17)||(p1==20&&p2==21)){
+				polOben=1;
+			}else
+			if((p1==6&&p2==7)||(p1==17&&p2==18)||(p1==14&&p2==15)||(p1==21&&p2==22)){
+				polOben=2;
+			}else
+			if((p1==10&&p2==11)||(p1==18&&p2==19)||(p1==2&&p2==3)||(p1==22&&p2==23)){
+				polOben=3;
+			}else
+			if((p1==0&&p2==3)||(p1==4&&p2==7)||(p1==8&&p2==11)||(p1==12&&p2==15)){
+				polOben=4;
+			}else
+			if((p1==13&&p2==14)||(p1==1&&p2==2)||(p1==5&&p2==6)||(p1==9&&p2==10)){
+				polOben=5;
+			}
+			
+			polRechts = SphereUtils.change2PolPositionPR(pol,polOben);
+			
+			addSteps(polRechts, 3, 3);
+			addSteps(polOben, 3, 1);
+			addSteps(polRechts, 1, 3);
+			addSteps(polOben, 3, 1);
+			addSteps(polRechts, 3, 3);
+			addSteps(polOben, 1, 1);
+			addSteps(polRechts, 1, 3);
+			addSteps(polOben, 3, 1);
+			addSteps(polRechts, 3, 3);
+			addSteps(polOben, 3, 1);
+			addSteps(polRechts, 1, 3);
+			
+			addSteps(pol, 1, 1);
+			addSteps(polRechts, 3, 3);
+			addSteps(polOben, 3, 1);
+			addSteps(polRechts, 1, 3);
+			addSteps(polOben, 3, 1);
+			addSteps(polRechts, 3, 3);
+			addSteps(polOben, 1, 1);
+			addSteps(polRechts, 1, 3);
+			addSteps(polOben, 3, 1);
+			addSteps(polRechts, 3, 3);
+			addSteps(polOben, 3, 1);
+			addSteps(polRechts, 1, 3);
+			addSteps(pol, 2, 1);
+			break;
+		case 2:
+			int posOnPol2 = p2%4;
+			int change2 = (posOnPol2+1)%4;
+			int change = pol*4+change2;
+			
+			change2PositionsOnOnePol(p1,p1+1);
+			change2PositionsOnOnePol(p2,change);
+			for(int i = 0; i<4; i++){
+				if(k.tri[p1]!=k.con[SphereUtils.findCorrectConIndexFromTri(p1)]){
+					addSteps(pol, 1, 1);
 				}
 			}
+			
+			break;
 		}
-	}
-	
-	/**
-	 * Gibt Pol oben von 2 p's an
-	 * @param p1 : P1
-	 * @param p2 : P2
-	 * @return
-	 */
-	private int change2PolPositionsD2(int p1, int p2){
-		//Wechselt so dass p1 kleiner als p2
-		if(p1>=p2){
-			int temp = p1;
-			p1 = p2;
-			p2 = temp;
-		}
-		//Gibt den Wert zurück
-		if((p1==12&&p2==13)||(p1==16&&p2==19)||(p1==4&&p2==5)||(p1==20&&p2==23)){
-			return 0;
-		}else
-		if((p1==0&&p2==1)||(p1==8&&p2==9)||(p1==16&&p2==17)||(p1==20&&p2==21)){
-			return 1;
-		}else
-		if((p1==6&&p2==7)||(p1==17&&p2==18)||(p1==14&&p2==15)||(p1==21&&p2==22)){
-			return 2;
-		}else
-		if((p1==10&&p2==11)||(p1==18&&p2==19)||(p1==2&&p2==3)||(p1==22&&p2==23)){
-			return 3;
-		}else
-		if((p1==0&&p2==3)||(p1==4&&p2==7)||(p1==8&&p2==11)||(p1==12&&p2==15)){
-			return 4;
-		}else
-		if((p1==13&&p2==14)||(p1==1&&p2==2)||(p1==5&&p2==6)||(p1==9&&p2==10)){
-			return 5;
-		}
-		
-		//Bei einem Fehler...
-		return -1;
-	}
-	/**
-	 * Gibt den Pol Rechts von pol1 an
-	 * @param pol1: Pol
-	 * @param pol2: Pol oben
-	 * @return : Rechter Pol
-	 */
-	private int change2PolPositionPR(int pol1, int pol2){
-		/**
-		 * 0 - 1 ==> 5
-		 * 0 - 2 ==> ---
-		 * 0 - 3 ==> 4
-		 * 0 - 4 ==> 1
-		 * 0 - 5 ==> 3
-		 * 1 - 0 ==> 4
-		 * 1 - 2 ==> 5
-		 * 1 - 3 ==> ---
-		 * 1 - 4 ==> 2
-		 * 1 - 5 ==> 0
-		 * 2 - 0 ==> ---
-		 * 2 - 1 ==> 4
-		 * 2 - 3 ==> 5
-		 * 2 - 4 ==> 3
-		 * 2 - 5 ==> 1
-		 * 3 - 0 ==> 5
-		 * 3 - 1 ==> ---
-		 * 3 - 2 ==> 4
-		 * 3 - 4 ==> 0
-		 * 3 - 5 ==> 2
-		 * 4 - 0 ==> 3
-		 * 4 - 1 ==> 0
-		 * 4 - 2 ==> 1
-		 * 4 - 3 ==> 2
-		 * 4 - 5 ==> ---
-		 * 5 - 0 ==> 1
-		 * 5 - 1 ==> 2
-		 * 5 - 2 ==> 3
-		 * 5 - 3 ==> 0
-		 * 5 - 4 ==> ---
-		 */
-		if((pol1==1&&pol2==5)||(pol1==3&&pol2==4)||(pol1==4&&pol2==1)||(pol1==5&&pol2==3)){
-			return 0;
-		}else
-		if((pol1==0&&pol2==4)||(pol1==2&&pol2==5)||(pol1==4&&pol2==2)||(pol1==5&&pol2==0)){
-			return 1;
-		}else
-		if((pol1==1&&pol2==4)||(pol1==3&&pol2==5)||(pol1==4&&pol2==3)||(pol1==5&&pol2==1)){
-			return 2;
-		}else
-		if((pol1==0&&pol2==5)||(pol1==2&&pol2==4)||(pol1==4&&pol2==0)||(pol1==5&&pol2==2)){
-			return 3;
-		}else
-		if((pol1==0&&pol2==3)||(pol1==1&&pol2==0)||(pol1==2&&pol2==1)||(pol1==3&&pol2==2)){
-			return 4;
-		}else
-		if((pol1==0&&pol2==1)||(pol1==1&&pol2==2)||(pol1==2&&pol2==3)||(pol1==3&&pol2==0)){
-			return 5;
-		}else
-		if((pol1==0&&pol2==2)||(pol1==1&&pol2==3)){
-			return 5;
-		}else
-		if((pol1==4&&pol2==5)){
-			return 1;
-		}
-		
-		//Bei einem Fehler...
-		return -1;
-	}
-	/**
-	 * Prüfen ob übers Kreuz gelöst werden muss
-	 * @param p1
-	 * @param p2
-	 * @return
-	 */
-	private boolean isPolGegenUber(int p1, int p2){
-		//Wechsle so das p1 kleiner als p2
-		if(p1>p2){
-			int temp = p1;
-			p1 = p2;
-			p2 = temp;
-		}
-		//Prüfe ob das so ist und es die Lösung bringt...
-		if(p1+2 == p2&&(k.con[SphereUtils.findCorrectConIndexFromTri(p1)]==k.tri[p2]||k.con[SphereUtils.findCorrectConIndexFromTri(p2)]==k.tri[p1])){
-			return true;
-		}
-		//Ansonsten gibt false zurück
-		return false;
-	}
-	
-	/**
-	 * Macht die Wechselfunktion der Pole durch gemäss Schema
-	 * @param pol : pol, auf welchem gewechselt wird
-	 * @param polO : pol Oben davon
-	 * @param polR : pol Rechts davon
-	 */
-	private void change2Pol(int pol,int polO, int polR){
-	//	k.turnKugel(polR, 3);
-		addSteps(polR, 3, 3);
-		//k.changePol(polO, 3);
-		addSteps(polO, 3, 1);
-		//k.turnKugel(polR, 1);
-		addSteps(polR, 1, 3);
-		//k.changePol(polO, 3);
-		addSteps(polO, 3, 1);
-		//k.turnKugel(polR, 3);
-		addSteps(polR, 3, 3);
-		//k.changePol(polO, 1);
-		addSteps(polO, 1, 1);
-		//k.turnKugel(polR, 1);
-		addSteps(polR, 1, 3);
-		//k.changePol(polO, 3);
-		addSteps(polO, 3, 1);
-		//k.turnKugel(polR, 3);
-		addSteps(polR, 3, 3);
-		//k.changePol(polO, 3);
-		addSteps(polO, 3, 1);
-		//k.turnKugel(polR, 1);
-		addSteps(polR, 1, 3);
-		
-		//k.changePol(pol, 1);
-		addSteps(pol, 1, 1);
-		//k.turnKugel(polR, 3);
-		addSteps(polR, 3, 3);
-		//k.changePol(polO, 3);
-		addSteps(polO, 3, 1);
-		//k.turnKugel(polR, 1);
-		addSteps(polR, 1, 3);
-		//k.changePol(polO, 3);
-		addSteps(polO, 3, 1);
-		//k.turnKugel(polR, 3);
-		addSteps(polR, 3, 3);
-		//k.changePol(polO, 1);
-		addSteps(polO, 1, 1);
-		//k.turnKugel(polR, 1);
-		addSteps(polR, 1, 3);
-		//k.changePol(polO, 3);
-		addSteps(polO, 3, 1);
-		//k.turnKugel(polR, 3);
-		addSteps(polR, 3, 3);
-		//k.changePol(polO, 3);
-		addSteps(polO, 3, 1);
-		//k.turnKugel(polR, 1);
-		addSteps(polR, 1, 3);
-	//	k.changePol(pol, 2);
-		addSteps(pol, 2, 1);
-	}
-	
-	/**
-	 * Löse übers Kreuz
-	 * @param p1
-	 * @param p2
-	 */
-	private void solvePolGegenuber(int p1,int p2){
-		//Wechseln so das p1 kleiner als p2
-    	if(p1>p2){
-    		int t = p1;
-    		p1 = p2;
-    		p2 = t;
-    	}
-		    
-    	//Speichern der Alten Positionen
-    	int p1_old = p1;
-		int p2_old = p2;
-		//Pol in Variabel schreiben
-		int pol = p1/4;
-		p2--;
-		//p2ändern so das gelöst werden kann
-		if(p2<pol*4){
-			p2+=4;
-		}
-		
-		//Pol Oben und Rechts finden
-		int polO = change2PolPositionsD2(p1, p2);
-		int polR = change2PolPositionPR(pol, polO);
-		
-		//Wechsle beide jetzt
-		change2Pol(pol,polO,polR);
-		
 
-		//p2 zurück setzten, p1 verschieben
-		p2 = p2_old;
-		p1++;
-		if(p1>pol*4+3){
-			p1-=4;
-		}
-		//Pol Oben und Rechts finden
-		polO = change2PolPositionsD2(p1, p2);
-		polR = change2PolPositionPR(pol, polO);
-		
-		//Wechsle erneut
-		change2Pol(pol,polO,polR);
-
-    	
-		//p1 zurücksetzten und p2 verschieben
-    	p1 = p1_old;
-		p2--;
-		if(p2<pol*4){
-			p2+=4;
-		}
-		//Pol Oben und Rechts finden
-		polO = change2PolPositionsD2(p1, p2);
-		polR = change2PolPositionPR(pol, polO);
-		
-		//Zum letzten Mal wechseln
-		change2Pol(pol,polO,polR);
-		
-    	int end = 0;
-    	//Prüfe ob Pol gelöst ist ansonsten drehe Pol bis gelöst
-    	while(!SolveCheck.isPolSolved(pol,k)&&end<4){
-    		//k.changePol(pol, 1);
-    		addSteps(pol, 1, 1);
-    		end++;
-    	}
-		
-		
 	}
+	
+	
 	
 	/**
 	 * Ersetzt unnützliche mehrfach Drehungen durch eine einzige
-	 * @param arrayList
-	 * @return
 	 */
 	private ArrayList<String> RemoveUnusedSteps(ArrayList<String> arrayList){
-		//Gehe jede position durch
+		
+		//Wenn ArrayList mehr als eine Kugel enthält
 		if(arrayList.size()>1){
+			
+			//Gehe für jede Position durch
 			for(int i = 0; i<arrayList.size()-2;i++){
+				
+				//Speichere den aktuellen Zustand der Kugel
+				String sphere = SphereUtils.getPureSphereCode(arrayList.get(i));
+				
+				//Gehe jeden Status bis ans ende der Kugel durch
+				for(int j = i+1; j<arrayList.size()-1;j++){
+					
+					//Wenn die Kugel nochmals genau gleich ist
+					if(sphere==SphereUtils.getPureSphereCode(arrayList.get(j))){
+						
+						//Gehe für alle Schritte retour zurück
+						for(int l = j; l>i; l--){
+							
+							//Entferne diese Schritte
+							arrayList.remove(l);
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+			//Gehe für jede Position durch
+			for(int i = 0; i<arrayList.size()-2;i++){
+				
 				//Nehme die Drehungen der nächsten beiden Stadien
 				int[] dreh1 = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(i));
 				int[] dreh2 = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(i+1));
+				
 				//Wenn auf gleichem Pol im Gleichen Modus gedreht wird
 				if((dreh1[0]==dreh2[0])&&(dreh1[2]==dreh2[2])){
+					
 					//Beide drehungen Addieren und Modulo 4 nehmen
 					int anz = dreh1[1]+dreh2[1];
+					
+					//Modulo 4 rechnen
 					anz%=4;
+					
 					//Wenn Anzahl nicht gleich 0 dann ersetzte erstes Element mit neuer Drehung und lösche zweites
 					if(anz!=0){
-						arrayList.set(i, SphereUtils.getPureSphereCode(arrayList.get(i+1))+"n"+i+"n"+dreh1[0]+""+(anz)+""+dreh1[2]);
-						arrayList.remove(i+1);
-					}else{
-						//Wenn Anzahl = 0, dann lösche beide
+						
+						//Setzte zweites durch den SphereCode + mit der neuen Drehung
+						arrayList.set(i+1, SphereUtils.getPureSphereCode(arrayList.get(i+1))+"n"+i+"n"+dreh1[0]+""+(anz)+""+dreh1[2]);
+						
+						//Lösche zweites
 						arrayList.remove(i);
+						
+					//Ansonsten
+					}else{
+						
+						//Lösche beide
+						//Zuerst i+1, damit dies durch entfernen von i zum neuen i wird...
 						arrayList.remove(i+1);
+						arrayList.remove(i);
+						
 					}
-					//Gehe 2 Schritte zurück, um allfällige neue überschneidungen zu entfernen
+					
+					//Gehe 2 Schritte zurück, um allfällige neue Überschneidungen zu entfernen
 					i-=2;
-				}else{
-					//Wenn nicht auf gleichem Pol, bzw Modus, korrigiere den Step, da dieser nun verschoben ist
-					arrayList.set(i, SphereUtils.getPureSphereCode(arrayList.get(i))+"n"+i+"n"+dreh1[0]+dreh1[1]+dreh1[2]);
+					
 				}
+				
 			}
-
-			//Korrigiere auch die Letzte Kugel, wegen dem i und i+1 ist es nicht mögluch dies in der Schlaufe zu tun
-			int[] dreh = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(arrayList.size()-2));
-			arrayList.set(arrayList.size()-2, SphereUtils.getPureSphereCode(arrayList.get(arrayList.size()-2))+"n"+(arrayList.size()-2)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
-			dreh = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(arrayList.size()-1));
-			arrayList.set(arrayList.size()-1, SphereUtils.getPureSphereCode(arrayList.get(arrayList.size()-1))+"n"+(arrayList.size()-1)+"n"+dreh[0]+""+dreh[1]+""+dreh[2]);
+			
 		}
 		
 		//Gib arraylist zurück
 		return arrayList;
 		
 	}
+	
 	/**
 	 * Pol in beste Position drehen, da so viele viele Schritte vermieden werden können
 	 */
 	private void turnPolToOptinalPosition(){
+		
+		//Gehe alle Pole Durch
 		for(int i = 0; i<6;i++){
+			
+			//Beste Position auf 0 setzen
 			int best = 0;
+			
+			//Beste Anzahl auf 0 setzen
 			int best_anz = 0;
+			
+			//jetztige Anzahl auf 0 setzen
 			int jetzt_anz = 0;
-			int[] cons = new int[4];
+			
+			//Array mit den Werten für die Cons
+			int[] cons = new int[4];		
+			
+			//Fülle Array mit Werten aus der Kugel
 			for(int j = 0; j<4; j++){
 				cons[j] = k.con[SphereUtils.findCorrectConIndexFromTri(i*4+j)];
 			}
+			
+			//Gehe jede Möglichkeit
 			for(int j = 0; j<4; j++){
+				
+				//Setzte jetztige Anzahl auf 0
 				jetzt_anz = 0;
+				
+				//Gehe jede Position durch
 				for(int l = 0; l<4;l++){
-					int conIndex = (j+l)%4;
-					if(k.tri[(i*4)+l]==k.con[SphereUtils.findCorrectConIndexFromTri((i*4+conIndex))]){
+					
+					//Wenn die Position stimmt
+					if(k.tri[(i*4)+l]==k.con[SphereUtils.findCorrectConIndexFromTri((i*4+((j+l)%4)))]){
+						
+						//Jetztige Anzahl + 1
 						jetzt_anz++;
+						
 					}
+					
 				}
+				
+				//Wenn jetztige Anzahl grösser als bisher beste Anzahl
 				if(jetzt_anz>best_anz){
+					
+					//Setze Jetztige Anzahl als beste Anzahl
 					best_anz = jetzt_anz;
+					
+					//Setze jetzt als best
 					best = j;
+					
 				}
+				
 			}
+			
+			//Wenn best grösser als 0
 			if(best>0){
-			//	k.changePol(i, best);
+				
+				//Drehe den Pol um die gegebene Anzahl Schritten
 				addSteps(i, best, 1);
+				
 			}
+			
 		}
-	}
-	private void solveFasterOverCross(){
-		for(int i = 0; i<5; i++){
-			for(int j = i+1; j<6; j++){
-				//Wenn nicht gegenüber und beide nicht gelöst
-				//System.out.println(i+" "+j);
-				//System.out.println(polGegenuber(i));
-				//System.out.println(SolveCheck.isPolSolved(i, k));
-				//System.out.println(SolveCheck.isPolSolved(j, k));
-				turnPolToOptinalPosition();
-				if(j!=polGegenuber(i)&&!SolveCheck.isPolSolved(i, k)&&!SolveCheck.isPolSolved(j, k)){
-					//System.out.println("Do cross accepted");
-					//System.out.println("Anz Steps: "+k.step);
-					int pr = change2PolPositionPR(i,j);
-					int con1 = gemeinsameCons(i,j,0);
-					int con2 = gemeinsameCons(i,j,1);
-					int p1c1 = ConPol2Tri(con1, i);
-					int p1c2 = ConPol2Tri(con2, i);
-					int p2c1 = ConPol2Tri(con1, j);
-					int p2c2 = ConPol2Tri(con2, j);
-					//System.out.println("Cross c1:"+i+" c2:"+j+" c1:"+k.con[con1]+" c2:"+k.con[con2]+" p1c1:"+k.tri[p1c1]+" p1c2:"+k.tri[p1c2]+" p2c1:"+k.tri[p2c1]+" p2c2:"+k.tri[p2c2]);
-					//Alles Legal
-					if(p1c1!=-1&&p1c2!=-1&&p2c1!=-1&&p2c2!=-1){
-						//Pol 1/2 bereit
-						boolean p1ready = false;
-						boolean p2ready = false;
-						int goStep = 2;
-						int doTurn = 3;
-						int hpTurn = 1;
-						//int p1r = 0;
-						//int p2r = 0;
-						int pol1 = i;
-						//int pol2 = j;
-						if((i==1&&j==2)||(i==0&&j==4)||(i==0&&j==5)||(i==1&&j==5)||(i==2&&j==5)||(i==3&&j==5)||(i==0&&j==1)||(i==1&&j==4)||(i==2&&j==3)||(i==3&&j==4)||(i==2&&j==4)||(i==0&&j==3)){
-							doTurn = 1;
-						}
-						if((i==0&&j==3)){
-							hpTurn = 3;
-						}
-						if(k.tri[p1c1]==k.con[con2]&&k.tri[p1c2]==k.con[con1]){
-							p1ready = true;
-						//	p1r = 1;
-						}else
-						if(k.tri[p1c1]==k.con[con1]&&k.tri[p1c2]==k.con[con2]){
-							p1ready = true;
-							goStep = 1;
-							//p1r = 2;
-						}else
-						if(k.tri[p1c1]==k.con[con1]&&k.tri[i*4+(((p1c1%4)+3)%4)]==k.con[con2]){
-						/*	k.changePol(i, 3);
-							if(addSteps(i, 3, 1)){end();}*/
-							p1ready = true;
-							//p1r = 3;
-						}else
-						if(k.tri[p1c2]==k.con[con2]&&k.tri[i*4+(((p1c2%4)+1)%4)]==k.con[con1]){
-							/*k.changePol(i, 1);
-							if(addSteps(i, 1, 1)){end();}*/
-							p1ready = true;
-							//p1r = 4;
-						}
-						
-						if(k.tri[p2c1]==k.con[con2]&&k.tri[p2c2]==k.con[con1]){
-							p2ready = true;
-							//p2r = 1;
-						}else
-						if(k.tri[p2c1]==k.con[con1]&&k.tri[p2c2]==k.con[con2]&&goStep==2){
-							p2ready = true;
-							goStep = 1;
-							//p2r = 2;
-						}else
-						if(k.tri[p2c1]==k.con[con1]&&k.tri[j*4+(((p2c1%4)+3)%4)]==k.con[con2]){
-						/*	k.changePol(j, 1);
-							if(addSteps(j, 1, 1)){end();}*/
-							p2ready = true;
-							//p2r = 3;
-						}else
-						if(k.tri[p2c2]==k.con[con2]&&k.tri[j*4+(((p2c2%4)+1)%4)]==k.con[con1]){
-							/*k.changePol(j, 3);
-							if(addSteps(j, 3, 1)){end();}*/
-							p2ready = true;
-							//p2r = 4;
-						}
-						if(hpTurn==3){
-							/*int temp = pol1;
-							pol1 = pol2;
-							pol2 = temp;*/
-						}
-						//System.out.println(p1ready+" "+p1r+" : "+p2ready+" "+p2r);
-						//System.out.println("Anz vor ready Steps: "+k.step);
-						if(p1ready&&p2ready){
-							//System.out.println("Cross done");
-							boolean isCorrect = false;
-							boolean doNothing = false;
-							while(!isCorrect){
-								if((k.tri[p1c1]==k.con[con2]&&k.tri[p1c2]==k.con[con1])){
-									isCorrect=true;
-									goStep = 2;
-								}else
-								if((k.tri[p1c1]==k.con[con1]&&k.tri[p1c2]==k.con[con2])){
-									isCorrect=true;
-									goStep = 1;
-								}else{
-									//k.changePol(i, 1);
-									addSteps(i, 1, 1);
-								}
-							}
-						//	System.out.println("Anz Steps nach 1: "+k.step);
-							
-							isCorrect = false;
-							while(!isCorrect){
-								if((k.tri[p2c1]==k.con[con2]&&k.tri[p2c2]==k.con[con1])){
-									isCorrect=true;
-									goStep = 2;
-								}else
-								if((k.tri[p2c1]==k.con[con1]&&k.tri[p2c2]==k.con[con2])&&goStep==2){
-									isCorrect=true;
-									goStep = 1;
-								}else
-								if((k.tri[p2c1]==k.con[con1]&&k.tri[p2c2]==k.con[con2])){
-									doNothing = true;
-									isCorrect = true;
-								}else{
-									//k.changePol(j, 1);
-									addSteps(j, 1, 1);
-								}
-							}
-						//	System.out.println("Anz Steps nach 2: "+k.step);
-							
-							if(!doNothing){
-								//Pol zurecht drehen
-								//k.changePol(i, doTurn);
-								addSteps(i, doTurn, 1);
-								
-								//k.changePol(j, 1);
-								addSteps(j, 1, 1);
-								
-								//Kugel hin
-								//k.turnKugel(pr, hpTurn);
-								addSteps(pr, 1, 3);
-								
-								//Wechsel
-								//k.changePol(pol1, goStep);
-								addSteps(pol1, goStep, 1);
-								
-								//Kugel zurück
-								//k.turnKugel(pr, ((hpTurn+2)%4));
-								addSteps(pr, ((1+2)%4), 3);
-								
-								//Pol zurück
-								//k.changePol(j, 3);
-								addSteps(j, 3, 1);
-								
-								//k.changePol(i, ((doTurn+2)%4));
-								addSteps(i, ((doTurn+2)%4), 1);
-							}
-							
-							
-						}
-						
-						
-						
-					}else{
-						System.out.println("Error");
-					}
-					
-					//System.out.println("Anz Steps: "+k.step);
-					
-					
-					
-				}else{
-				//	System.out.println("Gegenüber oder gelöst");
-				}
-			}
-		}
-		//System.out.println("Done with CrossOver");
-	}
-	/**Welcher Pol ist gegenüber
-	 * @param pol
-	 * @return
-	 */
-	private int polGegenuber(int pol){
-		switch(pol){
-			case 0: return 2;
-			case 1: return 3;
-			case 2: return 0;
-			case 3: return 1;
-			case 4: return 5;
-			case 5: return 4;
-			default: return -1;
-		}
-	}
-	private int gemeinsameCons(int pol1, int pol2, int i){
-		if(pol1>pol2){
-			/*int temp = pol1;
-			pol1 = pol2;
-			pol2 = temp;*/
-			System.out.println("Error-->Klein später");
-		}
-		switch(pol1){
-			case 0:
-				switch(pol2){
-					case 1:
-						switch(i){
-							case 0: return 2;
-							case 1: return 6;
-						}
-					break;
-					case 3:
-						switch(i){
-							case 0: return 1;
-							case 1: return 5;
-						}
-					break;
-					case 4:
-						switch(i){
-							case 0: return 1;
-							case 1: return 2;
-						}
-					break;
-					case 5:
-						switch(i){
-							case 0: return 5;
-							case 1: return 6;
-						}
-					break;
-				}
-			break;
-			case 1:
-				switch(pol2){
-					case 2:
-						switch(i){
-							case 0: return 3;
-							case 1: return 7;
-						}
-					break;
-					case 4:
-						switch(i){
-							case 0: return 2;
-							case 1: return 3;
-						}
-					break;
-					case 5:
-						switch(i){
-							case 0: return 6;
-							case 1: return 7;
-						}
-					break;
-				}
-			break;
-			case 2:
-				switch(pol2){
-					case 3:
-						switch(i){
-							case 0: return 0;
-							case 1: return 4;
-						}
-					break;
-					case 4:
-						switch(i){
-							case 0: return 3;
-							case 1: return 0;
-						}
-					break;
-					case 5:
-						switch(i){
-							case 0: return 7;
-							case 1: return 4;
-						}
-					break;
-				}
-			break;
-			case 3:
-				switch(pol2){
-					case 4:
-						switch(i){
-							case 0: return 0;
-							case 1: return 1;
-						}
-					break;
-					case 5:
-						switch(i){
-							case 0: return 4;
-							case 1: return 5;
-						}
-					break;
-				}
-			break;
-		}
-		return -1;
-	}
-	private int ConPol2Tri(int con, int pol){
-		switch(con){
-		case 0:
-			switch(pol){
-				case 2: return 11;
-				case 3: return 15;
-				case 4: return 18;
-			}
-		break;
-		case 1:
-			switch(pol){
-				case 0: return 3;
-				case 3: return 12;
-				case 4: return 19;
-			}
-		break;
-		case 2:
-			switch(pol){
-				case 0: return 0;
-				case 1: return 4;
-				case 4: return 16;
-			}
-		break;
-		case 3:
-			switch(pol){
-				case 1: return 7;
-				case 2: return 8;
-				case 4: return 17;
-			}
-		break;
-		case 4:
-			switch(pol){
-				case 2: return 10;
-				case 3: return 14;
-				case 5: return 22;
-			}
-		break;
-		case 5:
-			switch(pol){
-				case 0: return 2;
-				case 3: return 13;
-				case 5: return 23;
-			}
-		break;
-		case 6:
-			switch(pol){
-				case 0: return 1;
-				case 1: return 5;
-				case 5: return 20;
-			}
-		break;
-		case 7:
-			switch(pol){
-				case 1: return 6;
-				case 2: return 9;
-				case 5: return 21;
-			}
-		break;
 		
-		}
-		return -1;
-	}
-	private ArrayList<String> advancedTurnMinimizer(ArrayList<String> arrayList){
-		for(int i = 0; i<6;i++){
-			int lastTurnPos = -1;
-			int[] lastPos = new int[4];
-			int anz = 0;
-			Arrays.fill(lastPos,-1);
-			for(int j = 0; j<arrayList.size()-1;j++){
-				//pol, anz, modus
-				int[] aktOpt = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(j));
-				int[] akt = SphereUtils.extractPolFromStringReturnAsIntArray(arrayList.get(j),i);
-				Arrays.sort(akt);
-				Arrays.sort(lastPos);
-				//Wenn aktueller Pol = i; Modus = 1
-				if(aktOpt[0]==i&&aktOpt[2]==1){
-					if(Arrays.equals(akt,lastPos)){
-						anz+=aktOpt[1];
-						anz%=4;
-						arrayList.set(j, SphereUtils.getPureSphereCode(arrayList.get(j))+"n"+j+"n"+aktOpt[0]+""+(anz)+""+aktOpt[2]);
-						arrayList.remove(lastTurnPos);
-						lastPos = SphereUtils.extractPolFromStringReturnAsIntArray(arrayList.get(j),i);
-						j-=3;
-						lastTurnPos =-1;
-						anz = 0;
-						Arrays.fill(lastPos,-1);
-					}else
-					if(lastTurnPos==-1){
-						lastTurnPos = j;
-						anz+=aktOpt[1];
-						lastPos = SphereUtils.extractPolFromStringReturnAsIntArray(arrayList.get(j),i);
-					}else{
-						lastTurnPos =-1;
-						anz = 0;
-						Arrays.fill(lastPos,-1);
-					}
-				}else{
-					lastTurnPos =-1;
-					anz = 0;
-					Arrays.fill(lastPos,-1);
-				}
-			}
-		}
-		for(int i = 0; i<arrayList.size();i++){
-			//Neu Nummerieren...
-			arrayList.set(i,SphereUtils.getPureSphereCode(arrayList.get(i))+"n"+i+"n"+SphereUtils.getDrehungFromStringAsString(arrayList.get(i)));
-			//System.out.println(arrayList.get(i));
-		}
-		return arrayList;
-	}
-	private ArrayList<String> advancedStepRemover(ArrayList<String> arrayList){
-		for(int i = 0; i<arrayList.size()-2;i++){
-			String sphere = SphereUtils.getPureSphereCode(arrayList.get(i));
-			for(int j = i+1; j<arrayList.size()-1;j++){
-				if(sphere==SphereUtils.getPureSphereCode(arrayList.get(j))){
-					for(int l = j; l>i; l--){
-						arrayList.remove(l);
-					}
-				}
-			}
-		}
-		for(int i = 0; i<arrayList.size();i++){
-			//Neu Nummerieren...
-			arrayList.set(i,SphereUtils.getPureSphereCode(arrayList.get(i))+"n"+i+"n"+SphereUtils.getDrehungFromStringAsString(arrayList.get(i)));
-			//System.out.println(arrayList.get(i));
-		}
-	
-		
-		
-		
-		
-		return arrayList;
 	}
 	
-
 }

@@ -51,6 +51,10 @@ public class Rendern {
      * 
      * Option kugel wird auch als aktuelle Kugel des Rendern-Objekts definiert
      */
+    protected Rendern(){
+    	k = new Kugel();
+    	run();
+    }
     protected Rendern(Kugel kugel){
     	//Setze die Kugel als eigene
     	k = kugel;
@@ -58,7 +62,10 @@ public class Rendern {
     	//Starte das Rendern
     	run();
     }
-    
+    protected void updateVariables(Kugel kugel, int mode){
+    	renderMode = mode;
+    	k = kugel;
+    }
     /**
      * Funktion zum Updaten der Kugel
      */
@@ -76,7 +83,7 @@ public class Rendern {
      */
     private void run() {
         try {
-            init();
+        	init();
         }
         catch (Exception e) {
             e.printStackTrace();

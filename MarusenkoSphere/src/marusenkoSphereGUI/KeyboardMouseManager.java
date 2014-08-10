@@ -26,7 +26,7 @@ public class KeyboardMouseManager {
 	    }
 		
 	    //Zu Kugel wechseln wenn K gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
-	    if(Keyboard.isKeyDown(Keyboard.KEY_K)||pressedKey.contains('k')) {
+	    if(Keyboard.isKeyDown(Keyboard.KEY_K)||pollPressedKey('k')) {
 	    	//Wenn K nicht blockiert ist
 	    	if(!m.blockedKey.contains("k")){
 	    		//K blockieren
@@ -41,7 +41,7 @@ public class KeyboardMouseManager {
 	    }
 	    
 	    //Zu Editor wechseln wenn E gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
-	    if(Keyboard.isKeyDown(Keyboard.KEY_E)||pressedKey.contains('e')) {
+	    if(Keyboard.isKeyDown(Keyboard.KEY_E)||pollPressedKey('e')) {
 	    	//Wenn E nicht blockiert
 	    	if(!m.blockedKey.contains("e")){
 	    		//E blockieren
@@ -56,7 +56,7 @@ public class KeyboardMouseManager {
 	    }
 	    
 	    //Zu Devpanel wechsel wenn D gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
-	    if(Keyboard.isKeyDown(Keyboard.KEY_D)||pressedKey.contains('d')) {
+	    if(Keyboard.isKeyDown(Keyboard.KEY_D)||pollPressedKey('d')) {
 	    	//Wenn D nicht blockiert
 	    	if(!m.blockedKey.contains("d")){
 	    		//D blockieren
@@ -98,7 +98,7 @@ public class KeyboardMouseManager {
 		    }
 		    
 		    //Animation zum lösen der Kugel bis am Schluss starten, wenn L gedrückt ist, zusätzlich L 100ms blockieren,  damit nicht mehrere Anschläge in einem gemacht werden
-		    if(Keyboard.isKeyDown(Keyboard.KEY_L)||pressedKey.contains('l')){	
+		    if(Keyboard.isKeyDown(Keyboard.KEY_L)||pollPressedKey('l')){	
 		    	//Wenn L nicht blockiert
 				if(!m.blockedKey.contains("l")){
 					//L blockieren
@@ -113,7 +113,7 @@ public class KeyboardMouseManager {
 			}
 		    
 		    //Kugel neu füllen, wenn S gedrückt ist, zusätzlich 200ms blockieren,  damit nicht mehrere Anschläge in einem gemacht werden
-		    if(Keyboard.isKeyDown(Keyboard.KEY_S)||pressedKey.contains('s')) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_S)||pollPressedKey('s')) {
 		    	//Wenn S nicht blockiert
 		    	if(!m.blockedKey.contains("s")){
 		    		//S blockieren
@@ -128,7 +128,7 @@ public class KeyboardMouseManager {
 		    }
 		    
 		    //Einen Schritt weiter gehen, wenn X gedrückt, zusätzlich 100ms blockieren,  damit nicht mehrere Anschläge in einem gemacht werden
-		    if(Keyboard.isKeyDown(Keyboard.KEY_X)||pressedKey.contains('x')) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_X)||pollPressedKey('x')) {
 		    	//Wenn X nicht blockiert
 		    	if(!m.blockedKey.contains("x")){
 		    		//X blockieren
@@ -144,7 +144,7 @@ public class KeyboardMouseManager {
 		    }
 		    
 		    //Einen Schritt zurück gehen, wenn Y gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
-		    if(Keyboard.isKeyDown(Keyboard.KEY_Y)||pressedKey.contains('y')) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_Y)||pollPressedKey('y')) {
 		    	//Wenn Y nicht blockiert
 		    	if(!m.blockedKey.contains("y")){
 		    		//Y blockieren
@@ -195,6 +195,28 @@ public class KeyboardMouseManager {
 	    		}
 	    	}
 	    }
-	pressedKey.clear();
+	}
+	/**
+	 * Zum Abrufen der virtuellen Tasten
+	 * 
+	 * Fragt, ob 'c' vorhanden und löscht sie anschliessend
+	 */
+	private static boolean pollPressedKey(char c){
+		
+		//ist 'c' vorhanden
+		if(pressedKey.contains(c)){
+			
+			//Wenn ja, suche den Index und lösche ihn
+			pressedKey.remove(pressedKey.indexOf(c));
+			
+			//Gib true zurück
+			return true;
+			
+		//Ansonsten
+		}else{
+			
+			//Gib false zurück
+			return false;
+		}
 	}
 }
