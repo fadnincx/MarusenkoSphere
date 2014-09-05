@@ -1,5 +1,6 @@
 package marusenkoSphereKugel;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
@@ -520,5 +521,122 @@ public class SphereUtils {
 		
 		//Bei einem Fehler...
 		return -1;
+	}
+	
+	public static boolean otherPositionsOnPoleSolved(int p1, int p2, Kugel k){
+		int pol = p1/4;
+		int pos1 = p1%4;
+		int pos2 = p2%4;
+		
+		int[] pos = new int[2];
+		
+		for(int i = 0, index = 0; i<4; i++){
+			if(pos1!=i&&pos2!=i){
+				pos[index] = i;
+				index++;
+			}
+		}
+		return (SolveCheck.isPositionSolved((pol*4+pos[0]), k)&&SolveCheck.isPositionSolved((pol*4+pos[1]), k));
+		
+	}
+	public static boolean[] getPolBand(int p1, int p2){
+		int pol = p1/4;
+		
+		//Bekomme die beiden Pole, welche an die Position grenzen
+		int[] pole1 = SphereUtils.getPoleForPosition(p1);
+		
+		//Bekomme die beiden Pole, welche an die Position grenzen
+		int[] pole2 = SphereUtils.getPoleForPosition(p2);
+				
+		//Variable mit den beiden möglichen Polen
+		int[] poleMoeglich = new int[2]; 
+				
+		//Variable um zu fragen, ob die beiden positionen überhaupt einen gemeinsamen Nachbarspol haben (Voraussetzung)
+		boolean everSame = false;
+				
+				
+		//Gehe bei der ersten Position alle durch
+		for(int i = 0; i<2; i++){
+					
+			//Variable mit dem aktuellen Status
+			boolean same = false;
+					
+			//Variable um bei ungleichheit die Nummer zu speichern
+			int notSame = -1;
+					
+			//Gehe bei der 2 Position alle durch
+			for(int j = 0; j<2;j++){
+						
+				//Wenn die beiden gleich sind
+				if(pole1[i]==pole2[j]){
+						
+					//setzte aktuelle variable auf true
+					same = true;
+							
+				//Ansonsten	
+				}else{
+							
+					//Speichere die aktuelle Nummer
+					notSame = j;
+				}
+						
+			}
+					
+			//Wenn same falsch ist
+			if(!same){
+						
+				//Die möglichen Pole speichern
+				poleMoeglich[0]=pole1[i];
+				poleMoeglich[1]=pole2[notSame];
+						
+				//Variable auf true setzten, damit grundvoraussetzung gegeben ist
+				everSame = true;
+			}
+					
+		}
+		LinkedList<Integer> polRing = new LinkedList<Integer>();
+		//ist grundvoraussetzung gebenen
+		if(everSame){
+			int addPol = completePolBand(new int[]{pol, poleMoeglich[0], poleMoeglich[1]});
+			//Dann gibt wahr zurück
+			polRing.add(poleMoeglich[0]);
+			polRing.add(poleMoeglich[1]);
+			polRing.add(addPol);
+			polRing.add(pol);
+					
+		}	
+		boolean[] r = new boolean[6];
+		for(int i = 0; i<6; i++){
+			r[i] = polRing.contains(i);
+		}
+		
+		return r;
+	}
+
+	public static int completePolBand(int[] pole){
+		if(pole.length==3){
+			Arrays.sort(pole);
+			if((pole[0]==1&&pole[1]==2&&pole[2]==3)||(pole[0]==2&&pole[1]==4&&pole[2]==5)){
+				return 0;
+			}else
+			if((pole[0]==0&&pole[1]==2&&pole[2]==3)||(pole[0]==3&&pole[1]==4&&pole[2]==5)){
+				return 1;
+			}else
+			if((pole[0]==0&&pole[1]==1&&pole[2]==3)||(pole[0]==0&&pole[1]==4&&pole[2]==5)){
+				return 2;
+			}else
+			if((pole[0]==0&&pole[1]==1&&pole[2]==2)||(pole[0]==1&&pole[1]==4&&pole[2]==5)){
+				return 3;
+			}else
+			if((pole[0]==0&&pole[1]==2&&pole[2]==5)||(pole[0]==1&&pole[1]==3&&pole[2]==5)){
+				return 4;
+			}else
+			if((pole[0]==0&&pole[1]==2&&pole[2]==4)||(pole[0]==1&&pole[1]==3&&pole[2]==4)){
+				return 5;
+			}
+			return -1;
+		}else{
+			return -1;
+		}
 	}
 }

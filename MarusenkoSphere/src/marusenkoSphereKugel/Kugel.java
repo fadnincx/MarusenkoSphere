@@ -3,6 +3,8 @@ package marusenkoSphereKugel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+
+import marusenkoSphere.Settings;
 /**
  * Kugel-Datei
  * 
@@ -104,7 +106,11 @@ public class Kugel{
 			
 			//Den Step aktuallisieren
 			step = Integer.parseInt(sp[1]);
-		
+			
+			//Wenn gewünscht, den aktuellen Kugel Code ausgeben
+			if(Settings.PRINTSPHERECODE){
+				System.out.println(getSphere("000"));
+			}
 			
 		//Wenn der String nicht die erwartete Form hat
 		}else{

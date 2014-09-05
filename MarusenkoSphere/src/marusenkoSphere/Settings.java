@@ -14,6 +14,12 @@ public class Settings {
 	//Main
 	public static final boolean STARTKONSOLE = false;
 
+	//Log
+	public static final String LOGPATH = "D:/marusenkoLog";
+	
+	//Kugel
+	public static final boolean PRINTSPHERECODE = true;
+	
 	//RendernKugel
 	public static final int KUGELRENDERRASTER = 10; //Nur 1, 2, 5, 10
 }

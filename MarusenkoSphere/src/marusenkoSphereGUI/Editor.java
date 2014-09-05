@@ -420,6 +420,6 @@ public class Editor {
 	 * @param y   : Position y
 	 */
 	private static boolean isInRectangle(double r1x, double r1y, double r2x, double r2y, double x, double y){
-		return (isInTriangle(r1x,r1y,r2x,r2y,r1x,r2y,x,x)||isInTriangle(r1x,r1y,r2x,r2y,r2x,r1y,x,y)) ? true:false;
+		return (isInTriangle(r1x,r1y,r2x,r2y,r1x,r2y,x,y)||isInTriangle(r1x,r1y,r2x,r2y,r2x,r1y,x,y)) ? true:false;
 	}
 }

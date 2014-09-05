@@ -22,15 +22,10 @@ import java.util.Date;
 public class Log {
 
 	/**
-	 * Die Konstante mit dem Speicherpfad für die Logs
-	 */
-	public static final String LOG_PATH = "D:/marusenkoLog";
-	
-	/**
 	 * Schreibe ErrorLog zu Datei
 	 */
 	public static void ErrorLog(String error){
-		LogFile(error,LOG_PATH+"/error.log");
+		LogFile(error,Settings.LOGPATH+"/error.log");
 		System.out.println("!!!Error!!!  "+error);
 	}
 	
@@ -38,7 +33,7 @@ public class Log {
 	 * Schreibe DebugLog zu Datei
 	 */
 	public static void DebugLog(String debug){
-		LogFile(debug,LOG_PATH+"/debug.log");
+		LogFile(debug,Settings.LOGPATH+"/debug.log");
 		System.out.println("Debug, "+debug);
 	}
 	
