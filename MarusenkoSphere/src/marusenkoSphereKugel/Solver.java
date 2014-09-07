@@ -141,8 +141,8 @@ public class Solver {
 		
 			//Strategie 0
 			case 0:
+				
 				return strategieStandard();
-		
 			//Strategie 1
 			case 1:
 				return strategieOne();
@@ -158,7 +158,7 @@ public class Solver {
 	 * Löst die Kugel gemäss der Standard-Taktik
 	 */
 	private ArrayList<String> strategieStandard(){
-				
+		
 		//Array mit der Reihenfolge der Pole
 		int[] pol = {0,1,4,2,3,5};
 		
@@ -173,15 +173,18 @@ public class Solver {
 				if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
 					System.out.println("Löse Pol "+pol[i]+" Position 0 und 1");
 					strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+1);
-					System.out.println("Löse Pol "+pol[i]+" Position 2 und 3");
-					strategieStandardSolve2Positions(pol[i]*4+2, pol[i]*4+3);
 					break;
+					//System.out.println();
+					//System.out.println("Löse Pol "+pol[i]+" Position 2 und 3");
+					//strategieStandardSolve2Positions(pol[i]*4+2, pol[i]*4+3);
+					//break;
 				}else
 				if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
 					System.out.println("Löse Pol "+pol[i]+" Position 1 und 2");
 					strategieStandardSolve2Positions(pol[i]*4+1, pol[i]*4+2);
-					System.out.println("Löse Pol "+pol[i]+" Position 0 und 3");
-					strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+3);
+					break;
+					//System.out.println("Löse Pol "+pol[i]+" Position 0 und 3");
+					//strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+3);
 				}
 				
 			}
@@ -189,6 +192,32 @@ public class Solver {
 		
 		//Löse den Letzten Pol und gibt die Kugel zurück
 		//return strategieOne();
+		//TODO **/
+		/*for(int i = 0; i<24;i++){
+			for(int j = i+1; j<24; j++){
+				//if((int)i/4!=(int)j/4){
+					int color1 = k.tri[i];
+					int color2 = k.tri[j];
+					change2PosEqual(i, j);
+					if(color1 == k.tri[j]&& color2 == k.tri[i]){
+						System.out.println("Successfull "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
+					}else
+					if(color2 == k.tri[i]){
+						System.out.println("Partial Successfull 1 "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
+					}else
+					if(color1 == k.tri[j]){
+						System.out.println("Partial Successfull 2 "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);	
+					}else{
+						System.out.println("Failed "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
+					}
+					
+					
+				//}
+			}
+		}
+		
+		
+		*/
 		return solvingWay;
 	}
 	
@@ -196,14 +225,15 @@ public class Solver {
 	 * Löst 2 Positionen gemäss der Standart-Taktik
 	 */
 	private void strategieStandardSolve2Positions(int pos1, int pos2){
-		
+	
 		if(strategieStandardAreThis2Possible(pos1,pos2)){
+			
 			int urPol = pos1/4;
 			System.out.println("UrPol = "+urPol);
 			
 			int colorForPosition1 = k.con[SphereUtils.findCorrectConIndexFromTri(pos1)];
 			int colorForPosition2 = k.con[SphereUtils.findCorrectConIndexFromTri(pos2)];
-			System.out.println("Needed Colors, P1:"+pos1+" - "+colorForPosition1+" P2:"+pos2+" - "+colorForPosition2);
+			System.out.println("Needed Colors, P1("+pos1+") = "+colorForPosition1+" P2("+pos2+") = "+colorForPosition2);
 			
 			boolean otherPartOfPolSolved = SphereUtils.otherPositionsOnPoleSolved(pos1, pos2, k);
 			if(otherPartOfPolSolved){
@@ -237,29 +267,38 @@ public class Solver {
 				}
 				
 			}
+			//Bsp für (0,1) [true][false][true][false][true][true]
+			//Bsp für (0,3) [true][true][true][true][false][false]
 			boolean[] polRing = SphereUtils.getPolBand(pos1,pos2);
 			int[] polRanking = new int[6];
 			
 			for(int i=0; i<6; i++){
 				
+				//Wenn nicht Urpol -> Weiter
+				//Wenn nicht gelöst -> Weiter
+				//Wenn auf Ring -> Weiter
 				if(i!=urPol&&!SolveCheck.isPolSolved(i, k)&&polRing[i]){
 					
+					//Grund bedingung erfüllt --> +5 Punkte
 					polRanking[i]+=5;
 					
+					//farben gefunden auf false
 					boolean color1 = false;
 					boolean color2 = false;
 					
+					
 					for(int j = 0; j<4; j++){
 						
-						if(otherPartOfPolSolved||!color1OnUrPol){
+						if(!otherPartOfPolSolved&&color1OnUrPol){
+							color1 = true;
+							polRanking[i]+=10;
+						}
 							
-							if(!color1&&k.tri[i*4+j]==colorForPosition1){
+						if(!color1&&k.tri[i*4+j]==colorForPosition1){
 								
-								color1=true;
-								polRanking[i]+=10;
+							color1=true;
+							polRanking[i]+=10;
 								
-							}
-							
 						}
 						
 						if(!color2&&k.tri[i*4+j]==colorForPosition2){
@@ -267,7 +306,7 @@ public class Solver {
 							color2=true;
 							polRanking[i]+=10;
 							
-						}					
+						}	
 						
 					}
 
@@ -277,6 +316,7 @@ public class Solver {
 			
 			int anzPunkteForPol = 0;
 			System.out.println("PolRanking "+Arrays.toString(polRanking));
+			
 			for(int i=0; i<6; i++){
 				
 				if(polRanking[i]>anzPunkteForPol){
@@ -287,6 +327,7 @@ public class Solver {
 				}
 				
 			}
+			
 			System.out.println("HilfsPol: "+hilfsPol);
 			
 			if(hilfsPol != -1){
@@ -306,14 +347,6 @@ public class Solver {
 				boolean[] positionsOnHilfsPol = new boolean[]{false,false};
 				
 				for(int i = 0; i<4; i++){
-				
-					if(!otherPartOfPolSolved&&!positionsOnUrPol[0]&&k.tri[urPol*4+i]==colors[0]){
-						
-						positionsOnUrPol[0]=true;
-						
-						positionNrOnUrPol[0]=i;
-					
-					}
 					
 					if(!positionsOnUrPol[1]&&k.tri[urPol*4+i]==colors[1]){
 						
@@ -321,14 +354,6 @@ public class Solver {
 						
 						positionNrOnUrPol[1]=i;
 						
-					}
-					
-					if(!otherPartOfPolSolved&&!positionsOnHilfsPol[0]&&k.tri[hilfsPol*4+i]==colors[0]){
-						
-						positionsOnHilfsPol[0]=true;
-						
-						positionNrOnHilfsPol[0]=i;
-					
 					}
 					
 					if(!positionsOnHilfsPol[1]&&k.tri[hilfsPol*4+i]==colors[1]){
@@ -348,24 +373,44 @@ public class Solver {
 					int posHilf = positionNrOnHilfsPol[0]==0?3:0;
 					System.out.println("Exact - Pos2ToHPol ("+k.step+"): "+(urPol*4+positionNrOnUrPol[1])+", "+posHilf);
 					System.out.println("Positionen bevor drehen: "+k.tri[(urPol*4+positionNrOnUrPol[1])]+";"+posHilf);
-					changeExact2Positions((urPol*4+positionNrOnUrPol[1]), posHilf,true);
+					change2PosEqual((urPol*4+positionNrOnUrPol[1]), posHilf);//overflow
 					System.out.println("Positionen nach drehen: "+k.tri[(urPol*4+positionNrOnUrPol[1])]+";"+posHilf);
 					System.out.println("Exact end ("+k.step+")");
 					positionsOnHilfsPol[1] = true;
+
+				}
+				
+				
+				for(int i = 0; i<4; i++){
+					
+					if(!otherPartOfPolSolved&&!positionsOnUrPol[0]&&k.tri[urPol*4+i]==colors[0]){
+						
+						positionsOnUrPol[0]=true;
+						
+						positionNrOnUrPol[0]=i;
+					
+					}
+					
+					if(!positionsOnHilfsPol[0]&&k.tri[hilfsPol*4+i]==colors[0]){
+						
+						positionsOnHilfsPol[0]=true;
+						
+						positionNrOnHilfsPol[0]=i;
+					
+					}
 					
 				}
 				
+				
 				if(positionsOnUrPol[0]){
 					
-					//Position 1 an korrekte position drehen
-					
-					positionNrOnUrPol[0]=-1;
-					
+					System.out.println("Pos1 on Urpol...");
+					//Position 1 an korrekte position drehen	
 					positionsOnUrPol[0]=false;
 					
 					for(int i = 0; i<4;i++){
 						
-						if(!otherPartOfPolSolved&&k.tri[positions[1]]==colors[0]){
+						if(k.tri[positions[1]]!=colors[0]){
 							System.out.println("If pos 0 on urpol turn correct");
 							addSteps(urPol, 1, 1);
 						
@@ -394,22 +439,15 @@ public class Solver {
 							}
 							
 						}
-						
-						int hilfsPos = positionNrOnHilfsPol[1]==0?2:0;
-						
-						positionNrOnHilfsPol[0]=hilfsPos;
-						System.out.println("Exact - Pos1ToHPol ("+k.step+"): "+changePosition+", "+(hilfsPol*4+hilfsPos));
-						changeExact2Positions(changePosition, (hilfsPol*4+hilfsPos));
-						System.out.println("Exact end ("+k.step+")");
-						
-						
-						
-					}
 					
-					//Position 1 von Hilfspol auf korrekte position drehen
-					System.out.println("Exact - Pos1ToCorrectPos ("+k.step+"): "+(hilfsPol*4+positionNrOnHilfsPol[0])+", "+positions[1]);
-					changeExact2Positions((hilfsPol*4+positionNrOnHilfsPol[0]), positions[1], true);
-					System.out.println("Exact end ("+k.step+")");
+						System.out.println("Put Pos1 from anywhere to Pos2");
+						change2PosEqual(changePosition,positions[1]);
+						
+						
+					}else{
+						System.out.println("Put Pos 1 from Hilfspol to Pos2");
+						change2PosEqual((hilfsPol*4+positionNrOnHilfsPol[0]), positions[1]);
+					}
 					
 				}
 				
@@ -435,24 +473,17 @@ public class Solver {
 										
 					positionNrOnHilfsPol[0]=hilfsPol*4;
 					System.out.println("Exact - Pos2ToHPol ("+k.step+"): "+changePosition+", "+hilfsPol);
-					changeExact2Positions(changePosition, hilfsPol*4);
+					change2PosEqual(changePosition, hilfsPol*4);
 					System.out.println("Exact end ("+k.step+")");
 					positionNrOnHilfsPol[1]=0;
 					
 				}
 				
 				System.out.println("Exact - Pos2ToCorrectPol ("+k.step+"): "+(hilfsPol*4+positionNrOnHilfsPol[1])+", "+positions[1]);
-				changeExact2Positions((hilfsPol*4+positionNrOnHilfsPol[1]), positions[1],true);
+				change2PosEqual((hilfsPol*4+positionNrOnHilfsPol[1]), positions[0], true);//overflow
 				System.out.println("Exact end ("+k.step+")");
-				
-				
-				
-				
+	
 				//Position 2 von Hilfspol auf korrekte position drehen
-				
-				
-				
-				
 				
 			}else{
 				System.out.println("HilfsPol = -1");
@@ -461,417 +492,7 @@ public class Solver {
 		}else{
 			System.out.println("Lösen unmöglich von "+pos1+":"+pos2);
 		}
-		
-		/*
-		
-		
-		//TODO alter Teil der Funktion
-		
-		
-		
-		
-		//Sofern dies möglich ist
-		if(strategieStandardAreThis2Possible(pos1,pos2)){
-			
-			//Für beide Positionen die Angrenzenden Pole abfragen
-			int[] pole1 = SphereUtils.getPoleForPosition(pos1);
-			int[] pole2 = SphereUtils.getPoleForPosition(pos2);
-			
-			//Pol auf dem beide sind speichern
-			int UrPol = pos1/4;
-			
-			//Array mit möglichen Polen --> Pol an den nur einer Grenz
-			int[] poleMoeglich = new int[2]; 
-			
-			//Farben, welche an diesen Positionen benötigt werden
-			int[] neededColors = new int[] {k.con[SphereUtils.findCorrectConIndexFromTri(pos1)],k.con[SphereUtils.findCorrectConIndexFromTri(pos2)]};
-			
-			//Variable um zu fragen, ob die beiden positionen überhaupt einen gemeinsamen Nachbarspol haben (Voraussetzung)
-			boolean everSame = false;
-			
-			//Gehe bei der ersten Position alle durch
-			for(int i = 0; i<2; i++){
-				
-				//Variable mit dem aktuellen Status
-				boolean same = false;
-				
-				//Variable um bei ungleichheit die Nummer zu speichern
-				int notSame = -1;
-				
-				//Gehe bei der 2 Position alle durch
-				for(int j = 0; j<2;j++){
-					
-					//Wenn die beiden gleich sind
-					if(pole1[i]==pole2[j]){
-						
-						//setzte aktuelle variable auf true
-						same = true;
-						
-					//Ansonsten	
-					}else{
-						
-						//Speichere die aktuelle Nummer
-						notSame = j;
-					}
-					
-				}
-				
-				//Wenn same falsch ist
-				if(!same){
-					
-					//Die möglichen Pole speichern
-					poleMoeglich[0]=pole1[i];
-					poleMoeglich[1]=pole2[notSame];
-					
-					//Variable auf true setzten, damit grundvoraussetzung gegeben ist
-					everSame = true;
-				}
-				
-			}
-			
-			
-			//Pol, mit dem der wechsel wirklich ausgeführt wird
-			int poleToDo = -1;
-			
-			//Die Anzahl farben, welche auf diesen Pol verschoben werden müssen
-			int anzNeededColors = -1;
-			
-			//ist grundvoraussetzung gebenen
-			if(everSame){
-				
-				//Gehe die beiden Pole durch
-				for(int i = 0; i<2; i++){
-					
-					//Wenn ein Pol noch nicht gelöst ist
-					if(!SolveCheck.isPolSolved(poleMoeglich[i], k)){
-						
-						//Die benötigte Anzahl  = 0
-						int aktAnzNeeded = 0;
-						
-						//Farbe für Position 1 gefunden
-						boolean p1Found = false; 
-						
-						//Farbe für Position 2 gefunden
-						boolean p2Found = false;
-						
-						//Gehe die 4 Positionen eines Pol durch
-						for(int j = 0; j<4; j++){
-							
-							//Wenn die Farbe für Position 1 gefunden
-							if(k.tri[poleMoeglich[i]*4+j]==neededColors[0]&&!p1Found){
-								
-								//Anzahl ++
-								aktAnzNeeded++;
-								
-								//Position 1 gefunden = wahr
-								p1Found = true;
-								
-							}
-							
-							//Wenn die Farbe für Position 2 gefunden
-							if(k.tri[poleMoeglich[i]*4+j]==neededColors[1]&&!p2Found){
-								
-								//Anzahl ++
-								aktAnzNeeded++;
-								
-								//Position 2 gefunden = wahr
-								p2Found = true;
-								
-							}
-							
-						}
-						
-						//Wenn der Pol besser ist, als der vorhergehende
-						if(aktAnzNeeded>anzNeededColors){
-							
-							//Pol, auf welchem durch geführt wird setzten
-							poleToDo = poleMoeglich[i];
-							
-							//Anzahl farben setzten
-							anzNeededColors = aktAnzNeeded;	
-						}
-						
-					}
-					
-				}
-				
-			}
 
-			//Wenn ein Pol gefunden wurde
-			if(poleToDo!=-1){
-				
-				//Array mit dem Status, welche Pole bereits gelöst sind
-				boolean[] okPole = new boolean[6];
-				
-				//Fülle das Array --> gehe für alle Pole durch
-				for(int i = 0; i<6; i++){
-					
-					//Wenn Pol gelöst ist, dann soll er wahr gesetzt werden, sonst falsch
-					okPole[i] = SolveCheck.isPolSolved(i, k);
-					
-				}
-				
-
-				//Variable, Farbe für Position 1 ist auf dem Pol vorhanden
-				boolean color1OnPole = false;
-				
-				//Variable, Farbe für Position 2 ist auf dem Pol vorhanden
-				boolean color2OnPole = false;
-				
-				//Variable, Position mit der Farbe für Position 1
-				int color1Pos = -1;
-				
-				//Variable, Position mit der Farbe für Position 2
-				int color2Pos = -1;
-				
-				
-				//Array mit den beiden anderen Positionen auf dem Ursprünglichen Pol
-				int[] positionenOnUrPol = SphereUtils.otherPositionsOnPole(pos1, pos2);
-				
-				//Wenn die beiden anderen Positionen auf dem Ursprünglichen Pol noch nicht gelöst wurden
-				if(!SolveCheck.isPositionSolved(positionenOnUrPol[0], k)&&!SolveCheck.isPositionSolved(positionenOnUrPol[1], k)){
-					
-				}
-
-				// TODO ist von Funktion übernommen worden
-				
-
-				//Gehe für alle 4 Positionen durch
-				for(int i = 0; i<4; i++){
-					
-					//Ist die Farbe für Position 1 vorhanden?
-					if(k.tri[poleToDo*4+i]==neededColors[0]&&!color1OnPole){
-						
-						//Variable, Farbe für Position 1 vorhanden auf wahr setzen
-						color1OnPole = true;
-						
-						//Aktuelle Position speichern
-						color1Pos = poleToDo*4+i;
-						
-					}
-					
-					//Ist die Farbe für Position 2 vorhanden?
-					if(k.tri[poleToDo*4+i]==neededColors[1]&&!color2OnPole){
-						
-						//Variable, Farbe für Position 2 vorhanden auf wahr setzen
-						color2OnPole = true;
-						
-						//Aktuelle Position speichern
-						color2Pos = poleToDo*4+i;
-						
-					}
-					
-				}
-				
-				//Wenn die Farbe für Position 1 nicht auf dem Pol vorhanden ist
-				if(color1Pos==-1){
-					
-					//Gehe alle Positionen durch
-					for(int i = 0; i<4; i++){
-						
-						//Position gefunden auf falsch
-						boolean pFound = false;
-						
-						//Wenn nicht bereits die Position für Farbe 2 und Position nocht nicht gefunden
-						if(poleToDo*4+i!=color2Pos&&poleToDo*4+i+1!=color2Pos&&!pFound){
-							
-							//Als Position von Farbe 1 speichern
-							color1Pos = poleToDo*4+i;
-							
-						}
-						
-					}
-					
-				}
-				
-				//Gehe alle 1 Pole durch
-				for(int i = 0; i<6; i++){
-					
-					//Wenn der Pol noch nicht gelöst ist und Farbe 1 noch nicht gefunden
-					if(!okPole[i]&&!color1OnPole){
-						
-						//Gehe alle Positioinen durch
-						for(int j = 0; j<4; j++){
-							
-							//Wenn die Farbe 1 gefunden
-							if(k.tri[i*4+j]==neededColors[0]){
-								
-								//Verschiebe auf die vorherbestimmte Postion  
-								changeExact2Positions(color1Pos, i*4+j);
-								
-								//Setzte Variable auf wahr, dass Position für Farbe 1 gelöst ist
-								color1OnPole = true;
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-				//Setze die Positionen der Farben zurück
-				color1Pos = -1;
-				color2Pos = -1;
-				color1OnPole = false;
-				color2OnPole = false;
-				
-				//Gehe alle Positionen des pols erneut durch
-				for(int i = 0; i<4; i++){
-					
-					//Wenn Farbe 1 gefunden
-					if(k.tri[poleToDo*4+i]==neededColors[0]&&!color1OnPole){
-						
-						//Variable für Farbe 1 auf wahr
-						color1OnPole = true;
-						
-						//Position speichern
-						color1Pos = poleToDo*4+i;
-						
-					}
-					
-					//Wenn Farbe 2 gefunden
-					if(k.tri[poleToDo*4+i]==neededColors[1]&&!color2OnPole){
-						
-						//Variable für Farbe 2 auf wahr
-						color2OnPole = true;
-						
-						//Position speichern
-						color2Pos = poleToDo*4+i;
-						
-					}
-					
-				}
-				
-				//Wenn Farbe 2 noch nicht gefunden
-				if(color2Pos==-1){
-					
-					//Gehe alle Positionen durch
-					for(int i = 0; i<4; i++){
-						
-						//Position gefunden auf falsch
-						boolean pFound = false;
-						
-						//Wenn nicht bereits die Position für Farbe 1 und Position nocht nicht gefunden
-						if(poleToDo*4+i!=color1Pos&&poleToDo*4+i+1!=color1Pos&&!pFound){
-							
-							//Als Position von Farbe 2 speichern
-							color2Pos = poleToDo*4+i;
-							
-						}
-						
-					}
-					
-				}
-				
-				//Gehe alle 6 Pole durch
-				for(int i = 0; i<6; i++){
-					
-					//Wenn der Pol noch nicht gelöst ist und Farbe 2 noch nicht gefunden
-					if(!okPole[i]&&!color2OnPole){
-						
-						//Gehe alle Positioinen durch
-						for(int j = 0; j<4; j++){
-							
-							//Wenn Farbe 2 gefunden
-							if(k.tri[i*4+j]==neededColors[1]){
-								
-								//Verschiebe auf die vorherbestimmte Position
-								changeExact2Positions(color2Pos, i*4+j);
-								
-								//Setzte Variable auf wahr, dass Position für Farbe 2 gelöst ist
-								color2OnPole = true;
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-				// TODO Ende
-				
-				//Die Farben auf den Pol kriegen, sofern sie noch nicht vorhanden sind
-				
-				//Bekomme die Position, auf welche die Farben verschoben werden müssen, um zu passen
-				int posOnPol = SphereUtils.strategieStandardGetPosOnPol(pos1, pos2, poleToDo);
-				
-				//Bekomme den Pol mit welchem gedreht wird
-				int polDrehung = SphereUtils.strategieStandardGetPolForDrehung(pos1, pos2, poleToDo);
-				
-				//Bekomme die weiteren Optionen, mit welchen gedreht wird
-				int[] optionens = SphereUtils.strategieStandartGetTurnOpt(pos1, pos2, poleToDo);
-				
-				//Prüfe, dass der Index 0 zu Position 1 und Index 1 zu Position 2 passt, ansonsten die beiden Positionen tauschen
-				if(neededColors[0]==k.con[SphereUtils.findCorrectConIndexFromTri(pos2)]&&neededColors[1]==k.con[SphereUtils.findCorrectConIndexFromTri(pos1)]){
-					
-					//Dreieckstausch --> Variabel 1 in temp
-					int temp = neededColors[0];
-					
-					//Variable1 mit 2 überschreiben
-					neededColors[0] = neededColors[1];
-					
-					//Variable2 mit temp überschreiben
-					neededColors[1] = temp;
-					
-				}
-				
-				
-				//Speichert die benötigten Farben im Array
-				//Wenn optiones[2]==2 ist, dann müssen die Werte in umgekehrter Reihenfolge übernommen werden
-				int[] colors = (optionens[2]==2) ? new int[]{neededColors[1],neededColors[0]} : new int[]{neededColors[0],neededColors[1]};
-
-				//Gehe maximal 4 mal durch 
-				for(int i = 0; i<4; i++){
-					
-					//Wenn die benötigte Farbe nicht an der benötigten Position ist
-					if(k.tri[posOnPol]!=colors[0]){
-						
-						//Drehe den Pol eins weiter
-						addSteps(poleToDo, 1, 1);
-						
-					}
-					
-				}
-				
-				//Drehe die Halbe Kugel
-				addSteps(polDrehung, optionens[0], 3);
-				
-				//Drehe den Pol, um die erste Farbe an die Position der 2 zu verschieben
-				addSteps(UrPol, optionens[1], 1);
-				
-				//Drehe die Halbe Kugel zurück
-				addSteps(polDrehung, 4-optionens[0], 3);
-				
-
-				//Gehe maximal 4 mal durch
-				for(int i = 0; i<4; i++){
-					
-					//Wenn die benötigte Farbe nicht and der benötigten Position ist
-					if(k.tri[posOnPol]!=colors[1]){
-						
-						//Drehe den Pol eins weiter
-						addSteps(poleToDo, 1, 1);
-						
-					}
-					
-				}
-				
-				//Drehe die Halbe Kugel
-				addSteps(polDrehung, optionens[0], 3);
-				
-				//Drehe den Pol, um beide Farben an die korrekte Position zu verschieben
-				addSteps(UrPol, optionens[1], 1);
-				
-				//Drehe die Halbe Kugel zurück
-				addSteps(polDrehung, 4-optionens[0], 3);
-				
-			}
-		
-	
-		}else{
-			System.out.println("Lösen der Positionen nicht möglich ("+pos1+","+pos2+")");
-		}*/
 		
 	}
 		
@@ -1326,7 +947,7 @@ public class Solver {
 	/**
 	 * Dreht eine Farbe an eine bestimmte Position auf dem Pol
 	 */
-	private void strategieOneTurnColorToPositionOnPol(int p, int zielPos){
+	private void turnColorToPositionOnPol(int p, int zielPos){
 
 		//Bekomme den Pol
 		int pol = p/4;
@@ -1348,6 +969,441 @@ public class Solver {
 		}
 		
 	}
+	private void change2PosEqual(int p1, int p2){
+		change2PosEqual(p1,p2,false);
+	}
+	
+	
+	private void change2PosEqual(int p1, int p2,boolean overflow){
+		if(p1>p2){
+			int temp = p1;
+			p1 = p2; 
+			p2 = temp;
+		}
+		
+		int pol1 = p1/4;
+		int pol2 = p2/4;
+		if(pol1!=pol2){
+			int[] values = optionsChange2PosEqual(p1, p2);
+			
+			addSteps(pol2, values[0],1);
+			
+			//Drehung zu Pol
+			addSteps(values[1], values[2],3);
+			
+			//Drehung auf Pol
+			addSteps(pol1, values[3], 1);
+			
+			//Drehung zurück
+			addSteps(values[1], 4-values[2],3);
+			
+			//Post Drehung Pol1
+			if(!overflow){
+				addSteps(pol1, values[4], 1);
+			}
+
+			addSteps(pol2,values[5], 1);
+
+			
+		}else{
+			//System.out.println("On Same Pol");
+			change2PositionsOnOnePol(p1, p2);
+		}
+		
+		
+	}
+	// [PreDrehPosP2][PolRechts][AnzPolRechts][AnzPol1][AnzPostDrehungPol1][EndPosP2]
+	private int[] optionsChange2PosEqual(int p1, int p2){
+		if(p1>p2){
+			int temp = p1;
+			p1 = p2; 
+			p2 = temp;
+		}
+		//System.out.println("Drehen Equal:"+p1+";"+p2);
+		switch(p1){
+			case 0:
+				switch(p2){
+					case 4:  return new int[]{1,5,1,3,3,2};
+					case 5:  return new int[]{0,5,1,3,3,3};
+					case 6:  return new int[]{3,5,1,3,3,0};
+					case 7:  return new int[]{2,5,1,3,3,1};
+					
+					case 8:  return new int[]{1,5,2,3,3,2};
+					case 9:  return new int[]{0,5,2,3,3,3};
+					case 10: return new int[]{3,5,2,3,3,0};
+					case 11: return new int[]{2,5,2,3,3,1};
+					
+					case 12: return new int[]{2,5,3,3,3,1};
+					case 13: return new int[]{3,5,3,3,3,0};
+					case 14: return new int[]{0,5,3,3,3,3};
+					case 15: return new int[]{1,5,3,3,3,2};
+					
+					case 16: return new int[]{3,3,3,1,1,2};
+					case 17: return new int[]{2,3,3,1,1,3};
+					case 18: return new int[]{1,3,3,1,1,0};
+					case 19: return new int[]{0,3,3,1,1,1};
+					
+					case 20: return new int[]{2,3,1,1,1,3};
+					case 21: return new int[]{3,3,1,1,1,2};
+					case 22: return new int[]{0,3,1,1,1,1};
+					case 23: return new int[]{1,3,1,1,1,0};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 1:
+				switch(p2){
+				
+					case 4:  return new int[]{0,4,3,1,1,1};
+					case 5:  return new int[]{3,4,3,1,1,2};
+					case 6:  return new int[]{2,4,3,1,1,3};
+					case 7:  return new int[]{1,4,3,1,1,0};
+					
+					case 8:  return new int[]{0,4,2,1,1,1};
+					case 9:  return new int[]{3,4,2,1,1,2};
+					case 10: return new int[]{2,4,2,1,1,3};
+					case 11: return new int[]{1,4,2,1,1,0};
+					
+					case 12: return new int[]{1,4,1,1,1,0};
+					case 13: return new int[]{2,4,1,1,1,3};
+					case 14: return new int[]{3,4,1,1,1,2};
+					case 15: return new int[]{0,4,1,1,1,1};
+					
+					case 16: return new int[]{2,3,3,3,3,1};
+					case 17: return new int[]{1,3,3,3,3,2};
+					case 18: return new int[]{0,3,3,3,3,3};
+					case 19: return new int[]{3,3,3,3,3,0};
+					
+					case 20: return new int[]{1,3,1,3,3,2};
+					case 21: return new int[]{2,3,1,3,3,1};
+					case 22: return new int[]{3,3,1,3,3,0};
+					case 23: return new int[]{0,3,1,3,3,3};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 2:
+				switch(p2){
+					case 4:  return new int[]{3,4,3,3,3,0};
+					case 5:  return new int[]{2,4,3,3,3,1};
+					case 6:  return new int[]{1,4,3,3,3,2};
+					case 7:  return new int[]{0,4,3,3,3,3};
+					
+					case 8:  return new int[]{3,4,2,3,3,0};
+					case 9:  return new int[]{2,4,2,3,3,1};
+					case 10: return new int[]{1,4,2,3,3,2};
+					case 11: return new int[]{0,4,2,3,3,3};
+					
+					case 12: return new int[]{0,4,1,3,3,3};
+					case 13: return new int[]{1,4,1,3,3,2};
+					case 14: return new int[]{2,4,1,3,3,1};
+					case 15: return new int[]{3,4,1,3,3,0};
+					
+					case 16: return new int[]{1,1,1,1,1,0};
+					case 17: return new int[]{0,1,1,1,1,1};
+					case 18: return new int[]{3,1,1,1,1,2};
+					case 19: return new int[]{2,1,1,1,1,3};
+					
+					case 20: return new int[]{0,1,3,1,1,1};
+					case 21: return new int[]{1,1,3,1,1,0};
+					case 22: return new int[]{2,1,3,1,1,3};
+					case 23: return new int[]{3,1,3,1,1,2};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 3:
+				switch(p2){
+					case 4:  return new int[]{2,5,1,1,1,3};
+					case 5:  return new int[]{1,5,1,1,1,0};
+					case 6:  return new int[]{0,5,1,1,1,1};
+					case 7:  return new int[]{3,5,1,1,1,2};
+					
+					case 8:  return new int[]{2,5,2,1,1,3};
+					case 9:  return new int[]{1,5,2,1,1,0};
+					case 10: return new int[]{0,5,2,1,1,1};
+					case 11: return new int[]{3,5,2,1,1,2};
+					
+					case 12: return new int[]{3,5,3,1,1,2};
+					case 13: return new int[]{0,5,3,1,1,1};
+					case 14: return new int[]{1,5,3,1,1,0};
+					case 15: return new int[]{2,5,3,1,1,3};
+					
+					case 16: return new int[]{0,1,1,3,3,3};
+					case 17: return new int[]{3,1,1,3,3,0};
+					case 18: return new int[]{2,1,1,3,3,1};
+					case 19: return new int[]{1,1,1,3,3,2};
+					
+					case 20: return new int[]{3,1,3,3,3,0};
+					case 21: return new int[]{0,1,3,3,3,3};
+					case 22: return new int[]{1,1,3,3,3,2};
+					case 23: return new int[]{2,1,3,3,3,1};
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 4:
+				switch(p2){
+					case 8:  return new int[]{2,5,1,1,1,3};
+					case 9:  return new int[]{1,5,1,1,1,0};
+					case 10: return new int[]{0,5,1,1,1,1};
+					case 11: return new int[]{3,5,1,1,1,2};
+					
+					case 12: return new int[]{3,5,2,1,1,2};
+					case 13: return new int[]{0,5,2,1,1,1};
+					case 14: return new int[]{1,5,2,1,1,0};
+					case 15: return new int[]{2,5,2,1,1,3};
+					
+					case 16: return new int[]{1,2,1,3,3,2};
+					case 17: return new int[]{0,2,1,3,3,3};
+					case 18: return new int[]{3,2,1,3,3,0};
+					case 19: return new int[]{2,2,1,3,3,1};
+					
+					case 20: return new int[]{2,2,3,3,3,1};
+					case 21: return new int[]{3,2,3,3,3,0};
+					case 22: return new int[]{0,2,3,3,3,3};
+					case 23: return new int[]{1,2,3,3,3,2};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 5:
+				switch(p2){
+					case 8:  return new int[]{3,4,3,3,3,0};
+					case 9:  return new int[]{2,4,3,3,3,1};
+					case 10: return new int[]{1,4,3,3,3,2};
+					case 11: return new int[]{0,4,3,3,3,3};
+					
+					case 12: return new int[]{0,4,2,3,3,3};
+					case 13: return new int[]{1,4,2,3,3,2};
+					case 14: return new int[]{2,4,2,3,3,1};
+					case 15: return new int[]{3,4,2,3,3,0};
+					
+					case 16: return new int[]{2,2,1,1,1,3};
+					case 17: return new int[]{1,2,1,1,1,0};
+					case 18: return new int[]{0,2,1,1,1,1};
+					case 19: return new int[]{3,2,1,1,1,2};
+					
+					case 20: return new int[]{3,2,3,1,1,2};
+					case 21: return new int[]{0,2,3,1,1,1};
+					case 22: return new int[]{1,2,3,1,1,0};
+					case 23: return new int[]{2,2,3,1,1,3};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 6:
+				switch(p2){
+					case 8:  return new int[]{0,4,3,1,1,1};
+					case 9:  return new int[]{3,4,3,1,1,2};
+					case 10: return new int[]{2,4,3,1,1,3};
+					case 11: return new int[]{1,4,3,1,1,0};
+					
+					case 12: return new int[]{1,4,2,1,1,0};
+					case 13: return new int[]{2,4,2,1,1,3};
+					case 14: return new int[]{3,4,2,1,1,2};
+					case 15: return new int[]{0,4,2,1,1,1};
+					
+					case 16: return new int[]{3,0,3,3,3,0};
+					case 17: return new int[]{2,0,3,3,3,1};
+					case 18: return new int[]{1,0,3,3,3,2};
+					case 19: return new int[]{0,0,3,3,3,3};
+					
+					case 20: return new int[]{0,0,1,3,3,3};
+					case 21: return new int[]{1,0,1,3,3,2};
+					case 22: return new int[]{2,0,1,3,3,1};
+					case 23: return new int[]{3,0,1,3,3,0};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 7:
+				switch(p2){
+					case 8:  return new int[]{1,5,1,3,3,2};
+					case 9:  return new int[]{0,5,1,3,3,3};
+					case 10: return new int[]{3,5,1,3,3,0};
+					case 11: return new int[]{2,5,1,3,3,1};
+					
+					case 12: return new int[]{2,5,2,3,3,1};
+					case 13: return new int[]{3,5,2,3,3,0};
+					case 14: return new int[]{0,5,2,3,3,3};
+					case 15: return new int[]{1,5,2,3,3,2};
+					
+					case 16: return new int[]{0,0,3,1,1,1};
+					case 17: return new int[]{3,0,3,1,1,2};
+					case 18: return new int[]{2,0,3,1,1,3};
+					case 19: return new int[]{1,0,3,1,1,0};
+					
+					case 20: return new int[]{1,0,1,1,1,0};
+					case 21: return new int[]{2,0,1,1,1,3};
+					case 22: return new int[]{3,0,1,1,1,2};
+					case 23: return new int[]{0,0,1,1,1,1};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 8:
+				switch(p2){
+					case 12: return new int[]{3,5,1,1,1,2};
+					case 13: return new int[]{0,5,1,1,1,1};
+					case 14: return new int[]{1,5,1,1,1,0};
+					case 15: return new int[]{2,5,1,1,1,3};
+					
+					case 16: return new int[]{2,3,1,3,3,1};
+					case 17: return new int[]{1,3,1,3,3,2};
+					case 18: return new int[]{0,3,1,3,3,3};
+					case 19: return new int[]{3,3,1,3,3,0};
+					
+					case 20: return new int[]{1,3,3,3,3,2};
+					case 21: return new int[]{2,3,3,3,3,1};
+					case 22: return new int[]{3,3,3,3,3,0};
+					case 23: return new int[]{0,3,3,3,3,3};
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 9:
+				switch(p2){
+					case 12: return new int[]{0,4,3,3,3,3};
+					case 13: return new int[]{1,4,3,3,3,2};
+					case 14: return new int[]{2,4,3,3,3,1};
+					case 15: return new int[]{3,4,3,3,3,0};
+					
+					case 16: return new int[]{3,3,1,1,1,2};
+					case 17: return new int[]{2,3,1,1,1,3};
+					case 18: return new int[]{1,3,1,1,1,0};
+					case 19: return new int[]{0,3,1,1,1,1};
+					
+					case 20: return new int[]{2,3,3,1,1,3};
+					case 21: return new int[]{3,3,3,1,1,2};
+					case 22: return new int[]{0,3,3,1,1,1};
+					case 23: return new int[]{1,3,3,1,1,0};
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 10:
+				switch(p2){
+					case 12: return new int[]{1,4,3,1,1,0};
+					case 13: return new int[]{2,4,3,1,1,3};
+					case 14: return new int[]{3,4,3,1,1,2};
+					case 15: return new int[]{0,4,3,1,1,1};
+					
+					case 16: return new int[]{0,1,3,3,3,3};
+					case 17: return new int[]{3,1,3,3,3,0};
+					case 18: return new int[]{2,1,3,3,3,1};
+					case 19: return new int[]{1,1,3,3,3,2};
+					
+					case 20: return new int[]{3,1,1,3,3,0};
+					case 21: return new int[]{0,1,1,3,3,3};
+					case 22: return new int[]{1,1,1,3,3,2};
+					case 23: return new int[]{2,1,1,3,3,1};
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 11:
+				switch(p2){
+					case 12: return new int[]{2,5,1,3,3,1};
+					case 13: return new int[]{3,5,1,3,3,0};
+					case 14: return new int[]{0,5,1,3,3,3};
+					case 15: return new int[]{1,5,1,3,3,2};
+					
+					case 16: return new int[]{1,1,3,1,1,0};
+					case 17: return new int[]{0,1,3,1,1,1};
+					case 18: return new int[]{3,1,3,1,1,2};
+					case 19: return new int[]{2,1,3,1,1,3};
+					
+					case 20: return new int[]{0,1,1,1,1,1};
+					case 21: return new int[]{1,1,1,1,1,0};
+					case 22: return new int[]{2,1,1,1,1,3};
+					case 23: return new int[]{3,1,1,1,1,2};
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 12:
+				switch(p2){
+					case 16: return new int[]{2,2,3,1,1,3};
+					case 17: return new int[]{1,2,3,1,1,0};
+					case 18: return new int[]{0,2,3,1,1,1};
+					case 19: return new int[]{3,2,3,1,1,2};
+					
+					case 20: return new int[]{3,2,1,1,1,2};
+					case 21: return new int[]{0,2,1,1,1,1};
+					case 22: return new int[]{1,2,1,1,1,0};
+					case 23: return new int[]{2,2,1,1,1,3};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 13:
+				switch(p2){
+					case 16: return new int[]{1,2,3,3,3,2};
+					case 17: return new int[]{0,2,3,3,3,3};
+					case 18: return new int[]{3,2,3,3,3,0};
+					case 19: return new int[]{2,2,3,3,3,1};
+					
+					case 20: return new int[]{2,2,1,3,3,1};
+					case 21: return new int[]{3,2,1,3,3,0};
+					case 22: return new int[]{0,2,1,3,3,3};
+					case 23: return new int[]{1,2,1,3,3,2};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 14:
+				switch(p2){
+					case 16: return new int[]{0,0,1,1,1,1};
+					case 17: return new int[]{3,0,1,1,1,2};
+					case 18: return new int[]{2,0,1,1,1,3};
+					case 19: return new int[]{1,0,1,1,1,0};
+					
+					case 20: return new int[]{1,0,3,1,1,0};
+					case 21: return new int[]{2,0,3,1,1,3};
+					case 22: return new int[]{3,0,3,1,1,2};
+					case 23: return new int[]{0,0,3,1,1,1};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 15:
+				switch(p2){
+					case 16: return new int[]{3,0,1,3,3,0};
+					case 17: return new int[]{2,0,1,3,3,1};
+					case 18: return new int[]{1,0,1,3,3,2};
+					case 19: return new int[]{0,0,1,3,3,3};
+					
+					case 20: return new int[]{0,0,3,3,3,3};
+					case 21: return new int[]{1,0,3,3,3,2};
+					case 22: return new int[]{2,0,3,3,3,1};
+					case 23: return new int[]{3,0,3,3,3,0};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 16:
+				switch(p2){
+					case 20: return new int[]{1,3,2,3,3,2};
+					case 21: return new int[]{2,3,2,3,3,1};
+					case 22: return new int[]{3,3,2,3,3,0};
+					case 23: return new int[]{0,3,2,3,3,3};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 17:
+				switch(p2){
+					case 20: return new int[]{2,3,2,1,1,3};
+					case 21: return new int[]{3,3,2,1,1,2};
+					case 22: return new int[]{0,3,2,1,1,1};
+					case 23: return new int[]{1,3,2,1,1,0};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 18:
+				switch(p2){
+					case 20: return new int[]{3,1,2,3,3,0};
+					case 21: return new int[]{0,1,2,3,3,3};
+					case 22: return new int[]{1,1,2,3,3,2};
+					case 23: return new int[]{2,1,2,3,3,1};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			case 19:
+				switch(p2){
+					case 20: return new int[]{0,1,2,1,1,1};
+					case 21: return new int[]{1,1,2,1,1,0};
+					case 22: return new int[]{2,1,2,1,1,3};
+					case 23: return new int[]{3,1,2,1,1,2};
+					
+					default: return new int[]{-1,-1,-1,-1,-1,-1};
+				}
+			default: return new int[]{-1,-1,-1,-1,-1,-1};
+			//TODO	
+		}
+				
+	}
+	
+	
 	private void changeExact2Positions(int p1, int p2){
 		changeExact2Positions(p1, p2, false);
 	}
@@ -1554,10 +1610,10 @@ public class Solver {
 				}//#END switch pol1
 				
 				//Pol 1 zu korrekter Position drehen 			
-				strategieOneTurnColorToPositionOnPol(p1,pos1);
+				turnColorToPositionOnPol(p1,pos1);
 				
 				//Pol 2 zu korrekter Position drehen
-				strategieOneTurnColorToPositionOnPol(p2,pos2);
+				turnColorToPositionOnPol(p2,pos2);
 				
 				//Austauschen
 				
@@ -1658,14 +1714,18 @@ public class Solver {
 			addSteps(pol, 2, 1);
 			break;
 		case 2:
-			int posOnPol2 = p2%4;
-			int change2 = (posOnPol2+1)%4;
-			int change = pol*4+change2;
 			
+			int change = pol*4+(((p2%4)+1)%4);
+			int color1 = k.tri[p1+1];
+			int color2 = k.tri[change];
+			//System.out.println("Double Change: "+p1+"+"+(p1+1)+","+p2+"+"+change);
 			change2PositionsOnOnePol(p1,p1+1);
 			change2PositionsOnOnePol(p2,change);
 			for(int i = 0; i<4; i++){
-				if(k.tri[p1]!=k.con[SphereUtils.findCorrectConIndexFromTri(p1)]){
+				/*if(k.tri[p1]!=k.con[SphereUtils.findCorrectConIndexFromTri(p1)]){
+					addSteps(pol, 1, 1);
+				}*/
+				if(!(color1==k.tri[p1+1]&&color2==k.tri[change])){
 					addSteps(pol, 1, 1);
 				}
 			}
