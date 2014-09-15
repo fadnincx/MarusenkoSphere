@@ -111,7 +111,7 @@ public class KugelSteuern {
 	    		double[] mousePosIn3D = Editor.isMouseIn3D(x,y);
 	    		
 	    		//Wenn die Tiefe Z = 0 ist, dann ist dort ein Objekt--> also Muss Aktion statt finden
-	    		if(mousePosIn3D[2]==0){
+	    		if(mousePosIn3D[2]<=4){
 	    			
 	    			//Objekt auf welchem die Maus ist
 	    			int objekt = Editor.onWhichField(mousePosIn3D[0],mousePosIn3D[1]);
