@@ -160,10 +160,10 @@ public class Solver {
 	private ArrayList<String> strategieStandard(){
 		
 		//Array mit der Reihenfolge der Pole
-		int[] pol = {0,1,4,2,3,5};
+		int[] pol = {0,4,1,2,3,5};
 		
 		//Gehe alle Pole durch
-		for(int i = 0; i<6; i++){
+		for(int i = 0; i<5; i++){
 			
 			//Wenn der aktuele Pol nicht gelöst ist, dann lösen
 			if(!SolveCheck.isPolSolved(pol[i], k)){
@@ -172,54 +172,122 @@ public class Solver {
 				//Prüfe, auf welche Seite gelöst werden soll
 				if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
 					System.out.println("Löse Pol "+pol[i]+" Position 0 und 1");
-					strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+1);
-					break;
-					//System.out.println();
-					//System.out.println("Löse Pol "+pol[i]+" Position 2 und 3");
-					//strategieStandardSolve2Positions(pol[i]*4+2, pol[i]*4+3);
-					//break;
+					if(!SolveCheck.isPositionSolved(pol[i]*4+0, k)||!SolveCheck.isPositionSolved(pol[i]*4+1, k)){
+						strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+1);
+					}
+					System.out.println();
+					System.out.println("Löse Pol "+pol[i]+" Position 2 und 3");
+					if(!SolveCheck.isPositionSolved(pol[i]*4+2, k)||!SolveCheck.isPositionSolved(pol[i]*4+3, k)){
+						strategieStandardSolve2Positions(pol[i]*4+2, pol[i]*4+3);
+					}
 				}else
 				if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
 					System.out.println("Löse Pol "+pol[i]+" Position 1 und 2");
 					strategieStandardSolve2Positions(pol[i]*4+1, pol[i]*4+2);
-					break;
-					//System.out.println("Löse Pol "+pol[i]+" Position 0 und 3");
-					//strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+3);
+					System.out.println("Löse Pol "+pol[i]+" Position 0 und 3");
+					strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+3);
 				}
 				
 			}
 		}
-		
+		/*
+		//Prüfe ob Kugel noch Korrekt ist, oder ob es einen Fehler gibt
+				strategieOnecheckIfPositionOnKorrektPole();
+				
+				//Wenn keinen Fehler gefunden
+				if(SolveCheck.ArrayIsFullyOk(ok)){
+					
+					//So lange die Kugel nicht gelöst ist...
+					while(!SolveCheck.isKugelSolved(k)){
+						
+						//Gehe Jeden Pol durch
+						for(int i = 0; i<6; i++){
+							
+							//Wenn Pol noch nicht gelöst, löse ihn
+							if(!SolveCheck.isPolSolved(i,k)){		
+								
+								//Array mit werten, ob eine Position schon gelöst wurde, oder nicht
+								boolean[] pOk = new boolean[4];
+								
+								//Gehe für jede Position durch
+								for(int j = 0; j<4; j++){
+									
+									
+									pOk[j] = SolveCheck.isPositionSolved(i*4+j,k);
+									
+								}
+								
+								//Solange Pol nicht gelöst, noch einen Anlauf wagen 
+								while(!SolveCheck.isPolSolved(i,k)){
+									
+									//Gehe jede Position durch
+									for(int j = 0; j<4; j++){
+										
+										//Wenn noch nicht korrekt
+										if(!pOk[j]){
+											
+											//Finde das Verbindungsstück mit der selben Farbe heraus
+											int con = SphereUtils.findCorrectConIndexFromTri(i*4+j);
+											
+											//Gehe für alle Positionen durch
+											for(int l = 0; l<4; l++){
+												
+												//Wenn das Dreieck gefunden wurde, mit welchem getauscht werden muss
+												if(k.tri[i*4+l]==k.con[con]&&l!=j){
+													
+													//Tausche die beiden Positionen
+													change2PositionsOnOnePol(i*4+j, i*4+l);
+												}
+												
+											}
+											
+											//Gehe alle Positionen durch
+											for(int l = 0; l<4; l++){
+												
+												//Ist Position gelöst? Antwort in Array speichern
+												pOk[l] = SolveCheck.isPositionSolved(i*4+l,k);
+												
+											}
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+						}
+						
+					}	
+					
+				}*/
 		//Löse den Letzten Pol und gibt die Kugel zurück
 		//return strategieOne();
 		//TODO **/
-		/*for(int i = 0; i<24;i++){
-			for(int j = i+1; j<24; j++){
-				//if((int)i/4!=(int)j/4){
+		/*
+		for(int i = 0; i<24;i++){
+			for(int j = 0; j<24; j++){
+				if(i!=j){
 					int color1 = k.tri[i];
 					int color2 = k.tri[j];
-					change2PosEqual(i, j);
-					if(color1 == k.tri[j]&& color2 == k.tri[i]){
-						System.out.println("Successfull "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
-					}else
+					change2PosEqualDirect(i, j);
 					if(color2 == k.tri[i]){
-						System.out.println("Partial Successfull 1 "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
-					}else
-					if(color1 == k.tri[j]){
-						System.out.println("Partial Successfull 2 "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);	
+						System.out.println("Successfull "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
 					}else{
 						System.out.println("Failed "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
 					}
 					
 					
-				//}
+				}
 			}
 		}
-		
-		
 		*/
+		
+		
 		return solvingWay;
 	}
+	
 	
 	/**
 	 * Löst 2 Positionen gemäss der Standart-Taktik
@@ -267,11 +335,15 @@ public class Solver {
 				}
 				
 			}
+			
 			//Bsp für (0,1) [true][false][true][false][true][true]
 			//Bsp für (0,3) [true][true][true][true][false][false]
 			boolean[] polRing = SphereUtils.getPolBand(pos1,pos2);
 			int[] polRanking = new int[6];
-			
+			int polGegenuber = SphereUtils.polGegenuber(urPol);
+			polRing[polGegenuber]=false;
+			polRing[urPol]=false;
+			System.out.println("PolRing: "+Arrays.toString(polRing));
 			for(int i=0; i<6; i++){
 				
 				//Wenn nicht Urpol -> Weiter
@@ -331,6 +403,7 @@ public class Solver {
 			System.out.println("HilfsPol: "+hilfsPol);
 			
 			if(hilfsPol != -1){
+				//TODO
 				
 				int[] options = SphereUtils.strategieStandartGetTurnOpt(pos1, pos2, hilfsPol);
 				
@@ -370,10 +443,10 @@ public class Solver {
 					System.out.println("Farbe2 auf UrPol aber nicht auf HilfsPol");
 					//Position 2 auf Hilfspol verschieben
 					
-					int posHilf = positionNrOnHilfsPol[0]==0?3:0;
+					int posHilf = SphereUtils.verschiebeZuHilfPol(urPol*4+positionNrOnUrPol[1], hilfsPol);
 					System.out.println("Exact - Pos2ToHPol ("+k.step+"): "+(urPol*4+positionNrOnUrPol[1])+", "+posHilf);
 					System.out.println("Positionen bevor drehen: "+k.tri[(urPol*4+positionNrOnUrPol[1])]+";"+posHilf);
-					change2PosEqual((urPol*4+positionNrOnUrPol[1]), posHilf);//overflow
+					change2PosEqualDirect(posHilf,(urPol*4+positionNrOnUrPol[1]));//overflow
 					System.out.println("Positionen nach drehen: "+k.tri[(urPol*4+positionNrOnUrPol[1])]+";"+posHilf);
 					System.out.println("Exact end ("+k.step+")");
 					positionsOnHilfsPol[1] = true;
@@ -420,13 +493,13 @@ public class Solver {
 					
 				}else{
 					
-					if(!positionsOnHilfsPol[0]){
+					if(!positionsOnHilfsPol[0]&&!otherPartOfPolSolved){
 						
 						int changePosition = -1;
 						
 						for(int i = 0; i<6;i++){
 						
-							if(i!=urPol&&i!=hilfsPol&&!SolveCheck.isPolSolved(i, k)){
+							if(i!=urPol&&!SolveCheck.isPolSolved(i, k)){
 								
 								for(int j = 0; j<4; j++){
 									
@@ -439,29 +512,96 @@ public class Solver {
 							}
 							
 						}
-					
-						System.out.println("Put Pos1 from anywhere to Pos2");
-						change2PosEqual(changePosition,positions[1]);
+						System.out.println("Start:"+k.step);
+						System.out.println("Put Pos1 from anywhere to Pos2 -->"+positions[1]+":"+changePosition);
+						change2PosEqualDirect(positions[1],changePosition);
+						System.out.println("Stop:"+k.step);
+					}else if(!positionsOnHilfsPol[0]){
+						int changePosition = -1;
+						
+						for(int i = 0; i<6;i++){
+						
+							if(!SolveCheck.isPolSolved(i, k)){
+								
+								for(int j = 0; j<4; j++){
+									
+									if(k.tri[i*4+j]==colors[0]&&changePosition==-1){
+										changePosition=i*4+j;
+									}
+									
+								}
+								
+							}
+							
+						}
+						System.out.println("Start:"+k.step);
+						System.out.println("Put Pos1 from anywhere to HilfsPol -->"+SphereUtils.verschiebeZuHilfPol(changePosition, hilfsPol)+":"+changePosition);
+						change2PosEqualDirect(SphereUtils.verschiebeZuHilfPol(changePosition, hilfsPol),changePosition);
+						System.out.println("Stop:"+k.step);
+						
+						positionsOnHilfsPol[0]=false;
+						for(int i = 0; i<4; i++){
+							
+							if(!positionsOnHilfsPol[0]&&k.tri[hilfsPol*4+i]==colors[0]){
+								
+								positionsOnHilfsPol[0]=true;
+								
+								positionNrOnHilfsPol[0]=i;
+							
+							}
+							
+						}
 						
 						
+						System.out.println("Start:"+k.step);
+						System.out.println("Put Pos1 from Hilfspol to Pos2 -->"+positions[1]+":"+(hilfsPol*4+positionNrOnHilfsPol[0]));
+						change2PosEqualDirect(positions[1],(hilfsPol*4+positionNrOnHilfsPol[0]));
+						System.out.println("Stop:"+k.step);
 					}else{
-						System.out.println("Put Pos 1 from Hilfspol to Pos2");
-						change2PosEqual((hilfsPol*4+positionNrOnHilfsPol[0]), positions[1]);
+						positionsOnHilfsPol[0]=false;
+						for(int i = 0; i<4; i++){
+							
+							if(!positionsOnHilfsPol[0]&&k.tri[hilfsPol*4+i]==colors[0]){
+								
+								positionsOnHilfsPol[0]=true;
+								
+								positionNrOnHilfsPol[0]=i;
+							
+							}
+							
+						}
+						
+						
+						System.out.println("Start:"+k.step);
+						System.out.println("Put Pos 1 from Hilfspol to Pos2 -->"+positions[1]+":"+(hilfsPol*4+positionNrOnHilfsPol[0]));
+						change2PosEqualDirect(positions[1],(hilfsPol*4+positionNrOnHilfsPol[0]));
+						System.out.println("Stop:"+k.step);
 					}
 					
 				}
-				
+				positionsOnHilfsPol[1]=false;
+				for(int i = 0; i<4; i++){
+					
+					if(!positionsOnHilfsPol[1]&&k.tri[hilfsPol*4+i]==colors[1]){
+						
+						positionsOnHilfsPol[1]=true;
+						
+						positionNrOnHilfsPol[1]=i;
+					
+					}
+					
+				}
 				if(!positionsOnHilfsPol[1]){
 					
-					int changePosition = -1;
+					int changePosition = -2;
 					
 					for(int i = 0; i<6;i++){
 					
-						if(i!=urPol&&i!=hilfsPol&&!SolveCheck.isPolSolved(i, k)){
+						if(i!=urPol&&!SolveCheck.isPolSolved(i, k)){
 							
 							for(int j = 0; j<4; j++){
 								
-								if(k.tri[i*4+j]==colors[1]&&changePosition==-1){
+								if(k.tri[i*4+j]==colors[1]&&changePosition==-2){
 									changePosition=i*4+j;
 								}
 								
@@ -472,15 +612,30 @@ public class Solver {
 					}
 										
 					positionNrOnHilfsPol[0]=hilfsPol*4;
-					System.out.println("Exact - Pos2ToHPol ("+k.step+"): "+changePosition+", "+hilfsPol);
-					change2PosEqual(changePosition, hilfsPol*4);
+					System.out.println("Exact - Pos2ToHPol ("+k.step+"): "+hilfsPol*4+", "+changePosition);
+					change2PosEqualDirect(hilfsPol*4,changePosition);
 					System.out.println("Exact end ("+k.step+")");
 					positionNrOnHilfsPol[1]=0;
 					
 				}
 				
-				System.out.println("Exact - Pos2ToCorrectPol ("+k.step+"): "+(hilfsPol*4+positionNrOnHilfsPol[1])+", "+positions[1]);
-				change2PosEqual((hilfsPol*4+positionNrOnHilfsPol[1]), positions[0], true);//overflow
+				
+				positionsOnHilfsPol[1]=false;
+				for(int i = 0; i<4; i++){
+					
+					if(!positionsOnHilfsPol[1]&&k.tri[hilfsPol*4+i]==colors[1]){
+						
+						positionsOnHilfsPol[1]=true;
+						
+						positionNrOnHilfsPol[1]=i;
+					
+					}
+					
+				}
+				
+				
+				System.out.println("Exact - Pos2ToCorrectPol ("+k.step+"): "+positions[1]+", "+(hilfsPol*4+positionNrOnHilfsPol[1]));
+				change2PosEqualDirect(positions[1],(hilfsPol*4+positionNrOnHilfsPol[1]));//overflow
 				System.out.println("Exact end ("+k.step+")");
 	
 				//Position 2 von Hilfspol auf korrekte position drehen
@@ -972,8 +1127,36 @@ public class Solver {
 	private void change2PosEqual(int p1, int p2){
 		change2PosEqual(p1,p2,false);
 	}
-	
-	
+	/**
+	 * 
+	 * @param p1 : TO
+	 * @param p2 : From
+	 */
+	private void change2PosEqualDirect(int p1, int p2){		
+		int pol1 = p1/4;
+		int pol2 = p2/4;
+		if(pol1!=pol2){
+			int[] values = optionsChange2PosEqualDirect(p1, p2);
+			if(values[0]==-1){
+				System.out.println(k.getSphere("000"));
+			}
+			addSteps(pol2, values[0],1);
+			
+			//Drehung zu Pol
+			addSteps(values[1], values[2],3);
+			
+			//Drehung auf Pol
+			addSteps(pol1, values[3], 1);
+			
+			//Drehung zurück
+			addSteps(values[1], 4-values[2],3);
+			
+		}else{
+			//System.out.println("On Same Pol");
+			change2PositionsOnOnePol(p1, p2);
+		}
+		
+	}
 	private void change2PosEqual(int p1, int p2,boolean overflow){
 		if(p1>p2){
 			int temp = p1;
@@ -1402,7 +1585,588 @@ public class Solver {
 		}
 				
 	}
-	
+	// [PreDrehPosP2][PolRechts][AnzPolRechts][AnzPol1]
+		private int[] optionsChange2PosEqualDirect(int p1, int p2){
+			switch(p1){
+				case 0:
+					switch(p2){
+						case 4: return new int[]{2,5,1,1};
+						case 5: return new int[]{1,5,1,1};
+						case 6: return new int[]{0,5,1,1};
+						case 7: return new int[]{3,5,1,1};
+						case 8: return new int[]{2,5,2,1};
+						case 9: return new int[]{1,5,2,1};
+						case 10:return new int[]{0,5,2,1};
+						case 11:return new int[]{3,5,2,1};
+						case 12:return new int[]{3,5,3,1};
+						case 13:return new int[]{0,5,3,1};
+						case 14:return new int[]{1,5,3,1};
+						case 15:return new int[]{2,5,3,1};
+						case 16:return new int[]{2,3,3,3};
+						case 17:return new int[]{1,3,3,3};
+						case 18:return new int[]{0,3,3,3};
+						case 19:return new int[]{3,3,3,3};
+						case 20:return new int[]{1,3,1,3};
+						case 21:return new int[]{2,3,1,3};
+						case 22:return new int[]{3,3,1,3};
+						case 23:return new int[]{0,3,1,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 1:
+					switch(p2){
+						case 4: return new int[]{3,4,3,3};
+						case 5: return new int[]{2,4,3,3};
+						case 6: return new int[]{1,4,3,3};
+						case 7: return new int[]{0,4,3,3};
+						case 8: return new int[]{3,4,2,3};
+						case 9: return new int[]{2,4,2,3};
+						case 10:return new int[]{1,4,2,3};
+						case 11:return new int[]{0,4,2,3};
+						case 12:return new int[]{0,4,1,3};
+						case 13:return new int[]{1,4,1,3};
+						case 14:return new int[]{2,4,1,3};
+						case 15:return new int[]{3,4,1,3};
+						case 16:return new int[]{3,3,3,1};
+						case 17:return new int[]{2,3,3,1};
+						case 18:return new int[]{1,3,3,1};
+						case 19:return new int[]{0,3,3,1};
+						case 20:return new int[]{2,3,1,1};
+						case 21:return new int[]{3,3,1,1};
+						case 22:return new int[]{0,3,1,1};
+						case 23:return new int[]{1,3,1,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 2:
+					switch(p2){
+						case 4: return new int[]{0,4,3,1};
+						case 5: return new int[]{3,4,3,1};
+						case 6: return new int[]{2,4,3,1};
+						case 7: return new int[]{1,4,3,1};
+						case 8: return new int[]{0,4,2,1};
+						case 9: return new int[]{3,4,2,1};
+						case 10:return new int[]{2,4,2,1};
+						case 11:return new int[]{1,4,2,1};
+						case 12:return new int[]{1,4,1,1};
+						case 13:return new int[]{2,4,1,1};
+						case 14:return new int[]{3,4,1,1};
+						case 15:return new int[]{0,4,1,1};
+						case 16:return new int[]{0,1,1,3};
+						case 17:return new int[]{3,1,1,3};
+						case 18:return new int[]{2,1,1,3};
+						case 19:return new int[]{1,1,1,3};
+						case 20:return new int[]{3,1,3,3};
+						case 21:return new int[]{0,1,3,3};
+						case 22:return new int[]{1,1,3,3};
+						case 23:return new int[]{2,1,3,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 3:
+					switch(p2){
+						case 4: return new int[]{1,5,1,3};
+						case 5: return new int[]{0,5,1,3};
+						case 6: return new int[]{3,5,1,3};
+						case 7: return new int[]{2,5,1,3};
+						case 8: return new int[]{1,5,2,3};
+						case 9: return new int[]{0,5,2,3};
+						case 10:return new int[]{3,5,2,3};
+						case 11:return new int[]{2,5,2,3};
+						case 12:return new int[]{2,5,3,3};
+						case 13:return new int[]{3,5,3,3};
+						case 14:return new int[]{0,5,3,3};
+						case 15:return new int[]{1,5,3,3};
+						case 16:return new int[]{1,1,1,1};
+						case 17:return new int[]{0,1,1,1};
+						case 18:return new int[]{3,1,1,1};
+						case 19:return new int[]{2,1,1,1};
+						case 20:return new int[]{0,1,3,1};
+						case 21:return new int[]{1,1,3,1};
+						case 22:return new int[]{2,1,3,1};
+						case 23:return new int[]{3,1,3,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 4:
+					switch(p2){
+						case 0: return new int[]{2,5,3,3};
+						case 1: return new int[]{3,5,3,3};
+						case 2: return new int[]{0,5,3,3};
+						case 3: return new int[]{1,5,3,3};
+						case 8: return new int[]{1,5,1,3};
+						case 9: return new int[]{0,5,1,3};
+						case 10:return new int[]{3,5,1,3};
+						case 11:return new int[]{2,5,1,3};
+						case 12:return new int[]{2,5,2,3};
+						case 13:return new int[]{3,5,2,3};
+						case 14:return new int[]{0,5,2,3};
+						case 15:return new int[]{1,5,2,3};
+						case 16:return new int[]{2,2,1,1};
+						case 17:return new int[]{1,2,1,1};
+						case 18:return new int[]{0,2,1,1};
+						case 19:return new int[]{3,2,1,1};
+						case 20:return new int[]{3,2,3,1};
+						case 21:return new int[]{0,2,3,1};
+						case 22:return new int[]{1,2,3,1};
+						case 23:return new int[]{2,2,3,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 5:
+					switch(p2){
+						case 0: return new int[]{1,4,1,1};
+						case 1: return new int[]{2,4,1,1};
+						case 2: return new int[]{3,4,1,1};
+						case 3: return new int[]{0,4,1,1};
+						case 8: return new int[]{0,4,3,1};
+						case 9: return new int[]{3,4,3,1};
+						case 10:return new int[]{2,4,3,1};
+						case 11:return new int[]{1,4,3,1};
+						case 12:return new int[]{1,4,2,1};
+						case 13:return new int[]{2,4,2,1};
+						case 14:return new int[]{3,4,2,1};
+						case 15:return new int[]{0,4,2,1};
+						case 16:return new int[]{1,2,1,3};
+						case 17:return new int[]{0,2,1,3};
+						case 18:return new int[]{3,2,1,3};
+						case 19:return new int[]{2,2,1,3};
+						case 20:return new int[]{2,2,3,3};
+						case 21:return new int[]{3,2,3,3};
+						case 22:return new int[]{0,2,3,3};
+						case 23:return new int[]{1,2,3,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 6:
+					switch(p2){
+						case 0: return new int[]{0,4,1,3};
+						case 1: return new int[]{1,4,1,3};
+						case 2: return new int[]{2,4,1,3};
+						case 3: return new int[]{3,4,1,3};
+						case 8: return new int[]{3,4,3,3};
+						case 9: return new int[]{2,4,3,3};
+						case 10:return new int[]{1,4,3,3};
+						case 11:return new int[]{0,4,3,3};
+						case 12:return new int[]{0,4,2,3};
+						case 13:return new int[]{1,4,2,3};
+						case 14:return new int[]{2,4,2,3};
+						case 15:return new int[]{3,4,2,3};
+						case 16:return new int[]{0,0,3,1};
+						case 17:return new int[]{3,0,3,1};
+						case 18:return new int[]{2,0,3,1};
+						case 19:return new int[]{1,0,3,1};
+						case 20:return new int[]{1,0,1,1};
+						case 21:return new int[]{2,0,1,1};
+						case 22:return new int[]{3,0,1,1};
+						case 23:return new int[]{0,0,1,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 7:
+					switch(p2){
+						case 0: return new int[]{3,5,3,1};
+						case 1: return new int[]{0,5,3,1};
+						case 2: return new int[]{1,5,3,1};
+						case 3: return new int[]{2,5,3,1};
+						case 8: return new int[]{2,5,1,1};
+						case 9: return new int[]{1,5,1,1};
+						case 10:return new int[]{0,5,1,1};
+						case 11:return new int[]{3,5,1,1};
+						case 12:return new int[]{3,5,2,1};
+						case 13:return new int[]{0,5,2,1};
+						case 14:return new int[]{1,5,2,1};
+						case 15:return new int[]{2,5,2,1};
+						case 16:return new int[]{3,0,3,3};
+						case 17:return new int[]{2,0,3,3};
+						case 18:return new int[]{1,0,3,3};
+						case 19:return new int[]{0,0,3,3};
+						case 20:return new int[]{0,0,1,3};
+						case 21:return new int[]{1,0,1,3};
+						case 22:return new int[]{2,0,1,3};
+						case 23:return new int[]{3,0,1,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 8:
+					switch(p2){
+						case 0: return new int[]{2,5,2,3};
+						case 1: return new int[]{3,5,2,3};
+						case 2: return new int[]{0,5,2,3};
+						case 3: return new int[]{1,5,2,3};
+						case 4: return new int[]{1,5,3,3};
+						case 5: return new int[]{0,5,3,3};
+						case 6: return new int[]{3,5,3,3};
+						case 7: return new int[]{2,5,3,3};
+						case 12:return new int[]{2,5,1,3};
+						case 13:return new int[]{3,5,1,3};
+						case 14:return new int[]{0,5,1,3};
+						case 15:return new int[]{1,5,1,3};
+						case 16:return new int[]{3,3,1,1};
+						case 17:return new int[]{2,3,1,1};
+						case 18:return new int[]{1,3,1,1};
+						case 19:return new int[]{0,3,1,1};
+						case 20:return new int[]{2,3,3,1};
+						case 21:return new int[]{3,3,3,1};
+						case 22:return new int[]{0,3,3,1};
+						case 23:return new int[]{1,3,3,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 9:
+					switch(p2){
+						case 0: return new int[]{1,4,2,1};
+						case 1: return new int[]{2,4,2,1};
+						case 2: return new int[]{3,4,2,1};
+						case 3: return new int[]{0,4,2,1};
+						case 4: return new int[]{0,4,1,1};
+						case 5: return new int[]{3,4,1,1};
+						case 6: return new int[]{2,4,1,1};
+						case 7: return new int[]{1,4,1,1};
+						case 12:return new int[]{1,4,3,1};
+						case 13:return new int[]{2,4,3,1};
+						case 14:return new int[]{3,4,3,1};
+						case 15:return new int[]{0,4,3,1};
+						case 16:return new int[]{2,3,1,3};
+						case 17:return new int[]{1,3,1,3};
+						case 18:return new int[]{0,3,1,3};
+						case 19:return new int[]{3,3,1,3};
+						case 20:return new int[]{1,3,3,3};
+						case 21:return new int[]{2,3,3,3};
+						case 22:return new int[]{3,3,3,3};
+						case 23:return new int[]{0,3,3,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 10:
+					switch(p2){
+						case 0: return new int[]{0,4,2,3};
+						case 1: return new int[]{1,4,2,3};
+						case 2: return new int[]{2,4,2,3};
+						case 3: return new int[]{3,4,2,3};
+						case 4: return new int[]{3,4,1,3};
+						case 5: return new int[]{2,4,1,3};
+						case 6: return new int[]{1,4,1,3};
+						case 7: return new int[]{0,4,1,3};
+						case 12:return new int[]{0,4,3,3};
+						case 13:return new int[]{1,4,3,3};
+						case 14:return new int[]{2,4,3,3};
+						case 15:return new int[]{3,4,3,3};
+						case 16:return new int[]{1,1,3,1};
+						case 17:return new int[]{0,1,3,1};
+						case 18:return new int[]{3,1,3,1};
+						case 19:return new int[]{2,1,3,1};
+						case 20:return new int[]{0,1,1,1};
+						case 21:return new int[]{1,1,1,1};
+						case 22:return new int[]{2,1,1,1};
+						case 23:return new int[]{3,1,1,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 11:
+					switch(p2){
+						case 0: return new int[]{3,5,2,1};
+						case 1: return new int[]{0,5,2,1};
+						case 2: return new int[]{1,5,2,1};
+						case 3: return new int[]{2,5,2,1};
+						case 4: return new int[]{2,5,3,1};
+						case 5: return new int[]{1,5,3,1};
+						case 6: return new int[]{0,5,3,1};
+						case 7: return new int[]{3,5,3,1};
+						case 12:return new int[]{3,5,1,1};
+						case 13:return new int[]{0,5,1,1};
+						case 14:return new int[]{1,5,1,1};
+						case 15:return new int[]{2,5,1,1};
+						case 16:return new int[]{0,1,3,3};
+						case 17:return new int[]{3,1,3,3};
+						case 18:return new int[]{2,1,3,3};
+						case 19:return new int[]{1,1,3,3};
+						case 20:return new int[]{3,1,1,3};
+						case 21:return new int[]{0,1,1,3};
+						case 22:return new int[]{1,1,1,3};
+						case 23:return new int[]{2,1,1,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 12:
+					switch(p2){
+						case 0: return new int[]{3,5,1,1};
+						case 1: return new int[]{0,5,1,1};
+						case 2: return new int[]{1,5,1,1};
+						case 3: return new int[]{2,5,1,1};
+						case 4: return new int[]{2,5,2,1};
+						case 5: return new int[]{1,5,2,1};
+						case 6: return new int[]{0,5,2,1};
+						case 7: return new int[]{3,5,2,1};
+						case 8: return new int[]{2,5,3,1};
+						case 9: return new int[]{1,5,3,1};
+						case 10:return new int[]{0,5,3,1};
+						case 11:return new int[]{3,5,3,1};
+						case 16:return new int[]{1,2,3,3};
+						case 17:return new int[]{0,2,3,3};
+						case 18:return new int[]{3,2,3,3};
+						case 19:return new int[]{2,2,3,3};
+						case 20:return new int[]{2,2,1,3};
+						case 21:return new int[]{3,2,1,3};
+						case 22:return new int[]{0,2,1,3};
+						case 23:return new int[]{1,2,1,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 13:
+					switch(p2){
+						case 0: return new int[]{0,4,3,3};
+						case 1: return new int[]{1,4,3,3};
+						case 2: return new int[]{2,4,3,3};
+						case 3: return new int[]{3,4,3,3};
+						case 4: return new int[]{3,4,2,3};
+						case 5: return new int[]{2,4,2,3};
+						case 6: return new int[]{1,4,2,3};
+						case 7: return new int[]{0,4,2,3};
+						case 8: return new int[]{3,4,1,3};
+						case 9: return new int[]{2,4,1,3};
+						case 10:return new int[]{1,4,1,3};
+						case 11:return new int[]{0,4,1,3};
+						case 16:return new int[]{2,2,3,1};
+						case 17:return new int[]{1,2,3,1};
+						case 18:return new int[]{0,2,3,1};
+						case 19:return new int[]{3,2,3,1};
+						case 20:return new int[]{3,2,1,1};
+						case 21:return new int[]{0,2,1,1};
+						case 22:return new int[]{1,2,1,1};
+						case 23:return new int[]{2,2,1,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 14:
+					switch(p2){
+						case 0: return new int[]{1,4,3,1};
+						case 1: return new int[]{2,4,3,1};
+						case 2: return new int[]{3,4,3,1};
+						case 3: return new int[]{0,4,3,1};
+						case 4: return new int[]{0,4,2,1};
+						case 5: return new int[]{3,4,2,1};
+						case 6: return new int[]{2,4,2,1};
+						case 7: return new int[]{1,4,2,1};
+						case 8: return new int[]{0,4,1,1};
+						case 9: return new int[]{3,4,1,1};
+						case 10:return new int[]{2,4,1,1};
+						case 11:return new int[]{1,4,1,1};
+						case 16:return new int[]{3,0,1,3};
+						case 17:return new int[]{2,0,1,3};
+						case 18:return new int[]{1,0,1,3};
+						case 19:return new int[]{0,0,1,3};
+						case 20:return new int[]{0,0,3,3};
+						case 21:return new int[]{1,0,3,3};
+						case 22:return new int[]{2,0,3,3};
+						case 23:return new int[]{3,0,3,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 15:
+					switch(p2){
+						case 0: return new int[]{2,5,1,3};
+						case 1: return new int[]{3,5,1,3};
+						case 2: return new int[]{0,5,1,3};
+						case 3: return new int[]{1,5,1,3};
+						case 4: return new int[]{1,5,2,3};
+						case 5: return new int[]{0,5,2,3};
+						case 6: return new int[]{3,5,2,3};
+						case 7: return new int[]{2,5,2,3};
+						case 8: return new int[]{1,5,3,3};
+						case 9: return new int[]{0,5,3,3};
+						case 10:return new int[]{3,5,3,3};
+						case 11:return new int[]{2,5,3,3};
+						case 16:return new int[]{0,0,1,1};
+						case 17:return new int[]{3,0,1,1};
+						case 18:return new int[]{2,0,1,1};
+						case 19:return new int[]{1,0,1,1};
+						case 20:return new int[]{1,0,3,1};
+						case 21:return new int[]{2,0,3,1};
+						case 22:return new int[]{3,0,3,1};
+						case 23:return new int[]{0,0,3,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 16:
+					switch(p2){
+						case 0: return new int[]{2,3,1,1};
+						case 1: return new int[]{3,3,1,1};
+						case 2: return new int[]{0,3,1,1};
+						case 3: return new int[]{1,3,1,1};
+						case 4: return new int[]{2,2,3,3};
+						case 5: return new int[]{1,2,3,3};
+						case 6: return new int[]{0,2,3,3};
+						case 7: return new int[]{3,2,3,3};
+						case 8: return new int[]{3,3,3,1};
+						case 9: return new int[]{2,3,3,1};
+						case 10:return new int[]{1,3,3,1};
+						case 11:return new int[]{0,3,3,1};
+						case 12:return new int[]{1,2,1,3};
+						case 13:return new int[]{2,2,1,3};
+						case 14:return new int[]{3,2,1,3};
+						case 15:return new int[]{0,2,1,3};
+						case 20:return new int[]{2,3,2,1};
+						case 21:return new int[]{3,3,2,1};
+						case 22:return new int[]{0,3,2,1};
+						case 23:return new int[]{1,3,2,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 17:
+					switch(p2){
+						case 0: return new int[]{1,3,1,3};
+						case 1: return new int[]{2,3,1,3};
+						case 2: return new int[]{3,3,1,3};
+						case 3: return new int[]{0,3,1,3};
+						case 4: return new int[]{1,0,1,1};
+						case 5: return new int[]{0,0,1,1};
+						case 6: return new int[]{3,0,1,1};
+						case 7: return new int[]{2,0,1,1};
+						case 8: return new int[]{2,3,3,3};
+						case 9: return new int[]{1,3,3,3};
+						case 10:return new int[]{0,3,3,3};
+						case 11:return new int[]{3,3,3,3};
+						case 12:return new int[]{0,0,3,1};
+						case 13:return new int[]{1,0,3,1};
+						case 14:return new int[]{2,0,3,1};
+						case 15:return new int[]{3,0,3,1};
+						case 20:return new int[]{1,3,2,3};
+						case 21:return new int[]{2,3,2,3};
+						case 22:return new int[]{3,3,2,3};
+						case 23:return new int[]{0,3,2,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 18:
+					switch(p2){
+						case 0: return new int[]{0,1,3,1};
+						case 1: return new int[]{1,1,3,1};
+						case 2: return new int[]{2,1,3,1};
+						case 3: return new int[]{3,1,3,1};
+						case 4: return new int[]{0,0,1,3};
+						case 5: return new int[]{3,0,1,3};
+						case 6: return new int[]{2,0,1,3};
+						case 7: return new int[]{1,0,1,3};
+						case 8: return new int[]{1,1,1,1};
+						case 9: return new int[]{0,1,1,1};
+						case 10:return new int[]{3,1,1,1};
+						case 11:return new int[]{2,1,1,1};
+						case 12:return new int[]{3,0,3,3};
+						case 13:return new int[]{0,0,3,3};
+						case 14:return new int[]{1,0,3,3};
+						case 15:return new int[]{2,0,3,3};
+						case 20:return new int[]{0,1,2,1};
+						case 21:return new int[]{1,1,2,1};
+						case 22:return new int[]{2,1,2,1};
+						case 23:return new int[]{3,1,2,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 19:
+					switch(p2){
+						case 0: return new int[]{3,1,3,3};
+						case 1: return new int[]{0,1,3,3};
+						case 2: return new int[]{1,1,3,3};
+						case 3: return new int[]{2,1,3,3};
+						case 4: return new int[]{3,2,3,1};
+						case 5: return new int[]{2,2,3,1};
+						case 6: return new int[]{1,2,3,1};
+						case 7: return new int[]{0,2,3,1};
+						case 8: return new int[]{0,1,1,3};
+						case 9: return new int[]{3,1,1,3};
+						case 10:return new int[]{2,1,1,3};
+						case 11:return new int[]{1,1,1,3};
+						case 12:return new int[]{2,2,1,1};
+						case 13:return new int[]{3,2,1,1};
+						case 14:return new int[]{0,2,1,1};
+						case 15:return new int[]{1,2,1,1};
+						case 20:return new int[]{3,1,2,3};
+						case 21:return new int[]{0,1,2,3};
+						case 22:return new int[]{1,1,2,3};
+						case 23:return new int[]{2,1,2,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 20:
+					switch(p2){
+						case 0: return new int[]{1,3,3,3};
+						case 1: return new int[]{2,3,3,3};
+						case 2: return new int[]{3,3,3,3};
+						case 3: return new int[]{0,3,3,3};
+						case 4: return new int[]{3,2,1,1};
+						case 5: return new int[]{2,2,1,1};
+						case 6: return new int[]{1,2,1,1};
+						case 7: return new int[]{0,2,1,1};
+						case 8: return new int[]{2,3,1,3};
+						case 9: return new int[]{1,3,1,3};
+						case 10:return new int[]{0,3,1,3};
+						case 11:return new int[]{3,3,1,3};
+						case 12:return new int[]{2,2,3,1};
+						case 13:return new int[]{3,2,3,1};
+						case 14:return new int[]{0,2,3,1};
+						case 15:return new int[]{1,2,3,1};
+						case 16:return new int[]{2,3,2,3};
+						case 17:return new int[]{1,3,2,3};
+						case 18:return new int[]{0,3,2,3};
+						case 19:return new int[]{3,3,2,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 21:
+					switch(p2){
+						case 0: return new int[]{2,3,3,1};
+						case 1: return new int[]{3,3,3,1};
+						case 2: return new int[]{0,3,3,1};
+						case 3: return new int[]{1,3,3,1};
+						case 4: return new int[]{0,0,3,3};
+						case 5: return new int[]{3,0,3,3};
+						case 6: return new int[]{2,0,3,3};
+						case 7: return new int[]{1,0,3,3};
+						case 8: return new int[]{3,3,1,1};
+						case 9: return new int[]{2,3,1,1};
+						case 10:return new int[]{1,3,1,1};
+						case 11:return new int[]{0,3,1,1};
+						case 12:return new int[]{3,0,1,3};
+						case 13:return new int[]{0,0,1,3};
+						case 14:return new int[]{1,0,1,3};
+						case 15:return new int[]{2,0,1,3};
+						case 16:return new int[]{3,3,2,1};
+						case 17:return new int[]{2,3,2,1};
+						case 18:return new int[]{1,3,2,1};
+						case 19:return new int[]{0,3,2,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 22:
+					switch(p2){
+						case 0: return new int[]{3,1,1,3};
+						case 1: return new int[]{0,1,1,3};
+						case 2: return new int[]{1,1,1,3};
+						case 3: return new int[]{2,1,1,3};
+						case 4: return new int[]{1,0,3,1};
+						case 5: return new int[]{0,0,3,1};
+						case 6: return new int[]{3,0,3,1};
+						case 7: return new int[]{2,0,3,1};
+						case 8: return new int[]{0,1,3,3};
+						case 9: return new int[]{3,1,3,3};
+						case 10:return new int[]{2,1,3,3};
+						case 11:return new int[]{1,1,3,3};
+						case 12:return new int[]{0,0,1,1};
+						case 13:return new int[]{1,0,1,1};
+						case 14:return new int[]{2,0,1,1};
+						case 15:return new int[]{3,0,1,1};
+						case 16:return new int[]{0,1,2,3};
+						case 17:return new int[]{3,1,2,3};
+						case 18:return new int[]{2,1,2,3};
+						case 19:return new int[]{1,1,2,3};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+				case 23:
+					switch(p2){
+						case 0: return new int[]{0,1,1,1};
+						case 1: return new int[]{1,1,1,1};
+						case 2: return new int[]{2,1,1,1};
+						case 3: return new int[]{3,1,1,1};
+						case 4: return new int[]{2,2,1,3};
+						case 5: return new int[]{1,2,1,3};
+						case 6: return new int[]{0,2,1,3};
+						case 7: return new int[]{3,2,1,3};
+						case 8: return new int[]{1,1,3,1};
+						case 9: return new int[]{0,1,3,1};
+						case 10:return new int[]{3,1,3,1};
+						case 11:return new int[]{2,1,3,1};
+						case 12:return new int[]{1,2,3,3};
+						case 13:return new int[]{2,2,3,3};
+						case 14:return new int[]{3,2,3,3};
+						case 15:return new int[]{0,2,3,3};
+						case 16:return new int[]{1,1,2,1};
+						case 17:return new int[]{0,1,2,1};
+						case 18:return new int[]{3,1,2,1};
+						case 19:return new int[]{2,1,2,1};
+						default:return new int[]{-1,-1,-1,-1};
+					}
+			}
+			return new int[]{-1,-1,-1,-1};		
+		}
 	
 	private void changeExact2Positions(int p1, int p2){
 		changeExact2Positions(p1, p2, false);

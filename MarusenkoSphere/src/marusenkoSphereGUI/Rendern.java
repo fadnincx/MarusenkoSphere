@@ -156,16 +156,16 @@ public class Rendern {
      */
     protected static float[] getColorFloat(int n){
     	switch(n){
-    	case 0: return new float[] {1.0f,1.0f,1.0f};
-    	case 1: return new float[] {1.0f,1.0f,0.0f};
-    	case 2: return new float[] {1.0f,0.6f,0.0f};
-    	case 3: return new float[] {0.0f,0.0f,1.0f};	
-    	case 4: return new float[] {1.0f,0.0f,0.0f};
-    	case 5: return new float[] {0.0f,1.0f,1.0f};
-    	case 6: return new float[] {1.0f,0.0f,1.0f};
-    	case 7: return new float[] {0.0f,1.0f,0.0f};	
-    	case 8: return new float[] {0.0f,0.0f,0.0f};
-    	default:return new float[] {0.0f,0.0f,0.0f};
+    	case 0: return new float[] {1.0f,1.0f,1.0f};//Weiss
+    	case 1: return new float[] {1.0f,1.0f,0.0f};//Gelb
+    	case 2: return new float[] {1.0f,0.6f,0.0f};//Orange
+    	case 3: return new float[] {0.0f,0.0f,1.0f};//Blau	
+    	case 4: return new float[] {1.0f,0.0f,0.0f};//Rot
+    	case 5: return new float[] {0.0f,1.0f,1.0f};//Türkis
+    	case 6: return new float[] {1.0f,0.0f,1.0f};//Violett
+    	case 7: return new float[] {0.0f,1.0f,0.0f};//Grün	
+    	case 8: return new float[] {0.0f,0.0f,0.0f};//Schwarz
+    	default:return new float[] {0.0f,0.0f,0.0f};//Schwarz
     	}
     }
     

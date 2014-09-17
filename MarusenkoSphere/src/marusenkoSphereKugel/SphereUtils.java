@@ -1,5 +1,6 @@
 package marusenkoSphereKugel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -123,7 +124,7 @@ public class SphereUtils {
 					case 4: return (ali.contains(0)&&ali.contains(1)) ? new int[]{3,1,1}: new int[]{1,3,2};
 					
 					//Wenn Pol = 5, dann prüfe ob die Positionen 0 und 1 sind. Gibt je nachdem andere Werte zurück
-					case 5: return (ali.contains(0)&&ali.contains(1)) ? new int[]{1,3,2}: new int[]{3,1,1};
+					case 5: return (ali.contains(0)&&ali.contains(1)) ? new int[]{1,3,1}: new int[]{3,1,1};
 					
 					//Ansonten liefer ein leeres Resultat zurück
 					default: return new int[]{0,0,0};
@@ -540,6 +541,7 @@ public class SphereUtils {
 		
 	}
 	public static boolean[] getPolBand(int p1, int p2){
+		System.out.println("PolRing: "+p1+":"+p2);
 		int pol = p1/4;
 		
 		//Bekomme die beiden Pole, welche an die Position grenzen
@@ -548,63 +550,41 @@ public class SphereUtils {
 		//Bekomme die beiden Pole, welche an die Position grenzen
 		int[] pole2 = SphereUtils.getPoleForPosition(p2);
 				
+		System.out.println("PolRing gegeben: "+pole1[0]+","+pole1[1]+","+pole2[0]+","+pole2[1]);
+		
 		//Variable mit den beiden möglichen Polen
 		int[] poleMoeglich = new int[2]; 
 				
 		//Variable um zu fragen, ob die beiden positionen überhaupt einen gemeinsamen Nachbarspol haben (Voraussetzung)
 		boolean everSame = false;
-				
+		
+		LinkedList<Integer> pol1 = new LinkedList<Integer>();
+		LinkedList<Integer> pol2 = new LinkedList<Integer>();
+		
+		pol1.add(pole1[0]);pol1.add(pole1[1]);
+		pol2.add(pole2[0]);pol2.add(pole2[1]);
 				
 		//Gehe bei der ersten Position alle durch
 		for(int i = 0; i<2; i++){
 					
-			//Variable mit dem aktuellen Status
-			boolean same = false;
-					
-			//Variable um bei ungleichheit die Nummer zu speichern
-			int notSame = -1;
-					
-			//Gehe bei der 2 Position alle durch
-			for(int j = 0; j<2;j++){
-						
-				//Wenn die beiden gleich sind
-				if(pole1[i]==pole2[j]){
-						
-					//setzte aktuelle variable auf true
-					same = true;
-							
-				//Ansonsten	
-				}else{
-							
-					//Speichere die aktuelle Nummer
-					notSame = j;
-				}
-						
+			if(!pol2.contains(pol1.get(i))){
+				poleMoeglich[0]=pol1.get(i);
 			}
-					
-			//Wenn same falsch ist
-			if(!same){
-						
-				//Die möglichen Pole speichern
-				poleMoeglich[0]=pole1[i];
-				poleMoeglich[1]=pole2[notSame];
-						
-				//Variable auf true setzten, damit grundvoraussetzung gegeben ist
-				everSame = true;
-			}
-					
+			if(!pol1.contains(pol2.get(i))){
+				poleMoeglich[1]=pol2.get(i);
+			}					
 		}
+		System.out.println("PolRing followed: "+poleMoeglich[0]+","+poleMoeglich[1]);
+		
 		LinkedList<Integer> polRing = new LinkedList<Integer>();
 		//ist grundvoraussetzung gebenen
-		if(everSame){
-			int addPol = completePolBand(new int[]{pol, poleMoeglich[0], poleMoeglich[1]});
-			//Dann gibt wahr zurück
-			polRing.add(poleMoeglich[0]);
-			polRing.add(poleMoeglich[1]);
-			polRing.add(addPol);
-			polRing.add(pol);
+		int addPol = completePolBand(new int[]{pol, poleMoeglich[0], poleMoeglich[1]});
+		//Dann gibt wahr zurück
+		polRing.add(poleMoeglich[0]);
+		polRing.add(poleMoeglich[1]);
+		//polRing.add(addPol);
+		//polRing.add(pol);
 					
-		}	
 		boolean[] r = new boolean[6];
 		for(int i = 0; i<6; i++){
 			r[i] = polRing.contains(i);
@@ -638,5 +618,154 @@ public class SphereUtils {
 		}else{
 			return -1;
 		}
+	}
+	public static int verschiebeZuHilfPol(int p, int hilfspol){
+		int pol = p/4;
+		int pos = p%4;
+		if(pol==1||pol==2||pol==4){
+			pos=3-pos;
+		}
+		if(pol<4&&hilfspol<4){
+			switch(pos){
+				case 0:
+					switch(hilfspol){
+						case 0: return 1;
+						case 1: return 6;
+						case 2: return 10;
+						case 3: return 13;
+						default: return -1;
+					}
+				case 1:
+					switch(hilfspol){
+						case 0: return 0;
+						case 1: return 7;
+						case 2: return 11;
+						case 3: return 12;
+						default: return -1;
+					}
+				case 2:
+					switch(hilfspol){
+						case 0: return 3;
+						case 1: return 4;
+						case 2: return 8;
+						case 3: return 15;
+						default: return -1;
+					}
+				case 3:
+					switch(hilfspol){
+						case 0: return 2;
+						case 1: return 5;
+						case 2: return 9;
+						case 3: return 14;
+						default: return -1;
+					}
+				default: return -1;
+			}
+		}else if(pol>3){
+			switch(p){
+				case 16:
+					switch(hilfspol){
+						case 0: return 2;
+						case 1: return 6;
+						case 2: return 11;
+						case 3: return 15;
+						case 5: return 22;
+						default: return -1;
+					}
+				case 17:
+					switch(hilfspol){
+						case 0: return 3;
+						case 1: return 5;
+						case 2: return 10;
+						case 3: return 12;
+						case 5: return 23;
+						default:return -1;
+					}
+				case 18:
+					switch(hilfspol){
+						case 0: return 0;
+						case 1: return 4;
+						case 2: return 9;
+						case 3: return 13;
+						case 5: return 20;
+						default: return -1;
+					}
+				case 19:
+					switch(hilfspol){
+						case 0: return 1;
+						case 1: return 6;
+						case 2: return 8;
+						case 3: return 14;
+						case 5: return 21;
+						default: return -1;
+					}
+				case 20:
+					switch(hilfspol){
+						case 0: return 3;
+						case 1: return 7;
+						case 2: return 10;
+						case 3: return 14;
+						case 4: return 18;
+						default: return -1;
+					}
+				case 21:
+					switch(hilfspol){
+						case 0: return 2;
+						case 1: return 4;
+						case 2: return 11;
+						case 3: return 13;
+						case 4: return 19;
+						default: return -1;
+					}
+				case 22:
+					switch(hilfspol){
+						case 0: return 1;
+						case 1: return 5;
+						case 2: return 8;
+						case 3: return 12;
+						case 4: return 16;
+						default: return -1;
+					}
+				case 23:
+					switch(hilfspol){
+						case 0: return 0;
+						case 1: return 6;
+						case 2: return 9;
+						case 3: return 11;
+						case 4: return 17;
+						default: return -1;
+					}
+				default: return -1;
+			}
+		}else{
+			switch(pos){
+				case 0:
+					switch(hilfspol){
+						case 4: return 16+((2+pol)%4);
+						case 5: return 20+((3+pol)%4);
+						default: return -1;
+					}
+				case 1:
+					switch(hilfspol){
+						case 4: return 16+((3+pol)%4);
+						case 5: return 20+((2+pol)%4);
+						default: return -1;
+					}
+				case 2:
+					switch(hilfspol){
+						case 4: return 16+((0+pol)%4);
+						case 5: return 20+((1+pol)%4);
+						default: return -1;
+					}
+				case 3:
+					switch(hilfspol){
+						case 4: return 16+((1+pol)%4);
+						case 5: return 20+((0+pol)%4);
+						default: return -1;
+					}
+				default: return -1;
+			}
+		}
+
 	}
 }
