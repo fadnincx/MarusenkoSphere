@@ -3,6 +3,7 @@ package marusenkoSphereKonsole;
 
 import marusenkoSphere.Log;
 import marusenkoSphereKugel.Kugel;
+import marusenkoSphereKugel.SolveCheck;
 
 /**
  * Konsolen-Klasse
@@ -10,7 +11,6 @@ import marusenkoSphereKugel.Kugel;
  * Sehr primitive Methode um möglichst viele Kugeln zu lösen und Statistik zu führen
  *
  */
-@SuppressWarnings("unused")
 public class Konsole {
 
 	public Kugel k;
@@ -37,6 +37,11 @@ public class Konsole {
 		for(long i = 0;i<9223372036854775807L;i++){
 			//fülle Kugel neu, wobei sie sofort auch gelöst wird
 			k.FillRandom();
+			k.setKugelToStateFromList(k.getSolvingListSize()-1);
+			if(!SolveCheck.isKugelSolved(k)){
+				System.out.println("Error, kugel nicht gelöst!!!!");
+				//System.exit(0);
+			}
 			int aktAnz = k.getSolvingListSize()-1;
 			if(aktAnz>max){
 				max=aktAnz;
@@ -55,14 +60,14 @@ public class Konsole {
 				//Gib aus, die wie vielte Kugel gelöst wurde
 				System.out.println(i+". Kugel solved in "+aktAnz+" steps - Mittelwert: "+mittelwert+" Min: "+min+" Max: "+max);
 			}
-			/**if(i%100000==0&&i!=0){
+			if(i%100000==0&&i!=0){
 				//Statistik....
 				String s = "";
 				for(int j = 0; j<500; j++){
 					s+=j+";"+stats1[j]+";"+stats2[j/2]/2+";"+stats5[j/5]/5+";"+stats10[j/10]/10+"\n";
 				}
 				Log.DebugLog(s);
-			}**/
+			}
 			
 		}
 		

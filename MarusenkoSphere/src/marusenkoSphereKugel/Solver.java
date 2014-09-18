@@ -76,7 +76,7 @@ public class Solver {
 		}
 		// TODO Anzahl Strategien = 2 und nicht 1
 		//Anzahl Strategien, die durch gegangen werden
-		int anzahlStrategien = 1;
+		int anzahlStrategien = 2;
 		
 		int besteStrategie = -1;
 		
@@ -92,9 +92,24 @@ public class Solver {
 			//Erstelle Temporäre ArrayList mit der Lösung der Entsprechenden Strategie
 			ArrayList<String> AL = strategieChooser(i);
 
+			if(SolveCheck.isKugelSolved(k)){
+				println("Kugel erfolgreich");
+			}else{
+				println("Folgende Pole sind nicht korrekt gelöst!");
+				for(int j = 0; j<6; j++){
+					if(!SolveCheck.isPolSolved(j, k)){
+						println("Pol Nr. "+j);
+					}
+				}
+			}
 			//TODO RemoveUnusedSteps
 			//Entferne unnötige Schritte
-			//RemoveUnusedSteps(AL);
+			RemoveUnusedSteps(AL);
+			if(!SolveCheck.isKugelSolved(k)){
+				for(int j = 0; j<1000; j++){
+					AL.add("notFinished");
+				}
+			}
 			
 			//Wenn die Lösung schneller ist, dann setze Strategie als neue bestSolvingWay
 			if(AL.size()<bestSolvingWay.size()){
@@ -123,7 +138,7 @@ public class Solver {
 		
 		//Print, welche Strategie beste ist
 		String[] strategienName = new String[]{"StrategieStandard","StrategieOne"};
-		System.out.println("Die Kugel wurde mit der "+strategienName[besteStrategie]+" erfolgreich gelöst");
+		println("Die Kugel wurde mit der "+strategienName[besteStrategie]+" erfolgreich gelöst");
 		
 		//Gib den schnellsten Lösungsweg zurück
 		return bestSolvingWay;
@@ -171,26 +186,30 @@ public class Solver {
 				
 				//Prüfe, auf welche Seite gelöst werden soll
 				if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
-					System.out.println("Löse Pol "+pol[i]+" Position 0 und 1");
+					println("Löse Pol "+pol[i]+" Position 0 und 1");
 					if(!SolveCheck.isPositionSolved(pol[i]*4+0, k)||!SolveCheck.isPositionSolved(pol[i]*4+1, k)){
 						strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+1);
 					}
-					System.out.println();
-					System.out.println("Löse Pol "+pol[i]+" Position 2 und 3");
+					println("");
+					println("Löse Pol "+pol[i]+" Position 2 und 3");
 					if(!SolveCheck.isPositionSolved(pol[i]*4+2, k)||!SolveCheck.isPositionSolved(pol[i]*4+3, k)){
 						strategieStandardSolve2Positions(pol[i]*4+2, pol[i]*4+3);
 					}
 				}else
 				if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
-					System.out.println("Löse Pol "+pol[i]+" Position 1 und 2");
+					println("Löse Pol "+pol[i]+" Position 1 und 2");
 					strategieStandardSolve2Positions(pol[i]*4+1, pol[i]*4+2);
-					System.out.println("Löse Pol "+pol[i]+" Position 0 und 3");
+					println("Löse Pol "+pol[i]+" Position 0 und 3");
 					strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+3);
+				}else{
+					println("Error--No Lösungsmethode!!!!");
+					//System.exit(0);
 				}
 				
 			}
-		}
-		/*
+		}	
+		
+	
 		//Prüfe ob Kugel noch Korrekt ist, oder ob es einen Fehler gibt
 				strategieOnecheckIfPositionOnKorrektPole();
 				
@@ -261,7 +280,9 @@ public class Solver {
 						
 					}	
 					
-				}*/
+				}else{
+					Log.ErrorLog("Nicht alle Farben auf korrektem Pol");
+				}
 		//Löse den Letzten Pol und gibt die Kugel zurück
 		//return strategieOne();
 		//TODO **/
@@ -273,9 +294,9 @@ public class Solver {
 					int color2 = k.tri[j];
 					change2PosEqualDirect(i, j);
 					if(color2 == k.tri[i]){
-						System.out.println("Successfull "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
+						println("Successfull "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
 					}else{
-						System.out.println("Failed "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
+						println("Failed "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
 					}
 					
 					
@@ -297,17 +318,17 @@ public class Solver {
 		if(strategieStandardAreThis2Possible(pos1,pos2)){
 			
 			int urPol = pos1/4;
-			System.out.println("UrPol = "+urPol);
+			println("UrPol = "+urPol);
 			
 			int colorForPosition1 = k.con[SphereUtils.findCorrectConIndexFromTri(pos1)];
 			int colorForPosition2 = k.con[SphereUtils.findCorrectConIndexFromTri(pos2)];
-			System.out.println("Needed Colors, P1("+pos1+") = "+colorForPosition1+" P2("+pos2+") = "+colorForPosition2);
+			println("Needed Colors, P1("+pos1+") = "+colorForPosition1+" P2("+pos2+") = "+colorForPosition2);
 			
 			boolean otherPartOfPolSolved = SphereUtils.otherPositionsOnPoleSolved(pos1, pos2, k);
 			if(otherPartOfPolSolved){
-				System.out.println("2. Teil des Pols");
+				println("2. Teil des Pols");
 			}else{
-				System.out.println("1. Teil des Pols");
+				println("1. Teil des Pols");
 			}
 			
 			boolean color1OnUrPol = false;
@@ -322,13 +343,13 @@ public class Solver {
 					if(!color1OnUrPol&&k.tri[urPol*4+i]==colorForPosition1){
 						
 						color1OnUrPol=true;
-						System.out.println("Farbe 1 on UrPol");
+						println("Farbe 1 on UrPol");
 					}
 					
 					if(!color2OnUrPol&&k.tri[urPol*4+i]==colorForPosition2){
 						
 						color2OnUrPol=true;
-						System.out.println("Farbe 2 on UrPol");
+						println("Farbe 2 on UrPol");
 						
 					}					
 					
@@ -341,11 +362,14 @@ public class Solver {
 			boolean[] polRing = SphereUtils.getPolBand(pos1,pos2);
 			int[] polRanking = new int[6];
 			int polGegenuber = SphereUtils.polGegenuber(urPol);
-			polRing[polGegenuber]=false;
 			polRing[urPol]=false;
-			System.out.println("PolRing: "+Arrays.toString(polRing));
+			polRing[polGegenuber]=false;
+			println("PolRing: "+Arrays.toString(polRing));
 			for(int i=0; i<6; i++){
 				
+				if(i==polGegenuber){
+					polRanking[i]++;
+				}
 				//Wenn nicht Urpol -> Weiter
 				//Wenn nicht gelöst -> Weiter
 				//Wenn auf Ring -> Weiter
@@ -387,7 +411,7 @@ public class Solver {
 			}
 			
 			int anzPunkteForPol = 0;
-			System.out.println("PolRanking "+Arrays.toString(polRanking));
+			println("PolRanking "+Arrays.toString(polRanking));
 			
 			for(int i=0; i<6; i++){
 				
@@ -400,7 +424,7 @@ public class Solver {
 				
 			}
 			
-			System.out.println("HilfsPol: "+hilfsPol);
+			println("HilfsPol: "+hilfsPol);
 			
 			if(hilfsPol != -1){
 				//TODO
@@ -440,15 +464,15 @@ public class Solver {
 				}
 				
 				if(positionsOnUrPol[1]&&!positionsOnHilfsPol[1]){
-					System.out.println("Farbe2 auf UrPol aber nicht auf HilfsPol");
+					println("Farbe2 auf UrPol aber nicht auf HilfsPol");
 					//Position 2 auf Hilfspol verschieben
 					
 					int posHilf = SphereUtils.verschiebeZuHilfPol(urPol*4+positionNrOnUrPol[1], hilfsPol);
-					System.out.println("Exact - Pos2ToHPol ("+k.step+"): "+(urPol*4+positionNrOnUrPol[1])+", "+posHilf);
-					System.out.println("Positionen bevor drehen: "+k.tri[(urPol*4+positionNrOnUrPol[1])]+";"+posHilf);
+					println("Exact - Pos2ToHPol ("+k.step+"): "+(urPol*4+positionNrOnUrPol[1])+", "+posHilf);
+					println("Positionen bevor drehen: "+k.tri[(urPol*4+positionNrOnUrPol[1])]+";"+posHilf);
 					change2PosEqualDirect(posHilf,(urPol*4+positionNrOnUrPol[1]));//overflow
-					System.out.println("Positionen nach drehen: "+k.tri[(urPol*4+positionNrOnUrPol[1])]+";"+posHilf);
-					System.out.println("Exact end ("+k.step+")");
+					println("Positionen nach drehen: "+k.tri[(urPol*4+positionNrOnUrPol[1])]+";"+posHilf);
+					println("Exact end ("+k.step+")");
 					positionsOnHilfsPol[1] = true;
 
 				}
@@ -477,14 +501,14 @@ public class Solver {
 				
 				if(positionsOnUrPol[0]){
 					
-					System.out.println("Pos1 on Urpol...");
+					println("Pos1 on Urpol...");
 					//Position 1 an korrekte position drehen	
 					positionsOnUrPol[0]=false;
 					
 					for(int i = 0; i<4;i++){
 						
 						if(k.tri[positions[1]]!=colors[0]){
-							System.out.println("If pos 0 on urpol turn correct");
+							println("If pos 0 on urpol turn correct");
 							addSteps(urPol, 1, 1);
 						
 						}
@@ -512,10 +536,10 @@ public class Solver {
 							}
 							
 						}
-						System.out.println("Start:"+k.step);
-						System.out.println("Put Pos1 from anywhere to Pos2 -->"+positions[1]+":"+changePosition);
+						println("Start:"+k.step);
+						println("Put Pos1 from anywhere to Pos2 -->"+positions[1]+":"+changePosition);
 						change2PosEqualDirect(positions[1],changePosition);
-						System.out.println("Stop:"+k.step);
+						println("Stop:"+k.step);
 					}else if(!positionsOnHilfsPol[0]){
 						int changePosition = -1;
 						
@@ -534,10 +558,10 @@ public class Solver {
 							}
 							
 						}
-						System.out.println("Start:"+k.step);
-						System.out.println("Put Pos1 from anywhere to HilfsPol -->"+SphereUtils.verschiebeZuHilfPol(changePosition, hilfsPol)+":"+changePosition);
+						println("Start:"+k.step);
+						println("Put Pos1 from anywhere to HilfsPol -->"+SphereUtils.verschiebeZuHilfPol(changePosition, hilfsPol)+":"+changePosition);
 						change2PosEqualDirect(SphereUtils.verschiebeZuHilfPol(changePosition, hilfsPol),changePosition);
-						System.out.println("Stop:"+k.step);
+						println("Stop:"+k.step);
 						
 						positionsOnHilfsPol[0]=false;
 						for(int i = 0; i<4; i++){
@@ -553,10 +577,10 @@ public class Solver {
 						}
 						
 						
-						System.out.println("Start:"+k.step);
-						System.out.println("Put Pos1 from Hilfspol to Pos2 -->"+positions[1]+":"+(hilfsPol*4+positionNrOnHilfsPol[0]));
+						println("Start:"+k.step);
+						println("Put Pos1 from Hilfspol to Pos2 -->"+positions[1]+":"+(hilfsPol*4+positionNrOnHilfsPol[0]));
 						change2PosEqualDirect(positions[1],(hilfsPol*4+positionNrOnHilfsPol[0]));
-						System.out.println("Stop:"+k.step);
+						println("Stop:"+k.step);
 					}else{
 						positionsOnHilfsPol[0]=false;
 						for(int i = 0; i<4; i++){
@@ -572,10 +596,10 @@ public class Solver {
 						}
 						
 						
-						System.out.println("Start:"+k.step);
-						System.out.println("Put Pos 1 from Hilfspol to Pos2 -->"+positions[1]+":"+(hilfsPol*4+positionNrOnHilfsPol[0]));
+						println("Start:"+k.step);
+						println("Put Pos 1 from Hilfspol to Pos2 -->"+positions[1]+":"+(hilfsPol*4+positionNrOnHilfsPol[0]));
 						change2PosEqualDirect(positions[1],(hilfsPol*4+positionNrOnHilfsPol[0]));
-						System.out.println("Stop:"+k.step);
+						println("Stop:"+k.step);
 					}
 					
 				}
@@ -610,17 +634,22 @@ public class Solver {
 						}
 						
 					}
-										
-					positionNrOnHilfsPol[0]=hilfsPol*4;
-					System.out.println("Exact - Pos2ToHPol ("+k.step+"): "+hilfsPol*4+", "+changePosition);
-					change2PosEqualDirect(hilfsPol*4,changePosition);
-					System.out.println("Exact end ("+k.step+")");
-					positionNrOnHilfsPol[1]=0;
+					if(changePosition!=-2){
+						positionNrOnHilfsPol[0]=hilfsPol*4;
+						println("Exact - Pos2ToHPol ("+k.step+"): "+hilfsPol*4+", "+changePosition);
+						change2PosEqualDirect(hilfsPol*4,changePosition);
+						println("Exact end ("+k.step+")");
+						positionNrOnHilfsPol[1]=0;
+					}else{
+						println("Muss sonst lösen");
+					}
+					
 					
 				}
 				
 				
 				positionsOnHilfsPol[1]=false;
+				positionNrOnHilfsPol[1] = -1;
 				for(int i = 0; i<4; i++){
 					
 					if(!positionsOnHilfsPol[1]&&k.tri[hilfsPol*4+i]==colors[1]){
@@ -633,19 +662,23 @@ public class Solver {
 					
 				}
 				
+				if(positionNrOnHilfsPol[1]!=-1){
+					println("Exact - Pos2ToCorrectPol ("+k.step+"): "+positions[1]+", "+(hilfsPol*4+positionNrOnHilfsPol[1]));
+					change2PosEqualDirect(positions[1],(hilfsPol*4+positionNrOnHilfsPol[1]));//overflow
+					println("Exact end ("+k.step+")");
+				}else{
+					println("Not On Hilfspl-->Do nothing");
+				}
 				
-				System.out.println("Exact - Pos2ToCorrectPol ("+k.step+"): "+positions[1]+", "+(hilfsPol*4+positionNrOnHilfsPol[1]));
-				change2PosEqualDirect(positions[1],(hilfsPol*4+positionNrOnHilfsPol[1]));//overflow
-				System.out.println("Exact end ("+k.step+")");
 	
 				//Position 2 von Hilfspol auf korrekte position drehen
 				
 			}else{
-				System.out.println("HilfsPol = -1");
+				println("HilfsPol = -1");
 			}
 			
 		}else{
-			System.out.println("Lösen unmöglich von "+pos1+":"+pos2);
+			println("Lösen unmöglich von "+pos1+":"+pos2);
 		}
 
 		
@@ -656,79 +689,14 @@ public class Solver {
 	 */
 	private boolean strategieStandardAreThis2Possible(int pos1, int pos2){
 		
-		//Bekomme die beiden Pole, welche an die Position grenzen
-		int[] pole1 = SphereUtils.getPoleForPosition(pos1);
-		
-		//Bekomme die beiden Pole, welche an die Position grenzen
-		int[] pole2 = SphereUtils.getPoleForPosition(pos2);
-		
-		//Variable mit den beiden möglichen Polen
-		int[] poleMoeglich = new int[2]; 
-		
-		//Variable um zu fragen, ob die beiden positionen überhaupt einen gemeinsamen Nachbarspol haben (Voraussetzung)
-		boolean everSame = false;
-		
-		
-		//Gehe bei der ersten Position alle durch
-		for(int i = 0; i<2; i++){
-			
-			//Variable mit dem aktuellen Status
-			boolean same = false;
-			
-			//Variable um bei ungleichheit die Nummer zu speichern
-			int notSame = -1;
-			
-			//Gehe bei der 2 Position alle durch
-			for(int j = 0; j<2;j++){
-				
-				//Wenn die beiden gleich sind
-				if(pole1[i]==pole2[j]){
-					
-					//setzte aktuelle variable auf true
-					same = true;
-					
-				//Ansonsten	
-				}else{
-					
-					//Speichere die aktuelle Nummer
-					notSame = j;
-				}
-				
+		boolean[] polRing = SphereUtils.getPolBand(pos1, pos2);
+		int urPol = pos1/4;
+		for(int i = 0; i<6; i++){
+			if(!SolveCheck.isPolSolved(i, k)&&polRing[i]&&i!=urPol){
+				return true;
 			}
-			
-			//Wenn same falsch ist
-			if(!same){
-				
-				//Die möglichen Pole speichern
-				poleMoeglich[0]=pole1[i];
-				poleMoeglich[1]=pole2[notSame];
-				
-				//Variable auf true setzten, damit grundvoraussetzung gegeben ist
-				everSame = true;
-			}
-			
 		}
-		//ist grundvoraussetzung gebenen
-		if(everSame){
-			
-			//Gehe die beiden Pole durch
-			for(int i = 0; i<2; i++){
-				
-				//Wenn ein Pol noch nicht gelöst ist
-				if(!SolveCheck.isPolSolved(poleMoeglich[i], k)){
-					
-					//Dann gibt wahr zurück
-					return true;
-					
-				}
-				
-			}
-			
-		}	
-		
-		//Ansonsten gib falsch zurück
 		return false;
-		
 	}
 	
 	/**
@@ -1124,9 +1092,6 @@ public class Solver {
 		}
 		
 	}
-	private void change2PosEqual(int p1, int p2){
-		change2PosEqual(p1,p2,false);
-	}
 	/**
 	 * 
 	 * @param p1 : TO
@@ -1138,7 +1103,7 @@ public class Solver {
 		if(pol1!=pol2){
 			int[] values = optionsChange2PosEqualDirect(p1, p2);
 			if(values[0]==-1){
-				System.out.println(k.getSphere("000"));
+				println(k.getSphere("000"));
 			}
 			addSteps(pol2, values[0],1);
 			
@@ -1152,7 +1117,7 @@ public class Solver {
 			addSteps(values[1], 4-values[2],3);
 			
 		}else{
-			//System.out.println("On Same Pol");
+			//println("On Same Pol");
 			change2PositionsOnOnePol(p1, p2);
 		}
 		
@@ -1189,7 +1154,7 @@ public class Solver {
 
 			
 		}else{
-			//System.out.println("On Same Pol");
+			//println("On Same Pol");
 			change2PositionsOnOnePol(p1, p2);
 		}
 		
@@ -1202,7 +1167,7 @@ public class Solver {
 			p1 = p2; 
 			p2 = temp;
 		}
-		//System.out.println("Drehen Equal:"+p1+";"+p2);
+		//println("Drehen Equal:"+p1+";"+p2);
 		switch(p1){
 			case 0:
 				switch(p2){
@@ -2168,9 +2133,6 @@ public class Solver {
 			return new int[]{-1,-1,-1,-1};		
 		}
 	
-	private void changeExact2Positions(int p1, int p2){
-		changeExact2Positions(p1, p2, false);
-	}
 	private void changeExact2Positions(int p1, int p2,boolean overflow){
 		//Überprüft die Positionen auf legale werte --> Min 0, Max 23	--> nicht den selben wert
 				if(p1>=0&&p2>=0&&p1<=23&&p2<=23&&p1!=p2){
@@ -2482,7 +2444,7 @@ public class Solver {
 			int change = pol*4+(((p2%4)+1)%4);
 			int color1 = k.tri[p1+1];
 			int color2 = k.tri[change];
-			//System.out.println("Double Change: "+p1+"+"+(p1+1)+","+p2+"+"+change);
+			//println("Double Change: "+p1+"+"+(p1+1)+","+p2+"+"+change);
 			change2PositionsOnOnePol(p1,p1+1);
 			change2PositionsOnOnePol(p2,change);
 			for(int i = 0; i<4; i++){
@@ -2651,6 +2613,12 @@ public class Solver {
 			
 		}
 		
+	}
+	public void println(String s){
+		boolean display = false;
+		if(display){
+			System.out.println(s);
+		}
 	}
 	
 }

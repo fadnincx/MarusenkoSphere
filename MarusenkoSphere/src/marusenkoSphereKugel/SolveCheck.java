@@ -11,7 +11,7 @@ public class SolveCheck {
 	 * überprüft, ob aller Werte in Array true ist.
 	 * @return gibt true zurück, wenn alles true, sonst false
 	 */
-	protected static boolean ArrayIsFullyOk(boolean[] ok){
+	public static boolean ArrayIsFullyOk(boolean[] ok){
 		//Gehe alle Dreiecke durch
 		for(int i = 0; i<ok.length; i++){
 			//Wenn eines false, dann return false
@@ -28,7 +28,7 @@ public class SolveCheck {
 	 * Prüft, ob Kugel fertig gelöt wurde
 	 * @return : wenn gelöst, dann true sonst false
 	 */
-	protected static boolean isKugelSolved(Kugel k){
+	public static boolean isKugelSolved(Kugel k){
 		/**
 		 * Prüfe jeden Pol
 		 */
@@ -47,7 +47,7 @@ public class SolveCheck {
 	 * @param polNr : welcher Pole
 	 * @return : gibt true zurück, wenn Pole vollständig gelösst ist
 	 */
-	protected static boolean isPolSolved(int polNr, Kugel k){
+	public static boolean isPolSolved(int polNr, Kugel k){
 		int anzKorr = 0;
 		for(int i = 0; i<4; i++){
 			if(isPositionSolved((polNr*4)+i,k)){
@@ -63,7 +63,7 @@ public class SolveCheck {
 	 * @param p : welches Dreieck geprüft werden soll
 	 * @return : gibt true zurück, wenn gelöst
 	 */
-	protected static boolean isPositionSolved(int p, Kugel k){
+	public static boolean isPositionSolved(int p, Kugel k){
 		/**
 		 * Prüfe, ob tri mit con stimmt	
 		 * wenn ja, Return true	

@@ -1,6 +1,5 @@
 package marusenkoSphereKugel;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -541,7 +540,7 @@ public class SphereUtils {
 		
 	}
 	public static boolean[] getPolBand(int p1, int p2){
-		System.out.println("PolRing: "+p1+":"+p2);
+		//System.out.println("PolRing: "+p1+":"+p2);
 		int pol = p1/4;
 		
 		//Bekomme die beiden Pole, welche an die Position grenzen
@@ -550,13 +549,10 @@ public class SphereUtils {
 		//Bekomme die beiden Pole, welche an die Position grenzen
 		int[] pole2 = SphereUtils.getPoleForPosition(p2);
 				
-		System.out.println("PolRing gegeben: "+pole1[0]+","+pole1[1]+","+pole2[0]+","+pole2[1]);
+		//System.out.println("PolRing gegeben: "+pole1[0]+","+pole1[1]+","+pole2[0]+","+pole2[1]);
 		
 		//Variable mit den beiden möglichen Polen
 		int[] poleMoeglich = new int[2]; 
-				
-		//Variable um zu fragen, ob die beiden positionen überhaupt einen gemeinsamen Nachbarspol haben (Voraussetzung)
-		boolean everSame = false;
 		
 		LinkedList<Integer> pol1 = new LinkedList<Integer>();
 		LinkedList<Integer> pol2 = new LinkedList<Integer>();
@@ -574,7 +570,7 @@ public class SphereUtils {
 				poleMoeglich[1]=pol2.get(i);
 			}					
 		}
-		System.out.println("PolRing followed: "+poleMoeglich[0]+","+poleMoeglich[1]);
+		//System.out.println("PolRing followed: "+poleMoeglich[0]+","+poleMoeglich[1]);
 		
 		LinkedList<Integer> polRing = new LinkedList<Integer>();
 		//ist grundvoraussetzung gebenen
@@ -582,8 +578,8 @@ public class SphereUtils {
 		//Dann gibt wahr zurück
 		polRing.add(poleMoeglich[0]);
 		polRing.add(poleMoeglich[1]);
-		//polRing.add(addPol);
-		//polRing.add(pol);
+		polRing.add(addPol);
+		polRing.add(pol);
 					
 		boolean[] r = new boolean[6];
 		for(int i = 0; i<6; i++){
