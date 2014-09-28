@@ -76,5 +76,21 @@ public class SolveCheck {
 		 */
 		return false;
 	}
+	public static boolean otherPositionsOnPoleSolved(int p1, int p2, Kugel k){
+		int pol = p1/4;
+		int pos1 = p1%4;
+		int pos2 = p2%4;
+		
+		int[] pos = new int[2];
+		
+		for(int i = 0, index = 0; i<4; i++){
+			if(pos1!=i&&pos2!=i){
+				pos[index] = i;
+				index++;
+			}
+		}
+		return (isPositionSolved((pol*4+pos[0]), k)&&isPositionSolved((pol*4+pos[1]), k));
+		
+	}
 	
 }

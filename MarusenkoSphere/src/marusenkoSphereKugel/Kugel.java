@@ -119,58 +119,11 @@ public class Kugel{
 			System.out.println("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
 		}
 	}
-
-	/**
-	 * Moderne Methode um die Kugel zu mischen
-	 */
-	public void mixRandom(){
-		
-		//Zufalls-Objekt erstellen
-		Random rm = new Random();
-		
-		//Variable end erstellen und 1 zuweisen
-		int end = 1;
-		
-		//Solange end nicht 0 ist, drehe weiter
-		while(end!=0){
-			
-			//Variable um welchen Pol gedreht wird (zwischen 0 und 5)			
-			int pol = rm.nextInt(6);
-			
-			//Variable in welchem Modus gedreht wird (0 oder 1 --> Halbe Kugel oder Pol)
-			int mode = rm.nextInt(2);
-			
-			//Variable um wie viele Stellen gedreht werden soll (zwischen 0 und 3)
-			int step = rm.nextInt(4);
-			
-			//Je nach Modus
-			switch(mode){
-				case 0:
-					//Den Pol x um die gewünschte Drehung drehen
-					changePol(pol, step);
-					break;
-				case 1:
-					//Die Halbe Kugel um gewünschte Drehung drehen
-					turnKugel(pol, step);
-					break;
-			}
-			
-			//Zufällige zahl zwischen 0 und 9999 generieren
-			end = rm.nextInt(10000);
-			
-		}
-		//Den Step zurück auf 0 setzten
-		step = 0;
-		
-		//Löse die Kugel
-		solveSphere();
-					
-	}
 	
 	/**
 	 * Funktion zum zufälligen Füllen der Kugel mit Werten
 	 */
-	public void FillRandom(){
+	public void fillRandom(){
 		
 		//Objekt rm als Zufallsobjekt, aus welchem dann die Zusatzzahl generiert wird
 		Random rm = new Random();

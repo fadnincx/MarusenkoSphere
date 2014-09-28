@@ -6,6 +6,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -14,10 +16,13 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import marusenkoSphere.Settings;
 
 /**
  * Diese Klasse ist für die Darstellung des 2. Fensters, des Kontolpanels zuständig
@@ -25,7 +30,7 @@ import javax.swing.event.ChangeListener;
  * Zusätzlich ist ein ActionListener implementiert um direkt auf die Aktionen einzugehen
  */
 
-public class ControlPanel implements ActionListener{
+public class ControlPanel implements ActionListener, KeyListener{
 
 	//Manager um die Kugel vom Panel aus zu Steuern
 	private Manager m;
@@ -48,18 +53,18 @@ public class ControlPanel implements ActionListener{
 	private JButton cpButtonDown = new JButton();
 
 	//Kamera zurück setzten
-	private JButton cpButtonResetView = new JButton("Reset");
+	private JButton cpButtonResetView = new JButton("<html>Kamera<br>zurücksetzen</html>");
 	
 	//Schritte vorwärts und zurück gehen
-	private JButton cpButtonAddOneStep = new JButton("+1 Schritt");
-	private JButton cpButtonSubOneStep = new JButton("-1 Schritt");
+	private JButton cpButtonAddOneStep = new JButton();
+	private JButton cpButtonSubOneStep = new JButton();
 	
 	//Zu Fenster WechselButton
 	private JButton cpChangeEditor = new JButton("Editor");
 	private JButton cpChangeDev = new JButton("Dev");
 	
 	private JButton editChangeDev = new JButton("Dev");
-	private JButton editChangeSphere = new JButton("Kugel");
+	private JButton editChangeSphere = new JButton("zurück zur Kugel");
 	
 	private JButton devChangeEditor = new JButton("Editor");
 	private JButton devChangeSphere = new JButton("Kugel");
@@ -103,6 +108,12 @@ public class ControlPanel implements ActionListener{
 	//Slider für die Animationsgeschwindigkeit
 	private JSlider cpSliderAnimationSpeed = new JSlider();
 	
+	//Slider info
+	private JLabel cpLabelProgress = new JLabel("Lösungsfortschritt:");
+	
+	//Slider für den Lösungsweg
+	private JSlider cpSliderForSteps = new JSlider();
+	
 	//Textfeld um zu Position zu gehen inklusie Bestätigungs Button
 	private JTextField cpTextFieldGoToPosition = new JTextField();
 	private JButton cpButtonGoToPosition = new JButton("Go to");
@@ -113,6 +124,11 @@ public class ControlPanel implements ActionListener{
 
 	//CheckBox für dev Panel, ob gelöst werden soll
 	private JCheckBox devCheckBoxSolve = new JCheckBox("Kugel lösen");
+	
+	//Trennlinien
+	private JSeparator cpSepSliders = new JSeparator();
+	private JSeparator cpSepChangeWindow = new JSeparator();
+	private JSeparator cpSepCamera = new JSeparator();
 	
 	//Verschiebung des Fensters, so dass gerade neben dem Hauptfenster dargestellt wird
 	private int windowOffsetX;
@@ -144,7 +160,7 @@ public class ControlPanel implements ActionListener{
 		Dimension screenSize = tk.getScreenSize();
 				
 		//Berechne die Verschiebung des Fensters
-		windowOffsetX=(screenSize.width/2)+337;
+		windowOffsetX=(screenSize.width/2)+161;
 		windowOffsetY=(screenSize.height/2)-240;
 		
 		//Lade das Icon
@@ -156,9 +172,9 @@ public class ControlPanel implements ActionListener{
 		devPanel.setIconImage(icon);
 		
 		//Definiere die Grösse der Fenster
-		controlPanel.setSize(350, 510);
-		editorPanel.setSize(350, 510);
-		devPanel.setSize(350, 510);
+		controlPanel.setSize(350, 509);
+		editorPanel.setSize(350, 509);
+		devPanel.setSize(350, 509);
 		
 		//Setze nur das controlPanel sichtbar, die anderen auch unsichtbar
 		controlPanel.setVisible(true);
@@ -201,11 +217,16 @@ public class ControlPanel implements ActionListener{
 			ImageIcon imageDown = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/down.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 			ImageIcon imageRight = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/right.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 			ImageIcon imageLeft = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/left.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+			ImageIcon imagePlus = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/plus.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+			ImageIcon imageMinus = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/minus.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+			
 			
 			cpButtonUp.setIcon(imageUp);
 			cpButtonDown.setIcon(imageDown);
 			cpButtonRight.setIcon(imageRight);
 			cpButtonLeft.setIcon(imageLeft);
+			cpButtonAddOneStep.setIcon(imagePlus);
+			cpButtonSubOneStep.setIcon(imageMinus);
 			
 		} catch (IOException e) {
 			
@@ -225,34 +246,43 @@ public class ControlPanel implements ActionListener{
 		
 		//Dem Slider für die Animationsgeschwindikeit Position und Grösse zuweisen
 		cpSliderAnimationSpeed.setBounds(20,100,310,30);
+		
+		cpSepSliders.setBounds(5,140,330,5);
     	
-		//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen
-    	cpChangeDev.setBounds(20,130,145,50);
-    	cpChangeEditor.setBounds(185,130,145,50);
+		//Den + und - Buttons Position und Grösse zuweisen
+    	cpButtonSubOneStep.setBounds(20,190,30,30);
+    	cpButtonAddOneStep.setBounds(300,190,30,30);
     	
-    	//Dem Textfeld für Sprünge in der Lösungsreihe Position und Grösse zuweisen
-    	cpTextFieldGoToPosition.setBounds(20, 190, 145, 50);
+    	//Dem Positions Slider Position und Grösse zuweisen
+    	cpSliderForSteps.setBounds(60,190,230,30);
     	
-    	//Dem Button zum akzepieren des Inputs Position und Grösse zuweisen
-    	cpButtonGoToPosition.setBounds(185, 190, 145, 50);
+    	//Dem Infotext Position und Grösse zuweisen
+    	cpLabelProgress.setBounds(20,160,310,20);
     	
     	//Den Labels mit Infos zur Kugel Position und Grösse zuweisen
-    	cpLabelSphereStepNow.setBounds(20,250,200,20);
-    	cpLabelSphereStepMax.setBounds(20,270,200,20);
+    	cpLabelSphereStepNow.setBounds(20,230,200,20);
+    	cpLabelSphereStepMax.setBounds(20,250,200,20);
     	
-    	//Dem Button zum zurücksetzen der Kamera Position und Grösse zuweisen
-    	cpButtonResetView.setBounds(250,300,80,50);
+    	//Dem Slider für die Animationsgeschwindigkeit diverse Einstellungen vornehmen
+    	cpSliderForSteps.setMinimum(0);    //stellt den Minimalwert auf 0 ein
+    	cpSliderForSteps.setMaximum(180);  //stellt den Maximalwert auf 180 ein
+    	cpSliderForSteps.setValue(0);     //selektiert den Wert 0
+    	cpSliderForSteps.setMinorTickSpacing(5); //Abstände im Feinraster
+    	cpSliderForSteps.setMajorTickSpacing(10); //Abstände im Grossraster
+    	cpSliderForSteps.setSnapToTicks(false); //deaktiviert das automatische Versetzen / Einrasten im Raster
+    	cpSliderForSteps.setExtent(0); //der Zeiger verspringt jedesmal 0 Einheiten
+    	cpSliderForSteps.setPaintLabels(false);  //Zahlen werden nicht angezeigt
+    	cpSliderForSteps.setPaintTicks(false);    //Striche werden nicht angezeigt
     	
-    	//Den 4 Buttons mit Pfeilen Position und Grösse zuweisen
-    	cpButtonUp.setBounds(150,300,50,50);
-    	cpButtonLeft.setBounds(90,360,50,50);
-    	cpButtonRight.setBounds(210,360,50,50);
-    	cpButtonDown.setBounds(150,360,50,50);
-    	
-    	//Den Buttons zum einen Schritt machen Position und Grösse zuweisen
-    	cpButtonSubOneStep.setBounds(20,420,145,50);
-    	cpButtonAddOneStep.setBounds(185,420,145,50);
-    	
+    	//Zusätzlich wird ein ChangeListener hinzugefügt, damit der Wert im Manager geändert werden kann
+    	cpSliderForSteps.addChangeListener(new ChangeListener() {
+    	      public void stateChanged(ChangeEvent evt) {
+    	    	  
+    	    	  //Statische Variable im Manager ändern
+    	          m.cpSliderChangeState(cpSliderForSteps.getValue());
+    	          
+    	        }
+    	      });
     	//Dem Slider für die Animationsgeschwindigkeit diverse Einstellungen vornehmen
     	cpSliderAnimationSpeed.setMinimum(5);    //stellt den Minimalwert auf 5 ein
     	cpSliderAnimationSpeed.setMaximum(180);  //stellt den Maximalwert auf 180 ein
@@ -273,7 +303,33 @@ public class ControlPanel implements ActionListener{
     	          
     	        }
     	      });
-    	  	
+    	
+    	//Trennlinie
+    	cpSepCamera.setBounds(5,280,330,5);
+    	
+    	//Dem Button zum zurücksetzen der Kamera Position und Grösse zuweisen
+    	cpButtonResetView.setBounds(210,290,120,50);
+    	
+    	//Den 4 Buttons mit Pfeilen Position und Grösse zuweisen
+    	cpButtonUp.setBounds(150,290,50,50);
+    	cpButtonLeft.setBounds(90,350,50,50);
+    	cpButtonRight.setBounds(210,350,50,50);
+    	cpButtonDown.setBounds(150,350,50,50);
+    	  
+    	
+    	
+    	//Trennlinie
+    	cpSepChangeWindow.setBounds(5,410,330,5);
+    	
+    	//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen
+			if(Settings.DEBUGMODE){
+				cpChangeDev.setBounds(20,420,145,50);
+		    	cpChangeEditor.setBounds(185,420,145,50);
+			}else{
+		    	cpChangeEditor.setBounds(20,420,310,50);
+			}
+    	
+    	
     	//Füge jedes Objekt dem Controlpanel hinzu
     	controlPanel.add(cpButtonFillSphere);
     	controlPanel.add(cpButtonSolve);
@@ -284,12 +340,17 @@ public class ControlPanel implements ActionListener{
     	controlPanel.add(cpButtonResetView);
     	controlPanel.add(cpButtonAddOneStep);
     	controlPanel.add(cpButtonSubOneStep);
+    	controlPanel.add(cpSepSliders);
+    	controlPanel.add(cpSliderForSteps);
+    	controlPanel.add(cpLabelProgress);
     	controlPanel.add(cpLabelSphereStepNow);
     	controlPanel.add(cpLabelSphereStepMax);
     	controlPanel.add(cpTextFieldGoToPosition);
     	controlPanel.add(cpButtonGoToPosition);
     	controlPanel.add(cpSliderAnimationSpeed);
     	controlPanel.add(cpLabelAnimationSpeed);
+    	controlPanel.add(cpSepCamera);
+    	controlPanel.add(cpSepChangeWindow);
     	controlPanel.add(cpChangeDev);
     	controlPanel.add(cpChangeEditor);
     	
@@ -338,8 +399,13 @@ public class ControlPanel implements ActionListener{
 		editButtonColor7.setBounds(20, 230, 150, 20);
 	
 		//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen 
-		editChangeSphere.setBounds(20,330,145,50);
-		editChangeDev.setBounds(185, 330, 145,50);
+		if(Settings.DEBUGMODE){
+			editChangeSphere.setBounds(20,330,145,50);
+			editChangeDev.setBounds(185, 330, 145,50);
+		}else{
+			editChangeSphere.setBounds(20,330,300,50);
+		}
+		
 		
 		//Dem Label mit Infos zur Legalität der Kugel Position und Grösse zuweisen
 		editLabelIsSphereLegal.setBounds(20,260,300,50);
@@ -450,13 +516,16 @@ public class ControlPanel implements ActionListener{
 	 * Funktion zum aktuallisieren der Infos über die Kugel
 	 */
 	protected void updateSphereInfos(int aktuellePosition, int fertigBeiPosition){
+		cpSliderForSteps.setMaximum(fertigBeiPosition);
+		cpSliderForSteps.setValue(aktuellePosition);
+		
 		//Setzte Text neu fürs Controlpanel
-		cpLabelSphereStepNow.setText("Anzahl Schritte: "+aktuellePosition);
-		cpLabelSphereStepMax.setText("Gelöst bei Schritte: "+fertigBeiPosition);
+		cpLabelSphereStepNow.setText("Aktuelle Position: "+aktuellePosition);
+		cpLabelSphereStepMax.setText("Gelöst bei Position: "+fertigBeiPosition);
 		
 		//Setze Text neu fürs DevPanel
-		devLabelSphereStepNow.setText("Anzahl Schritte: "+aktuellePosition);
-		devLabelSphereStepMax.setText("Gelöst bei Schritte: "+fertigBeiPosition);
+		devLabelSphereStepNow.setText("Anzahl Position: "+aktuellePosition);
+		devLabelSphereStepMax.setText("Gelöst bei Position: "+fertigBeiPosition);
 	}
 	
 	/**
@@ -623,6 +692,24 @@ public class ControlPanel implements ActionListener{
         	KeyboardMouseManager.pressedKey.add('k');
         }
 		
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 }

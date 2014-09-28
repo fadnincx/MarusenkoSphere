@@ -58,16 +58,12 @@ public class Manager {
 	 * @param k : Kugel zum lösen
 	 */
 	public Manager(Kugel k){
-		System.out.println("Started Manager");
 		//Übernehme Kugel von der Main-Datei
 		this.k = k;
-		System.out.println("Start Calc Trigonometrie");
-		//Berechne die Trigonimetrischen Funktionen bereits hier, damit diese später schon berechnet sind
-		Trigonometrie.CalcTrigonometrie();
-		System.out.println("Fill Kugel Random");
+		
 		//Fülle Kugel zufällig
-		k.FillRandom(); 	
-		System.out.println("Open Window");
+		k.fillRandom(); 	
+
 		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
 		//Sonst wirf eine Exception
 		try{
@@ -80,8 +76,6 @@ public class Manager {
 		//Update die Anzeigt bezüglich der Anzahl Schritten 
 		updateControlpanelInformations();
 		
-		
-		
 		//Methode loop starten
 		loop();
 	}
@@ -91,7 +85,7 @@ public class Manager {
 	 */
 	private void loop(){
 		
-		
+		//Endlos wiederholen
 		while(true){
 			
 			//Frage die Tastatur und Mauseingaben ab
@@ -99,7 +93,6 @@ public class Manager {
 			
 			//Rendere die Aktuelle Kugel
 			rendern.updateKugel(k,displayMode);
-			//rendern.updateVariables(k, displayMode);
 			
 			//Wenn aktuelle Animation fertig ist, dann QueueManager aufrufen
 			if(animationFinished){
@@ -109,37 +102,50 @@ public class Manager {
 		}
 		  
 	}
+	
 	/**
 	 * Wartet bis die gegebene Anzahl Millisekunden verstrichen sind
 	 */
 	protected void sleep(long time){
+		
+		//Damit bei einem Fehler dieser ausgegeben werden kann
 		try{
+			//Versuche den Thread zu pausieren
 			Thread.sleep(time);
+			
+		//Wenn ein Fehler auftritt	
 		}catch(InterruptedException e){
+			
+			//Gib den Fehler aus
 			e.printStackTrace();
+			
 		}
+		
 	}
 	
 	/**
-	 * Ändert die Variable, dass die Kugel bis zum ende Gelöst wird
+	 * Ändert die Variable, dass die Kugel bis zum Ende gelöst wird
 	 */
 	protected void changeRunAnimationToEnd(){
+		
 		runAnimationToEnd = !runAnimationToEnd;
+		
 	}
 	
 	/**
 	 * Füllt die Kugel zufällig
 	 */
 	protected void fillSphere(){
+		
 		//Stop, falls die Kugel zum Ende gelöst wird
 		runAnimationToEnd = false;
 		
 		//Füllt die Kugel zufällig
-	    k.mixRandom();
-		
-		
+	    k.fillRandom();
+
 	    //Updated das Controlpanel
 	    updateControlpanelInformations();   
+	    
 	}
 	
 	/**
@@ -148,47 +154,91 @@ public class Manager {
 	 * @param solving : Soll Kugel gelöst werden
 	 */
 	protected void fillSphereFromDevString(String s, boolean solving){
-		//Updated das Controlpanel
+		
+		//Beendet, dass Kugel zu ende gelöst wird
 		runAnimationToEnd = false;
 		
 		//Fülle die Kugel gemäss String
 		k.fillKugelFromDebugString(s, solving);
 		
-		//Update Controlpanel
+		//Update das Controlpanel
 		updateControlpanelInformations();	
+		
 	}
 	
 	/**
 	 * Updatet die Werte über die Kugel im Controlpanel
 	 */
 	protected void updateControlpanelInformations(){
+		
 		cp.updateSphereInfos(k.getStep(), k.getSolvingListSize()-1);
+		
 	}
 	
 	/**
 	 * Zu Position X in Lösungsweg gehen
 	 */
 	protected void goToStep(int x){
+		
+		//Versuche zur gewünschten Positon zu gehen
 		setKugelToPositionFromArrayList(x);
+		
+		//Aktuellisiere die Informationen auf dem Controlpanel
 		updateControlpanelInformations();
+		
+	}
+	
+	/**
+	 * Wird aufgerufen, wenn der Slider auf dem Controlpanel verändert wird
+	 * (durch Benutzer und Programm)
+	 * @param x
+	 */
+	protected void cpSliderChangeState(int x){
+		
+		//Bekomme bei welcher Position die Kugel aktuell ist
+		int stepFromSphere = k.getStep();
+		
+		//Wenn es nicht die aktuelle Position ist
+		if(x!=stepFromSphere){
+			
+			//Gehe zu der gewünschten Position
+			goToStep(x);
+			
+		}
+		
 	}
 	
 	/**
 	 * Gibt die Kugel zur Gegebenen Step zurück
 	 */
 	private void setKugelToPositionFromArrayList(int step){
-		//Prüfe, dass sich der gewünschte Step im Rahmen des erlaubten befindet
-		if(step<=0){
+		
+		//Wenn die gewünschte Position kleiner als 0 ist
+		if(step<0){
+			
+			//Setzet die gewünschte Position auf 0
 			step = 0;
+			
+		//Wenn die gewünschte Position grösser als das Maximum ist	
 		}else if(step>=k.getSolvingListSize()){
+			
+			//Dann setze die gewünschte Position auf das Maximum
 			step = k.getSolvingListSize()-1;
+			
 		}
-		//Wenn Kugel am Ende ist, dann runAnimationToEnd auf false setzen
+		
+		//Wenn die Kugel zu ende gelöst wird und
+		//Wenn die Kugel mit dieser Änderung am Ende angekommen ist
 		if(runAnimationToEnd&&step==k.getSolvingListSize()-1){
+			
+			//Setzte lösen bis ans Ende auf falsch
 			runAnimationToEnd = false;
+			
 		}
-		//Setze Kugel
+		
+		//Verändere die Kugel nach der Liste
 		k.setKugelToStateFromList(step);
+		
 	}
 	
 	
@@ -198,6 +248,7 @@ public class Manager {
 	protected void addOneStep(){
 		 goToStep(k.getStep()+1);
 	}
+	
 	/**
 	 * Geht im Lösungsprozess eine Position zurück
 	 */
@@ -259,11 +310,12 @@ public class Manager {
 		return animationSpeed;
 	}
 	
+	/**
+	 * Setzt die aktuelle Animationsgeschwindigkeit neu
+	 */
 	protected static void setAnimationSpeed(double value){
 		animationSpeed = value/30;
 	}
-	
-	
 	
 	/**
 	 * Gibt die aktuelle Bildfrequenz zurück
@@ -377,6 +429,7 @@ public class Manager {
 	 * Prüfe, ob Kugel legal ist
 	 */
 	private boolean isSphereAllowed(){
+		
 		//Erstelle Array für alle aktuellen Tris
 		int[] checkTri = new int[24];
 		
@@ -404,13 +457,13 @@ public class Manager {
 		Arrays.sort(checkCon);
 		
 		return Arrays.equals(checkTri,referenceTri)&&Arrays.equals(checkCon,referenceCon);
+		
 	}
 	
 	/**
 	 * Wenn das Programm beendet werden soll
 	 */
 	protected void exitProgramm(){
-		//rendern.end();
 		 System.exit(0);
 	}
 	

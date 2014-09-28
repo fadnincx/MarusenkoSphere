@@ -112,26 +112,26 @@ public class RenderKugel {
         for(int j = 0; j<90; j+=renderSteps){
 			for(int l = 0; l<90; l+=renderSteps){
 				//1. Dreieck 1. Korrdinate
-				preCalc[j][l][0][0] = Trigonometrie.cos(l)*Trigonometrie.sin(j);
-				preCalc[j][l][0][1] = Trigonometrie.cos(l)*Trigonometrie.cos(j);
-				preCalc[j][l][0][2] = Trigonometrie.sin(l);
+				preCalc[j][l][0][0] = Math.cos(Math.toRadians(l))*Math.sin(Math.toRadians(j));
+				preCalc[j][l][0][1] = Math.cos(Math.toRadians(l))*Math.cos(Math.toRadians(j));
+				preCalc[j][l][0][2] = Math.sin(Math.toRadians(l));
 				//1. Dreieck 2. Korrdinate
-				preCalc[j][l][1][0] = Trigonometrie.cos(l)*Trigonometrie.sin(j+renderStepsZ);
-				preCalc[j][l][1][1] = Trigonometrie.cos(l)*Trigonometrie.cos(j+renderStepsZ);
-				preCalc[j][l][1][2] = Trigonometrie.sin(l);
+				preCalc[j][l][1][0] = Math.cos(Math.toRadians(l))*Math.sin(Math.toRadians(j+renderStepsZ));
+				preCalc[j][l][1][1] = Math.cos(Math.toRadians(l))*Math.cos(Math.toRadians(j+renderStepsZ));
+				preCalc[j][l][1][2] = Math.sin(Math.toRadians(l));
 				//1. Dreieck 3. Korrdinate
-				preCalc[j][l][2][0] = Trigonometrie.cos(l+renderStepsZ)*Trigonometrie.sin(j+renderStepsZ);
-				preCalc[j][l][2][1] = Trigonometrie.cos(l+renderStepsZ)*Trigonometrie.cos(j+renderStepsZ);
-				preCalc[j][l][2][2] = Trigonometrie.sin(l+renderStepsZ);
+				preCalc[j][l][2][0] = Math.cos(Math.toRadians(l+renderStepsZ))*Math.sin(Math.toRadians(j+renderStepsZ));
+				preCalc[j][l][2][1] = Math.cos(Math.toRadians(l+renderStepsZ))*Math.cos(Math.toRadians(j+renderStepsZ));
+				preCalc[j][l][2][2] = Math.sin(Math.toRadians(l+renderStepsZ));
 						
 				//2. Dreieck 1. Korrdinate
 				preCalc[j][l][3][0] = preCalc[j][l][0][0];
 				preCalc[j][l][3][1] = preCalc[j][l][0][1];
 				preCalc[j][l][3][2] = preCalc[j][l][0][2];
 				//2. Dreieck 2. Korrdinate
-				preCalc[j][l][4][0] = Trigonometrie.cos(l+renderStepsZ)*Trigonometrie.sin(j);
-				preCalc[j][l][4][1] = Trigonometrie.cos(l+renderStepsZ)*Trigonometrie.cos(j);
-				preCalc[j][l][4][2] = Trigonometrie.sin(l+renderStepsZ);
+				preCalc[j][l][4][0] = Math.cos(Math.toRadians(l+renderStepsZ))*Math.sin(Math.toRadians(j));
+				preCalc[j][l][4][1] = Math.cos(Math.toRadians(l+renderStepsZ))*Math.cos(Math.toRadians(j));
+				preCalc[j][l][4][2] = Math.sin(Math.toRadians(l+renderStepsZ));
 				//2. Dreieck 3. Korrdinate 
 				preCalc[j][l][5][0] = preCalc[j][l][2][0];
 				preCalc[j][l][5][1] = preCalc[j][l][2][1];
@@ -343,12 +343,12 @@ public class RenderKugel {
 						
 			//Die x-Mal gleich Verwendeten Sinus/Cosinus in Variable speichern --> Ist effizienter als jedesmal Trigonometrie.sin() abzurufen
 			double[][] sinCos = new double[3][2];
-			sinCos[0][0] = Trigonometrie.sin(drehx);
-			sinCos[0][1] = Trigonometrie.cos(drehx);
-			sinCos[1][0] = Trigonometrie.sin(drehy);
-			sinCos[1][1] = Trigonometrie.cos(drehy);
-			sinCos[2][0] = Trigonometrie.sin(drehz);
-			sinCos[2][1] = Trigonometrie.cos(drehz);
+			sinCos[0][0] = Math.sin(Math.toRadians(drehx));
+			sinCos[0][1] = Math.cos(Math.toRadians(drehx));
+			sinCos[1][0] = Math.sin(Math.toRadians(drehy));
+			sinCos[1][1] = Math.cos(Math.toRadians(drehy));
+			sinCos[2][0] = Math.sin(Math.toRadians(drehz));
+			sinCos[2][1] = Math.cos(Math.toRadians(drehz));
 			
 			//Dann den Viertel Rendern 
 			for(int j = 0; j<90; j+=renderSteps){
@@ -479,18 +479,18 @@ public class RenderKugel {
 			
 			//Schreibe die oft benötigten Trigonometrischen Funktionen in Array --> Effizienter als jedesmal Trigonometrie.sin() abzurufen			
 			double[][] sinCos = new double[3][2];
-			sinCos[0][0] = Trigonometrie.sin(drehx);
-			sinCos[0][1] = Trigonometrie.cos(drehx);
-			sinCos[1][0] = Trigonometrie.sin(drehy);
-			sinCos[1][1] = Trigonometrie.cos(drehy);
-			sinCos[2][0] = Trigonometrie.sin(drehz);
-			sinCos[2][1] = Trigonometrie.cos(drehz);
+			sinCos[0][0] = Math.sin(Math.toRadians(drehx));
+			sinCos[0][1] = Math.cos(Math.toRadians(drehx));
+			sinCos[1][0] = Math.sin(Math.toRadians(drehy));
+			sinCos[1][1] = Math.cos(Math.toRadians(drehy));
+			sinCos[2][0] = Math.sin(Math.toRadians(drehz));
+			sinCos[2][1] = Math.cos(Math.toRadians(drehz));
 			
 			//Rendere Rand des Zwischenst�cks
 			for(int j = 0; j<90; j+=renderStepsZ){
 				for(int l = 40 ; l<50; l+=renderStepsZ){
 					//Sofern es nicht zu einem Pol gehört
-					if((Trigonometrie.cos(j)*Trigonometrie.sin(l))<=Trigonometrie.sin(50)&&(Trigonometrie.cos(j-renderStepsZ)*Trigonometrie.cos(l+renderStepsZ))<=Trigonometrie.sin(50)){
+					if((Math.cos(Math.toRadians(j))*Math.sin(Math.toRadians(l)))<=Math.sin(Math.toRadians(50))&&(Math.cos(Math.toRadians(j-renderStepsZ))*Math.cos(Math.toRadians(l+renderStepsZ)))<=Math.sin(Math.toRadians(50))){
 						
 						//Jeden der Drei Ränder selbst  
 						for(int m = 0; m<3; m++){
@@ -548,7 +548,7 @@ public class RenderKugel {
 			for(int j = 30; j<50; j+=renderStepsZ){
 				for(int l = 20; l<40;l+=renderStepsZ){
 					//Falls nicht zu pol gehärt
-					if((Trigonometrie.cos(j)*Trigonometrie.sin(l))<=Trigonometrie.sin(50)&&(Trigonometrie.cos(j-renderStepsZ)*Trigonometrie.cos(l+renderStepsZ))<=Trigonometrie.sin(50)){	
+					if((Math.cos(Math.toRadians(j))*Math.sin(Math.toRadians(l)))<=Math.sin(Math.toRadians(50))&&(Math.cos(Math.toRadians(j-renderStepsZ))*Math.cos(Math.toRadians(l+renderStepsZ)))<=Math.sin(Math.toRadians(50))){	
 	    				
 						//Werte berechnen
 						double zwi[][] = new double[12][3];
@@ -588,39 +588,39 @@ public class RenderKugel {
         
         double[][][]preCalcLines = new double[3][90][6];
         for(int j =0; j<90; j++){
-        	preCalcLines[0][j][0] = Trigonometrie.cos(50)*Trigonometrie.sin(j);
-        	preCalcLines[0][j][1] = Trigonometrie.cos(50)*Trigonometrie.cos(j);
-        	preCalcLines[0][j][2] = Trigonometrie.sin(50);
+        	preCalcLines[0][j][0] = Math.cos(Math.toRadians(50))*Math.sin(Math.toRadians(j));
+        	preCalcLines[0][j][1] = Math.cos(Math.toRadians(50))*Math.cos(Math.toRadians(j));
+        	preCalcLines[0][j][2] = Math.sin(Math.toRadians(50));
         	
-        	preCalcLines[0][j][3] = Trigonometrie.cos(50)*Trigonometrie.sin(j+1);
-        	preCalcLines[0][j][4] = Trigonometrie.cos(50)*Trigonometrie.cos(j+1);
-        	preCalcLines[0][j][5] = Trigonometrie.sin(50);	
+        	preCalcLines[0][j][3] = Math.cos(Math.toRadians(50))*Math.sin(Math.toRadians(j+1));
+        	preCalcLines[0][j][4] = Math.cos(Math.toRadians(50))*Math.cos(Math.toRadians(j+1));
+        	preCalcLines[0][j][5] = Math.sin(Math.toRadians(50));	
 		}
 		for(int j = 0; j<40; j++){
 			preCalcLines[1][j][0] = 0;
-        	preCalcLines[1][j][1] = Trigonometrie.sin(j);
-        	preCalcLines[1][j][2] = Trigonometrie.cos(j);
+        	preCalcLines[1][j][1] = Math.sin(Math.toRadians(j));
+        	preCalcLines[1][j][2] = Math.cos(Math.toRadians(j));
         	
         	preCalcLines[1][j][3] = 0;
-        	preCalcLines[1][j][4] = Trigonometrie.sin(j+1);
-        	preCalcLines[1][j][5] = Trigonometrie.cos(j);	
+        	preCalcLines[1][j][4] = Math.sin(Math.toRadians(j+1));
+        	preCalcLines[1][j][5] = Math.cos(Math.toRadians(j));	
         	
-        	preCalcLines[1][j+40][0] = Trigonometrie.sin(j);
+        	preCalcLines[1][j+40][0] = Math.sin(Math.toRadians(j));
         	preCalcLines[1][j+40][1] = 0;
-        	preCalcLines[1][j+40][2] = Trigonometrie.cos(j);
+        	preCalcLines[1][j+40][2] = Math.cos(Math.toRadians(j));
         	
-        	preCalcLines[1][j+40][3] = Trigonometrie.sin(j+1);
+        	preCalcLines[1][j+40][3] = Math.sin(Math.toRadians(j+1));
         	preCalcLines[1][j+40][4] = 0;
-        	preCalcLines[1][j+40][5] = Trigonometrie.cos(j);	
+        	preCalcLines[1][j+40][5] = Math.cos(Math.toRadians(j));	
 		}
 		for(int j = 0; j<40; j++){
 			preCalcLines[2][0][0] = 0;
-        	preCalcLines[2][0][1] = Trigonometrie.sin(j);
-        	preCalcLines[2][0][2] = Trigonometrie.cos(j);
+        	preCalcLines[2][0][1] = Math.sin(Math.toRadians(j));
+        	preCalcLines[2][0][2] = Math.cos(Math.toRadians(j));
         	
         	preCalcLines[2][1][3] = 0;
-        	preCalcLines[2][1][5] = Trigonometrie.sin(j);
-        	preCalcLines[2][1][4] = Trigonometrie.cos(j);	
+        	preCalcLines[2][1][5] = Math.sin(Math.toRadians(j));
+        	preCalcLines[2][1][4] = Math.cos(Math.toRadians(j));	
 		}
         
         
@@ -821,12 +821,12 @@ public class RenderKugel {
         		
         		//Die x-Mal gleich Verwendeten Sinus/Cosinus in Variable speichern --> Ist effizienter als jedesmal Trigonometrie.sin() abzurufen
     			double[][] sinCos = new double[3][2];
-    			sinCos[0][0] = Trigonometrie.sin(drehx);
-    			sinCos[0][1] = Trigonometrie.cos(drehx);
-    			sinCos[1][0] = Trigonometrie.sin(drehy);
-    			sinCos[1][1] = Trigonometrie.cos(drehy);
-    			sinCos[2][0] = Trigonometrie.sin(drehz);
-    			sinCos[2][1] = Trigonometrie.cos(drehz);
+    			sinCos[0][0] = Math.sin(Math.toRadians(drehx));
+    			sinCos[0][1] = Math.cos(Math.toRadians(drehx));
+    			sinCos[1][0] = Math.sin(Math.toRadians(drehy));
+    			sinCos[1][1] = Math.cos(Math.toRadians(drehy));
+    			sinCos[2][0] = Math.sin(Math.toRadians(drehz));
+    			sinCos[2][1] = Math.cos(Math.toRadians(drehz));
     			
         		for(int j = 0; j<90; j++){
         			//1. Dreieck 1. Koordinate
@@ -859,12 +859,6 @@ public class RenderKugel {
         		
         	}        
         GL11.glEnd();
-
-       /* if(k.am.bleibendeDrehung()>0){
-        	k.am.setAktuelleDrehung(rotation);
-        }else{
-        	Manager.setAnimationFinished(true);
-        }*/
         
         //Gib true zurück, wenn hier ankommt, dann alles Erfolgreich
         return true;

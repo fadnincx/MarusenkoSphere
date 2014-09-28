@@ -74,10 +74,11 @@ public class Solver {
 		for(int i = 0; i<10000; i++){
 			bestSolvingWay.add("preSet");
 		}
-		// TODO Anzahl Strategien = 2 und nicht 1
+		
 		//Anzahl Strategien, die durch gegangen werden
 		int anzahlStrategien = 2;
 		
+		//Setze besteStrategie auf -1
 		int besteStrategie = -1;
 		
 		//Gehe alle Strategien durch
@@ -92,19 +93,10 @@ public class Solver {
 			//Erstelle Temporäre ArrayList mit der Lösung der Entsprechenden Strategie
 			ArrayList<String> AL = strategieChooser(i);
 
-			if(SolveCheck.isKugelSolved(k)){
-				println("Kugel erfolgreich");
-			}else{
-				println("Folgende Pole sind nicht korrekt gelöst!");
-				for(int j = 0; j<6; j++){
-					if(!SolveCheck.isPolSolved(j, k)){
-						println("Pol Nr. "+j);
-					}
-				}
-			}
-			//TODO RemoveUnusedSteps
 			//Entferne unnötige Schritte
 			RemoveUnusedSteps(AL);
+			
+			//Wenn Kugel nicht gelöst, dann ist es sicher nicht der schnellste Algorithmus
 			if(!SolveCheck.isKugelSolved(k)){
 				for(int j = 0; j<1000; j++){
 					AL.add("notFinished");
@@ -186,127 +178,46 @@ public class Solver {
 				
 				//Prüfe, auf welche Seite gelöst werden soll
 				if(strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+1)&&strategieStandardAreThis2Possible(pol[i]*4+2,  pol[i]*4+3)){
-					println("Löse Pol "+pol[i]+" Position 0 und 1");
+					
 					if(!SolveCheck.isPositionSolved(pol[i]*4+0, k)||!SolveCheck.isPositionSolved(pol[i]*4+1, k)){
+						
 						strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+1);
+						
 					}
-					println("");
-					println("Löse Pol "+pol[i]+" Position 2 und 3");
+					
 					if(!SolveCheck.isPositionSolved(pol[i]*4+2, k)||!SolveCheck.isPositionSolved(pol[i]*4+3, k)){
+						
 						strategieStandardSolve2Positions(pol[i]*4+2, pol[i]*4+3);
+						
 					}
+					
 				}else
 				if(strategieStandardAreThis2Possible(pol[i]*4+1,  pol[i]*4+2)&&strategieStandardAreThis2Possible(pol[i]*4+0,  pol[i]*4+3)){
-					println("Löse Pol "+pol[i]+" Position 1 und 2");
-					strategieStandardSolve2Positions(pol[i]*4+1, pol[i]*4+2);
-					println("Löse Pol "+pol[i]+" Position 0 und 3");
-					strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+3);
-				}else{
-					println("Error--No Lösungsmethode!!!!");
-					//System.exit(0);
-				}
-				
-			}
-		}	
-		
-	
-		//Prüfe ob Kugel noch Korrekt ist, oder ob es einen Fehler gibt
-				strategieOnecheckIfPositionOnKorrektPole();
-				
-				//Wenn keinen Fehler gefunden
-				if(SolveCheck.ArrayIsFullyOk(ok)){
-					
-					//So lange die Kugel nicht gelöst ist...
-					while(!SolveCheck.isKugelSolved(k)){
+
+					if(!SolveCheck.isPositionSolved(pol[i]*4+1, k)||!SolveCheck.isPositionSolved(pol[i]*4+2, k)){
 						
-						//Gehe Jeden Pol durch
-						for(int i = 0; i<6; i++){
-							
-							//Wenn Pol noch nicht gelöst, löse ihn
-							if(!SolveCheck.isPolSolved(i,k)){		
-								
-								//Array mit werten, ob eine Position schon gelöst wurde, oder nicht
-								boolean[] pOk = new boolean[4];
-								
-								//Gehe für jede Position durch
-								for(int j = 0; j<4; j++){
-									
-									
-									pOk[j] = SolveCheck.isPositionSolved(i*4+j,k);
-									
-								}
-								
-								//Solange Pol nicht gelöst, noch einen Anlauf wagen 
-								while(!SolveCheck.isPolSolved(i,k)){
-									
-									//Gehe jede Position durch
-									for(int j = 0; j<4; j++){
-										
-										//Wenn noch nicht korrekt
-										if(!pOk[j]){
-											
-											//Finde das Verbindungsstück mit der selben Farbe heraus
-											int con = SphereUtils.findCorrectConIndexFromTri(i*4+j);
-											
-											//Gehe für alle Positionen durch
-											for(int l = 0; l<4; l++){
-												
-												//Wenn das Dreieck gefunden wurde, mit welchem getauscht werden muss
-												if(k.tri[i*4+l]==k.con[con]&&l!=j){
-													
-													//Tausche die beiden Positionen
-													change2PositionsOnOnePol(i*4+j, i*4+l);
-												}
-												
-											}
-											
-											//Gehe alle Positionen durch
-											for(int l = 0; l<4; l++){
-												
-												//Ist Position gelöst? Antwort in Array speichern
-												pOk[l] = SolveCheck.isPositionSolved(i*4+l,k);
-												
-											}
-											
-										}
-										
-									}
-									
-								}
-								
-							}
-							
-						}
+						strategieStandardSolve2Positions(pol[i]*4+1, pol[i]*4+2);
 						
-					}	
-					
-				}else{
-					Log.ErrorLog("Nicht alle Farben auf korrektem Pol");
-				}
-		//Löse den Letzten Pol und gibt die Kugel zurück
-		//return strategieOne();
-		//TODO **/
-		/*
-		for(int i = 0; i<24;i++){
-			for(int j = 0; j<24; j++){
-				if(i!=j){
-					int color1 = k.tri[i];
-					int color2 = k.tri[j];
-					change2PosEqualDirect(i, j);
-					if(color2 == k.tri[i]){
-						println("Successfull "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
-					}else{
-						println("Failed "+i+","+j+":"+color1+","+color2+":"+k.tri[i]+","+k.tri[j]);
 					}
 					
+					if(!SolveCheck.isPositionSolved(pol[i]*4+0, k)||!SolveCheck.isPositionSolved(pol[i]*4+3, k)){
+						
+						strategieStandardSolve2Positions(pol[i]*4+0, pol[i]*4+3);
+						
+					}
 					
 				}
+				
 			}
-		}
-		*/
+			
+		}	
 		
+		//Löse den letzten Pol
+		solveColorsOnPol();
 		
+		//Gib den Lösungsweg zurück
 		return solvingWay;
+		
 	}
 	
 	
@@ -315,41 +226,45 @@ public class Solver {
 	 */
 	private void strategieStandardSolve2Positions(int pos1, int pos2){
 	
+		//Sofern dies überhaupt möglich ist...
 		if(strategieStandardAreThis2Possible(pos1,pos2)){
 			
+			//UrsprungsPol
 			int urPol = pos1/4;
-			println("UrPol = "+urPol);
 			
+			//Die benötigten Farben
 			int colorForPosition1 = k.con[SphereUtils.findCorrectConIndexFromTri(pos1)];
 			int colorForPosition2 = k.con[SphereUtils.findCorrectConIndexFromTri(pos2)];
-			println("Needed Colors, P1("+pos1+") = "+colorForPosition1+" P2("+pos2+") = "+colorForPosition2);
-			
-			boolean otherPartOfPolSolved = SphereUtils.otherPositionsOnPoleSolved(pos1, pos2, k);
-			if(otherPartOfPolSolved){
-				println("2. Teil des Pols");
-			}else{
-				println("1. Teil des Pols");
-			}
-			
+
+			//Ist der andere Teil der Kugel bereits gelöst?
+			boolean otherPartOfPolSolved = SolveCheck.otherPositionsOnPoleSolved(pos1, pos2, k);
+
+			//Variablen ob Farben gefunden
 			boolean color1OnUrPol = false;
 			boolean color2OnUrPol = false;
 			
+			//Der Hilfspol = -1
 			int hilfsPol = -1;
 			
+			//Sofern der andere Teil des Poles noch nicht gelöst ist
 			if(!otherPartOfPolSolved){
 				
+				//Gehe alle 4 Positionen durch
 				for(int i = 0; i<4; i++){
 					
+					//Wenn Farbe 1 noch nicht gefunden und aktuelle Position die benötigte Farbe hat
 					if(!color1OnUrPol&&k.tri[urPol*4+i]==colorForPosition1){
 						
+						//Farbe 1 auf UrsprungsPol vorhanden
 						color1OnUrPol=true;
-						println("Farbe 1 on UrPol");
+
 					}
 					
+					//Wenn Farbe 2 noch nicht gefunden und aktelle Position die benötigte Farbe hat
 					if(!color2OnUrPol&&k.tri[urPol*4+i]==colorForPosition2){
 						
+						//Farbe 2 auf UrsprungsPol vorhanden
 						color2OnUrPol=true;
-						println("Farbe 2 on UrPol");
 						
 					}					
 					
@@ -359,17 +274,29 @@ public class Solver {
 			
 			//Bsp für (0,1) [true][false][true][false][true][true]
 			//Bsp für (0,3) [true][true][true][true][false][false]
+			//Gibt Array mit 6 Indizen zurück, jeder sagt, ob der entsprechende Pol grundsätzlich geht
 			boolean[] polRing = SphereUtils.getPolBand(pos1,pos2);
+			
+			//Array für den Vergleich der Pole
 			int[] polRanking = new int[6];
+			
+			//Der Pol gegenüber
 			int polGegenuber = SphereUtils.polGegenuber(urPol);
+			
+			//UrsprungsPol ist nicht als HilfsPol geeignet
 			polRing[urPol]=false;
+		
+			//Pol gegenüber ist nicht als HilfsPol geeignet, weil es falsche drehungen gibt
 			polRing[polGegenuber]=false;
-			println("PolRing: "+Arrays.toString(polRing));
+			
+			//Gehe alle Pole durch
 			for(int i=0; i<6; i++){
 				
+				//Wenn Pol gegenüber, dann gibt es einen extra Punkt, dafür fehlen 4 beim PolRing
 				if(i==polGegenuber){
 					polRanking[i]++;
 				}
+				
 				//Wenn nicht Urpol -> Weiter
 				//Wenn nicht gelöst -> Weiter
 				//Wenn auf Ring -> Weiter
@@ -382,14 +309,14 @@ public class Solver {
 					boolean color1 = false;
 					boolean color2 = false;
 					
-					
+					//Evaluation für alle 4 Positionen eines Pols
 					for(int j = 0; j<4; j++){
 						
 						if(!otherPartOfPolSolved&&color1OnUrPol){
 							color1 = true;
 							polRanking[i]+=10;
 						}
-							
+						
 						if(!color1&&k.tri[i*4+j]==colorForPosition1){
 								
 							color1=true;
@@ -410,30 +337,34 @@ public class Solver {
 				
 			}
 			
+			//Aktuelles Maximum
 			int anzPunkteForPol = 0;
-			println("PolRanking "+Arrays.toString(polRanking));
 			
+			//Gehe für alle 6 Pole durh
 			for(int i=0; i<6; i++){
 				
+				//Wenn der Pol besser ist, als der bisherige
 				if(polRanking[i]>anzPunkteForPol){
 					
+					//Dieser als aktuellen Hilfspol nehmen
 					anzPunkteForPol = polRanking[i];
 					hilfsPol = i;
 					
 				}
 				
 			}
-			
-			println("HilfsPol: "+hilfsPol);
-			
+
+			//Sofern ein Hilfspol gefunden wurde, kann nun der Pol gelöst werden
 			if(hilfsPol != -1){
-				//TODO
 				
-				int[] options = SphereUtils.strategieStandartGetTurnOpt(pos1, pos2, hilfsPol);
+				//Bekomme die Option, ob das ganze umgekehrt sein muss
+				int options = SphereUtils.strategieStandartGetTurnOpt(pos1, pos2, hilfsPol);
 				
-				int[] positions = options[2]==1?new int[]{pos1,pos2}:new int[]{pos2,pos1};
+				//Wechsle Positionen falls nötig
+				int[] positions = options==1?new int[]{pos1,pos2}:new int[]{pos2,pos1};
 				
-				int[] colors = options[2]==1?new int[]{colorForPosition1,colorForPosition2}:new int[]{colorForPosition2,colorForPosition1};
+				//Wechsle Farben falls nötig
+				int[] colors = options==1?new int[]{colorForPosition1,colorForPosition2}:new int[]{colorForPosition2,colorForPosition1};
 				
 				int[] positionNrOnUrPol = new int[]{-1,-1};
 				
@@ -823,77 +754,7 @@ public class Solver {
 			
 		}
 		
-		//Prüfe ob Kugel noch Korrekt ist, oder ob es einen Fehler gibt
-		strategieOnecheckIfPositionOnKorrektPole();
-		
-		//Wenn keinen Fehler gefunden
-		if(SolveCheck.ArrayIsFullyOk(ok)){
-			
-			//So lange die Kugel nicht gelöst ist...
-			while(!SolveCheck.isKugelSolved(k)){
-				
-				//Gehe Jeden Pol durch
-				for(int i = 0; i<6; i++){
-					
-					//Wenn Pol noch nicht gelöst, löse ihn
-					if(!SolveCheck.isPolSolved(i,k)){		
-						
-						//Array mit werten, ob eine Position schon gelöst wurde, oder nicht
-						boolean[] pOk = new boolean[4];
-						
-						//Gehe für jede Position durch
-						for(int j = 0; j<4; j++){
-							
-							
-							pOk[j] = SolveCheck.isPositionSolved(i*4+j,k);
-							
-						}
-						
-						//Solange Pol nicht gelöst, noch einen Anlauf wagen 
-						while(!SolveCheck.isPolSolved(i,k)){
-							
-							//Gehe jede Position durch
-							for(int j = 0; j<4; j++){
-								
-								//Wenn noch nicht korrekt
-								if(!pOk[j]){
-									
-									//Finde das Verbindungsstück mit der selben Farbe heraus
-									int con = SphereUtils.findCorrectConIndexFromTri(i*4+j);
-									
-									//Gehe für alle Positionen durch
-									for(int l = 0; l<4; l++){
-										
-										//Wenn das Dreieck gefunden wurde, mit welchem getauscht werden muss
-										if(k.tri[i*4+l]==k.con[con]&&l!=j){
-											
-											//Tausche die beiden Positionen
-											change2PositionsOnOnePol(i*4+j, i*4+l);
-										}
-										
-									}
-									
-									//Gehe alle Positionen durch
-									for(int l = 0; l<4; l++){
-										
-										//Ist Position gelöst? Antwort in Array speichern
-										pOk[l] = SolveCheck.isPositionSolved(i*4+l,k);
-										
-									}
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-			}	
-			
-		}
+		solveColorsOnPol();
 		
 		//Kugel zurück geben wobei noch unnötige schritte entfehrt werden
 		return solvingWay;
@@ -1067,6 +928,82 @@ public class Solver {
 		return -1;
 	}
 	
+	private void solveColorsOnPol(){
+		strategieOnecheckIfPositionOnKorrektPole();
+		
+		//Wenn keinen Fehler gefunden
+		if(SolveCheck.ArrayIsFullyOk(ok)){
+					
+			//So lange die Kugel nicht gelöst ist...
+			while(!SolveCheck.isKugelSolved(k)){
+				
+				//Gehe Jeden Pol durch
+				for(int i = 0; i<6; i++){
+					
+					//Wenn Pol noch nicht gelöst, löse ihn
+					if(!SolveCheck.isPolSolved(i,k)){		
+						
+						//Array mit werten, ob eine Position schon gelöst wurde, oder nicht
+						boolean[] pOk = new boolean[4];
+						
+						//Gehe für jede Position durch
+						for(int j = 0; j<4; j++){
+							
+							
+							pOk[j] = SolveCheck.isPositionSolved(i*4+j,k);
+							
+						}
+						
+						//Solange Pol nicht gelöst, noch einen Anlauf wagen 
+						while(!SolveCheck.isPolSolved(i,k)){
+							
+							//Gehe jede Position durch
+							for(int j = 0; j<4; j++){
+								
+								//Wenn noch nicht korrekt
+								if(!pOk[j]){
+									
+									//Finde das Verbindungsstück mit der selben Farbe heraus
+									int con = SphereUtils.findCorrectConIndexFromTri(i*4+j);
+									
+									//Gehe für alle Positionen durch
+									for(int l = 0; l<4; l++){
+										
+										//Wenn das Dreieck gefunden wurde, mit welchem getauscht werden muss
+										if(k.tri[i*4+l]==k.con[con]&&l!=j){
+											
+											//Tausche die beiden Positionen
+											change2PositionsOnOnePol(i*4+j, i*4+l);
+										}
+										
+									}
+									
+									//Gehe alle Positionen durch
+									for(int l = 0; l<4; l++){
+										
+										//Ist Position gelöst? Antwort in Array speichern
+										pOk[l] = SolveCheck.isPositionSolved(i*4+l,k);
+										
+									}
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+			}	
+			
+		}else{
+			Log.ErrorLog("Nicht alle Farben auf korrektem Pol");
+		}
+	}
+	
+	
 	/**
 	 * Dreht eine Farbe an eine bestimmte Position auf dem Pol
 	 */
@@ -1122,6 +1059,7 @@ public class Solver {
 		}
 		
 	}
+	@SuppressWarnings("unused")
 	private void change2PosEqual(int p1, int p2,boolean overflow){
 		if(p1>p2){
 			int temp = p1;
@@ -2133,6 +2071,7 @@ public class Solver {
 			return new int[]{-1,-1,-1,-1};		
 		}
 	
+	@SuppressWarnings("unused")
 	private void changeExact2Positions(int p1, int p2,boolean overflow){
 		//Überprüft die Positionen auf legale werte --> Min 0, Max 23	--> nicht den selben wert
 				if(p1>=0&&p2>=0&&p1<=23&&p2<=23&&p1!=p2){

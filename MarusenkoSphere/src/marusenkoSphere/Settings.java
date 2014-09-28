@@ -9,7 +9,7 @@ package marusenkoSphere;
 public class Settings {
 	
 	//Allgemein
-	public static final boolean DEBUGMODE = true;
+	public static final boolean DEBUGMODE = false;
 	
 	//Main
 	public static final boolean STARTKONSOLE = false;

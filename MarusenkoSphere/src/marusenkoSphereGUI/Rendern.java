@@ -255,7 +255,7 @@ public class Rendern {
 	        //Setzte den DisplayMode und den Fenstertitel       
 	        Display.setDisplayMode(displayMode);
 	        Display.setTitle(windowTitle);
-	        
+       
 	        //Erstelle Fenster mit den voreingestellten Einstellungen
 	        try{
 	        	//Versuche es mit Antialiasing
@@ -264,9 +264,19 @@ public class Rendern {
 	        	//Wennn nicht möglich, dann gibt die Meldung aus und starte ohne
 	        	System.out.println("Kein Antialiasing Möglich!");
 	        	Display.create();
-	        }
+	        }     
+	        //Aktuelle Position des Fensters abfragen
+	        int x = Display.getX();
+	        int y = Display.getY();
+	        
+	        //Neue Position setzten, so das Fenster und Controlpanel zentriert sind
+	        Display.setLocation(x-175, y);
+	        
 	        //VSync aktivieren
 	        Display.setVSyncEnabled(true);
+	        
+	        
+	        
 	        
     	}catch(LWJGLException e){
     		//Wenn Fehler beim Initialisieren des Fensters passiert, dann sofort Programm beenden
