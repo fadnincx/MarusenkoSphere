@@ -74,25 +74,25 @@ public class KeyboardMouseManager {
 	    if(m.getDisplayMode()==0||m.getDisplayMode()==2){
 	    	
 	    	//Drehen, wenn links gedrück ist
-		    if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)||pollPressedKey('1')) {
 		    	//Rotiere nach Links
 		    	m.changeRotationAngle(0, -1);
 		    }
 		    
 		    //Drehen, wenn rechts gerückt ist
-		    if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)||pollPressedKey('3')) {
 		    	//Rotiere nach Rechts
 		    	m.changeRotationAngle(0, 1);
 		    }
 		    
 		    //Drehen, wenn oben gedrückt ist
-		    if(Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_UP)||pollPressedKey('0')) {
 		    	//Rotiere nach Oben
 		    	m.changeRotationAngle(-1, 0);
 		    }
 		    
 		    //Drehen, wenn Unten gedrückt ist
-		    if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+		    if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)||pollPressedKey('2')) {
 		    	//Rotieren nach Unten
 		    	m.changeRotationAngle(1, 0);
 		    }

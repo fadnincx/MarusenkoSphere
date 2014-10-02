@@ -60,7 +60,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 	private JButton cpButtonSubOneStep = new JButton();
 	
 	//Zu Fenster WechselButton
-	private JButton cpChangeEditor = new JButton("Editor");
+	private JButton cpChangeEditor = new JButton("zum Editor");
 	private JButton cpChangeDev = new JButton("Dev");
 	
 	private JButton editChangeDev = new JButton("Dev");
@@ -69,7 +69,12 @@ public class ControlPanel implements ActionListener, KeyListener{
 	private JButton devChangeEditor = new JButton("Editor");
 	private JButton devChangeSphere = new JButton("Kugel");
 	
-
+	//Help buttons
+	private JButton cpHelpAnimation = new JButton();
+	private JButton cpHelpFortschritt = new JButton();
+	private JButton cpHelpKamera = new JButton();
+	private JButton cpHelpEditor = new JButton();
+	
 	//Die Farbigen Buttons des Editors
 	private JButton editButtonColor0 = new JButton();
 	private JButton editButtonColor1 = new JButton();
@@ -200,7 +205,9 @@ public class ControlPanel implements ActionListener, KeyListener{
 		controlPanel.setLayout(null);
 		editorPanel.setLayout(null);
 		devPanel.setLayout(null);
-
+		
+		controlPanel.addKeyListener(this);
+		
 		initControlpanel();
 		initEditor();
 		initDev();
@@ -219,7 +226,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 			ImageIcon imageLeft = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/left.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 			ImageIcon imagePlus = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/plus.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 			ImageIcon imageMinus = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/minus.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-			
+			ImageIcon imageHelp = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/help.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 			
 			cpButtonUp.setIcon(imageUp);
 			cpButtonDown.setIcon(imageDown);
@@ -227,6 +234,11 @@ public class ControlPanel implements ActionListener, KeyListener{
 			cpButtonLeft.setIcon(imageLeft);
 			cpButtonAddOneStep.setIcon(imagePlus);
 			cpButtonSubOneStep.setIcon(imageMinus);
+			cpHelpAnimation.setIcon(imageHelp);
+			cpHelpEditor.setIcon(imageHelp);
+			cpHelpFortschritt.setIcon(imageHelp);
+			cpHelpKamera.setIcon(imageHelp);
+			
 			
 		} catch (IOException e) {
 			
@@ -237,31 +249,57 @@ public class ControlPanel implements ActionListener, KeyListener{
 
 		//Button zum neu füllen der Kugel Position und Grösse zuweisen
 		cpButtonFillSphere.setBounds(20, 20, 145, 50);
+		cpButtonFillSphere.setToolTipText("Mischt die Kugel neu");
 		
 		//Button zum lösen der Kugel Position und Grösse zuweisen
 		cpButtonSolve.setBounds(185, 20,145, 50);
+		cpButtonSolve.setToolTipText("Löst die Kugel bis ans Ende");
     	
 		//Dem Label für die Animationsgeschwindigkeit Position und Grösse zuweisen
 		cpLabelAnimationSpeed.setBounds(20,80,310,20);
 		
 		//Dem Slider für die Animationsgeschwindikeit Position und Grösse zuweisen
-		cpSliderAnimationSpeed.setBounds(20,100,310,30);
+		cpSliderAnimationSpeed.setBounds(20,100,270,30);
+		cpSliderAnimationSpeed.setToolTipText("Wie schnell die Animation abläuft");
 		
+		//Help Animation
+		cpHelpAnimation.setBounds(300,100,30,30);
+		cpHelpAnimation.setToolTipText("Hilfe");
+		
+		//Help Fortschritt
+		cpHelpFortschritt.setBounds(300,240,30,30);
+		cpHelpFortschritt.setToolTipText("Hilfe");
+		
+		//Help Kamera
+		cpHelpKamera.setBounds(300,370,30,30);
+		cpHelpKamera.setToolTipText("Hilfe");
+		
+		//Help Editor
+		cpHelpEditor.setBounds(300,440,30,30);
+		cpHelpEditor.setToolTipText("Hilfe");
+		
+		//Trennlinie
 		cpSepSliders.setBounds(5,140,330,5);
     	
 		//Den + und - Buttons Position und Grösse zuweisen
     	cpButtonSubOneStep.setBounds(20,190,30,30);
     	cpButtonAddOneStep.setBounds(300,190,30,30);
+    	cpButtonSubOneStep.setToolTipText("Im Lösungsweg einen Schritt zurück");
+    	cpButtonAddOneStep.setToolTipText("Im Lösungsweg einen Schritt weiter");
+    	
     	
     	//Dem Positions Slider Position und Grösse zuweisen
     	cpSliderForSteps.setBounds(60,190,230,30);
+    	cpSliderForSteps.setToolTipText("Position im Lösungsweg");
     	
     	//Dem Infotext Position und Grösse zuweisen
     	cpLabelProgress.setBounds(20,160,310,20);
     	
     	//Den Labels mit Infos zur Kugel Position und Grösse zuweisen
     	cpLabelSphereStepNow.setBounds(20,230,200,20);
+    	cpLabelSphereStepNow.setToolTipText("Aktuelle Position im Lösungsweg");
     	cpLabelSphereStepMax.setBounds(20,250,200,20);
+    	cpLabelSphereStepMax.setToolTipText("Position bei der die Kugel gelöst ist");
     	
     	//Dem Slider für die Animationsgeschwindigkeit diverse Einstellungen vornehmen
     	cpSliderForSteps.setMinimum(0);    //stellt den Minimalwert auf 0 ein
@@ -309,24 +347,30 @@ public class ControlPanel implements ActionListener, KeyListener{
     	
     	//Dem Button zum zurücksetzen der Kamera Position und Grösse zuweisen
     	cpButtonResetView.setBounds(210,290,120,50);
+    	cpButtonResetView.setToolTipText("Setzt die Position der Kamera zurück");
     	
     	//Den 4 Buttons mit Pfeilen Position und Grösse zuweisen
     	cpButtonUp.setBounds(150,290,50,50);
+    	cpButtonUp.setToolTipText("Dreht die Kugel nach oben");
     	cpButtonLeft.setBounds(90,350,50,50);
+    	cpButtonLeft.setToolTipText("Dreht die Kugel nach links");
     	cpButtonRight.setBounds(210,350,50,50);
+    	cpButtonRight.setToolTipText("Dreht die Kugel nach rechts");
     	cpButtonDown.setBounds(150,350,50,50);
+    	cpButtonDown.setToolTipText("Dreht die Kugel nach unten");
     	  
-    	
-    	
     	//Trennlinie
     	cpSepChangeWindow.setBounds(5,410,330,5);
     	
+    	//ToolTip für Editor Button
+    	cpChangeEditor.setToolTipText("Öffne den Editor um eine eigene Kugel zu erstellen");
+    	
     	//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen
 			if(Settings.DEBUGMODE){
-				cpChangeDev.setBounds(20,420,145,50);
-		    	cpChangeEditor.setBounds(185,420,145,50);
+				cpChangeDev.setBounds(20,420,105,50);
+		    	cpChangeEditor.setBounds(145,420,145,50);
 			}else{
-		    	cpChangeEditor.setBounds(20,420,310,50);
+		    	cpChangeEditor.setBounds(20,420,270,50);
 			}
     	
     	
@@ -353,6 +397,10 @@ public class ControlPanel implements ActionListener, KeyListener{
     	controlPanel.add(cpSepChangeWindow);
     	controlPanel.add(cpChangeDev);
     	controlPanel.add(cpChangeEditor);
+    	controlPanel.add(cpHelpAnimation);
+    	controlPanel.add(cpHelpFortschritt);
+    	controlPanel.add(cpHelpKamera);
+    	controlPanel.add(cpHelpEditor);
     	
     	//Füge den Buttons ein ActionListener hinzu
     	cpButtonFillSphere.addActionListener(this);
@@ -367,7 +415,10 @@ public class ControlPanel implements ActionListener, KeyListener{
     	cpButtonGoToPosition.addActionListener(this);
         cpChangeDev.addActionListener(this);
         cpChangeEditor.addActionListener(this);
-        
+        cpHelpAnimation.addActionListener(this);
+        cpHelpEditor.addActionListener(this);
+        cpHelpFortschritt.addActionListener(this);
+        cpHelpKamera.addActionListener(this);
         
         //Controlpanel neu Zeichnen
         controlPanel.repaint();
@@ -543,8 +594,10 @@ public class ControlPanel implements ActionListener, KeyListener{
 	protected void updateInfoIsSphereAllowed(boolean isOk){
 		if(isOk){
 			editLabelIsSphereLegal.setText("Die Kugel enthält keine Fehler");
+			editChangeSphere.setText("Kugel übernehmen");
 		}else{
 			editLabelIsSphereLegal.setText("Die Kugel ist nicht gültig");
+			editChangeSphere.setText("abbrechen und zurück zur Kugel");
 		}
 	}
 	
@@ -575,22 +628,22 @@ public class ControlPanel implements ActionListener, KeyListener{
         //Ist der Button nach Oben gedrückt?
         }else if (z.getSource() == cpButtonUp){
         	//Kugel nach oben drehen
-        	m.changeRotationAngle(-10,0);
+        	m.changeRotationAngle(-5,0);
         	
         //Ist der Button nach Rechts gedrückt?	
         }else if (z.getSource() == cpButtonRight){
         	//Kugel nach rechts drehen
-        	m.changeRotationAngle(0,10);
+        	m.changeRotationAngle(0,5);
         	
         //Ist der Button nach Links gedrückt?
         }else if (z.getSource() == cpButtonLeft){
         	//Kugel nach links drehen
-        	m.changeRotationAngle(0,-10);
+        	m.changeRotationAngle(0,-5);
         	
         //Ist der Button nach Unten gedrückt?	
         }else if (z.getSource() == cpButtonDown){
         	//Kugel nach unten drehen
-        	m.changeRotationAngle(10,0);
+        	m.changeRotationAngle(5,0);
         	
         //Ist der Button zum Zurücksetzen der Drehung gedrückt?
         }else if (z.getSource() == cpButtonResetView){
@@ -690,26 +743,48 @@ public class ControlPanel implements ActionListener, KeyListener{
         }else if (z.getSource() == devChangeSphere|| z.getSource() == editChangeSphere){
         	//K als KeyBoard Input hinzufügen
         	KeyboardMouseManager.pressedKey.add('k');
+        //Ist der Button gedrückt um die Animationshilfe zu starten?
+        }else if (z.getSource() == cpHelpAnimation){
+        	//Help fenster öffnen
+        	new Help(0);
+        //Ist der Button gedückt um die Editorshilfe zu starten?
+        }else if (z.getSource() == cpHelpEditor){
+        	//Help fenster öffnen
+        	new Help(3);
+        	//Ist der Button gedückt um die Fortschrittshilfe zu starten?
+        }else if (z.getSource() == cpHelpFortschritt){
+        	//Help fenster öffnen
+        	new Help(1);	
+        	//Ist der Button gedückt um die Kamerahilfe zu starten?
+        }else if (z.getSource() == cpHelpKamera){
+        	//Help fenster öffnen
+        	new Help(2);	
         }
 		
 		
 	}
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {
+	public void keyPressed(KeyEvent key) {
 		// TODO Auto-generated method stub
+		if(key.getKeyCode() == KeyEvent.VK_UP){
+			m.changeRotationAngle(-1, 0);
+		}else
+		if(key.getKeyCode() == KeyEvent.VK_DOWN){
+			m.changeRotationAngle(1, 0);
+		}else
+		if(key.getKeyCode() == KeyEvent.VK_LEFT){
+			m.changeRotationAngle(0, -1);
+		}else
+		if(key.getKeyCode() == KeyEvent.VK_RIGHT){
+			m.changeRotationAngle(0, 1);
+		}
 		
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyReleased(KeyEvent arg0) {}
 
 	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyTyped(KeyEvent arg0) {}
 }
