@@ -94,6 +94,8 @@ public class Manager {
 			//Rendere die Aktuelle Kugel
 			rendern.updateKugel(k,displayMode);
 			
+			cp.updateSolvingState(k.getStep(), runAnimationToEnd);
+			
 			//Wenn aktuelle Animation fertig ist, dann QueueManager aufrufen
 			if(animationFinished){
 				QueueManager.Queue(this);
@@ -130,6 +132,13 @@ public class Manager {
 		
 		runAnimationToEnd = !runAnimationToEnd;
 		
+	}
+	
+	/**
+	 * Setzte die Variable, dass die Kugel bis zum Ende gelöst wird falsch
+	 */
+	protected void stopAnimationToEnd(){
+		runAnimationToEnd = false;
 	}
 	
 	/**

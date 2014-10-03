@@ -44,7 +44,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 	private JButton cpButtonFillSphere = new JButton("neu mischen");
 	
 	//Button zum lösen bis am ende
-	private JButton cpButtonSolve = new JButton("lösen");
+	private JButton cpButtonSolve = new JButton("<html>Lösungsanimation<br>starten</html>");
 	
 	//Buttons mit Pfeile zum Drehen der Kugel
 	private JButton cpButtonUp = new JButton();
@@ -118,10 +118,6 @@ public class ControlPanel implements ActionListener, KeyListener{
 	
 	//Slider für den Lösungsweg
 	private JSlider cpSliderForSteps = new JSlider();
-	
-	//Textfeld um zu Position zu gehen inklusie Bestätigungs Button
-	private JTextField cpTextFieldGoToPosition = new JTextField();
-	private JButton cpButtonGoToPosition = new JButton("Go to");
 	
 	//Debugging Feld für eingabe von Kugel inklusive Bestätigungs Button
 	private JTextField devTextFieldSphereDebugStringInput = new JTextField();
@@ -389,8 +385,6 @@ public class ControlPanel implements ActionListener, KeyListener{
     	controlPanel.add(cpLabelProgress);
     	controlPanel.add(cpLabelSphereStepNow);
     	controlPanel.add(cpLabelSphereStepMax);
-    	controlPanel.add(cpTextFieldGoToPosition);
-    	controlPanel.add(cpButtonGoToPosition);
     	controlPanel.add(cpSliderAnimationSpeed);
     	controlPanel.add(cpLabelAnimationSpeed);
     	controlPanel.add(cpSepCamera);
@@ -412,13 +406,14 @@ public class ControlPanel implements ActionListener, KeyListener{
     	cpButtonResetView.addActionListener(this);
     	cpButtonAddOneStep.addActionListener(this);
     	cpButtonSubOneStep.addActionListener(this);
-    	cpButtonGoToPosition.addActionListener(this);
         cpChangeDev.addActionListener(this);
         cpChangeEditor.addActionListener(this);
         cpHelpAnimation.addActionListener(this);
         cpHelpEditor.addActionListener(this);
         cpHelpFortschritt.addActionListener(this);
         cpHelpKamera.addActionListener(this);
+        
+        addKeyListenerToAll();
         
         //Controlpanel neu Zeichnen
         controlPanel.repaint();
@@ -536,6 +531,32 @@ public class ControlPanel implements ActionListener, KeyListener{
     	//das DevPanel neu zeichnen
         devPanel.repaint();
 	}
+	private void addKeyListenerToAll(){
+		cpButtonFillSphere.addKeyListener(this);
+		cpButtonSolve.addKeyListener(this);
+		cpButtonUp.addKeyListener(this);
+		cpButtonDown.addKeyListener(this);
+		cpButtonRight.addKeyListener(this);
+		cpButtonLeft.addKeyListener(this);
+		cpButtonResetView.addKeyListener(this);
+		cpButtonAddOneStep.addKeyListener(this);
+		cpButtonSubOneStep.addKeyListener(this);
+		cpChangeEditor.addKeyListener(this);
+		cpChangeDev.addKeyListener(this);
+		cpHelpAnimation.addKeyListener(this);
+		cpHelpEditor.addKeyListener(this);
+		cpHelpFortschritt.addKeyListener(this);
+		cpHelpKamera.addKeyListener(this);
+		cpLabelAnimationSpeed.addKeyListener(this);
+		cpLabelProgress.addKeyListener(this);
+		cpLabelSphereStepMax.addKeyListener(this);
+		cpLabelSphereStepNow.addKeyListener(this);
+		cpSepCamera.addKeyListener(this);
+		cpSepChangeWindow.addKeyListener(this);
+		cpSepSliders.addKeyListener(this);
+		cpSliderAnimationSpeed.addKeyListener(this);
+		cpSliderForSteps.addKeyListener(this);
+	}
 	
 	/**
 	 * Funktion zum wechseln des anzeige Modus
@@ -577,7 +598,19 @@ public class ControlPanel implements ActionListener, KeyListener{
 		//Setze Text neu fürs DevPanel
 		devLabelSphereStepNow.setText("Anzahl Position: "+aktuellePosition);
 		devLabelSphereStepMax.setText("Gelöst bei Position: "+fertigBeiPosition);
+		
 	}
+	protected void updateSolvingState(int aktuellePosition, boolean solveButton){
+		if(solveButton){
+			cpButtonSolve.setText("<html>Lösungsanimation<br>pausieren</html>");
+		}else
+		if(aktuellePosition==0){
+			cpButtonSolve.setText("<html>Lösungsanimation<br>starten</html>");
+		}else{
+			cpButtonSolve.setText("<html>Lösungsanimation<br>fortsetzen</html>");
+		}
+	}
+	
 	
 	/**
 	 * Updated die Position des Textes selected
@@ -659,19 +692,6 @@ public class ControlPanel implements ActionListener, KeyListener{
         }else if (z.getSource() == cpButtonSubOneStep){
         	//Y als KeyBoard Input hinzufügen
         	KeyboardMouseManager.pressedKey.add('y');
-
-        //Ist der Button um an eine Position zu springe gedrückt?	
-        }else if (z.getSource() == cpButtonGoToPosition){
-        	//Versuche in Integer um zu wandeln und dann zu Position zu springen
-        	try{
-        		int pos = Integer.parseInt(cpTextFieldGoToPosition.getText());
-        		m.goToStep(pos);
-        	
-        	//Bei Fehler
-        	}catch(Exception e){
-        		//Ignorieren
-        	}
-        	
         	
         //Ist Im Editor die Farbe 0 ausgewählt?	
         }else if (z.getSource() == editButtonColor0){
@@ -745,18 +765,26 @@ public class ControlPanel implements ActionListener, KeyListener{
         	KeyboardMouseManager.pressedKey.add('k');
         //Ist der Button gedrückt um die Animationshilfe zu starten?
         }else if (z.getSource() == cpHelpAnimation){
+        	//Animation stoppen
+        	m.stopAnimationToEnd();
         	//Help fenster öffnen
         	new Help(0);
         //Ist der Button gedückt um die Editorshilfe zu starten?
         }else if (z.getSource() == cpHelpEditor){
+        	//Animation stoppen
+        	m.stopAnimationToEnd();
         	//Help fenster öffnen
         	new Help(3);
         	//Ist der Button gedückt um die Fortschrittshilfe zu starten?
         }else if (z.getSource() == cpHelpFortschritt){
+        	//Animation stoppen
+        	m.stopAnimationToEnd();
         	//Help fenster öffnen
         	new Help(1);	
         	//Ist der Button gedückt um die Kamerahilfe zu starten?
         }else if (z.getSource() == cpHelpKamera){
+        	//Animation stoppen
+        	m.stopAnimationToEnd();
         	//Help fenster öffnen
         	new Help(2);	
         }
@@ -764,9 +792,11 @@ public class ControlPanel implements ActionListener, KeyListener{
 		
 	}
 
+	/**
+	 * Dreht bei betätigen der Pfeiltasten die Kugel
+	 */
 	@Override
 	public void keyPressed(KeyEvent key) {
-		// TODO Auto-generated method stub
 		if(key.getKeyCode() == KeyEvent.VK_UP){
 			m.changeRotationAngle(-1, 0);
 		}else
@@ -782,6 +812,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 		
 	}
 
+	//Die Methoden müssen da sein, wegen dem KeyListener
 	@Override
 	public void keyReleased(KeyEvent arg0) {}
 

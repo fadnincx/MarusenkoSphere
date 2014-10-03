@@ -999,7 +999,7 @@ public class Solver {
 			}	
 			
 		}else{
-			Log.ErrorLog("Nicht alle Farben auf korrektem Pol");
+			//Log.ErrorLog("Nicht alle Farben auf korrektem Pol");
 		}
 	}
 	

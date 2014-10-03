@@ -16,135 +16,172 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
-@SuppressWarnings("serial")
+/**
+ * Zeigt das HelpCenter an
+ */
 public class Help extends JPanel{
-
+	
+	/**
+	 * Erstellt das HilfeCenter als Parameter tab wird der gewünschte start Tab übergeben
+	 */
 	public Help(final int tab){
-		//Schedule a job for the event dispatch thread:
-        //creating and showing this application's GUI.
+		
+		//Starte die Grafik in einem neuen Thread...
         SwingUtilities.invokeLater(new Runnable() {
+        	
             public void run() {
-                //Turn off metal's use of bold fonts
-        createAndShowGUI(tab);
+            	
+                //Starte die Grafik --> Wenn Fehler beim laden der Grafiken auftreten, dann Fehler ausgeben
+            	try {
+            		
+					createAndShowGUI(tab);
+					
+				} catch (IOException e) {
+					
+					//Wenn nötig Fehler ausgeben
+					e.printStackTrace();
+					
+				}
             }
         });
 	}
-	private void createAndShowGUI(int tab) {
-        //Create and set up the window.
+	/**
+	 * Erstelle das Grafikfenster
+	 * @param tab : welcher Tab angezeigt werden soll
+	 * @throws IOException 
+	 */
+	private void createAndShowGUI(int tab) throws IOException {
+		
+        //Erstelle Fenster
         JFrame frame = new JFrame("MarusenkoSphere Hilfecenter");
+        
+        //Setzte, dass bei Klick auf X nur Fenster geschlossen wird
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
          
-        //Add content to the window.
+        //Füge dem Fenster die Tabs hinzu
         frame.add(new HelpTabbed(tab), BorderLayout.CENTER);
          
-        //Display the window.
+        //Setzte die Fenstergrösse optimal
         frame.pack();
+        
+        //Zentriere das Fenster auf dem Bildschirm
         frame.setLocationRelativeTo(null);
+        
+        //Setze das Fenster sichtbar
         frame.setVisible(true);
+        
     }
+	
+	/**
+	 * Klasse für die Generierung der Tabs
+	 */
 	class HelpTabbed extends JPanel{
-		public HelpTabbed(int tab){
+		
+		/**
+		 * Konstruktor für das erstellen der Tabs
+		 * @param tab
+		 * @throws IOException 
+		 */
+		public HelpTabbed(int tab) throws IOException{
+			
+			//Setze das Layout --> super weil geerbte Klasse von JPanel
 			super(new GridLayout(1, 1));
 	         
-		        JTabbedPane tabbedPane = new JTabbedPane();
-		        ImageIcon icon = createImageIcon("/img/help.png");
-		         
-		        JComponent panel1 = createHelpAnimation();
-		        tabbedPane.addTab("Animation", icon, panel1,
-		                "Hilfe zur Animation");
-		        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		         
-		        JComponent panel2 = createHelpFortschritt();
-		        tabbedPane.addTab("Lösungsfortschritt", icon, panel2,
-		                "Hilfe zum Lösungsfortschritt");
-		        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		         
-		        JComponent panel3 = createHelpKamera();
-		        tabbedPane.addTab("Kamera", icon, panel3,
-		                "Hilfe zur Kamera");
-		        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-		         
-		        JComponent panel4 = createHelpEditor();
-		        panel4.setPreferredSize(new Dimension(640, 480));
-		        tabbedPane.addTab("Editor", icon, panel4,
-		                "Hilfe für den Editor");
-		        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-		         
-		        //Add the tabbed pane to this panel.
-		        add(tabbedPane);
-		         
-		        //The following line enables to use scrolling tabs.
-		        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		        
-		        
-		        tabbedPane.setSelectedIndex(tab);
+			//Definiere das TabbedPane
+	        JTabbedPane tabbedPane = new JTabbedPane();
+	        
+	        //Lade das Icon für die Tabs
+	        ImageIcon icon = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/help.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+	         
+	        
+	        //Erstelle das erste Panel
+	        JComponent panel1 = createImgTab("/helpCenterPages/helpAnimation.png");
+	        
+	        //Setze die bevorzugte Grösse des Tabs
+	        panel1.setPreferredSize(new Dimension(640, 480));
+	        
+	        //Füge das Panel mit Titel, Icon und ToolTip dem TabbedPane hinzu
+	        tabbedPane.addTab("Animation", icon, panel1, "Hilfe zur Animation");
+	        
+	        //Setze so, dass darauf gewechselt werde kann
+	        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+	         
+	        
+	        //Erstelle das zweite Panel
+	        JComponent panel2 = createImgTab("/helpCenterPages/helpFortschritt.png");
+	        
+	        //Setze die bevorzugte Grösse des Tabs
+	        panel2.setPreferredSize(new Dimension(640, 480));
+	        
+	        //Füge das Panel mit Titel, Icon und ToolTip dem TabbedPane hinzu
+	        tabbedPane.addTab("Lösungsfortschritt", icon, panel2, "Hilfe zum Lösungsfortschritt");
+	        
+	        //Setze so, dass darauf gewechselt werde kann
+	        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+	         
+	        
+	        //Erstelle das dritte Panel
+	        JComponent panel3 = createImgTab("/helpCenterPages/helpKamera.png");
+	        
+	        //Setze die bevorzugte Grösse des Tabs
+	        panel3.setPreferredSize(new Dimension(640, 480));
+	        
+	        //Füge das Panel mit Titel, Icon und ToolTip dem TabbedPane hinzu
+	        tabbedPane.addTab("Kamera", icon, panel3, "Hilfe zur Kamera");
+	        
+	        //Setze so, dass darauf gewechselt werde kann
+	        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+	         
+	        
+	        //Erstelle das vierte Panel
+	        JComponent panel4 = createImgTab("/helpCenterPages/helpEditor.png");
+	        
+	        //Setze die bevorzugte Grösse des Tabs
+	        panel4.setPreferredSize(new Dimension(640, 480));
+	        
+	        //Füge das Panel mit Titel, Icon und ToolTip dem TabbedPane hinzu
+	        tabbedPane.addTab("Editor", icon, panel4, "Hilfe für den Editor");
+	        
+	        //Setze so, dass darauf gewechselt werde kann
+	        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+	         
+	        
+	        //Füge das tabbedPane zu sich selbst hinzu
+	        this.add(tabbedPane);
+	         
+	        //Aktiviere das scrollen, falls benötigt
+	        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	        
+	        //Wähle aus, welcher Tab zubeginn angezeigt werden soll
+	        tabbedPane.setSelectedIndex(tab);
 		        
 		 }
-		protected JComponent makeTextPanel(String text) {
-	        JPanel panel = new JPanel(false);
-	        JLabel filler = new JLabel(text);
-	        filler.setHorizontalAlignment(JLabel.CENTER);
-	        panel.setLayout(new GridLayout(1, 1));
-	        panel.add(filler);
-	        return panel;
-	    }
-	     
-	    /** Returns an ImageIcon, or null if the path was invalid. */
-	    protected ImageIcon createImageIcon(String path) {
-			try {
-				return new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream(path))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-	    }
-	    private JComponent createHelpAnimation(){
+
+		/**
+		 * Erstelle den Tab mit Bild und gibt ihn als JComponet zurück
+		 */
+	    private JComponent createImgTab(String imgUrl) throws IOException{
+	    	
+	    	//JPanel erstellen
 	    	JPanel panel = new JPanel(false);
-	    	try {
-	    		ImageIcon img = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/helpCenterPages/helpAnimation.png"))).getImage().getScaledInstance(640, 480, Image.SCALE_SMOOTH));
-	    		JLabel label = new JLabel(img);
-	    		panel.add(label);
-	    	} catch (IOException e) {
-				e.printStackTrace();
-	
-			}
+	    	
+	    	//Lade das Hilfebild
+	    	ImageIcon img = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream(imgUrl))).getImage().getScaledInstance(640, 480, Image.SCALE_SMOOTH));
+	    	
+	    	//Erstelle Label in welchem das Bild angezeigt wird
+	    	JLabel label = new JLabel(img);
+	    	
+	    	//Füge Label dem Panel hinzu
+	    	panel.add(label);
+	    	
+	    	//Setze das Layout des Panels
 	        panel.setLayout(new GridLayout(1, 1));
+	        
+	        //Gib das Panel zurück
 	    	return panel;
+	    	
 	    }
-	    private JComponent createHelpFortschritt(){
-	    	JPanel panel = new JPanel(false);
-	    	try {
-	    		ImageIcon img = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/helpCenterPages/helpFortschritt.png"))).getImage().getScaledInstance(640, 480, Image.SCALE_SMOOTH));
-	    		JLabel label = new JLabel(img);
-	    		panel.add(label);
-	    	} catch (IOException e) {
-				e.printStackTrace();
-	
-			}
-	        panel.setLayout(new GridLayout(1, 1));
-	    	return panel;
-	    }
-	    private JComponent createHelpKamera(){
-	    	JPanel panel = new JPanel(false);
-	    	try {
-	    		ImageIcon img = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/helpCenterPages/helpKamera.png"))).getImage().getScaledInstance(640, 480, Image.SCALE_SMOOTH));
-	    		JLabel label = new JLabel(img);
-	    		panel.add(label);
-	    	} catch (IOException e) {
-				e.printStackTrace();
-	
-			}
-	        panel.setLayout(new GridLayout(1, 1));
-	    	return panel;
-	    }
-	    private JComponent createHelpEditor(){
-	    	JPanel panel = new JPanel(false);
-	    	JLabel filler = new JLabel("Editor Hilfe");
-	        filler.setHorizontalAlignment(JLabel.CENTER);
-	        panel.setLayout(new GridLayout(1, 1));
-	        panel.add(filler);
-	    	return panel;
-	    }
-	    
+
 	}
+
 }
