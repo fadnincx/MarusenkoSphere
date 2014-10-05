@@ -58,6 +58,7 @@ public class Manager {
 	 * @param k : Kugel zum lösen
 	 */
 	public Manager(Kugel k){
+		
 		//Übernehme Kugel von der Main-Datei
 		this.k = k;
 		
@@ -67,10 +68,14 @@ public class Manager {
 		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
 		//Sonst wirf eine Exception
 		try{
+			
 			rendern = new Rendern(k);
 			cp = new ControlPanel(this);
+			
 		}catch(Exception e){
+			
 			e.printStackTrace();
+			
 		}	
 		
 		//Update die Anzeigt bezüglich der Anzahl Schritten 
@@ -78,6 +83,7 @@ public class Manager {
 		
 		//Methode loop starten
 		loop();
+		
 	}
 	
 	/**
@@ -98,7 +104,9 @@ public class Manager {
 			
 			//Wenn aktuelle Animation fertig ist, dann QueueManager aufrufen
 			if(animationFinished){
+				
 				QueueManager.Queue(this);
+				
 		    }
 			
 		}
@@ -112,6 +120,7 @@ public class Manager {
 		
 		//Damit bei einem Fehler dieser ausgegeben werden kann
 		try{
+			
 			//Versuche den Thread zu pausieren
 			Thread.sleep(time);
 			
@@ -138,7 +147,9 @@ public class Manager {
 	 * Setzte die Variable, dass die Kugel bis zum Ende gelöst wird falsch
 	 */
 	protected void stopAnimationToEnd(){
+		
 		runAnimationToEnd = false;
+		
 	}
 	
 	/**
@@ -255,14 +266,18 @@ public class Manager {
 	 * Geht im Lösungsprozess eine Position weiter
 	 */
 	protected void addOneStep(){
+		
 		 goToStep(k.getStep()+1);
+		 
 	}
 	
 	/**
 	 * Geht im Lösungsprozess eine Position zurück
 	 */
 	protected void subOneStep(){
+		
 		goToStep(k.getStep()-1);
+		
 	}
 	
 	/**
@@ -275,8 +290,10 @@ public class Manager {
 			
 			//Wenn Kugel korrekt, dann übernehmen
 			if(isSphereAllowed()){
+				
 				k.sphereFromEditor();
 				updateControlpanelInformations();
+				
 			}else{
 				
 				//Wenn nicht, dann zu ursprünglicher Kugel zurück kehren
@@ -289,6 +306,7 @@ public class Manager {
 			
 			//Setzte Step, damit im nachhinein wieder zu diesem zurück gekehrt werden kann
 			stepWhenGoesToEditor = k.getStep();
+			
 		}
 		
 		//Ändere den Modus
@@ -296,76 +314,97 @@ public class Manager {
 		
 		//Teile dem Controlpanel mit, dass der Modus gewechselt wurde
 		cp.updateMode(displayMode);
+		
 	}
 	
 	/**
 	 * Gibt die im Editor ausgewählte Farbe zurück
 	 */
 	protected int getSelectedColor(){
+		
 		return selectedColor;
+		
 	}
 	
 	/**
 	 * Wechselt die ausgewählte Farbe des Editors zu Nummer n
 	 */
 	protected void changeSelectedColor(int n){
+		
 		selectedColor = n;
+		
 	}
 	
 	/**
 	 *Gibt die aktuelle Animationsgeschwindigkeit zurück, welche im Controlpanel eingestellt ist
 	 */
 	public static double getAnimationsSpeed(){
+		
 		return animationSpeed;
+		
 	}
 	
 	/**
 	 * Setzt die aktuelle Animationsgeschwindigkeit neu
 	 */
 	protected static void setAnimationSpeed(double value){
+		
 		animationSpeed = value/30;
+		
 	}
 	
 	/**
 	 * Gibt die aktuelle Bildfrequenz zurück
 	 */
 	public static double getFPS(){
+		
 		return fps;
+		
 	}
 	
 	/**
 	 * Gibt den aktuellen DisplayModus zurück
 	 */
 	protected int getDisplayMode(){
+		
 		return displayMode;
+		
 	}
 
 	/**
 	 * Gibt zurück, ob die Kugel bis zum Ende gelöst werden soll
 	 */
 	protected static boolean getRunAnimationToEnd(){
+		
 		return runAnimationToEnd;
+		
 	}
 	
 	/**
 	 * Gibt zurück, ob die aktuelle Animation beendet ist
 	 */
 	protected static boolean getAnimationFinished(){
+		
 		return animationFinished;
+		
 	}
 	
 	/**
 	 * Ändert den Status zur aktuellen Animation
 	 */
 	public  static void setAnimationFinished(boolean set){
+		
 		animationFinished = set;
+		
 	}
 	
 	/**
 	 * Setzt die aktuelle Bildfrequenz
 	 */
 	protected static void setFPS(int newFPS){
+		
 		fps = newFPS;
+		
 	}
 	
 	/**
@@ -373,21 +412,27 @@ public class Manager {
 	 * x = Schritt weiter, y = Schritt zurück
 	 */
 	protected void addToSolvingQueue(char s){
+		
 		solvingQueue.offer(s);
+		
 	}
 	
 	/**
 	 * Gibt zurück, ob sich ein Element im SolvingQueue befindet
 	 */
 	protected boolean isElementInSolvingQueue(){
-		return solvingQueue.size()>0 ? true:false;
+		
+		return solvingQueue.size()>0;
+		
 	}
 	
 	/**
 	 * Fragt das erste Element im SolvingQueue ab und löscht es
 	 */
 	protected char pollElementFromSolvingQueue(){
+		
 		return solvingQueue.poll();
+		
 	}
 	
 	/**
@@ -395,43 +440,53 @@ public class Manager {
 	 * Veränderung in x und y Richtung angeben
 	 */
 	protected void changeRotationAngle(double x, double y){
+		
 		rendern.cm.turnRotationAngle(x, y);
+		
 	}
 	
 	/**
 	 * Setzt die Rotationswinkel auf die Startposition zurück
 	 */
 	protected void resetRotationAngle(){
+		
 		rendern.cm.setToStartPosition();
+		
 	}
 	
 	/**
 	 * Methode für Editor zum Verändern der Dreiecke der Kugel
 	 */
 	protected void editSphereTri(int n){
+		
 		//Ändern des Dreieckes
 		k.tri[n] = selectedColor;
 		
 		//Aktuallisiere den Status im Controlpanel bezüglich legalität der Kugel
 		updateInformationToLegalityOfSphere();
+		
 	}
 	
 	/**
 	 * Methode für Editor zum Verändern der Verbindungsstücke der Kugel
 	 */
 	protected void editSphereCon(int n){
+		
 		//Ändern des Verbindungsstück
 		k.con[n] = selectedColor;
 		
 		//Aktuallisiere den Status im Controlpanel bezüglich legalität der Kugel
 		updateInformationToLegalityOfSphere();
+		
 	}
 	
 	/**
 	 * Aktuallisiere den Status im Controlpanel bezüglich legalität der Kugel
 	 */
 	private void updateInformationToLegalityOfSphere(){
+		
 		cp.updateInfoIsSphereAllowed(isSphereAllowed());
+		
 	}
 	
 	/**
@@ -473,7 +528,9 @@ public class Manager {
 	 * Wenn das Programm beendet werden soll
 	 */
 	protected void exitProgramm(){
+		
 		 System.exit(0);
+		 
 	}
 	
 }

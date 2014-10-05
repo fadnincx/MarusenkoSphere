@@ -30,25 +30,48 @@ public class Konsole {
 	
 	
 	public Konsole(Kugel k){
+		
 		//Setze Aktuelle Kugel
 		this.k = k;
 	
 		//Gehe maximale Anzahl schlaufen durch ((2^63)-1) 
 		for(long i = 0;i<9223372036854775807L;i++){
+			
 			//fülle Kugel neu, wobei sie sofort auch gelöst wird
 			k.fillRandom();
+			
+			//Setzet Kugel in die letzte Position
 			k.setKugelToStateFromList(k.getSolvingListSize()-1);
+			
+			//Wenn nicht gelöst wurden
 			if(!SolveCheck.isKugelSolved(k)){
+				
+				//Error ausgeben
 				System.out.println("Error, kugel nicht gelöst!!!!");
-				//System.exit(0);
-			}
-			int aktAnz = k.getSolvingListSize()-1;
-			if(aktAnz>max){
-				max=aktAnz;
-			}else if(aktAnz<min){
-				min=aktAnz;
+				
+				//Programm beenden
+				System.exit(0);
+				
 			}
 			
+			//Aktuelle anzahl Schritte
+			int aktAnz = k.getSolvingListSize()-1;
+			
+			//Wenn grösser als aktuelles Maximum
+			if(aktAnz>max){
+				
+				//Setze neues Maximum
+				max=aktAnz;
+				
+			//Wenn kleiner als aktuelles Minimum	
+			}else if(aktAnz<min){
+				
+				//setzte neues Minimum
+				min=aktAnz;
+				
+			}
+			
+			//Mittelwert aktuallisieren
 			mittelwert=((mittelwert*i)+aktAnz)/(i+1);
 			/**if(aktAnz<500){
 				stats1[aktAnz]++;
@@ -56,21 +79,33 @@ public class Konsole {
 				stats5[aktAnz/5]++;
 				stats10[aktAnz/10]++;
 			}**/
+			
+			//Jede zehnte Kugel status ausgeben
 			if(i%10==0){
+				
 				//Gib aus, die wie vielte Kugel gelöst wurde
 				System.out.println(i+". Kugel solved in "+aktAnz+" steps - Mittelwert: "+mittelwert+" Min: "+min+" Max: "+max);
+				
 			}
+			
+			//Alle 1000000 die statistik ausgeben
 			if(i%100000==0&&i!=0){
+				
 				//Statistik....
 				String s = "";
+				
 				for(int j = 0; j<500; j++){
 					s+=j+";"+stats1[j]+";"+stats2[j/2]/2+";"+stats5[j/5]/5+";"+stats10[j/10]/10+"\n";
 				}
+				
+				//Als DebugLog speichern
 				Log.DebugLog(s);
+				
 			}
 			
 		}
 		
 	}
+	
 }
 

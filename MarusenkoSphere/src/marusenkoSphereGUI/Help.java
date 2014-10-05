@@ -80,7 +80,6 @@ public class Help extends JPanel{
 		/**
 		 * Konstruktor für das erstellen der Tabs
 		 * @param tab
-		 * @throws IOException 
 		 */
 		public HelpTabbed(int tab) throws IOException{
 			

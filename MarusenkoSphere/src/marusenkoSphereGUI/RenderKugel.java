@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
  *
  */
 public class RenderKugel {
+	
 	/**
 	 * Funktion, welche die Kugel Rendert. 
 	 * Version 3: Mit Animation
@@ -21,6 +22,7 @@ public class RenderKugel {
 	 * @return : true wenn Erfolgreich
 	 */
 	protected static boolean render(Kugel k, CameraController cm) {
+		
     	/**
     	 * Auskommentieren, damit Flächen der Kugel nicht gefält werden
     	 * 
@@ -77,8 +79,13 @@ public class RenderKugel {
 		//Variabel definiert die Rotationsgeschwindikeit
 		double rotation = k.animationManager.getRotationForFrame();
 		
+		//Wenn Sotiert wird
 		if(rotation>0){
+			
+			//Wenn drehmodus == 1
 			if(dreheMode==1){
+				
+				//Switche nach DrehPol
 				switch(drehePol){
 					case 0:  z1 = true; neg =  1; break;
 					case 1:  x1 = true; neg =  1; break;
@@ -87,8 +94,13 @@ public class RenderKugel {
 					case 4:  y1 = true; neg =  1; break;
 					case 5: my1 = true; neg = -1; break;
 				}
+				
 			}else
+				
+			//Wenn drehmodus == 3	
 			if(dreheMode==3){
+				
+				//Switche nach DrehPol
 				switch(drehePol){
 					case 0:  z1 = true;  z3 = true; neg =  1; break;
 					case 1:  x1 = true;  x3 = true; neg =  1; break;
@@ -97,49 +109,58 @@ public class RenderKugel {
 					case 4:  y1 = true;  y3 = true; neg =  1; break;
 					case 5: my1 = true; my3 = true; neg = -1; break;
 				}
+				
 			}
+			
 		}
 		
-		
-        
         //Wie genau die Kugel gerendert wird --> In wie gross/klein die Dreiecke sind
         int renderSteps = Settings.KUGELRENDERRASTER;//Nur 1, 2, 5, 10
-        int renderStepsZ = Settings.KUGELRENDERRASTER;//Nur 1, 2, 5, 10
         
         //Berechnungen welche nur einmal ausgeführt werden müssen
         
+        //Array für die Werte, welche nur einmal berechnet werden
         double[][][][] preCalc = new double[90][90][6][3];
+        
+        //Gehe von 0 bis 90
         for(int j = 0; j<90; j+=renderSteps){
+        	
+        	//Gehe von 0 bis 90
 			for(int l = 0; l<90; l+=renderSteps){
+				
 				//1. Dreieck 1. Korrdinate
 				preCalc[j][l][0][0] = Math.cos(Math.toRadians(l))*Math.sin(Math.toRadians(j));
 				preCalc[j][l][0][1] = Math.cos(Math.toRadians(l))*Math.cos(Math.toRadians(j));
 				preCalc[j][l][0][2] = Math.sin(Math.toRadians(l));
+				
 				//1. Dreieck 2. Korrdinate
-				preCalc[j][l][1][0] = Math.cos(Math.toRadians(l))*Math.sin(Math.toRadians(j+renderStepsZ));
-				preCalc[j][l][1][1] = Math.cos(Math.toRadians(l))*Math.cos(Math.toRadians(j+renderStepsZ));
+				preCalc[j][l][1][0] = Math.cos(Math.toRadians(l))*Math.sin(Math.toRadians(j+renderSteps));
+				preCalc[j][l][1][1] = Math.cos(Math.toRadians(l))*Math.cos(Math.toRadians(j+renderSteps));
 				preCalc[j][l][1][2] = Math.sin(Math.toRadians(l));
+				
 				//1. Dreieck 3. Korrdinate
-				preCalc[j][l][2][0] = Math.cos(Math.toRadians(l+renderStepsZ))*Math.sin(Math.toRadians(j+renderStepsZ));
-				preCalc[j][l][2][1] = Math.cos(Math.toRadians(l+renderStepsZ))*Math.cos(Math.toRadians(j+renderStepsZ));
-				preCalc[j][l][2][2] = Math.sin(Math.toRadians(l+renderStepsZ));
+				preCalc[j][l][2][0] = Math.cos(Math.toRadians(l+renderSteps))*Math.sin(Math.toRadians(j+renderSteps));
+				preCalc[j][l][2][1] = Math.cos(Math.toRadians(l+renderSteps))*Math.cos(Math.toRadians(j+renderSteps));
+				preCalc[j][l][2][2] = Math.sin(Math.toRadians(l+renderSteps));
 						
 				//2. Dreieck 1. Korrdinate
 				preCalc[j][l][3][0] = preCalc[j][l][0][0];
 				preCalc[j][l][3][1] = preCalc[j][l][0][1];
 				preCalc[j][l][3][2] = preCalc[j][l][0][2];
+				
 				//2. Dreieck 2. Korrdinate
-				preCalc[j][l][4][0] = Math.cos(Math.toRadians(l+renderStepsZ))*Math.sin(Math.toRadians(j));
-				preCalc[j][l][4][1] = Math.cos(Math.toRadians(l+renderStepsZ))*Math.cos(Math.toRadians(j));
-				preCalc[j][l][4][2] = Math.sin(Math.toRadians(l+renderStepsZ));
+				preCalc[j][l][4][0] = Math.cos(Math.toRadians(l+renderSteps))*Math.sin(Math.toRadians(j));
+				preCalc[j][l][4][1] = Math.cos(Math.toRadians(l+renderSteps))*Math.cos(Math.toRadians(j));
+				preCalc[j][l][4][2] = Math.sin(Math.toRadians(l+renderSteps));
+				
 				//2. Dreieck 3. Korrdinate 
 				preCalc[j][l][5][0] = preCalc[j][l][2][0];
 				preCalc[j][l][5][1] = preCalc[j][l][2][1];
 				preCalc[j][l][5][2] = preCalc[j][l][2][2];
+				
 			}
+			
         }
-
-
 
 		//Schleife um alle 24 Pol Viertel aus dem Berechneten auszu geben
 		for(int i = 0; i<24; i++){
@@ -352,50 +373,61 @@ public class RenderKugel {
 			
 			//Dann den Viertel Rendern 
 			for(int j = 0; j<90; j+=renderSteps){
+				
     			for(int l = 50; l<90; l+=renderSteps){
+    				
     				//1. Dreieck 1. Koordinate
     				GL11.glVertex3d(
     						((((ix*preCalc[j][l][0][px]*sinCos[2][1])+(iy*preCalc[j][l][0][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalc[j][l][0][pz]*sinCos[1][0])), 
     						((((iy*preCalc[j][l][0][py]*sinCos[2][1])-(ix*preCalc[j][l][0][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalc[j][l][0][pz]*sinCos[0][0])), 
     						((((iz*preCalc[j][l][0][pz]*sinCos[1][1])+(ix*preCalc[j][l][0][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalc[j][l][0][py]*sinCos[0][0]))
     								);
+    				
     				//1. Dreieck 2. Koordinate
     				GL11.glVertex3d(
     						((((ix*preCalc[j][l][1][px]*sinCos[2][1])+(iy*preCalc[j][l][1][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalc[j][l][1][pz]*sinCos[1][0])), 
     						((((iy*preCalc[j][l][1][py]*sinCos[2][1])-(ix*preCalc[j][l][1][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalc[j][l][1][pz]*sinCos[0][0])), 
     						((((iz*preCalc[j][l][1][pz]*sinCos[1][1])+(ix*preCalc[j][l][1][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalc[j][l][1][py]*sinCos[0][0]))
     								);
+    				
     				//1. Dreieck 3. Koordinate
     				GL11.glVertex3d(
     						((((ix*preCalc[j][l][2][px]*sinCos[2][1])+(iy*preCalc[j][l][2][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalc[j][l][2][pz]*sinCos[1][0])), 
     						((((iy*preCalc[j][l][2][py]*sinCos[2][1])-(ix*preCalc[j][l][2][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalc[j][l][2][pz]*sinCos[0][0])), 
     						((((iz*preCalc[j][l][2][pz]*sinCos[1][1])+(ix*preCalc[j][l][2][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalc[j][l][2][py]*sinCos[0][0]))
     								);
+    				
     				//2. Dreieck 1. Koordinate
     				GL11.glVertex3d(
     						((((ix*preCalc[j][l][3][px]*sinCos[2][1])+(iy*preCalc[j][l][3][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalc[j][l][3][pz]*sinCos[1][0])), 
     						((((iy*preCalc[j][l][3][py]*sinCos[2][1])-(ix*preCalc[j][l][3][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalc[j][l][3][pz]*sinCos[0][0])), 
     						((((iz*preCalc[j][l][3][pz]*sinCos[1][1])+(ix*preCalc[j][l][3][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalc[j][l][3][py]*sinCos[0][0]))
     								);
+    				
     				//2. Dreieck 2. Koordinate
     				GL11.glVertex3d(
     						((((ix*preCalc[j][l][4][px]*sinCos[2][1])+(iy*preCalc[j][l][4][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalc[j][l][4][pz]*sinCos[1][0])), 
     						((((iy*preCalc[j][l][4][py]*sinCos[2][1])-(ix*preCalc[j][l][4][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalc[j][l][4][pz]*sinCos[0][0])), 
     						((((iz*preCalc[j][l][4][pz]*sinCos[1][1])+(ix*preCalc[j][l][4][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalc[j][l][4][py]*sinCos[0][0]))
     								);
+    				
     				//2. Dreieck 3. Koordinate
     				GL11.glVertex3d(
     						((((ix*preCalc[j][l][5][px]*sinCos[2][1])+(iy*preCalc[j][l][5][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalc[j][l][5][pz]*sinCos[1][0])), 
     						((((iy*preCalc[j][l][5][py]*sinCos[2][1])-(ix*preCalc[j][l][5][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalc[j][l][5][pz]*sinCos[0][0])), 
     						((((iz*preCalc[j][l][5][pz]*sinCos[1][1])+(ix*preCalc[j][l][5][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalc[j][l][5][py]*sinCos[0][0]))
     								);
+    				
     			} 			
+    			
        		}
+			
 		}
 		
 		
 		//Rendern der Zwischenteile
 		for(int i = 0; i<8; i++){
+			
 			//Setzet Drehung zurück auf 0
 			drehx = 0;
 			drehy = 0;
@@ -486,16 +518,20 @@ public class RenderKugel {
 			sinCos[2][0] = Math.sin(Math.toRadians(drehz));
 			sinCos[2][1] = Math.cos(Math.toRadians(drehz));
 			
-			//Rendere Rand des Zwischenst�cks
-			for(int j = 0; j<90; j+=renderStepsZ){
-				for(int l = 40 ; l<50; l+=renderStepsZ){
+			//Rendere Rand des Zwischenstücks
+			for(int j = 0; j<90; j+=renderSteps){
+				
+				for(int l = 40 ; l<50; l+=renderSteps){
+					
 					//Sofern es nicht zu einem Pol gehört
-					if((Math.cos(Math.toRadians(j))*Math.sin(Math.toRadians(l)))<=Math.sin(Math.toRadians(50))&&(Math.cos(Math.toRadians(j-renderStepsZ))*Math.cos(Math.toRadians(l+renderStepsZ)))<=Math.sin(Math.toRadians(50))){
+					if((Math.cos(Math.toRadians(j))*Math.sin(Math.toRadians(l)))<=Math.sin(Math.toRadians(50))&&(Math.cos(Math.toRadians(j-renderSteps))*Math.cos(Math.toRadians(l+renderSteps)))<=Math.sin(Math.toRadians(50))){
 						
 						//Jeden der Drei Ränder selbst  
 						for(int m = 0; m<3; m++){
+							
 							//Achsenwelchsel Variablen
 							int x = 0, y = 1,  z = 2;
+							
 							//Neu definieren
 							switch(m){
 								case 1: x = 1; y = 2; z = 0; break;
@@ -504,6 +540,7 @@ public class RenderKugel {
 							
 							//Die Je nach Drehung transformieren
 							double zwi[][] = new double[6][3];
+							
 							zwi[0][0] = ((((preCalc[j][l][0][x]*sinCos[2][1])+(preCalc[j][l][0][y]*sinCos[2][0]))*sinCos[1][1])-(preCalc[j][l][0][z]*sinCos[1][0]));
 							zwi[0][1] = ((((preCalc[j][l][0][y]*sinCos[2][1])-(preCalc[j][l][0][x]*sinCos[2][0]))*sinCos[0][1])+(preCalc[j][l][0][z]*sinCos[0][0]));
 							zwi[0][2] = ((((preCalc[j][l][0][z]*sinCos[1][1])+(preCalc[j][l][0][x]*sinCos[1][0]))*sinCos[0][1])-(preCalc[j][l][0][y]*sinCos[0][0]));
@@ -539,16 +576,21 @@ public class RenderKugel {
 							GL11.glVertex3d(ix*zwi[5][px],iy*zwi[5][py],iz*zwi[5][pz]);
 							
 						}
+						
 					}
+					
 				}
+				
 	   		}
 			
 			
 			//Lücke in den Verbinsungsstücken schliessen	
-			for(int j = 30; j<50; j+=renderStepsZ){
-				for(int l = 20; l<40;l+=renderStepsZ){
+			for(int j = 30; j<50; j+=renderSteps){
+				
+				for(int l = 20; l<40;l+=renderSteps){
+					
 					//Falls nicht zu pol gehärt
-					if((Math.cos(Math.toRadians(j))*Math.sin(Math.toRadians(l)))<=Math.sin(Math.toRadians(50))&&(Math.cos(Math.toRadians(j-renderStepsZ))*Math.cos(Math.toRadians(l+renderStepsZ)))<=Math.sin(Math.toRadians(50))){	
+					if((Math.cos(Math.toRadians(j))*Math.sin(Math.toRadians(l)))<=Math.sin(Math.toRadians(50))&&(Math.cos(Math.toRadians(j-renderSteps))*Math.cos(Math.toRadians(l+renderSteps)))<=Math.sin(Math.toRadians(50))){	
 	    				
 						//Werte berechnen
 						double zwi[][] = new double[12][3];
@@ -577,9 +619,13 @@ public class RenderKugel {
 						GL11.glVertex3d(ix*zwi[11][0],iy*zwi[11][1],iz*zwi[11][2]);
 							
 					}
+					
 				}
+				
 			}
+			
 		}
+		
 		//Beende das Rendern der Farben
         GL11.glEnd();
         GL11.glLineWidth(1.5f); 
@@ -587,16 +633,21 @@ public class RenderKugel {
         
         
         double[][][]preCalcLines = new double[3][90][6];
+        
         for(int j =0; j<90; j++){
+        	
         	preCalcLines[0][j][0] = Math.cos(Math.toRadians(50))*Math.sin(Math.toRadians(j));
         	preCalcLines[0][j][1] = Math.cos(Math.toRadians(50))*Math.cos(Math.toRadians(j));
         	preCalcLines[0][j][2] = Math.sin(Math.toRadians(50));
         	
         	preCalcLines[0][j][3] = Math.cos(Math.toRadians(50))*Math.sin(Math.toRadians(j+1));
         	preCalcLines[0][j][4] = Math.cos(Math.toRadians(50))*Math.cos(Math.toRadians(j+1));
-        	preCalcLines[0][j][5] = Math.sin(Math.toRadians(50));	
+        	preCalcLines[0][j][5] = Math.sin(Math.toRadians(50));
+        	
 		}
+        
 		for(int j = 0; j<40; j++){
+			
 			preCalcLines[1][j][0] = 0;
         	preCalcLines[1][j][1] = Math.sin(Math.toRadians(j));
         	preCalcLines[1][j][2] = Math.cos(Math.toRadians(j));
@@ -612,255 +663,266 @@ public class RenderKugel {
         	preCalcLines[1][j+40][3] = Math.sin(Math.toRadians(j+1));
         	preCalcLines[1][j+40][4] = 0;
         	preCalcLines[1][j+40][5] = Math.cos(Math.toRadians(j));	
-		}
-		for(int j = 0; j<40; j++){
-			preCalcLines[2][0][0] = 0;
+        	
+        	preCalcLines[2][0][0] = 0;
         	preCalcLines[2][0][1] = Math.sin(Math.toRadians(j));
         	preCalcLines[2][0][2] = Math.cos(Math.toRadians(j));
         	
         	preCalcLines[2][1][3] = 0;
         	preCalcLines[2][1][5] = Math.sin(Math.toRadians(j));
-        	preCalcLines[2][1][4] = Math.cos(Math.toRadians(j));	
+        	preCalcLines[2][1][4] = Math.cos(Math.toRadians(j));
+        	
 		}
-        
-        
-        
+
         
         //Farbe auf Schwarz
         Rendern.setColor(8);
-        	for(int i = 0; i<24; i++){
-        		drehx = 0;
-        		drehy = 0;
-        		drehz = 0;
-        		switch(i){
-    			case 0:
-    				ix = 1; iy = 1; iz = 1;
-    				px = 0; py = 1; pz = 2;
-    				if(z1){  drehz=rotation; }else
-    				if(x3){  drehx=rotation; }else
-    				if(y3){  drehy=rotation; }
-    				break;
-    			case 1:
-    				ix = 1; iy =-1; iz = 1;
-    				px = 0; py = 1; pz = 2;
-    				if(z1){  drehz=rotation; }else
-    				if(x3){  drehx=rotation; }else
-    				if(my3){ drehy=rotation; }
-    				break;
-    			case 2:
-    				ix =-1; iy =-1; iz = 1;
-    				px = 0; py = 1; pz = 2;
-    				if(z1){  drehz=rotation; }else
-    				if(mx3){ drehx=rotation; }else
-    				if(my3){ drehy=rotation; }
-    				break;
-    			case 3:
-    				ix =-1; iy = 1; iz = 1;
-    				px = 0; py = 1; pz = 2;
-    				if(z1){  drehz=rotation; }else
-    				if(mx3){ drehx=rotation; }else
-    				if(y3){  drehy=rotation; }
-    				break;
-    			//
-    			case 4:
-    				ix = 1; iy = 1; iz = 1;
-    				px = 2; py = 0; pz = 1;
-    				if(x1){  drehx=rotation; }else
-    				if(z3){  drehz=rotation; }else
-    				if(y3){  drehy=rotation; }
-    				break;
-    			case 5:
-    				ix = 1; iy = -1; iz =1;
-    				px = 2; py = 0; pz = 1;
-    				if(x1){  drehx=rotation; }else
-    				if(z3){  drehz=rotation; }else
-    				if(my3){ drehy=rotation; }
-    				break;
-    			case 6:
-    				ix = 1; iy =-1; iz =-1;
-    				px = 2; py = 0; pz = 1;
-    				if(x1){  drehx=rotation; }else
-    				if(mz3){ drehz=rotation; }else
-    				if(my3){ drehy=rotation; }
-    				break;
-    			case 7:
-    				ix = 1; iy =1; iz = -1;
-    				px = 2; py = 0; pz = 1;
-    				if(x1){  drehx=rotation; }else
-    				if(mz3){ drehz=rotation; }else
-    				if(y3){  drehy=rotation; }
-    				break;
-    			//
-    			case 8:
-    				ix = 1; iy = 1; iz =-1;
-    				px = 0; py = 1; pz = 2;
-    				if(mz1){ drehz=rotation; }else
-    				if(x3){  drehx=rotation; }else
-    				if(y3){  drehy=rotation; }
-    				break;
-    			case 9:
-    				ix = 1; iy =-1; iz =-1;
-    				px = 0; py = 1; pz = 2;
-    				if(mz1){ drehz=rotation; }else
-    				if(x3){  drehx=rotation; }else
-    				if(my3){ drehy=rotation; }
-    				break;
-    			case 10:
-    				ix =-1; iy =-1; iz =-1;
-    				px = 0; py = 1; pz = 2;
-    				if(mz1){ drehz=rotation; }else
-    				if(mx3){ drehx=rotation; }else
-    				if(my3){ drehy=rotation; }
-    				break;
-    			case 11:
-    				ix =-1; iy = 1; iz =-1;
-    				px = 0; py = 1; pz = 2;
-    				if(mz1){ drehz=rotation; }else
-    				if(mx3){ drehx=rotation; }else
-    				if(y3){  drehy=rotation; }
-    				break;
-    			//
-    			case 12:
-    				ix =-1; iy = 1; iz = 1;
-    				px = 2; py = 1; pz = 0;
-    				if(mx1){ drehx=rotation; }else
-    				if(z3){  drehz=rotation; }else
-    				if(y3){  drehy=rotation; }
-    				break;
-    			case 13:
-    				ix =-1; iy =-1; iz = 1;
-    				px = 2; py = 1; pz = 0;
-    				if(mx1){ drehx=rotation; }else
-    				if(z3){  drehz=rotation; }else
-    				if(my3){ drehy=rotation; }
-    				break;
-    			case 14:
-    				ix =-1; iy =-1; iz =-1;
-    				px = 2; py = 1; pz = 0;
-    				if(mx1){ drehx=rotation; }else
-    				if(mz3){ drehz=rotation; }else
-    				if(my3){ drehy=rotation; }
-    				break;
-    			case 15:
-    				ix =-1; iy = 1; iz =-1;
-    				px = 2; py = 1; pz = 0;
-    				if(mx1){ drehx=rotation; }else
-    				if(mz3){ drehz=rotation; }else
-    				if(y3){  drehy=rotation; }
-    				break;
-    			//
-    			case 16:
-    				ix = 1; iy = 1; iz = 1;
-    				px = 0; py = 2; pz = 1;
-    				if(y1){  drehy=rotation; }else
-    				if(z3){  drehz=rotation; }else
-    				if(x3){  drehx=rotation; }
-    				break;
-    			case 17:
-    				ix = 1; iy = 1; iz =-1;
-    				px = 0; py = 2; pz = 1;
-    				if(y1){  drehy=rotation; }else
-    				if(x3){  drehx=rotation; }else
-    				if(mz3){ drehz=rotation; }
-    				break;
-    			case 18:
-    				ix =-1; iy = 1; iz =-1;
-    				px = 0; py = 2; pz = 1;
-    				if(y1){  drehy=rotation; }else
-    				if(mx3){ drehx=rotation; }else
-    				if(mz3){ drehz=rotation; }
-    				break;
-    			case 19:
-    				ix =-1; iy = 1; iz = 1;
-    				px = 0; py = 2; pz = 1;
-    				if(y1){  drehy=rotation; }else
-    				if(mx3){ drehx=rotation; }else
-    				if(z3){  drehz=rotation; }
-    				break;
-    			//
-    			case 20:
-    				ix = 1; iy =-1; iz = 1;
-    				px = 0; py = 2; pz = 1;
-    				if(my1){ drehy=rotation; }else
-    				if(x3){  drehx=rotation; }else
-    				if(z3){  drehz=rotation; }
-    				break;
-    			case 21:
-    				ix = 1; iy =-1; iz =-1;
-    				px = 0; py = 2; pz = 1;
-    				if(my1){ drehy=rotation; }else
-    				if(x3){  drehx=rotation; }else
-    				if(mz3){ drehz=rotation; }
-    				break;
-    			case 22:
-    				ix =-1; iy =-1; iz =-1;
-    				px = 0; py = 2; pz = 1;
-    				if(my1){ drehy=rotation; }else
-    				if(mx3){ drehx=rotation; }else
-    				if(mz3){ drehz=rotation; }
-    				break;
-    			case 23:
-    				ix =-1; iy =-1; iz = 1;
-    				px = 0; py = 2; pz = 1;
-    				if(my1){ drehy=rotation; }else
-    				if(mx3){ drehx=rotation; }else
-    				if(z3){  drehz=rotation; }
-    				break;
-    			}
-        		
-        		//Füge alle Negationsvariablen zusammen
-    			drehx*=k.animationManager.getDrehRichtung();
-    			drehy*=k.animationManager.getDrehRichtung();
-    			drehz*=k.animationManager.getDrehRichtung();
-    			drehx*=neg;
-    			drehy*=neg;
-    			drehz*=neg;
-    			drehx*=addNeg;
-    			drehy*=addNeg;
-    			drehz*=addNeg;
-        		
-        		//Die x-Mal gleich Verwendeten Sinus/Cosinus in Variable speichern --> Ist effizienter als jedesmal Trigonometrie.sin() abzurufen
-    			double[][] sinCos = new double[3][2];
-    			sinCos[0][0] = Math.sin(Math.toRadians(drehx));
-    			sinCos[0][1] = Math.cos(Math.toRadians(drehx));
-    			sinCos[1][0] = Math.sin(Math.toRadians(drehy));
-    			sinCos[1][1] = Math.cos(Math.toRadians(drehy));
-    			sinCos[2][0] = Math.sin(Math.toRadians(drehz));
-    			sinCos[2][1] = Math.cos(Math.toRadians(drehz));
+        
+    	for(int i = 0; i<24; i++){
+    		
+    		drehx = 0;
+    		drehy = 0;
+    		drehz = 0;
+    		
+    		switch(i){
+			case 0:
+				ix = 1; iy = 1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				if(z1){  drehz=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(y3){  drehy=rotation; }
+				break;
+			case 1:
+				ix = 1; iy =-1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				if(z1){  drehz=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(my3){ drehy=rotation; }
+				break;
+			case 2:
+				ix =-1; iy =-1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				if(z1){  drehz=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(my3){ drehy=rotation; }
+				break;
+			case 3:
+				ix =-1; iy = 1; iz = 1;
+				px = 0; py = 1; pz = 2;
+				if(z1){  drehz=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(y3){  drehy=rotation; }
+				break;
+			//
+			case 4:
+				ix = 1; iy = 1; iz = 1;
+				px = 2; py = 0; pz = 1;
+				if(x1){  drehx=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(y3){  drehy=rotation; }
+				break;
+			case 5:
+				ix = 1; iy = -1; iz =1;
+				px = 2; py = 0; pz = 1;
+				if(x1){  drehx=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(my3){ drehy=rotation; }
+				break;
+			case 6:
+				ix = 1; iy =-1; iz =-1;
+				px = 2; py = 0; pz = 1;
+				if(x1){  drehx=rotation; }else
+				if(mz3){ drehz=rotation; }else
+				if(my3){ drehy=rotation; }
+				break;
+			case 7:
+				ix = 1; iy =1; iz = -1;
+				px = 2; py = 0; pz = 1;
+				if(x1){  drehx=rotation; }else
+				if(mz3){ drehz=rotation; }else
+				if(y3){  drehy=rotation; }
+				break;
+			//
+			case 8:
+				ix = 1; iy = 1; iz =-1;
+				px = 0; py = 1; pz = 2;
+				if(mz1){ drehz=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(y3){  drehy=rotation; }
+				break;
+			case 9:
+				ix = 1; iy =-1; iz =-1;
+				px = 0; py = 1; pz = 2;
+				if(mz1){ drehz=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(my3){ drehy=rotation; }
+				break;
+			case 10:
+				ix =-1; iy =-1; iz =-1;
+				px = 0; py = 1; pz = 2;
+				if(mz1){ drehz=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(my3){ drehy=rotation; }
+				break;
+			case 11:
+				ix =-1; iy = 1; iz =-1;
+				px = 0; py = 1; pz = 2;
+				if(mz1){ drehz=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(y3){  drehy=rotation; }
+				break;
+			//
+			case 12:
+				ix =-1; iy = 1; iz = 1;
+				px = 2; py = 1; pz = 0;
+				if(mx1){ drehx=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(y3){  drehy=rotation; }
+				break;
+			case 13:
+				ix =-1; iy =-1; iz = 1;
+				px = 2; py = 1; pz = 0;
+				if(mx1){ drehx=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(my3){ drehy=rotation; }
+				break;
+			case 14:
+				ix =-1; iy =-1; iz =-1;
+				px = 2; py = 1; pz = 0;
+				if(mx1){ drehx=rotation; }else
+				if(mz3){ drehz=rotation; }else
+				if(my3){ drehy=rotation; }
+				break;
+			case 15:
+				ix =-1; iy = 1; iz =-1;
+				px = 2; py = 1; pz = 0;
+				if(mx1){ drehx=rotation; }else
+				if(mz3){ drehz=rotation; }else
+				if(y3){  drehy=rotation; }
+				break;
+			//
+			case 16:
+				ix = 1; iy = 1; iz = 1;
+				px = 0; py = 2; pz = 1;
+				if(y1){  drehy=rotation; }else
+				if(z3){  drehz=rotation; }else
+				if(x3){  drehx=rotation; }
+				break;
+			case 17:
+				ix = 1; iy = 1; iz =-1;
+				px = 0; py = 2; pz = 1;
+				if(y1){  drehy=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(mz3){ drehz=rotation; }
+				break;
+			case 18:
+				ix =-1; iy = 1; iz =-1;
+				px = 0; py = 2; pz = 1;
+				if(y1){  drehy=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(mz3){ drehz=rotation; }
+				break;
+			case 19:
+				ix =-1; iy = 1; iz = 1;
+				px = 0; py = 2; pz = 1;
+				if(y1){  drehy=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(z3){  drehz=rotation; }
+				break;
+			//
+			case 20:
+				ix = 1; iy =-1; iz = 1;
+				px = 0; py = 2; pz = 1;
+				if(my1){ drehy=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(z3){  drehz=rotation; }
+				break;
+			case 21:
+				ix = 1; iy =-1; iz =-1;
+				px = 0; py = 2; pz = 1;
+				if(my1){ drehy=rotation; }else
+				if(x3){  drehx=rotation; }else
+				if(mz3){ drehz=rotation; }
+				break;
+			case 22:
+				ix =-1; iy =-1; iz =-1;
+				px = 0; py = 2; pz = 1;
+				if(my1){ drehy=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(mz3){ drehz=rotation; }
+				break;
+			case 23:
+				ix =-1; iy =-1; iz = 1;
+				px = 0; py = 2; pz = 1;
+				if(my1){ drehy=rotation; }else
+				if(mx3){ drehx=rotation; }else
+				if(z3){  drehz=rotation; }
+				break;
+			}
+    		
+    		//Füge alle Negationsvariablen zusammen
+			drehx*=k.animationManager.getDrehRichtung();
+			drehy*=k.animationManager.getDrehRichtung();
+			drehz*=k.animationManager.getDrehRichtung();
+			
+			drehx*=neg;
+			drehy*=neg;
+			drehz*=neg;
+			
+			drehx*=addNeg;
+			drehy*=addNeg;
+			drehz*=addNeg;
+    		
+    		//Die x-Mal gleich Verwendeten Sinus/Cosinus in Variable speichern --> Ist effizienter als jedesmal Trigonometrie.sin() abzurufen
+			double[][] sinCos = new double[3][2];
+			sinCos[0][0] = Math.sin(Math.toRadians(drehx));
+			sinCos[0][1] = Math.cos(Math.toRadians(drehx));
+			sinCos[1][0] = Math.sin(Math.toRadians(drehy));
+			sinCos[1][1] = Math.cos(Math.toRadians(drehy));
+			sinCos[2][0] = Math.sin(Math.toRadians(drehz));
+			sinCos[2][1] = Math.cos(Math.toRadians(drehz));
+			
+    		for(int j = 0; j<90; j++){
     			
-        		for(int j = 0; j<90; j++){
-        			//1. Dreieck 1. Koordinate
-    				GL11.glVertex3d(
-    						((((ix*preCalcLines[0][j][px]*sinCos[2][1])+(iy*preCalcLines[0][j][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[0][j][pz]*sinCos[1][0])), 
-    						((((iy*preCalcLines[0][j][py]*sinCos[2][1])-(ix*preCalcLines[0][j][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[0][j][pz]*sinCos[0][0])), 
-    						((((iz*preCalcLines[0][j][pz]*sinCos[1][1])+(ix*preCalcLines[0][j][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[0][j][py]*sinCos[0][0]))
-    								);
-    				GL11.glVertex3d(
-    						((((ix*preCalcLines[0][j][px+3]*sinCos[2][1])+(iy*preCalcLines[0][j][py+3]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[0][j][pz+3]*sinCos[1][0])), 
-    						((((iy*preCalcLines[0][j][py+3]*sinCos[2][1])-(ix*preCalcLines[0][j][px+3]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[0][j][pz+3]*sinCos[0][0])), 
-    						((((iz*preCalcLines[0][j][pz+3]*sinCos[1][1])+(ix*preCalcLines[0][j][px+3]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[0][j][py+3]*sinCos[0][0]))
-    								);
-    				
-        		}
-        		for(int j = 0; j<80; j++){
-        			//1. Dreieck 1. Koordinate
-    				GL11.glVertex3d(
-    						((((ix*preCalcLines[1][j][px]*sinCos[2][1])+(iy*preCalcLines[1][j][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[1][j][pz]*sinCos[1][0])), 
-    						((((iy*preCalcLines[1][j][py]*sinCos[2][1])-(ix*preCalcLines[1][j][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[1][j][pz]*sinCos[0][0])), 
-    						((((iz*preCalcLines[1][j][pz]*sinCos[1][1])+(ix*preCalcLines[1][j][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[1][j][py]*sinCos[0][0]))
-    								);
-    				GL11.glVertex3d(
-    						((((ix*preCalcLines[1][j][px+3]*sinCos[2][1])+(iy*preCalcLines[1][j][py+3]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[1][j][pz+3]*sinCos[1][0])), 
-    						((((iy*preCalcLines[1][j][py+3]*sinCos[2][1])-(ix*preCalcLines[1][j][px+3]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[1][j][pz+3]*sinCos[0][0])), 
-    						((((iz*preCalcLines[1][j][pz+3]*sinCos[1][1])+(ix*preCalcLines[1][j][px+3]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[1][j][py+3]*sinCos[0][0]))
-    								);
-    				
-        		}
-        		
-        	}        
+    			//Strich 1. Koordinate
+				GL11.glVertex3d(
+						((((ix*preCalcLines[0][j][px]*sinCos[2][1])+(iy*preCalcLines[0][j][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[0][j][pz]*sinCos[1][0])), 
+						((((iy*preCalcLines[0][j][py]*sinCos[2][1])-(ix*preCalcLines[0][j][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[0][j][pz]*sinCos[0][0])), 
+						((((iz*preCalcLines[0][j][pz]*sinCos[1][1])+(ix*preCalcLines[0][j][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[0][j][py]*sinCos[0][0]))
+								);
+				//Strich 2. Koordinate
+				GL11.glVertex3d(
+						((((ix*preCalcLines[0][j][px+3]*sinCos[2][1])+(iy*preCalcLines[0][j][py+3]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[0][j][pz+3]*sinCos[1][0])), 
+						((((iy*preCalcLines[0][j][py+3]*sinCos[2][1])-(ix*preCalcLines[0][j][px+3]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[0][j][pz+3]*sinCos[0][0])), 
+						((((iz*preCalcLines[0][j][pz+3]*sinCos[1][1])+(ix*preCalcLines[0][j][px+3]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[0][j][py+3]*sinCos[0][0]))
+								);
+				
+    		}
+    		
+    		for(int j = 0; j<80; j++){
+    			//Strich 1. Koordinate
+				GL11.glVertex3d(
+						((((ix*preCalcLines[1][j][px]*sinCos[2][1])+(iy*preCalcLines[1][j][py]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[1][j][pz]*sinCos[1][0])), 
+						((((iy*preCalcLines[1][j][py]*sinCos[2][1])-(ix*preCalcLines[1][j][px]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[1][j][pz]*sinCos[0][0])), 
+						((((iz*preCalcLines[1][j][pz]*sinCos[1][1])+(ix*preCalcLines[1][j][px]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[1][j][py]*sinCos[0][0]))
+								);
+				
+				//Strich 2. Koordinate
+				GL11.glVertex3d(
+						((((ix*preCalcLines[1][j][px+3]*sinCos[2][1])+(iy*preCalcLines[1][j][py+3]*sinCos[2][0]))*sinCos[1][1])-(iz*preCalcLines[1][j][pz+3]*sinCos[1][0])), 
+						((((iy*preCalcLines[1][j][py+3]*sinCos[2][1])-(ix*preCalcLines[1][j][px+3]*sinCos[2][0]))*sinCos[0][1])+(iz*preCalcLines[1][j][pz+3]*sinCos[0][0])), 
+						((((iz*preCalcLines[1][j][pz+3]*sinCos[1][1])+(ix*preCalcLines[1][j][px+3]*sinCos[1][0]))*sinCos[0][1])-(iy*preCalcLines[1][j][py+3]*sinCos[0][0]))
+								);
+				
+    		}
+    		
+    	}       
+    	
         GL11.glEnd();
         
         //Gib true zurück, wenn hier ankommt, dann alles Erfolgreich
         return true;
+        
     }
+	
 }

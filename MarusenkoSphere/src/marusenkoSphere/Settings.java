@@ -22,4 +22,9 @@ public class Settings {
 	
 	//RendernKugel
 	public static final int KUGELRENDERRASTER = 10; //Nur 1, 2, 5, 10
+	
+	//Controlpanel
+	public static final int VERSCHIEBEFENSTERX = 161;
+	public static final int VERSCHIEBEFENSTERY = -240;
+	
 }

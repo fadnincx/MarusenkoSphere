@@ -20,8 +20,10 @@ public class QueueManager {
 
 			//Gehe einen Schritt weiter
 			m.addOneStep();
+			
 		}else
-			//Wenn das Queue noch nicht leer ist, dann führe die Aktion aus
+			
+		//Wenn das Queue noch nicht leer ist, dann führe die Aktion aus
 		if(m.isElementInSolvingQueue()){
 			
 			//Bekomme den String aus dem Queue und lösche ihn zugleich
@@ -29,15 +31,24 @@ public class QueueManager {
 			
 			//Gehe nach weiter oder zurück
 			switch(s){
-			case 'x':
-				//Einen Schritt weiter gehen
-				m.addOneStep();
-				break;
-			case 'y':
-				//Einen Schritt zurück gehen
-				m.subOneStep();
-				break;
+				case 'x':
+					
+					//Einen Schritt weiter gehen
+					m.addOneStep();
+					
+					break;
+					
+				case 'y':
+					
+					//Einen Schritt zurück gehen
+					m.subOneStep();
+					
+					break;
+					
 			}
+			
 		}
+		
 	}
+	
 }

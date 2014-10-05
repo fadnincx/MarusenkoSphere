@@ -139,6 +139,7 @@ public class AnimationsManager {
 			
 			//Setze neue Gesamt Drehung auf 180°
 			gesamteDrehung = 180.0;
+			
 		}else
 			
 		//Wenn Drehung um 3, dann gesammte ist -90° --> 90° und Richtung *-1
@@ -156,6 +157,7 @@ public class AnimationsManager {
 			
 			//Setzte neue Gesamt Drehung auf 0°
 			gesamteDrehung = 0.0;
+			
 		}
 		
 		//Setzet die die Gesamte Drehung als blebende Drehung, da noch nicht gedreht wurde
@@ -168,7 +170,9 @@ public class AnimationsManager {
 	 * Rufe die aktuell eingestellte Animationnsgeschwindigkeit vom Manager ab
 	 */
 	private void getAnimaitionSpeedFromManager(){
+		
 		userSetAnimationSpeed = Manager.getAnimationsSpeed();
+		
 	}
 	
 	
@@ -176,7 +180,9 @@ public class AnimationsManager {
 	 * Rufe die aktuelle Framerate vom Manager ab
 	 */
 	private void getFPSVonManager(){
+		
 		fps = Manager.getFPS();
+		
 	}
 	
 	
@@ -234,19 +240,30 @@ public class AnimationsManager {
 			
 			//Gib als Drehung 0 zurück
 			return 0.0;
+			
 		}
+		
 	}
 	
 	/**
 	 * Getter
 	 */
 	public int getDrehPol(){
+		
 		return drehungsPol;
+		
 	}
+	
 	public int getDrehRichtung(){
+		
 		return drehungsRichtung;
+		
 	}
+	
 	public int getDrehModus(){
+		
 		return drehungsModus;
+		
 	}
+	
 }

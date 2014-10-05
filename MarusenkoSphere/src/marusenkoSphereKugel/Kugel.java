@@ -38,6 +38,7 @@ public class Kugel{
 		
 		//gelöste Kugel füllen
 		setSphereToString("61023457054105722736143602615734n0n000");
+		
 	}
 	
 	/**
@@ -57,25 +58,32 @@ public class Kugel{
 			
 		//Sonst lösche gesammte solvingList und füge nur aktuelle Kugel hinzu
 		}else{
+			
 			step = 0;
 			solvingList.clear();
 			solvingList.add(getSphere("000"));
+			
 		}
+		
 	}
 	
 	/**
 	 * Übernimmt die Kugel aus dem Editor
 	 */
 	public void sphereFromEditor(){
+		
 		step = 0;
 		fillKugelFromDebugString(getSphere("000"),true);
+		
 	}
 
 	/**
 	 * Übernimmt die Kugel aus der ArrayList zur gegebenen Step
 	 */
 	public void setKugelToStateFromList(int step){
+		
 		setSphereToString(solvingList.get(step));
+		
 	}
 	
 	/**
@@ -98,10 +106,15 @@ public class Kugel{
 			
 			//Setzte den aktuellen Status gemäss String
 			for(int i = 0; i<8;i++){
+				
 				con[i]=Integer.parseInt(s.substring(i, i+1));
+				
 			}
+			
 			for(int i = 0; i<24;i++){
+				
 				tri[i]=Integer.parseInt(s.substring(i+8, i+9));
+				
 			}
 			
 			//Den Step aktuallisieren
@@ -109,7 +122,9 @@ public class Kugel{
 			
 			//Wenn gewünscht, den aktuellen Kugel Code ausgeben
 			if(Settings.PRINTSPHERECODE){
+				
 				System.out.println(getSphere("000"));
+				
 			}
 			
 		//Wenn der String nicht die erwartete Form hat
@@ -117,7 +132,9 @@ public class Kugel{
 			
 			//Ausgeben, dass String nicht in ordnung ist, jedoch nichts weiters
 			System.out.println("String ist nicht wie erwartet formatiert oder inkorrekt: '"+s+"'");
+			
 		}
+		
 	}
 	
 	/**
@@ -139,15 +156,23 @@ public class Kugel{
 			
 			//Finde das nächste noch nicht einer Farbe zugeteilte Verbindungsstück --> wenn gefunden, dann weise Farbe zu
 			boolean found = false;
+		
 			while(!found){
+			
 				if(con[r]==-1){
+				
 					con[r] = i;
 					found = true;
+					
 				}else{
+					
 					r++;
 					r %= 8;
+					
 				}
+				
 			}
+			
 		}
 		
 		//Alle Dreiecke werden auf -1 gesetzt, damit klar ist, dass diese noch keine Farbe haben 
@@ -164,15 +189,23 @@ public class Kugel{
 			
 			//Finde das nächste noch nicht einer Farbe zugeteilte Dreieck --> wenn gefunden, dann weise Farbe zu
 			boolean found = false;
+			
 			while(!found){
+			
 				if(tri[r]==-1){
+				
 					tri[r] = j;
 					found = true;
+					
 				}else{
+					
 					r++;
 					r %= 24;
+					
 				}
+				
 			}
+			
 		}
 		
 		//Der Step wird noch auf 0 gesetzt
@@ -188,33 +221,47 @@ public class Kugel{
 	 * Damit andere Klassen den aktuellen Step abfragen können
 	 */
 	public int getStep(){
+		
 		return step;
+		
 	}
 	
 	/**
 	 * Gibt die länge der Lösungs-ArrayList zurück
 	 */
 	public int getSolvingListSize(){
+		
 		return solvingList.size();
+		
 	}
 	
 	/**
 	 * Methode, welche die Kugel als String ausgibt
 	 */
 	protected String getSphere(String dreh){
+		
 		//Output = leer
 		String out = "";
+		
 		//Füge die Zahlenwerte der Verbindungsstücke ein
 		for(int i = 0; i<8;i++){
+		
 			out+=con[i];
+			
 		}
+		
 		//Füge die Zahlenwerte der Pole ein
 		for(int i = 0; i<24;i++){
+			
 			out+=tri[i];
+			
 		}
+		
 		//Füge "n" als Trennzeichen hinzu, sowie den Step
 		out += "n"+step+"n"+dreh;
+		
 		return out;
+		
 	}
 	
 	/**
@@ -273,6 +320,7 @@ public class Kugel{
 			turn3Ring(pole);
 			
 		}
+		
 	}
 	
 	
@@ -280,30 +328,38 @@ public class Kugel{
 	 * HilfsFunktion, zum Drehen von Halber Kugel
 	 */
 	private void turn3Ring(int pole){
+		
 		//Dreht den "3. Ring" 
 		switch(pole){	
+		
 			case 0: change8Tri(19, 16, 4, 5, 20, 23, 13, 12); break;
 			case 1: change8Tri(16, 17, 8, 9, 21, 20, 1, 0);   break;
 			case 2: change8Tri(17, 18, 15, 14, 22, 21, 6, 7); break;
 			case 3: change8Tri(18, 19, 3, 2, 23, 22, 10, 11); break;
 			case 4: change8Tri(3, 0, 15, 12, 8, 11, 4, 7);    break;
 			case 5: change8Tri(2, 1, 5, 6, 9, 10, 14, 13);    break;
+			
 		}	
+		
 	}
 	
 	/**
 	 * HilfsFunktion, zum Drehen von Halber Kugel
 	 */
 	private void turn2Ring(int pole){
+		
 		//Dreht den "2. Ring"
 		switch(pole){
+		
 			case 0: change4Con(1,2,6,5); break;
 			case 1: change4Con(2,3,7,6); break;
 			case 2: change4Con(3,0,4,7); break;
 			case 3: change4Con(0,1,5,4); break;
 			case 4: change4Con(0,3,2,1); break;
 			case 5: change4Con(4,5,6,7); break;
+			
 		}	
+		
 	}
 	
 	
@@ -346,6 +402,7 @@ public class Kugel{
 		tri[p2] = tri[p3];
 		tri[p3] = tri[p4];
 		tri[p4] = zs;
+		
 	}
 	
 	/**
@@ -355,17 +412,22 @@ public class Kugel{
 		
 		//Für die gegebene Anzahl (1 = Gegenuhrzeigersinn, 3 = Uhrzeigersinn
 		for(int i = 0; i<anz;i++){		
+		
 			//Korrigiere einen Fehler bei der Speicherung --> Pol 1, 2, 4 müssen anderst aufgerufen werden
 			if((polNr==1||polNr==2||polNr==4)){
 				
 				//Rufe Hilfsfunktion zum drehen auf
 				change4Tri(4*polNr+3,4*polNr+2,4*polNr+1,4*polNr);
+			
 			}else{
 				
 				//Rufe Hilfsfunktion zum drehen auf
 				change4Tri(4*polNr,4*polNr+1,4*polNr+2,4*polNr+3);
+			
 			}
 			
 		}
+		
 	}
+	
 }

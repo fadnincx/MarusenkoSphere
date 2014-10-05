@@ -51,28 +51,25 @@ public class Rendern {
      * 
      * Option kugel wird auch als aktuelle Kugel des Rendern-Objekts definiert
      */
-    protected Rendern(){
-    	k = new Kugel();
-    	run();
-    }
     protected Rendern(Kugel kugel){
+    	
     	//Setze die Kugel als eigene
     	k = kugel;
     	
     	//Starte das Rendern
     	run();
+    	
     }
-    protected void updateVariables(Kugel kugel, int mode){
-    	renderMode = mode;
-    	k = kugel;
-    }
+    
     /**
      * Funktion zum Updaten der Kugel
      */
     protected void updateKugel(Kugel kugel, int mode){
+    	
     	renderMode = mode;
     	k = kugel;
     	doing();
+    	
     }
     
     /**
@@ -82,29 +79,40 @@ public class Rendern {
      * --> Tritt bekanntermassen nur auf, wenn Grafikkartentreiber nicht richtig installiert und mit JAR-Splice Zusatz-Option nicht hinzugefügt wurde
      */
     private void run() {
+    	
         try {
+        	
         	init();
-        }
-        catch (Exception e) {
+        	
+        }catch (Exception e) {
+        	
             e.printStackTrace();
             System.exit(0);
-        }  
+        
+        }
+        
     }
     
     /**
      * Funktion welche das Fenster updatet
      */
     private void doing(){
+    	
     	switch(renderMode){
     	case 1:
+    		
     		//Editor rendern
     		Editor.renderEditor(k);
     		break;
+    		
     	default:
+    		
     		//Rendere die Kugel mit der externen Funktion
         	RenderKugel.render(k,cm); 
     		break;
+    		
     	}
+    	
     	//Die Framerate aktuallisieren
     	updateFPS();
     	
@@ -113,14 +121,16 @@ public class Rendern {
     	
     	//Update die Darstellung auf dem Display
         Display.update();
+        
     }
     
     /**
      * Gibt die aktuelle Zeit in Millisekunden zurück
-     * @return
      */
     private long getTime() {
+    	
     	return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    	
     }
 
     
@@ -129,44 +139,50 @@ public class Rendern {
      * Updatet FPS im Manager für die Berechnung der Animationsgeschwindigkeit
      */
     private void updateFPS() {
+    	
     	//Wenn eine Sekunde vergangen
     	if (getTime() - lastFPS > 1000) {
     		
     		//Wenn der Globale Debugmodus eingeschalten ist, dann im Titel die Framerate anzeigen
     		if(Settings.DEBUGMODE){
+    			
     			Display.setTitle(windowTitle+" - "+fps);
+    			
     		}
+    		
     		//Setze die Framerate im Manager
     		Manager.setFPS(fps);
+    		
+    		//FPS zurück setzten
     		fps = 0;
     		lastFPS += 1000;
+    		
     	}
+    	
     	fps++;
-    }
-    
-    /**
-     * Beendet das Rendern und schliesst das Fenster
-     */
-    protected void end(){
-    	cleanup();
+    	
     }
 
     /**
      * Gibt die Farbe n als float-Array zurück
      */
     protected static float[] getColorFloat(int n){
+    	
     	switch(n){
-    	case 0: return new float[] {1.0f,1.0f,1.0f};//Weiss
-    	case 1: return new float[] {1.0f,1.0f,0.0f};//Gelb
-    	case 2: return new float[] {1.0f,0.6f,0.0f};//Orange
-    	case 3: return new float[] {0.0f,0.0f,1.0f};//Blau	
-    	case 4: return new float[] {1.0f,0.0f,0.0f};//Rot
-    	case 5: return new float[] {0.0f,1.0f,1.0f};//Türkis
-    	case 6: return new float[] {1.0f,0.0f,1.0f};//Violett
-    	case 7: return new float[] {0.0f,1.0f,0.0f};//Grün	
-    	case 8: return new float[] {0.0f,0.0f,0.0f};//Schwarz
-    	default:return new float[] {0.0f,0.0f,0.0f};//Schwarz
+    	
+	    	case 0: return new float[] {1.0f,1.0f,1.0f};//Weiss
+	    	case 1: return new float[] {1.0f,1.0f,0.0f};//Gelb
+	    	case 2: return new float[] {1.0f,0.6f,0.0f};//Orange
+	    	case 3: return new float[] {0.0f,0.0f,1.0f};//Blau	
+	    	case 4: return new float[] {1.0f,0.0f,0.0f};//Rot
+	    	case 5: return new float[] {0.0f,1.0f,1.0f};//Türkis
+	    	case 6: return new float[] {1.0f,0.0f,1.0f};//Violett
+	    	case 7: return new float[] {0.0f,1.0f,0.0f};//Grün	
+	    	case 8: return new float[] {0.0f,0.0f,0.0f};//Schwarz
+	    	default:return new float[] {0.0f,0.0f,0.0f};//Schwarz
+	    	
     	}
+    	
     }
     
     /**
@@ -174,16 +190,20 @@ public class Rendern {
      * @param n : Farbcode
      */
     protected static void setColor(int n){
+    	
     	float[] color = getColorFloat(n);
     	GL11.glColor4f(color[0],color[1],color[2], 1.0f);
+    	
     }
     
     /**
      * Funktion gibt eine AWT-Color zurück für das Editor-Controlpanel
      */
     protected static Color getColorColor(int n){
+    	
     	float[] color = getColorFloat(n);
     	return new Color(color[0],color[1],color[2], 1.0f);
+    	
     }
     
     
@@ -191,7 +211,9 @@ public class Rendern {
      * Funktion zum erstellen des Fensters
      */
     private void createWindow() throws Exception {
+    	
     	try{
+    		
 	    	//Suche nach allen verfügbaren Modien mit welchen das Fenster
 	    	//dargestellt werden kann
 	    		
@@ -201,38 +223,56 @@ public class Rendern {
 	        
 	        //Bevorzuge 32Bit farbtiefe
 	        for (int i = 0; i < d.length; i++) {
+	        	
 	            if (d[i].getWidth() == 640
 	                && d[i].getHeight() == 480
 	                && d[i].getBitsPerPixel() == 32) {
+	            	
 	                displayMode = d[i];
 	                break;
+	                
 	            }
+	            
 	        }
+	        
 	        //Wenn 32Bit nicht verfügbar, dann 24Bit nehmen
 	        if(displayMode == null){
+	        	
 	        	for (int i = 0; i < d.length; i++) {
+	        		
 	                if (d[i].getWidth() == 640
 	                    && d[i].getHeight() == 480
 	                    && d[i].getBitsPerPixel() == 24) {
-	                    displayMode = d[i];
+	                
+	                	displayMode = d[i];
 	                    break;
+	                    
 	                }
+	                
 	            }
+	        	
 	        }
+	        
 	        //Für ganz Schlechte Bildschirme noch 16Bit
 	        if(displayMode == null){
+	        
 	        	for (int i = 0; i < d.length; i++) {
-	                if (d[i].getWidth() == 640
+	            
+	        		if (d[i].getWidth() == 640
 	                    && d[i].getHeight() == 480
 	                    && d[i].getBitsPerPixel() == 16) {
-	                    displayMode = d[i];
+	                
+	        			displayMode = d[i];
 	                    break;
 	                }
+	        		
 	            }
+	        	
 	        }
 	        
 	        //Versuche das Icon für das Fenster zu laden
 	        try {
+	        	
 	        	//Erstelle ein ByteBuffer array für alle verfügbaren icons
 	            ByteBuffer[] icons = new ByteBuffer[4];
 	            
@@ -249,7 +289,9 @@ public class Rendern {
 	            
 	        //Werfe eine Exception, wenn ein Fehler dabei passiert!    
 	        } catch (IOException e) {
+	        	
 	           e.printStackTrace();
+	           
 	        }
 	
 	        //Setzte den DisplayMode und den Fenstertitel       
@@ -258,13 +300,18 @@ public class Rendern {
        
 	        //Erstelle Fenster mit den voreingestellten Einstellungen
 	        try{
+	        	
 	        	//Versuche es mit Antialiasing
 	        	Display.create(new PixelFormat(0, 8, 0, 4));
+	        	
 	        }catch(LWJGLException ex){
+	        	
 	        	//Wennn nicht möglich, dann gibt die Meldung aus und starte ohne
 	        	System.out.println("Kein Antialiasing Möglich!");
 	        	Display.create();
-	        }     
+	        	
+	        }   
+	        
 	        //Aktuelle Position des Fensters abfragen
 	        int x = Display.getX();
 	        int y = Display.getY();
@@ -276,14 +323,16 @@ public class Rendern {
 	        Display.setVSyncEnabled(true);
 	        
 	        
-	        
-	        
     	}catch(LWJGLException e){
+    		
     		//Wenn Fehler beim Initialisieren des Fensters passiert, dann sofort Programm beenden
     		e.printStackTrace();
     		System.exit(0);
+    		
     	}
+    	
     	lastFPS = getTime();
+    	
     }
     
     /**
@@ -304,32 +353,42 @@ public class Rendern {
         //breite*höhe*4 (die 4 ist für rot, grün, blau und alpha)
     
         byte[] imageBytes = new byte[width * height * 4];
+        
         for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+        
+        	for (int j = 0; j < width; j++) {
             	
             	//Frage Image an entsprechende Position ab um es anschliessend in das Array zu schreiben
                 int pixel = image.getRGB(j, i);
                 
                 //Rot, Grün und Blau in das Array schreiben 
                 for (int k = 0; k < 3; k++){
-                    imageBytes[(i*width+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
+            
+                	imageBytes[(i*width+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
+                
                 }
                 
                 //Alpha (transparenz) in das Array schreiben
                 imageBytes[(i*width+j)*4 + 3] = (byte)(((pixel>>(3)*8))&255);
+                
             }
+        	
         }
         
         //Wandle das Byte Arre in ein ByteBuffer um und gebe ihn zurück
         return ByteBuffer.wrap(imageBytes);
+        
     }
     
     /**
      * Funktion zum Aufrufen der Initialisierungsfunktionen des Fensters und OpenGL
      */
     private void init() throws Exception {
-        createWindow();
+        
+    	createWindow();
+        
         initGL();
+        
     }
 
     /**
@@ -368,12 +427,5 @@ public class Rendern {
         GL11.glEnable(GL11.GL_BLEND);
         
     }
-
-    /**
-     * Funktion welche beim Beenden Aufgerufen wird, ist wichtig, damit Speicher wieder freigegeben wird 
-     */
-    private static void cleanup() {
-        Display.destroy();
-        System.exit(0);
-    }
+    
 }
