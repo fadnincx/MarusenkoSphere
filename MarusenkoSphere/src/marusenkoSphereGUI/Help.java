@@ -55,6 +55,12 @@ public class Help extends JPanel{
         //Erstelle Fenster
         JFrame frame = new JFrame("MarusenkoSphere Hilfecenter");
         
+        //Lade das Icon
+        Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
+        
+        //Setzet das Icon
+        frame.setIconImage(icon);
+        
         //Setzte, dass bei Klick auf X nur Fenster geschlossen wird
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
          

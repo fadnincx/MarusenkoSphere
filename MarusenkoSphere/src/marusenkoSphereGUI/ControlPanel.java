@@ -257,13 +257,13 @@ public class ControlPanel implements ActionListener, KeyListener{
 		cpButtonFillSphere.setBounds(20, 20, 145, 50);
 		
 		//Info ToolTip Hinzufügen
-		cpButtonFillSphere.setToolTipText("Mischt die Kugel neu");
+		//cpButtonFillSphere.setToolTipText("Mischt die Kugel neu");
 		
 		//Button zum lösen der Kugel Position und Grösse zuweisen
 		cpButtonSolve.setBounds(185, 20,145, 50);
 		
 		//Info ToolTip Hinzufügen
-		cpButtonSolve.setToolTipText("Löst die Kugel bis ans Ende");
+		//cpButtonSolve.setToolTipText("Löst die Kugel bis ans Ende");
     	
 		//Dem Label für die Animationsgeschwindigkeit Position und Grösse zuweisen
 		cpLabelAnimationSpeed.setBounds(20,80,310,20);
@@ -278,25 +278,25 @@ public class ControlPanel implements ActionListener, KeyListener{
 		cpHelpAnimation.setBounds(300,100,30,30);
 		
 		//Info ToolTip Hinzufügen
-		cpHelpAnimation.setToolTipText("Hilfe");
+		//cpHelpAnimation.setToolTipText("Hilfe");
 		
 		//Help Fortschritt Position und Grösse zuweisen
 		cpHelpFortschritt.setBounds(300,240,30,30);
 		
 		//Info ToolTip Hinzufügen
-		cpHelpFortschritt.setToolTipText("Hilfe");
+		//cpHelpFortschritt.setToolTipText("Hilfe");
 		
 		//Help Kamera Position und Grösse zuweisen
 		cpHelpKamera.setBounds(300,370,30,30);
 		
 		//Info ToolTip Hinzufügen
-		cpHelpKamera.setToolTipText("Hilfe");
+		//cpHelpKamera.setToolTipText("Hilfe");
 		
 		//Help Editor Position und Grösse zuweisen
 		cpHelpEditor.setBounds(300,440,30,30);
 		
 		//Info ToolTip Hinzufügen
-		cpHelpEditor.setToolTipText("Hilfe");
+		//cpHelpEditor.setToolTipText("Hilfe");
 		
 		//Trennlinie Position und Grösse zuweisen
 		cpSepSliders.setBounds(5,140,330,5);
@@ -306,15 +306,15 @@ public class ControlPanel implements ActionListener, KeyListener{
     	cpButtonAddOneStep.setBounds(300,190,30,30);
     	
     	//Info ToolTip Hinzufügen
-    	cpButtonSubOneStep.setToolTipText("Im Lösungsweg einen Schritt zurück");
-    	cpButtonAddOneStep.setToolTipText("Im Lösungsweg einen Schritt weiter");
+    	//cpButtonSubOneStep.setToolTipText("Im Lösungsweg einen Schritt zurück");
+    	//cpButtonAddOneStep.setToolTipText("Im Lösungsweg einen Schritt weiter");
     	
     	
     	//Dem Positions Slider Position und Grösse zuweisen
     	cpSliderForSteps.setBounds(60,190,230,30);
     	
     	//Info ToolTip Hinzufügen
-    	cpSliderForSteps.setToolTipText("Position im Lösungsweg");
+    	//cpSliderForSteps.setToolTipText("Position im Lösungsweg");
     	
     	//Dem Infotext Position und Grösse zuweisen
     	cpLabelProgress.setBounds(20,160,310,20);
@@ -324,8 +324,8 @@ public class ControlPanel implements ActionListener, KeyListener{
     	cpLabelSphereStepMax.setBounds(20,250,200,20);
     	
     	//Info ToolTip Hinzufügen
-    	cpLabelSphereStepNow.setToolTipText("Aktuelle Position im Lösungsweg");
-    	cpLabelSphereStepMax.setToolTipText("Position bei der die Kugel gelöst ist");
+    	//cpLabelSphereStepNow.setToolTipText("Aktuelle Position im Lösungsweg");
+    	//cpLabelSphereStepMax.setToolTipText("Position bei der die Kugel gelöst ist");
     	
     	//Dem Slider für den Lösungsweg diverse Einstellungen vornehmen
     	cpSliderForSteps.setMinimum(0);    //stellt den Minimalwert auf 0 ein
@@ -376,7 +376,7 @@ public class ControlPanel implements ActionListener, KeyListener{
     	cpButtonResetView.setBounds(210,290,120,50);
     	
     	//Info ToolTip Hinzufügen
-    	cpButtonResetView.setToolTipText("Setzt die Position der Kamera zurück");
+    	//cpButtonResetView.setToolTipText("Setzt die Position der Kamera zurück");
     	
     	//Den 4 Buttons mit Pfeilen Position und Grösse zuweisen
     	cpButtonUp.setBounds(150,290,50,50);
@@ -385,16 +385,16 @@ public class ControlPanel implements ActionListener, KeyListener{
     	cpButtonDown.setBounds(150,350,50,50);
     	  
     	//Info ToolTip Hinzufügen
-    	cpButtonUp.setToolTipText("Dreht die Kugel nach oben");
-    	cpButtonLeft.setToolTipText("Dreht die Kugel nach links");
-    	cpButtonRight.setToolTipText("Dreht die Kugel nach rechts");
-    	cpButtonDown.setToolTipText("Dreht die Kugel nach unten");
+    	//cpButtonUp.setToolTipText("Dreht die Kugel nach oben");
+    	//cpButtonLeft.setToolTipText("Dreht die Kugel nach links");
+    	//cpButtonRight.setToolTipText("Dreht die Kugel nach rechts");
+    	//cpButtonDown.setToolTipText("Dreht die Kugel nach unten");
     	
     	//Trennlinie
     	cpSepChangeWindow.setBounds(5,410,330,5);
     	
     	//ToolTip für Editor Button
-    	cpChangeEditor.setToolTipText("Öffne den Editor um eine eigene Kugel zu erstellen");
+    	//cpChangeEditor.setToolTipText("Öffne den Editor um eine eigene Kugel zu erstellen");
     	
     	//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen
 		if(Settings.DEBUGMODE){
@@ -491,7 +491,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editHelp.setBounds(300,440,30,30);
 		
 		//Info ToolTip Hinzufügen
-		editHelp.setToolTipText("Hilfe");
+		//editHelp.setToolTipText("Hilfe");
 		
 		
 		//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen 
@@ -734,6 +734,9 @@ public class ControlPanel implements ActionListener, KeyListener{
 		}
 		
 	}
+	protected void focusUpdate(){
+		controlPanel.requestFocus();
+	}
 	
 	/**
 	 * Die ActionListener-Methode für die Buttons
@@ -969,6 +972,13 @@ public class ControlPanel implements ActionListener, KeyListener{
 			//Drehen nach rechts
 			m.changeRotationAngle(0, 1);
 			
+		}else
+		if(key.getKeyCode() == KeyEvent.VK_Q){
+			controlPanel.requestFocus();
+			cpSliderAnimationSpeed.setValue(52);
+		}else
+		if(key.getKeyCode() == KeyEvent.VK_D){
+			KeyboardMouseManager.pressedKey.add('d');
 		}
 		
 	}

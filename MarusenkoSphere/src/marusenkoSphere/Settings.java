@@ -18,7 +18,7 @@ public class Settings {
 	public static final String LOGPATH = "D:/marusenkoLog";
 	
 	//Kugel
-	public static final boolean PRINTSPHERECODE = false;
+	public static final boolean PRINTSPHERECODE = true;
 	
 	//RendernKugel
 	public static final int KUGELRENDERRASTER = 10; //Nur 1, 2, 5, 10
