@@ -2,12 +2,15 @@ package marusenkoSphereGUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -31,7 +34,7 @@ import marusenkoSphere.Settings;
  * Ein KeyListener sorgt dafür, dass auf Tastatur eingaben gemacht werden können
  */
 
-public class ControlPanel implements ActionListener, KeyListener{
+public class ControlPanel implements ActionListener, KeyListener, WindowListener{
 
 	//Manager um die Kugel vom Panel aus zu Steuern
 	private Manager m;
@@ -213,6 +216,8 @@ public class ControlPanel implements ActionListener, KeyListener{
 		devPanel.setLayout(null);
 		
 		controlPanel.addKeyListener(this);
+		controlPanel.addWindowListener(this);
+		editorPanel.addWindowListener(this);
 		
 		initControlpanel();
 		initEditor();
@@ -735,6 +740,17 @@ public class ControlPanel implements ActionListener, KeyListener{
 		
 	}
 	
+	protected void maxCP(){
+		controlPanel.setState(Frame.NORMAL);
+		editorPanel.setState(Frame.NORMAL);
+	}
+	
+	protected void minCP(){
+		controlPanel.setState(Frame.ICONIFIED);
+		editorPanel.setState(Frame.ICONIFIED);
+	}
+	
+	
 	/**
 	 * Die ActionListener-Methode für die Buttons
 	 */
@@ -979,4 +995,48 @@ public class ControlPanel implements ActionListener, KeyListener{
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("CP is Maximiert");
+		m.maxLWJGL();
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("CP is Minimiert");
+		m.minLWJGL();
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

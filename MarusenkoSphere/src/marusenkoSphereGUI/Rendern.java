@@ -1,11 +1,19 @@
 package marusenkoSphereGUI;
 
+import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
 import marusenkoSphere.Settings;
 import marusenkoSphereKugel.Kugel;
@@ -36,6 +44,15 @@ public class Rendern {
     //Definiert DisplayMode ==> Verantwortlich, wie Fenster mit Farbmodus etc. ist
     private DisplayMode displayMode;
     
+    private JFrame frame = new JFrame();
+    
+    private Canvas canvas = new Canvas(){
+	private static final long serialVersionUID = -1069002023468669595L;
+		public void removeNotify() {
+			
+		}
+	};
+    
     //Definiert die Kugel, welche dargestellt wird    
     protected Kugel k;
 
@@ -45,6 +62,9 @@ public class Rendern {
     //Variabeln für die FPS Berechnungen
     private int fps;
     private long lastFPS;
+    
+    
+    private int x,y;
 
     /**
      * Konstruktor des Rendern-Objekts
@@ -63,6 +83,7 @@ public class Rendern {
     
     /**
      * Funktion zum Updaten der Kugel
+     * @param active 
      */
     protected void updateKugel(Kugel kugel, int mode){
     	
@@ -70,6 +91,13 @@ public class Rendern {
     	k = kugel;
     	doing();
     	
+    }
+    
+    protected void maxLWJGL(){
+    	frame.setState(Frame.NORMAL);
+    }
+    protected void minLWJGL(){
+    	frame.setState(Frame.ICONIFIED);
     }
     
     /**
@@ -297,6 +325,76 @@ public class Rendern {
 	        //Setzte den DisplayMode und den Fenstertitel       
 	        Display.setDisplayMode(displayMode);
 	        Display.setTitle(windowTitle);
+	        
+	        
+	        //Neues Toolkit Objekt erstellen, wird gebraucht um an die Bildschirmaufläsung zu kommen
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			
+			//Die Bildschirmdimensionen bekommen
+			Dimension screenSize = tk.getScreenSize();
+
+			//Berechne die Verschiebung des Fensters
+			x=((screenSize.width/2)-500);
+			y=((screenSize.height/2)-245);
+
+			//Lade das Icon
+			Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
+			
+			//Setzte Titel
+	        frame.setTitle(windowTitle);
+	        
+	        //Setzte Icon
+	        frame.setIconImage(icon);
+	        
+	        //Setzte Positioin
+	        frame.setLocation(x, y);
+	        
+	        //Füge Zeichnung hinzu
+	        frame.add(canvas);
+	        
+	        //Setzte gewünschte Grösse
+	        canvas.setPreferredSize(new Dimension(640, 480));
+	        
+	        //Setzte minimale Grösse
+			canvas.setMinimumSize(new Dimension(640, 480));
+			
+			//Neu zeichnen Ignorieren
+			canvas.setIgnoreRepaint(true);
+			
+			//Canvas sichtbar machen
+	        canvas.setVisible(true);
+	        
+	        //Canvas als LWJGL Parent setzen
+	        Display.setParent(canvas);
+	        
+	        //Fenster Packen
+	        frame.pack();
+	        
+	        //Fenster sichtbar
+	        frame.setVisible(true);
+	        
+	        //Default close Operation
+	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        
+	        //Window listener Hinzufügen
+	        frame.addWindowListener(new WindowListener() {
+				public void windowOpened(WindowEvent arg0) {
+				}
+				public void windowIconified(WindowEvent arg0) {
+					Manager.minCP();
+				}
+				public void windowDeiconified(WindowEvent arg0) {
+					Manager.maxCP();
+				}
+				public void windowDeactivated(WindowEvent arg0) {
+				}
+				public void windowClosing(WindowEvent arg0) {
+				}
+				public void windowClosed(WindowEvent arg0) {
+				}
+				public void windowActivated(WindowEvent arg0) {
+				}
+			});
        
 	        //Erstelle Fenster mit den voreingestellten Einstellungen
 	        try{
@@ -311,17 +409,15 @@ public class Rendern {
 	        	Display.create();
 	        	
 	        }   
-	        
 	        //Aktuelle Position des Fensters abfragen
-	        int x = Display.getX();
-	        int y = Display.getY();
+	        x = Display.getX();
+	        y = Display.getY();
 	        
 	        //Neue Position setzten, so das Fenster und Controlpanel zentriert sind
 	        Display.setLocation(x-175, y);
 	        
 	        //VSync aktivieren
 	        Display.setVSyncEnabled(true);
-	        
 	        
     	}catch(LWJGLException e){
     		

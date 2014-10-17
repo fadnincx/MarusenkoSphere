@@ -52,6 +52,9 @@ public class Manager {
 	private static boolean runAnimationToEnd = false;
 	
 	private int stepWhenGoesToEditor = 0;
+	
+	private static boolean active = true;
+	private static boolean isActive = true;
 
 	/**
 	 * Manager zum Lösen Verwalten der GUI und lösen der Kugel
@@ -109,6 +112,17 @@ public class Manager {
 				
 		    }
 			
+			if(isActive!=active){
+				isActive=active;
+				if(active){
+					System.out.println("DO Max");
+					cp.maxCP();
+				}else{
+					System.out.println("DO Min");
+					cp.minCP();
+				}
+			}
+			
 		}
 		  
 	}
@@ -132,6 +146,23 @@ public class Manager {
 			
 		}
 		
+	}
+	
+	protected static void minCP(){
+		System.out.println("minimize");
+		active = false;
+	}
+	protected static void maxCP(){
+		System.out.println("maxminize");
+		active = true;
+	}
+	protected void maxLWJGL(){
+		System.out.println("CP want Max");
+		rendern.maxLWJGL();
+	}
+	protected void minLWJGL(){
+		System.out.println("CP want Min");
+		rendern.minLWJGL();
 	}
 	
 	/**
