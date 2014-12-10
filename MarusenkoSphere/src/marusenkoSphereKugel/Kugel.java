@@ -47,21 +47,26 @@ public class Kugel{
 	 */
 	public void fillKugelFromDebugString(String s,boolean solving){
 		
-		//Führe die Funktion ohne lösen der Kugel durch
-		setSphereToString(s);
-		
 		//Wenn gelöst werden soll
 		if(solving){
+			//Führe die Funktion ohne lösen der Kugel durch
+			setSphereToString(s);
 			
 			//Löse die Kugel
 			solveSphere();
 			
 		//Sonst lösche gesammte solvingList und füge nur aktuelle Kugel hinzu
 		}else{
-			
+			s.trim();
+			String[] sp = s.split("m");
+			int anzSp = sp.length;
 			step = 0;
 			solvingList.clear();
-			solvingList.add(getSphere("000"));
+			for(int i = 0; i<anzSp; i++){
+				solvingList.add(sp[i]);
+			}
+			setSphereToString(solvingList.get(0));
+			//solvingList.add(getSphere("000"));
 			
 		}
 		

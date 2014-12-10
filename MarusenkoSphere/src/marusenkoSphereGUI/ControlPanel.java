@@ -272,7 +272,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 		cpSliderAnimationSpeed.setBounds(20,100,270,30);
 		
 		//Info ToolTip Hinzufügen
-		cpSliderAnimationSpeed.setToolTipText("Wie schnell die Animation abläuft");
+		//cpSliderAnimationSpeed.setToolTipText("Wie schnell die Animation abläuft");
 		
 		//Help Animation Position ung Grösse zuweisen
 		cpHelpAnimation.setBounds(300,100,30,30);
@@ -975,7 +975,11 @@ public class ControlPanel implements ActionListener, KeyListener{
 		}else
 		if(key.getKeyCode() == KeyEvent.VK_Q){
 			controlPanel.requestFocus();
-			cpSliderAnimationSpeed.setValue(52);
+			//cpSliderAnimationSpeed.setValue(52);
+		}else
+		if(key.getKeyCode() == KeyEvent.VK_5){
+			devButtonSphereDebugStringInput.doClick();
+			//cpSliderAnimationSpeed.setValue(52);
 		}else
 		if(key.getKeyCode() == KeyEvent.VK_D){
 			KeyboardMouseManager.pressedKey.add('d');

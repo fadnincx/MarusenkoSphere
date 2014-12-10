@@ -179,6 +179,7 @@ public class Rendern {
 	    	case 6: return new float[] {1.0f,0.0f,1.0f};//Violett
 	    	case 7: return new float[] {0.0f,1.0f,0.0f};//Grün	
 	    	case 8: return new float[] {0.0f,0.0f,0.0f};//Schwarz
+	    	case 9: return new float[] {0.5f,0.5f,0.5f};//Schwarz
 	    	default:return new float[] {0.0f,0.0f,0.0f};//Schwarz
 	    	
     	}
