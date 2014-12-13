@@ -74,7 +74,7 @@ public class Manager {
 			
 			rendern = new Rendern(k);
 			cp = new ControlPanel(this);
-			
+			KeyboardMouseManager.init();
 		}catch(Exception e){
 			
 			e.printStackTrace();
@@ -483,6 +483,13 @@ public class Manager {
 		
 		rendern.cm.setToStartPosition();
 		
+	}
+	
+	protected int getNegativeX(){
+		return rendern.cm.negativeXI();
+	}
+	protected int getNegativeY(){
+		return rendern.cm.negativeYI();
 	}
 	
 	/**

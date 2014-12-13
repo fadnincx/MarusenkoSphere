@@ -27,4 +27,7 @@ public class Settings {
 	public static final int VERSCHIEBEFENSTERX = 161;
 	public static final int VERSCHIEBEFENSTERY = -240;
 	
+	//Mouse
+	public static final double MOUSESENSITIVE = 0.1;
+	
 }

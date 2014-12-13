@@ -423,4 +423,144 @@ public class Editor {
 	private static boolean isInRectangle(double r1x, double r1y, double r2x, double r2y, double x, double y){
 		return (isInTriangle(r1x,r1y,r2x,r2y,r1x,r2y,x,y)||isInTriangle(r1x,r1y,r2x,r2y,r2x,r1y,x,y)) ? true:false;
 	}
+	protected static int positionOnSphere(double x, double y, double z){
+		int oktant = getOktant(x, y, z);
+		double c = 0.77;
+		x=Math.abs(x);
+		y=Math.abs(y);
+		z=Math.abs(z);
+		switch(oktant){
+		case 0:
+			if(x>c){
+				return 4;
+			}else
+			if(y>c){
+				return 16;
+			}else
+			if(z>c){
+				return 0;
+			}else{
+				return 32;
+			}
+		case 1:
+			if(x>c){
+				return 7;
+			}else
+			if(y>c){
+				return 17;
+			}else
+			if(z>c){
+				return 8;
+			}else{
+				return 33;
+			}
+		case 2:
+			if(x>c){
+				return 5;
+			}else
+			if(y>c){
+				return 20;
+			}else
+			if(z>c){
+				return 1;
+			}else{
+				return 36;
+			}
+		case 3:
+			if(x>c){
+				return 6;
+			}else
+			if(y>c){
+				return 21;
+			}else
+			if(z>c){
+				return 9;
+			}else{
+				return 37;
+			}
+		case 4:
+			if(x>c){
+				return 12;
+			}else
+			if(y>c){
+				return 19;
+			}else
+			if(z>c){
+				return 3;
+			}else{
+				return 31;
+			}
+		case 5:
+			if(x>c){
+				return 15;
+			}else
+			if(y>c){
+				return 18;
+			}else
+			if(z>c){
+				return 11;
+			}else{
+				return 30;
+			}
+		case 6:
+			if(x>c){
+				return 13;
+			}else
+			if(y>c){
+				return 23;
+			}else
+			if(z>c){
+				return 2;
+			}else{
+				return 35;
+			}
+		case 7:
+			if(x>c){
+				return 14;
+			}else
+			if(y>c){
+				return 22;
+			}else
+			if(z>c){
+				return 10;
+			}else{
+				return 34;
+			}
+		default:
+			return -1;
+		}
+		
+	}
+	private static int getOktant(double x, double y, double z){
+		if(x>0){
+			if(y>0){
+				if(z>0){
+					return 0;
+				}else{
+					return 1;
+				}
+			}else{
+				if(z>0){
+					return 2;
+				}else{
+					return 3;
+				}
+			}
+		}else{
+			if(y>0){
+				if(z>0){
+					return 4;
+				}else{
+					return 5;
+				}
+			}else{
+				if(z>0){
+					return 6;
+				}else{
+					return 7;
+				}
+			}
+		}
+	}
+	
 }

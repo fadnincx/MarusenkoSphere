@@ -47,6 +47,9 @@ public class CameraController {
 		//die Drehung wird umgesetzt
 		rotation.x+=angleX;
 		rotation.y+=angleY;
+		
+		rotation.x%=360;
+		rotation.y%=360;
 	}
 	
 	/**
@@ -63,6 +66,18 @@ public class CameraController {
 		//Setze Z-Achse
 		rotation.z = 0;
 		
+	}
+	public boolean negativeY(){
+		return rotation.y>180||rotation.y<-180;
+	}
+	public boolean negativeX(){
+		return rotation.x>180||rotation.x<-180;
+	}
+	public int negativeYI(){
+		return negativeY()?-1:1;
+	}
+	public int negativeXI(){
+		return negativeX()?-1:1;
 	}
 	
 	/**
