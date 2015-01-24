@@ -128,9 +128,9 @@ public class KeyboardMouseManager {
 	    		//Bekomme die Koordinaten der Maus im 3Dimensionalen System
 	    		double[] mousePosIn3D = Editor.MouseIn3D(x,y);
 	    		
-	    		//Wenn die Tiefe Z <= 4 ist, dann ist dort ein Objekt--> also Muss Aktion statt finden
+	    		//Wenn auf Kugel geklickt
 	    		if(!lookPfeile&&mousePosIn3D[0]*mousePosIn3D[0]<1.5&&mousePosIn3D[1]*mousePosIn3D[1]<1.5&&mousePosIn3D[2]*mousePosIn3D[2]<1.5){
-	    			System.out.println("");
+	    			//System.out.println("");
 	    			position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
 	    			
 	    			m.setNewPfeilID(position);
@@ -143,7 +143,7 @@ public class KeyboardMouseManager {
 	    	
 	    	//Kugel verändern
 	    	if(Mouse.isButtonDown(0)&&Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
-	    		lookPfeile=!lookPfeile;
+	    		lookPfeile=true;
 	    	}
 	    	
 	    	//Drehen, wenn links gedrück ist

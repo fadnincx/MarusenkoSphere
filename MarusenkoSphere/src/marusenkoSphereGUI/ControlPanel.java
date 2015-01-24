@@ -218,7 +218,7 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		controlPanel.addKeyListener(this);
 		controlPanel.addWindowListener(this);
 		editorPanel.addWindowListener(this);
-		
+
 		initControlpanel();
 		initEditor();
 		initDev();
@@ -746,12 +746,12 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 	}
 	
 	protected void maxCP(){
-		controlPanel.setState(Frame.NORMAL);
+		//controlPanel.setState(Frame.NORMAL);
 		editorPanel.setState(Frame.NORMAL);
 	}
 	
 	protected void minCP(){
-		controlPanel.setState(Frame.ICONIFIED);
+	//	controlPanel.setState(Frame.ICONIFIED);
 		editorPanel.setState(Frame.ICONIFIED);
 	}
 	
@@ -1002,46 +1002,27 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 	public void keyTyped(KeyEvent arg0) {}
 
 	@Override
-	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void windowActivated(WindowEvent arg0) {}
 
 	@Override
-	public void windowClosed(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void windowClosed(WindowEvent arg0) {}
 
 	@Override
-	public void windowClosing(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void windowClosing(WindowEvent arg0) {}
 
 	@Override
-	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void windowDeactivated(WindowEvent arg0) {}
 
 	@Override
 	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("CP is Maximiert");
 		m.maxLWJGL();
 	}
 
 	@Override
 	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("CP is Minimiert");
 		m.minLWJGL();
 	}
 
 	@Override
-	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void windowOpened(WindowEvent arg0) {}
 }

@@ -68,10 +68,10 @@ public class CameraController {
 		
 	}
 	public boolean negativeY(){
-		return rotation.y>180||rotation.y<-180;
+		return (rotation.y>180||rotation.y<-180);
 	}
 	public boolean negativeX(){
-		return rotation.x>180||rotation.x<-180;
+		return (rotation.x>180||rotation.x<-180);
 	}
 	public int negativeYI(){
 		return negativeY()?-1:1;

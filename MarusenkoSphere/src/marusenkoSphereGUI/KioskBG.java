@@ -52,11 +52,15 @@ public class KioskBG{
 		
 		overlay.getContentPane().setLayout(new java.awt.BorderLayout());
 		overlay.getContentPane().add(titel, java.awt.BorderLayout.NORTH);
-		overlay.getContentPane().add(copyright, java.awt.BorderLayout.SOUTH);
+		overlay.getContentPane().add(copyright, java.awt.BorderLayout.PAGE_END);
+		
         
 	
 		overlay.setVisible(true);
 		
+	}
+	protected void changeDebug(String s){
+		copyright.setText(s);
 	}
 	
 }

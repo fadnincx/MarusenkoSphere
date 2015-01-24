@@ -14,9 +14,6 @@ import marusenkoSphereKugel.Kugel;
  *
  */
 public class Manager {
-
-	@SuppressWarnings("unused")
-	private KioskBG kiosk;
 	
 	//Kugel die dargestellt wird
 	private Kugel k;
@@ -76,7 +73,7 @@ public class Manager {
 		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
 		//Sonst wirf eine Exception
 		try{
-			kiosk = new KioskBG();
+			new KioskBG();
 			rendern = new Rendern(k);
 			cp = new ControlPanel(this);
 			KeyboardMouseManager.init();
@@ -120,10 +117,8 @@ public class Manager {
 			if(isActive!=active){
 				isActive=active;
 				if(active){
-					System.out.println("DO Max");
 					cp.maxCP();
 				}else{
-					System.out.println("DO Min");
 					cp.minCP();
 				}
 			}
@@ -154,19 +149,15 @@ public class Manager {
 	}
 	
 	protected static void minCP(){
-		System.out.println("minimize");
 		active = false;
 	}
 	protected static void maxCP(){
-		System.out.println("maxminize");
 		active = true;
 	}
 	protected void maxLWJGL(){
-		System.out.println("CP want Max");
 		rendern.maxLWJGL();
 	}
 	protected void minLWJGL(){
-		System.out.println("CP want Min");
 		rendern.minLWJGL();
 	}
 	

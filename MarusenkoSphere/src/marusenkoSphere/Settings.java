@@ -12,7 +12,7 @@ public class Settings {
 	
 	//Allgemein
 	public static final boolean DEBUGMODE = false;
-	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
+	public static final int SETCLOSE = JFrame.DO_NOTHING_ON_CLOSE;
 	
 	
 	//Main
