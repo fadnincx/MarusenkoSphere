@@ -16,6 +16,8 @@ import org.lwjgl.opengl.Display;
  *
  */
 public class KeyboardMouseManager {
+	private static boolean lookPfeile = false;
+	private static int position = -1;
 	
 	public static void init(){
 		Mouse.getDX();
@@ -34,7 +36,12 @@ public class KeyboardMouseManager {
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)||Display.isCloseRequested()) {
 			
 			//Beende das Programm
-	        m.exitProgramm();
+	        //m.exitProgramm();
+	        
+	    }
+		if(Keyboard.isKeyDown(Keyboard.KEY_F3)) {
+			
+			m.resetPosition();
 	        
 	    }
 		
@@ -107,13 +114,13 @@ public class KeyboardMouseManager {
 	    //Wenn Kugel dargestellt wird (auch Dev-Modus)
 	    if(m.getDisplayMode()==0||m.getDisplayMode()==2){
 	    	 
+	    	
 	    	//Kamera mit Maus drehen
 	    	if(Mouse.isButtonDown(0)&&!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
 	    		m.changeRotationAngle(-Mouse.getDY()*Settings.MOUSESENSITIVE*m.getNegativeY(), Mouse.getDX()*Settings.MOUSESENSITIVE*m.getNegativeX());
 	    	}
 	    	
-	    	//Kugel verändern
-	    	if(Mouse.isButtonDown(0)&&Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
+	    	if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
 	    		//Speichere die x und y Koordinate der Maus im Fenster
 		    	int x = Mouse.getX();
 		    	int y = Mouse.getY();
@@ -122,15 +129,22 @@ public class KeyboardMouseManager {
 	    		double[] mousePosIn3D = Editor.MouseIn3D(x,y);
 	    		
 	    		//Wenn die Tiefe Z <= 4 ist, dann ist dort ein Objekt--> also Muss Aktion statt finden
-	    		if(mousePosIn3D[0]*mousePosIn3D[0]<1.5&&mousePosIn3D[1]*mousePosIn3D[1]<1.5&&mousePosIn3D[2]*mousePosIn3D[2]<1.5){
+	    		if(!lookPfeile&&mousePosIn3D[0]*mousePosIn3D[0]<1.5&&mousePosIn3D[1]*mousePosIn3D[1]<1.5&&mousePosIn3D[2]*mousePosIn3D[2]<1.5){
+	    			System.out.println("");
+	    			position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
 	    			
-	    			
-	    			//System.out.println(mousePosIn3D[0]+","+mousePosIn3D[1]+","+mousePosIn3D[2]);
-	    			System.out.println(Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]));
+	    			m.setNewPfeilID(position);
 	    			
 	    		}
+	    	}else if(m.getPfeilID()!=-1){
+	    		m.setNewPfeilID(-1);
+	    		lookPfeile = false;
 	    	}
 	    	
+	    	//Kugel verändern
+	    	if(Mouse.isButtonDown(0)&&Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
+	    		lookPfeile=!lookPfeile;
+	    	}
 	    	
 	    	//Drehen, wenn links gedrück ist
 		    if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)||pollPressedKey('1')) {

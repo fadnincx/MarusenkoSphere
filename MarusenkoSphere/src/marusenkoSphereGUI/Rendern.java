@@ -63,7 +63,7 @@ public class Rendern {
     private int fps;
     private long lastFPS;
     
-    
+    private int pfeilID = -1;
     private int x,y;
 
     /**
@@ -85,10 +85,11 @@ public class Rendern {
      * Funktion zum Updaten der Kugel
      * @param active 
      */
-    protected void updateKugel(Kugel kugel, int mode){
+    protected void updateKugel(Kugel kugel, int mode, int pfeilID){
     	
     	renderMode = mode;
     	k = kugel;
+    	this.pfeilID = pfeilID;
     	doing();
     	
     }
@@ -136,7 +137,7 @@ public class Rendern {
     	default:
     		
     		//Rendere die Kugel mit der externen Funktion
-        	RenderKugel.render(k,cm); 
+        	RenderKugel.render(k,cm, pfeilID); 
     		break;
     		
     	}
@@ -370,11 +371,14 @@ public class Rendern {
 	        //Fenster Packen
 	        frame.pack();
 	        
+	        //Grösse Verändern unmöglich
+	        frame.setResizable(false);
+	        
 	        //Fenster sichtbar
 	        frame.setVisible(true);
 	        
 	        //Default close Operation
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frame.setDefaultCloseOperation(Settings.SETCLOSE);
 	        
 	        //Window listener Hinzufügen
 	        frame.addWindowListener(new WindowListener() {
@@ -523,5 +527,18 @@ public class Rendern {
         GL11.glEnable(GL11.GL_BLEND);
         
     }
-    
+    protected void resetPosition(){
+    	  
+        //Neues Toolkit Objekt erstellen, wird gebraucht um an die Bildschirmaufläsung zu kommen
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		
+		//Die Bildschirmdimensionen bekommen
+		Dimension screenSize = tk.getScreenSize();
+
+		//Berechne die Verschiebung des Fensters
+		x=((screenSize.width/2)-500);
+		y=((screenSize.height/2)-245);
+		
+		frame.setLocation(x, y);
+    }
 }

@@ -1,5 +1,7 @@
 package marusenkoSphere;
 
+import javax.swing.JFrame;
+
 /**
  * Settings-Klasse
  * Enthält diverse Einstellungen an einem Zentralen Ort, 
@@ -10,6 +12,8 @@ public class Settings {
 	
 	//Allgemein
 	public static final boolean DEBUGMODE = false;
+	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
+	
 	
 	//Main
 	public static final boolean STARTKONSOLE = false;
@@ -24,10 +28,12 @@ public class Settings {
 	public static final int KUGELRENDERRASTER = 10; //Nur 1, 2, 5, 10
 	
 	//Controlpanel
-	public static final int VERSCHIEBEFENSTERX = 161;
-	public static final int VERSCHIEBEFENSTERY = -240;
+	public static final int VERSCHIEBEFENSTERX = 165;
+	public static final int VERSCHIEBEFENSTERY = -245;
 	
 	//Mouse
 	public static final double MOUSESENSITIVE = 0.1;
+	
+	
 	
 }

@@ -22,6 +22,11 @@ import javax.swing.SwingUtilities;
 public class Help extends JPanel{
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8461029529626833515L;
+
+	/**
 	 * Erstellt das HilfeCenter als Parameter tab wird der gewünschte start Tab übergeben
 	 */
 	public Help(final int tab){
@@ -81,6 +86,11 @@ public class Help extends JPanel{
 	 */
 	class HelpTabbed extends JPanel{
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6506176482886760822L;
+
 		/**
 		 * Konstruktor für das erstellen der Tabs
 		 * @param tab

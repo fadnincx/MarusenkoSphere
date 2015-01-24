@@ -4,6 +4,7 @@ import marusenkoSphere.Settings;
 import marusenkoSphereKugel.Kugel;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 
 /**
  * RenderKugel - Datei
@@ -21,7 +22,7 @@ public class RenderKugel {
 	 * @param cm : CameraManager für die Kamera
 	 * @return : true wenn Erfolgreich
 	 */
-	protected static boolean render(Kugel k, CameraController cm) {
+	protected static boolean render(Kugel k, CameraController cm, int pfeilID) {
 		
     	/**
     	 * Auskommentieren, damit Flächen der Kugel nicht gefält werden
@@ -920,9 +921,341 @@ public class RenderKugel {
     	
         GL11.glEnd();
         
+        float[][] valuesPol = new float[3][3];
+        float[][] valuesCon = new float[2][3];
+        
+        valuesPol[0][0] = 0.15f;valuesPol[0][1] = 0.5f;valuesPol[0][2] = 0.86f;
+        valuesPol[1][0] = 0.28f;valuesPol[1][1] = 0.5f;valuesPol[1][2] = 0.85f;
+        valuesPol[2][0] = 0.37f;valuesPol[2][1] = 0.42f;valuesPol[2][2] = 0.85f;
+        
+        valuesCon[0][0] = 0.45f;valuesCon[0][1] = 0.1f;valuesCon[0][2] = 0.9f;	
+        valuesCon[1][0] = 0.57f;valuesCon[1][1] = 0.1f;valuesCon[1][2] = 0.83f;	
+        
+        
+        if(pfeilID<30&&pfeilID>=0){
+        	int invX = 1;
+        	int invY = 1;
+        	int invZ = 1;
+        	int X1 = 0;
+        	int Y1 = 1;
+        	int Z1 = 2;
+        	int X2 = 0;
+        	int Y2 = 1;
+        	int Z2 = 2;
+        	switch(pfeilID){
+        	case 0:
+        		invX = 1; invY = 1; invZ = 1;
+        		X1 = 0; Y1 = 1; Z1 = 2;
+        		X2 = 1; Y2 = 0; Z2 = 2;
+        		break;
+        	case 1:
+        		invX = 1; invY = -1; invZ = 1;
+        		X1 = 0; Y1 = 1; Z1 = 2;
+        		X2 = 1; Y2 = 0; Z2 = 2;
+        		break;
+        	case 2:
+        		invX = -1; invY = -1; invZ = 1;
+        		X1 = 0; Y1 = 1; Z1 = 2;
+        		X2 = 1; Y2 = 0; Z2 = 2;
+        		break;
+        	case 3:
+        		invX = -1; invY = 1; invZ = 1;
+        		X1 = 0; Y1 = 1; Z1 = 2;
+        		X2 = 1; Y2 = 0; Z2 = 2;
+        		break;
+        	case 4:
+        		invX = 1; invY = 1; invZ = 1;
+        		X1 = 2; Y1 = 0; Z1 = 1;
+        		X2 = 2; Y2 = 1; Z2 = 0;
+        		break;
+        	case 5:
+        		invX = 1; invY = -1; invZ = 1;
+        		X1 = 2; Y1 = 0; Z1 = 1;
+        		X2 = 2; Y2 = 1; Z2 = 0;
+        		break;
+        	case 6:
+        		invX = 1; invY = -1; invZ = -1;
+        		X1 = 2; Y1 = 0; Z1 = 1;
+        		X2 = 2; Y2 = 1; Z2 = 0;
+        		break;	
+        	case 7:
+        		invX = 1; invY = 1; invZ = -1;
+        		X1 = 2; Y1 = 0; Z1 = 1;
+        		X2 = 2; Y2 = 1; Z2 = 0;
+        		break;
+        	case 8:
+        		invX = 1; invY = 1; invZ = -1;
+        		X1 = 0; Y1 = 1; Z1 = 2;
+        		X2 = 1; Y2 = 0; Z2 = 2;
+        		break;	
+        	case 9:
+        		invX = 1; invY = -1; invZ = -1;
+        		X1 = 0; Y1 = 1; Z1 = 2;
+        		X2 = 1; Y2 = 0; Z2 = 2;
+        		break;
+        	case 10:
+        		invX = -1; invY = -1; invZ = -1;
+        		X1 = 0; Y1 = 1; Z1 = 2;
+        		X2 = 1; Y2 = 0; Z2 = 2;
+        		break;
+        	case 11:
+        		invX = -1; invY = 1; invZ = -1;
+        		X1 = 0; Y1 = 1; Z1 = 2;
+        		X2 = 1; Y2 = 0; Z2 = 2;
+        		break;
+        	case 12:
+        		invX = -1; invY = 1; invZ = 1;
+        		X1 = 2; Y1 = 0; Z1 = 1;
+        		X2 = 2; Y2 = 1; Z2 = 0;
+        		break;
+        	case 13:
+        		invX = -1; invY = -1; invZ = 1;
+        		X1 = 2; Y1 = 0; Z1 = 1;
+        		X2 = 2; Y2 = 1; Z2 = 0;
+        		break;
+        	case 14:
+        		invX = -1; invY = -1; invZ = -1;
+        		X1 = 2; Y1 = 0; Z1 = 1;
+        		X2 = 2; Y2 = 1; Z2 = 0;
+        		break;	
+        	case 15:
+        		invX = -1; invY = 1; invZ = -1;
+        		X1 = 2; Y1 = 0; Z1 = 1;
+        		X2 = 2; Y2 = 1; Z2 = 0;
+        		break;
+        	case 16:
+        		invX = 1; invY = 1; invZ = 1;
+        		X1 = 0; Y1 = 2; Z1 = 1;
+        		X2 = 1; Y2 = 2; Z2 = 0;
+        		break;	
+        	case 17:
+        		invX = 1; invY = 1; invZ = -1;
+        		X1 = 0; Y1 = 2; Z1 = 1;
+        		X2 = 1; Y2 = 2; Z2 = 0;
+        		break;	
+        	case 18:
+        		invX = -1; invY = 1; invZ = -1;
+        		X1 = 0; Y1 = 2; Z1 = 1;
+        		X2 = 1; Y2 = 2; Z2 = 0;
+        		break;	
+        	case 19:
+        		invX = -1; invY = 1; invZ = 1;
+        		X1 = 0; Y1 = 2; Z1 = 1;
+        		X2 = 1; Y2 = 2; Z2 = 0;
+        		break;	
+        	case 20:
+        		invX = 1; invY = -1; invZ = 1;
+        		X1 = 0; Y1 = 2; Z1 = 1;
+        		X2 = 1; Y2 = 2; Z2 = 0;
+        		break;	
+        	case 21:
+        		invX = 1; invY = -1; invZ = -1;
+        		X1 = 0; Y1 = 2; Z1 = 1;
+        		X2 = 1; Y2 = 2; Z2 = 0;
+        		break;	
+        	case 22:
+        		invX = -1; invY = -1; invZ = -1;
+        		X1 = 0; Y1 = 2; Z1 = 1;
+        		X2 = 1; Y2 = 2; Z2 = 0;
+        		break;	
+        	case 23:
+        		invX = -1; invY = -1; invZ = 1;
+        		X1 = 0; Y1 = 2; Z1 = 1;
+        		X2 = 1; Y2 = 2; Z2 = 0;
+        		break;	
+        	}
+        	 drawPfeil(new Vector3f(valuesPol[0][X1]*invX,valuesPol[0][Y1]*invY, valuesPol[0][Z1]*invZ),
+             		new Vector3f(valuesPol[1][X1]*invX,valuesPol[1][Y1]*invY,valuesPol[1][Z1]*invZ), 
+             		new Vector3f(valuesPol[2][X1]*invX,valuesPol[2][Y1]*invY,valuesPol[2][Z1]*invZ),0.081f, 5f);
+             
+             drawPfeil(new Vector3f(valuesPol[0][X2]*invX,valuesPol[0][Y2]*invY,valuesPol[0][Z2]*invZ),
+             		new Vector3f(valuesPol[1][X2]*invX,valuesPol[1][Y2]*invY,valuesPol[1][Z2]*invZ), 
+             		new Vector3f(valuesPol[2][X2]*invX,valuesPol[2][Y2]*invY,valuesPol[2][Z2]*invZ),0.081f, 5f);
+        	
+        }else
+        if(pfeilID>=30){
+        	int invX = 1;
+        	int invY = 1;
+        	int invZ = 1;
+        	switch(pfeilID){
+        	case 30:
+        		invX = -1; invY = 1; invZ = -1;
+            	break;
+        	case 31:
+        		invX = -1; invY = 1; invZ = 1;
+            	break;
+        	case 32:
+        		invX = 1; invY = 1; invZ = 1;
+            	break;	
+        	case 33:
+        		invX = 1; invY = 1; invZ = -1;
+            	break;
+        	case 34:
+        		invX = -1; invY = -1; invZ = -1;
+            	break;
+        	case 35:
+        		invX = -1; invY = -1; invZ = 1;
+            	break;
+        	case 36:
+        		invX = 1; invY = -1; invZ = 1;
+            	break;
+        	case 37:
+        		invX = 1; invY = -1; invZ = -1;
+            	break;
+        	}
+        	
+        	drawPfeil(new Vector3f(valuesCon[0][0]*invX,valuesCon[0][1]*invY,valuesCon[0][2]*invZ), 
+            		new Vector3f(valuesCon[1][0]*invX,valuesCon[1][1]*invY,valuesCon[1][2]*invZ),0.081f, 5f);
+            
+            drawPfeil(new Vector3f(valuesCon[0][2]*invX,valuesCon[0][1]*invY,valuesCon[0][0]*invZ), 
+            		new Vector3f(valuesCon[1][2]*invX,valuesCon[1][1]*invY,valuesCon[1][0]*invZ),0.081f, 5f);
+            
+            drawPfeil(new Vector3f(valuesCon[0][1]*invX,valuesCon[0][0]*invY,valuesCon[0][2]*invZ),
+            		new Vector3f(valuesCon[1][1]*invX,valuesCon[1][0]*invY,valuesCon[1][2]*invZ),0.081f, 5f);
+       
+            drawPfeil(new Vector3f(valuesCon[0][1]*invX,valuesCon[0][2]*invY,valuesCon[0][0]*invZ),
+            		new Vector3f(valuesCon[1][1]*invX,valuesCon[1][2]*invY,valuesCon[1][0]*invZ),0.081f, 5f);
+
+            drawPfeil(new Vector3f(valuesCon[0][0]*invX,valuesCon[0][2]*invY,valuesCon[0][1]*invZ), 
+            		new Vector3f(valuesCon[1][0]*invX,valuesCon[1][2]*invY,valuesCon[1][1]*invZ),0.081f, 5f);
+            
+            drawPfeil(new Vector3f(valuesCon[0][2]*invX,valuesCon[0][0]*invY,valuesCon[0][1]*invZ), 
+            		new Vector3f(valuesCon[1][2]*invX,valuesCon[1][0]*invY,valuesCon[1][1]*invZ),0.081f, 5f);
+        	
+        	
+        }
+        
+        
+        
+        //Test Pfeile Zeichnen
+        
+        
+        //Pfeile für Pole drehen
+   /*     drawPfeil(new Vector3f(0.15f, 0.5f, 0.86f),
+        		new Vector3f(0.28f, 0.5f, 0.85f), 
+        		new Vector3f(0.37f,0.42f,0.85f),0.081f, 5f);
+        
+        drawPfeil(new Vector3f(0.5f, 0.15f, 0.86f),
+        		new Vector3f(0.5f, 0.28f, 0.85f), 
+        		new Vector3f(0.42f,0.37f,0.85f),0.081f, 5f);
+     
+        //Pfeile für Kugel hälfte drehen
+        
+        drawPfeil(new Vector3f(0.45f, 0.1f, 0.9f), 
+        		new Vector3f(0.57f,0.1f,0.83f),0.081f, 5f);
+        
+        drawPfeil(new Vector3f(0.9f, 0.1f, 0.45f), 
+        		new Vector3f(0.83f,0.1f,0.57f),0.081f, 5f);
+        
+        drawPfeil(new Vector3f(0.1f, 0.45f, 0.9f),
+        		new Vector3f(0.1f, 0.57f, 0.83f),0.081f, 5f);
+   
+        drawPfeil(new Vector3f(0.1f, 0.9f, 0.45f),
+        		new Vector3f(0.1f, 0.83f, 0.57f),0.081f, 5f);
+
+        drawPfeil(new Vector3f(0.45f, 0.9f, 0.1f), 
+        		new Vector3f(0.57f, 0.83f, 0.1f),0.081f, 5f);
+        
+        drawPfeil(new Vector3f(0.9f,0.45f,  0.1f), 
+        		new Vector3f( 0.83f,0.57f, 0.1f),0.081f, 5f);*/
+        
         //Gib true zurück, wenn hier ankommt, dann alles Erfolgreich
         return true;
         
     }
+	
+	/**
+	 * Für gerade Pfeile
+	 */
+	private static void drawPfeil(Vector3f pfeilSpitze, Vector3f pfeilEnde, float spitzengroesse, float strichdicke){
+		
+		//Erstelle neuen Vektor
+		Vector3f pfeilMitte = new Vector3f();
+		
+		//Setze neuen Vektor als Addition der Vektoren für Anfang und Ende
+		Vector3f.add(pfeilSpitze, pfeilEnde, pfeilMitte);
+		
+		//Dividiere durch 2 um die Selbe länge zu erhalten
+		pfeilMitte.scale(0.5f);
+		
+		//Rufe Funktion für gebogene Pfeile auf
+		drawPfeil(pfeilSpitze, pfeilMitte,pfeilEnde,spitzengroesse, strichdicke);
+	}
+	
+	/**
+	 * Für gebogene Pfeile
+	 */
+	private static void drawPfeil(Vector3f pfeilSpitze, Vector3f pfeilMitte, Vector3f pfeilEnde, float spitzengroesse, float strichdicke){
+		
+		//Starte das Zeichnen von Dreiecken
+		GL11.glBegin(GL11.GL_TRIANGLES);
+		
+		//Setzte die Farbe auf Schwarz
+	    Rendern.setColor(8);
+	    
+	    //Erstelle einen Neuen Pfeil, welcher die Richtung der Spitze angibt
+	    Vector3f direction = new Vector3f();
+	    
+	    //Subtrahiere vom Mittelpunkt die Spitze und erhalte den Vektor
+	    Vector3f.sub(pfeilMitte, pfeilSpitze, direction);
+	    
+	    //Verändere den Vektor auf Länge 1
+	    direction.normalise();
+	    
+	    //Verkleinere den Vektor auf die gegebene Spitzengrösse
+	    direction.scale(spitzengroesse);
+	        
+	    //Pfeilspitze Zeichnen
+	      
+	    //Spitzen Punkt
+	    GL11.glVertex3d(pfeilSpitze.x-direction.x,pfeilSpitze.y-direction.y,pfeilSpitze.z-direction.z);
+	       
+	    //Mache das Kreuzprodukt des Richtungsvektors mit dem Ortsvektor der Spitze um einen Sektrechten Vektor zu erhalten
+	    Vector3f.cross(direction, pfeilSpitze, direction);
+	    
+	    //Vektor auf Länge 1 bringen
+	    direction.normalise();
+	    
+	    //Vektor auf die Spitzengrösse skalieren
+	    direction.scale(spitzengroesse);
+	    
+	    //Flügelpunkte der Pfeilspitze
+	    GL11.glVertex3d(pfeilSpitze.x-direction.x,pfeilSpitze.y-direction.y,pfeilSpitze.z-direction.z);
+	    GL11.glVertex3d(pfeilSpitze.x+direction.x,pfeilSpitze.y+direction.y,pfeilSpitze.z+direction.z);
+
+	    //Beende das Zeichnen von Dreiecken
+	    GL11.glEnd();
+	    
+	    //Setze die Liniendicke auf die gegebene Liniendicke
+	    GL11.glLineWidth(strichdicke);
+	    
+	    //Starte das Zeichnen von Linien
+	    GL11.glBegin(GL11.GL_LINE_STRIP);
+	    
+	    //Für jeden 100tel den Punkt berechnen gemäss den Bezierkurven
+	    for(float t = 0.000f; t<1; t+=0.01){
+	    	
+	    	double xValue = ((1-t)*(1-t)*pfeilSpitze.x)+(2*t*(1-t)*pfeilMitte.x)+(t*t*pfeilEnde.x);	    	
+	    	double yValue = ((1-t)*(1-t)*pfeilSpitze.y)+(2*t*(1-t)*pfeilMitte.y)+(t*t*pfeilEnde.y);	    
+	    	double zValue = ((1-t)*(1-t)*pfeilSpitze.z)+(2*t*(1-t)*pfeilMitte.z)+(t*t*pfeilEnde.z);	    
+	    	
+	    	//Punkt zu Linie hinzufügen
+	    	GL11.glVertex3d(xValue,yValue,zValue);
+	    	
+	    }
+	    
+	    //Zeichnen von Linien beenden
+	    GL11.glEnd();
+	    
+	   /* 
+	    GL11.glLineWidth(2f);
+	    GL11.glBegin(GL11.GL_LINE_STRIP);
+	    Rendern.setColor(4);
+	    GL11.glVertex3d(pfeilSpitze.x,pfeilSpitze.y,pfeilSpitze.z);
+	    GL11.glVertex3d(pfeilMitte.x,pfeilMitte.y,pfeilMitte.z);
+	    GL11.glVertex3d(pfeilEnde.x,pfeilEnde.y,pfeilEnde.z);
+	    GL11.glEnd();
+	     /*  */
+	}
 	
 }

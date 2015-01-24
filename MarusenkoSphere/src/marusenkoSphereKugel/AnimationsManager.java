@@ -43,6 +43,7 @@ public class AnimationsManager {
 	
 	//Geschwindigkeit mit der gedreht wird, framerate bereinigt
 	private double doAnimationSpeed;
+
 	
 	
 	/**
@@ -202,13 +203,12 @@ public class AnimationsManager {
 		
 	}
 	
-	
 	/**
 	 * gibt die Rotation für das akutelle Bild zurück
 	 * zusätzlich verwaltung der weiteren Drehungen
 	 */
 	public double getRotationForFrame(){
-		
+	
 		//Aktuallisiere die Variablen 
 		updateAnimationsSpeed();
 		
@@ -242,6 +242,9 @@ public class AnimationsManager {
 			return 0.0;
 			
 		}
+		
+			
+			
 		
 	}
 	

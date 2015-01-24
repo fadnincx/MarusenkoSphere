@@ -15,6 +15,9 @@ import marusenkoSphereKugel.Kugel;
  */
 public class Manager {
 
+	@SuppressWarnings("unused")
+	private KioskBG kiosk;
+	
 	//Kugel die dargestellt wird
 	private Kugel k;
 	
@@ -55,6 +58,8 @@ public class Manager {
 	
 	private static boolean active = true;
 	private static boolean isActive = true;
+	
+	private int pfeilID = -1;
 
 	/**
 	 * Manager zum Lösen Verwalten der GUI und lösen der Kugel
@@ -71,7 +76,7 @@ public class Manager {
 		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
 		//Sonst wirf eine Exception
 		try{
-			
+			kiosk = new KioskBG();
 			rendern = new Rendern(k);
 			cp = new ControlPanel(this);
 			KeyboardMouseManager.init();
@@ -101,7 +106,7 @@ public class Manager {
 			KeyboardMouseManager.Input(this);
 			
 			//Rendere die Aktuelle Kugel
-			rendern.updateKugel(k,displayMode);
+			rendern.updateKugel(k,displayMode,pfeilID);
 			
 			cp.updateSolvingState(k.getStep(), runAnimationToEnd);
 			
@@ -492,6 +497,14 @@ public class Manager {
 		return rendern.cm.negativeYI();
 	}
 	
+	protected void setNewPfeilID(int ID){
+		pfeilID = ID;
+	}
+	protected int getPfeilID(){
+		return pfeilID;
+	}
+	
+	
 	/**
 	 * Methode für Editor zum Verändern der Dreiecke der Kugel
 	 */
@@ -561,14 +574,17 @@ public class Manager {
 		return Arrays.equals(checkTri,referenceTri)&&Arrays.equals(checkCon,referenceCon);
 		
 	}
+	protected void resetPosition(){
+		rendern.resetPosition();
+		cp.resetPositions();
+	}
 	
 	/**
 	 * Wenn das Programm beendet werden soll
 	 */
-	protected void exitProgramm(){
-		
+	protected void exitProgramm(){	
 		 System.exit(0);
-		 
+
 	}
 	
 }

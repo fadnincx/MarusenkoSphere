@@ -186,9 +186,9 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		devPanel.setIconImage(icon);
 		
 		//Definiere die Grösse der Fenster
-		controlPanel.setSize(350, 509);
-		editorPanel.setSize(350, 509);
-		devPanel.setSize(350, 509);
+		controlPanel.setSize(350, 518);
+		editorPanel.setSize(350, 518);
+		devPanel.setSize(350, 518);
 		
 		//Setze nur das controlPanel sichtbar, die anderen auch unsichtbar
 		controlPanel.setVisible(true);
@@ -196,9 +196,9 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		devPanel.setVisible(false);
 		
 		//Definiere was beim Schliessen des Fenster passieren soll --> Programm beenden
-		controlPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		editorPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		devPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		controlPanel.setDefaultCloseOperation(Settings.SETCLOSE);
+		editorPanel.setDefaultCloseOperation(Settings.SETCLOSE);
+		devPanel.setDefaultCloseOperation(Settings.SETCLOSE);
 		
 		//Setzte die Position der Fenster
 		controlPanel.setLocation(windowOffsetX,windowOffsetY);
@@ -222,6 +222,11 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		initControlpanel();
 		initEditor();
 		initDev();
+	}
+	protected void resetPositions(){
+		controlPanel.setLocation(windowOffsetX,windowOffsetY);
+		editorPanel.setLocation(windowOffsetX,windowOffsetY);
+		devPanel.setLocation(windowOffsetX,windowOffsetY);
 	}
 
 	/**
