@@ -175,7 +175,7 @@ public class Rendern {
     		//Wenn der Globale Debugmodus eingeschalten ist, dann im Titel die Framerate anzeigen
     		if(Settings.DEBUGMODE){
     			
-    			Display.setTitle(windowTitle+" - "+fps);
+    			frame.setTitle(windowTitle+" - "+fps);
     			
     		}
     		

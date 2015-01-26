@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -62,6 +63,11 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 	//Schritte vorwärts und zurück gehen
 	private JButton cpButtonAddOneStep = new JButton();
 	private JButton cpButtonSubOneStep = new JButton();
+	
+	//Editor switchButton
+	private JToggleButton editViewSwitch2D = new JToggleButton("2D");
+	private JToggleButton editViewSwitch3D = new JToggleButton("3D");
+	private JLabel editViewSwitch = new JLabel("Ansicht");
 	
 	//Zu Fenster WechselButton
 	
@@ -504,12 +510,26 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		editHelp.setToolTipText("Hilfe");
 		
 		
+		editViewSwitch3D.setBounds(20, 300, 50, 50);
+		editViewSwitch2D.setBounds(70, 300, 50, 50);
+		editViewSwitch.setBounds(140, 300, 50, 50);
+		
+		editViewSwitch3D.setSelected(true);
+		editViewSwitch2D.setSelected(false);
+		editViewSwitch3D.setEnabled(false);
+    	editViewSwitch2D.setEnabled(true);
+		
+    	editViewSwitch.setToolTipText("Wechselt die Ansicht des Editors");
+    	editViewSwitch2D.setToolTipText("Wechselt die Ansicht des Editors auf 2D");
+    	editViewSwitch3D.setToolTipText("Wechselt die Ansicht des Editors auf 3D");
+		
+		
 		//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen 
 		if(Settings.DEBUGMODE){
-			editChangeSphere.setBounds(20,330,145,50);
-			editChangeDev.setBounds(185, 330, 145,50);
+			editChangeSphere.setBounds(20,370,145,50);
+			editChangeDev.setBounds(185, 370, 145,50);
 		}else{
-			editChangeSphere.setBounds(20,330,300,50);
+			editChangeSphere.setBounds(20,370,300,50);
 		}
 		
 		
@@ -533,6 +553,9 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		editorPanel.add(editButtonColor7);	
 		editorPanel.add(editLabelIsSphereLegal);
 		editorPanel.add(editLabelSelected);
+		editorPanel.add(editViewSwitch);
+		editorPanel.add(editViewSwitch2D);
+		editorPanel.add(editViewSwitch3D);
 		
 		//Den Buttons ein Actionlistener hinzufügen
 		editButtonColor0.addActionListener(this);
@@ -546,6 +569,8 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		editChangeDev.addActionListener(this);
 		editChangeSphere.addActionListener(this);
 		editHelp.addActionListener(this);
+		editViewSwitch3D.addActionListener(this);
+		editViewSwitch2D.addActionListener(this);
 		
 		//das EditorPanel neu zeichnen
 		editorPanel.repaint();
@@ -640,7 +665,7 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		//Setze entsprechendes Fenster auf sichtbar
 		//Controlpanel ist default anstelle 0, damit sicher immer ein Fenster angezeigt wird...
 		switch(mode){
-			case 1:
+			case 1:case 3:
 				editorPanel.setVisible(true);
 				break;
 			case 2:
@@ -787,25 +812,25 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
         }else if (z.getSource() == cpButtonUp){
         	
         	//Kugel nach oben drehen
-        	m.changeRotationAngle(-5,0);
+        	m.changeRotationAngle(5,0);
         	
         //Ist der Button nach Rechts gedrückt?	
         }else if (z.getSource() == cpButtonRight){
         	
         	//Kugel nach rechts drehen
-        	m.changeRotationAngle(0,5);
+        	m.changeRotationAngle(0,-5);
         	
         //Ist der Button nach Links gedrückt?
         }else if (z.getSource() == cpButtonLeft){
         	
         	//Kugel nach links drehen
-        	m.changeRotationAngle(0,-5);
+        	m.changeRotationAngle(0,5);
         	
         //Ist der Button nach Unten gedrückt?	
         }else if (z.getSource() == cpButtonDown){
         	
         	//Kugel nach unten drehen
-        	m.changeRotationAngle(5,0);
+        	m.changeRotationAngle(-5,0);
         	
         //Ist der Button zum Zurücksetzen der Drehung gedrückt?
         }else if (z.getSource() == cpButtonResetView){
@@ -950,6 +975,20 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
         	
         	//Help fenster öffnen
         	new Help(2);	
+        }else if (z.getSource() == editViewSwitch2D){
+        	
+        	m.changeToMode(1);
+        	editViewSwitch3D.setSelected(false);
+        	editViewSwitch2D.setEnabled(false);
+        	editViewSwitch3D.setEnabled(true);
+        	
+        }else if (z.getSource() == editViewSwitch3D){
+        	
+        	m.changeToMode(3);
+        	editViewSwitch2D.setSelected(false);
+        	editViewSwitch3D.setEnabled(false);
+        	editViewSwitch2D.setEnabled(true);
+        
         }
 		
 	}

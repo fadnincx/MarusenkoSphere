@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import marusenkoSphere.Settings;
 import marusenkoSphereKugel.Kugel;
 
 /**
@@ -29,7 +30,7 @@ public class Manager {
 	protected ArrayList<Character> blockedKey = new ArrayList<Character>();
 	
 	//Gibt an, was dargestellt wird
-	//0 = Kugel, 1 = Editor, 2 = Dev
+	//0 = Kugel, 1 = Editor2D, 2 = Dev, 3 = Editor3D
 	private int displayMode = 0; 
 	
 	//Gibt an, welche Farbe im Editor ausgewählt ist
@@ -57,6 +58,7 @@ public class Manager {
 	private static boolean isActive = true;
 	
 	private int pfeilID = -1;
+	
 
 	/**
 	 * Manager zum Lösen Verwalten der GUI und lösen der Kugel
@@ -73,7 +75,9 @@ public class Manager {
 		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
 		//Sonst wirf eine Exception
 		try{
-			new KioskBG();
+			if(Settings.KIOSKMODE){
+				new KioskBG();
+			}
 			rendern = new Rendern(k);
 			cp = new ControlPanel(this);
 			KeyboardMouseManager.init();
@@ -313,7 +317,7 @@ public class Manager {
 	 */
 	protected void changeToMode(int i){
 		//Wenn der Editor angezeigt wurde, dann prüfen ob kugel korrekt und ob übernommen werden kann
-		if(displayMode==1){
+		if((displayMode==1||displayMode==3)&&(i!=1||i!=3)){
 			
 			//Wenn Kugel korrekt, dann übernehmen
 			if(isSphereAllowed()){
@@ -329,7 +333,7 @@ public class Manager {
 		}
 		
 		//Wenn neu der Editor
-		if(i==1){
+		if((i==1||i==3)&&(displayMode!=1||displayMode!=3)){
 			
 			//Setzte Step, damit im nachhinein wieder zu diesem zurück gekehrt werden kann
 			stepWhenGoesToEditor = k.getStep();
@@ -481,20 +485,12 @@ public class Manager {
 		
 	}
 	
-	protected int getNegativeX(){
-		return rendern.cm.negativeXI();
-	}
-	protected int getNegativeY(){
-		return rendern.cm.negativeYI();
-	}
-	
 	protected void setNewPfeilID(int ID){
 		pfeilID = ID;
 	}
 	protected int getPfeilID(){
 		return pfeilID;
 	}
-	
 	
 	/**
 	 * Methode für Editor zum Verändern der Dreiecke der Kugel

@@ -3,8 +3,6 @@ package marusenkoSphereGUI;
 
 import java.util.LinkedList;
 
-import marusenkoSphere.Settings;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -77,7 +75,7 @@ public class KeyboardMouseManager {
 	    		m.blockedKey.add('e');
 	    		
 	    		//Modus wechseln
-	    		m.changeToMode(1);
+	    		m.changeToMode(3);
 	    		
 	    		//100ms warten
 		    	m.sleep(100);
@@ -116,9 +114,9 @@ public class KeyboardMouseManager {
 	    	 
 	    	
 	    	//Kamera mit Maus drehen
-	    	if(Mouse.isButtonDown(0)&&!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
-	    		m.changeRotationAngle(-Mouse.getDY()*Settings.MOUSESENSITIVE*m.getNegativeY(), Mouse.getDX()*Settings.MOUSESENSITIVE*m.getNegativeX());
-	    	}
+	    	/*if(Mouse.isButtonDown(0)&&!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
+	    		m.changeRotationAngle(-Mouse.getDY()*Settings.MOUSESENSITIVE, Mouse.getDX()*Settings.MOUSESENSITIVE);
+	    	}*/
 	    	
 	    	if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
 	    		//Speichere die x und y Koordinate der Maus im Fenster
@@ -132,7 +130,7 @@ public class KeyboardMouseManager {
 	    		if(!lookPfeile&&mousePosIn3D[0]*mousePosIn3D[0]<1.5&&mousePosIn3D[1]*mousePosIn3D[1]<1.5&&mousePosIn3D[2]*mousePosIn3D[2]<1.5){
 	    			//System.out.println("");
 	    			position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
-	    			
+	    			System.out.println(position);
 	    			m.setNewPfeilID(position);
 	    			
 	    		}
@@ -150,7 +148,7 @@ public class KeyboardMouseManager {
 		    if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)||pollPressedKey('1')) {
 		
 		    	//Rotiere nach Links
-		    	m.changeRotationAngle(0, -1);
+		    	m.changeRotationAngle(0, 1);
 		    
 		    }
 		    
@@ -158,7 +156,7 @@ public class KeyboardMouseManager {
 		    if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)||pollPressedKey('3')) {
 		    
 		    	//Rotiere nach Rechts
-		    	m.changeRotationAngle(0, 1);
+		    	m.changeRotationAngle(0, -1);
 		    
 		    }
 		    
@@ -166,7 +164,7 @@ public class KeyboardMouseManager {
 		    if(Keyboard.isKeyDown(Keyboard.KEY_UP)||pollPressedKey('0')) {
 		    
 		    	//Rotiere nach Oben
-		    	m.changeRotationAngle(-1, 0);
+		    	m.changeRotationAngle(1, 0);
 		   
 		    }
 		    
@@ -174,7 +172,7 @@ public class KeyboardMouseManager {
 		    if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)||pollPressedKey('2')) {
 		    
 		    	//Rotieren nach Unten
-		    	m.changeRotationAngle(1, 0);
+		    	m.changeRotationAngle(-1, 0);
 		   
 		    }
 		    
@@ -276,7 +274,7 @@ public class KeyboardMouseManager {
 		    
 	    }else
 
-	    //Wenn der Editor angezeigt wird
+	    //Wenn der 2D-Editor angezeigt wird
 	    if(m.getDisplayMode() == 1){
 
 	    	//Wenn links Klick aus geführt wird
@@ -312,6 +310,33 @@ public class KeyboardMouseManager {
 	    	
 	    	}
 	    
+	    }else
+	    //Wenn 3D-Editor angezeigt wird
+	    if(m.getDisplayMode() == 3){
+	    	if(Mouse.isButtonDown(1)){
+	    		
+	    		//Speichere die x und y Koordinate der Maus im Fenster
+		    	int x = Mouse.getX();
+		    	int y = Mouse.getY();
+	    		
+	    		//Bekomme die Koordinaten der Maus im 3Dimensionalen System
+	    		double[] mousePosIn3D = Editor.MouseIn3D(x,y);
+	    		position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
+    			//System.out.println(position);
+	    		
+    			
+    			if(position>=0&&position<24){
+    
+    				m.editSphereTri(position);
+    			
+    			}else
+    			if(position>=30&&position<38){
+    			
+    				m.editSphereCon(position-30);
+    			
+    			}
+    			
+	    	}
 	    }
 	
 	}
