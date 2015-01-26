@@ -1,24 +1,19 @@
 package marusenkoSphereGUI;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -35,15 +30,15 @@ import marusenkoSphere.Settings;
  * Ein KeyListener sorgt dafür, dass auf Tastatur eingaben gemacht werden können
  */
 
-public class ControlPanel implements ActionListener, KeyListener, WindowListener{
+public class ControlPanel implements ActionListener, KeyListener{
 
-	//Manager um die Kugel vom Panel aus zu Steuern
+	//Manager
 	private Manager m;
 	
-	//Eigentliche Fenster
-	private JFrame controlPanel = new JFrame("MarusenkoSphere Controlpanel");
-	private JFrame editorPanel = new JFrame("MarusenkoSphere Editor");
-	private JFrame devPanel = new JFrame("MarusenkoSphere Developer");
+	//Eigentliche Panels
+	private JPanel controlPanel = new JPanel();
+	private JPanel editorPanel = new JPanel();
+	private JPanel devPanel = new JPanel();
 	
 	//Button zum neu mischen
 	private JButton cpButtonFillSphere = new JButton("<html>Die Kugel<br>neu mischen</html>");
@@ -69,7 +64,7 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 	private JToggleButton editViewSwitch3D = new JToggleButton("3D");
 	private JLabel editViewSwitch = new JLabel("Ansicht");
 	
-	//Zu Fenster WechselButton
+	//Zu Modus WechselButton
 	
 	//auf Controlpanel
 	private JButton cpChangeEditor = new JButton("zum Editor");
@@ -149,14 +144,11 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 	private JSeparator cpSepChangeWindow = new JSeparator();
 	private JSeparator cpSepCamera = new JSeparator();
 	
-	//Verschiebung des Fensters, so dass gerade neben dem Hauptfenster dargestellt wird
-	private int windowOffsetX;
-	private int windowOffsetY;
-	
 	/**
 	 * Konstruktor welcher das Manager-Objekt initialisiert und ein neues Fenster erstellen lässt
 	 */
 	protected ControlPanel(Manager m){
+		
 		//Übernehme den Manager
 		this.m = m;
 		
@@ -172,67 +164,33 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 	 * Funktion zum Erstellen der Fensters
 	 */
 	private void createFrames() throws IOException{
-		
-		//Neues Toolkit Objekt erstellen, wird gebraucht um an die Bildschirmaufläsung zu kommen
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		
-		//Die Bildschirmdimensionen bekommen
-		Dimension screenSize = tk.getScreenSize();
-				
-		//Berechne die Verschiebung des Fensters
-		windowOffsetX=(screenSize.width/2)+Settings.VERSCHIEBEFENSTERX;
-		windowOffsetY=(screenSize.height/2)+Settings.VERSCHIEBEFENSTERY;
-		
-		//Lade das Icon
-		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
-		
-		//Setze das Icon für alle Fenster
-		controlPanel.setIconImage(icon);
-		editorPanel.setIconImage(icon);
-		devPanel.setIconImage(icon);
-		
-		//Definiere die Grösse der Fenster
-		controlPanel.setSize(350, 518);
-		editorPanel.setSize(350, 518);
-		devPanel.setSize(350, 518);
+
+		//Definiere die Grösse und Position der Panels		
+		controlPanel.setBounds(640,20,350,518);
+		editorPanel.setBounds(640,20,350,518);
+		devPanel.setBounds(640,20,350,518);
 		
 		//Setze nur das controlPanel sichtbar, die anderen auch unsichtbar
 		controlPanel.setVisible(true);
 		editorPanel.setVisible(false);
 		devPanel.setVisible(false);
 		
-		//Definiere was beim Schliessen des Fenster passieren soll --> Programm beenden
-		controlPanel.setDefaultCloseOperation(Settings.SETCLOSE);
-		editorPanel.setDefaultCloseOperation(Settings.SETCLOSE);
-		devPanel.setDefaultCloseOperation(Settings.SETCLOSE);
-		
-		//Setzte die Position der Fenster
-		controlPanel.setLocation(windowOffsetX,windowOffsetY);
-		editorPanel.setLocation(windowOffsetX,windowOffsetY);
-		devPanel.setLocation(windowOffsetX,windowOffsetY);
-		
-		//Setzte, dass die Fenstergrösse durch den Benutzer nicht veränderbar ist
-		controlPanel.setResizable(false);
-		editorPanel.setResizable(false);
-		devPanel.setResizable(false);
-		
 		//Setzte Layout = null
 		controlPanel.setLayout(null);
 		editorPanel.setLayout(null);
 		devPanel.setLayout(null);
 		
+		//Setze KeyListener
 		controlPanel.addKeyListener(this);
-		controlPanel.addWindowListener(this);
-		editorPanel.addWindowListener(this);
+		
+		//Füge Panels dem Hauptfensterhinzu
+		m.mainFrame.add(controlPanel);
+		m.mainFrame.add(editorPanel);
+		m.mainFrame.add(devPanel);
 
 		initControlpanel();
 		initEditor();
 		initDev();
-	}
-	protected void resetPositions(){
-		controlPanel.setLocation(windowOffsetX,windowOffsetY);
-		editorPanel.setLocation(windowOffsetX,windowOffsetY);
-		devPanel.setLocation(windowOffsetX,windowOffsetY);
 	}
 
 	/**
@@ -770,17 +728,6 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 		
 	}
 	
-	protected void maxCP(){
-		//controlPanel.setState(Frame.NORMAL);
-		editorPanel.setState(Frame.NORMAL);
-	}
-	
-	protected void minCP(){
-	//	controlPanel.setState(Frame.ICONIFIED);
-		editorPanel.setState(Frame.ICONIFIED);
-	}
-	
-	
 	/**
 	 * Die ActionListener-Methode für die Buttons
 	 */
@@ -1040,28 +987,4 @@ public class ControlPanel implements ActionListener, KeyListener, WindowListener
 	@Override
 	public void keyTyped(KeyEvent arg0) {}
 
-	@Override
-	public void windowActivated(WindowEvent arg0) {}
-
-	@Override
-	public void windowClosed(WindowEvent arg0) {}
-
-	@Override
-	public void windowClosing(WindowEvent arg0) {}
-
-	@Override
-	public void windowDeactivated(WindowEvent arg0) {}
-
-	@Override
-	public void windowDeiconified(WindowEvent arg0) {
-		m.maxLWJGL();
-	}
-
-	@Override
-	public void windowIconified(WindowEvent arg0) {
-		m.minLWJGL();
-	}
-
-	@Override
-	public void windowOpened(WindowEvent arg0) {}
 }

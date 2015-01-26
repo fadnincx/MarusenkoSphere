@@ -1,11 +1,30 @@
 package marusenkoSphereGUI;
 
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.imageio.ImageIO;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import marusenkoSphere.Settings;
+import marusenkoSphereKugel.ImportExportSphere;
 import marusenkoSphereKugel.Kugel;
 
 /**
@@ -16,14 +35,34 @@ import marusenkoSphereKugel.Kugel;
  */
 public class Manager {
 	
+	//Hauptfenster
+	protected JFrame mainFrame;
+	
 	//Kugel die dargestellt wird
 	private Kugel k;
 	
-	// Das Render Fenster
+	//Das Render Fenster
 	private Rendern rendern;
 	
-	//Das Controlpanel
+	//Die Controlpanels
 	private ControlPanel cp;
+	
+
+	private JMenuBar menuBar;
+	
+	private JMenu file;
+	private JMenuItem save;
+	private JMenuItem open;
+	private JMenuItem exit;
+	
+	private JMenu settings;
+	private JMenuItem mouseSensity;
+	
+	private JMenu help;
+	private JMenuItem helpcenter;
+	private JMenuItem about;
+	
+	
 	
 	//Eine ArrayList mit Tasten die Blockiert sind
 	//Verhindert, das durch normalen Tastenanschlag mehrere Aktionen ausgeführt werden
@@ -54,9 +93,6 @@ public class Manager {
 	
 	private int stepWhenGoesToEditor = 0;
 	
-	private static boolean active = true;
-	private static boolean isActive = true;
-	
 	private int pfeilID = -1;
 	
 
@@ -71,14 +107,18 @@ public class Manager {
 		
 		//Fülle Kugel zufällig
 		k.fillRandom(); 	
+		
+		
+		
 
 		//Versuche die Fenster zu initialisieren (KugelRendern und ControlPanel)
 		//Sonst wirf eine Exception
 		try{
+			initMainFrame();
 			if(Settings.KIOSKMODE){
 				new KioskBG();
 			}
-			rendern = new Rendern(k);
+			rendern = new Rendern(k, this);
 			cp = new ControlPanel(this);
 			KeyboardMouseManager.init();
 		}catch(Exception e){
@@ -117,18 +157,231 @@ public class Manager {
 				QueueManager.Queue(this);
 				
 		    }
-			
-			if(isActive!=active){
-				isActive=active;
-				if(active){
-					cp.maxCP();
-				}else{
-					cp.minCP();
-				}
-			}
-			
+
 		}
 		  
+	}
+	private void initMainFrame() throws IOException{
+		mainFrame = new JFrame("MarusenkoSphere");
+		
+		//Lade das Icon
+		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
+			
+		//Setze das Icon
+		mainFrame.setIconImage(icon);
+				
+		//Definiere die Grösse der Fenster
+		mainFrame.setSize(1000, 538);
+				
+		//Setze sichtbar
+		mainFrame.setVisible(true);
+				
+		//Definiere was beim Schliessen des Fenster passieren soll --> Programm beenden
+		mainFrame.setDefaultCloseOperation(Settings.SETCLOSE);
+				
+		//Setzte die Position der Fenster
+		mainFrame.setLocationRelativeTo(null);
+
+		//Setzte, dass die Fenstergrösse durch den Benutzer nicht veränderbar ist
+		mainFrame.setResizable(false);
+				
+		//Setzte Layout = null
+		mainFrame.setLayout(null);
+		
+		
+		//Erstelle MenuBar
+		menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 1000, 20);
+		
+		
+		file = new JMenu("Datei");
+		menuBar.add(file);
+		
+		save = new JMenuItem("Speichern");
+		file.add(save);
+		save.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser;
+			    String pfad = System.getProperty("user.home");
+			    File file = new File(pfad.trim());
+
+			    chooser = new JFileChooser(pfad){
+					private static final long serialVersionUID = 7625169427404387627L;
+
+					@Override
+				    public void approveSelection(){
+				        File f = getSelectedFile();
+				        if(f.exists() && getDialogType() == SAVE_DIALOG){
+				            int result = JOptionPane.showConfirmDialog(this,"Die Datei existiert bereits, überschreiben?","Datei existiert bereits",JOptionPane.YES_NO_CANCEL_OPTION);
+				            switch(result){
+				                case JOptionPane.YES_OPTION:
+				                    super.approveSelection();
+				                    return;
+				                case JOptionPane.NO_OPTION:
+				                    return;
+				                case JOptionPane.CLOSED_OPTION:
+				                    return;
+				                case JOptionPane.CANCEL_OPTION:
+				                    cancelSelection();
+				                    return;
+				            }
+				        }
+				        super.approveSelection();
+				    }     
+			    };
+			    chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+			    FileNameExtensionFilter Filter = new FileNameExtensionFilter("MarusenkoSphere: mssf", "mssf");
+			    chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
+			    chooser.setFileFilter(Filter);
+			    chooser.setDialogTitle("Speichern unter...");
+			    chooser.setVisible(true);
+
+			    int result = chooser.showSaveDialog(mainFrame);
+
+			    if (result == JFileChooser.APPROVE_OPTION) {
+
+			    	pfad = chooser.getSelectedFile().toString();
+			        if (!pfad.endsWith(".mssf")){
+			        	pfad += ".mssf";
+			        }
+			         	file = new File(pfad);
+			            if (Filter.accept(file)){
+			            	ImportExportSphere.save(file, k);
+			            	System.out.println(pfad + " kann gespeichert werden.");
+			            }else{
+			                System.out.println(pfad + " ist der falsche Dateityp.");
+			            }
+			            chooser.setVisible(false);
+			        
+			        chooser.setVisible(false); 
+				}
+			}
+		});
+		
+		
+		open = new JMenuItem("Öffnen");
+		file.add(open);
+		open.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser;
+			    String pfad = System.getProperty("user.home");
+			    File file = new File(pfad.trim());
+
+			    chooser = new JFileChooser(pfad);
+			    chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+			    FileNameExtensionFilter Filter = new FileNameExtensionFilter("MarusenkoSphere: mssf", "mssf");
+			    chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
+			    chooser.setFileFilter(Filter);
+			    chooser.setDialogTitle("Öffnen...");
+			    chooser.setVisible(true);
+
+			    int result = chooser.showOpenDialog(mainFrame);
+
+			    if (result == JFileChooser.APPROVE_OPTION) {
+
+			    	pfad = chooser.getSelectedFile().toString();
+			        if (!pfad.endsWith(".mssf")){
+			        	pfad += ".mssf";
+			        }
+			         	file = new File(pfad);
+			            if (Filter.accept(file)){
+			            	ImportExportSphere.open(file, k);
+			            	System.out.println(pfad + " kann geöffnet werden.");
+			            	updateControlpanelInformations();
+			            }else{
+			                System.out.println(pfad + " ist der falsche Dateityp.");
+			            }
+			            chooser.setVisible(false);
+			        
+			        chooser.setVisible(false); 
+				}
+			}
+		});
+		
+		
+		file.addSeparator();
+		exit = new JMenuItem("Beenden");
+		file.add(exit);
+		exit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		
+		settings = new JMenu("Einstellungen");
+		menuBar.add(settings);
+		
+		mouseSensity = new JMenuItem("Mausempfindlichkeit");
+		settings.add(mouseSensity);
+		mouseSensity.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane optionPane = new JOptionPane();
+			    JSlider slider = getSlider(optionPane);
+			    optionPane.setMessage(new Object[] { "Wähle Mausempfindlichkeit ", slider });
+			    optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+			    optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
+			    JDialog dialog = optionPane.createDialog(mainFrame, "Mausempfindlichkeit");
+			    dialog.setVisible(true);
+			    System.out.println("Input: " + optionPane.getInputValue());
+			    Settings.MOUSESENSITIVE = (int) optionPane.getInputValue();
+			}
+			    JSlider getSlider(final JOptionPane optionPane) {
+			        JSlider slider = new JSlider();
+			        slider.setMajorTickSpacing(1);
+			        slider.setMinimum(1);
+			        slider.setMaximum(50);
+			        slider.setValue((int) (Settings.MOUSESENSITIVE));
+			        slider.setPaintTicks(false);
+			        slider.setPaintLabels(false);
+			        ChangeListener changeListener = new ChangeListener() {
+			          public void stateChanged(ChangeEvent changeEvent) {
+			            JSlider theSlider = (JSlider) changeEvent.getSource();
+			            if (!theSlider.getValueIsAdjusting()) {
+			              optionPane.setInputValue(new Integer(theSlider.getValue()));
+			            }
+			          }
+			        };
+			        slider.addChangeListener(changeListener);
+			        return slider;
+			      }
+			
+		});
+		
+		
+		help = new JMenu("Hilfe");
+		menuBar.add(help);
+		
+		helpcenter = new JMenuItem("Hilfe Center");
+		help.add(helpcenter);
+		helpcenter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Help(0);
+			}
+		});
+		
+		about = new JMenuItem("Über");
+		help.add(about);
+		about.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(mainFrame,
+					    "<html>Ein Programm zur Darstellung und Visualisierung der MarusenkoSphere<br><br>von Marcel Würsten</html>",
+					    Settings.TITEL+" - Über",
+					    JOptionPane.PLAIN_MESSAGE);
+			}
+		});
+
+		mainFrame.add(menuBar);
+		
 	}
 	
 	/**
@@ -151,20 +404,7 @@ public class Manager {
 		}
 		
 	}
-	
-	protected static void minCP(){
-		active = false;
-	}
-	protected static void maxCP(){
-		active = true;
-	}
-	protected void maxLWJGL(){
-		rendern.maxLWJGL();
-	}
-	protected void minLWJGL(){
-		rendern.minLWJGL();
-	}
-	
+
 	/**
 	 * Ändert die Variable, dass die Kugel bis zum Ende gelöst wird
 	 */
@@ -562,8 +802,7 @@ public class Manager {
 		
 	}
 	protected void resetPosition(){
-		rendern.resetPosition();
-		cp.resetPositions();
+		mainFrame.setLocationRelativeTo(null);
 	}
 	
 	/**

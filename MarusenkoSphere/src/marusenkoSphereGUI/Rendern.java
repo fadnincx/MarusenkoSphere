@@ -2,18 +2,6 @@ package marusenkoSphereGUI;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 
 import marusenkoSphere.Settings;
 import marusenkoSphereKugel.Kugel;
@@ -34,9 +22,6 @@ import org.lwjgl.util.glu.GLU;
  */
 
 public class Rendern {
-	
-	//Definiert den Titel des Fenster
-	private final String windowTitle = "MarusenkoSphere";
     
 	//Den CameraController für die Kameradrehungen
     protected CameraController cm = new CameraController();
@@ -44,14 +29,11 @@ public class Rendern {
     //Definiert DisplayMode ==> Verantwortlich, wie Fenster mit Farbmodus etc. ist
     private DisplayMode displayMode;
     
-    private JFrame frame = new JFrame();
+    //Manager
+    private Manager m;
     
-    private Canvas canvas = new Canvas(){
-	private static final long serialVersionUID = -1069002023468669595L;
-		public void removeNotify() {
-			
-		}
-	};
+    //Canvas für die Kugel
+    private Canvas canvas = new Canvas();
     
     //Definiert die Kugel, welche dargestellt wird    
     protected Kugel k;
@@ -63,15 +45,19 @@ public class Rendern {
     private int fps;
     private long lastFPS;
     
+    //Pfeildarstellung
     private int pfeilID = -1;
-    private int x,y;
+    //private int x,y;
 
     /**
      * Konstruktor des Rendern-Objekts
      * 
      * Option kugel wird auch als aktuelle Kugel des Rendern-Objekts definiert
      */
-    protected Rendern(Kugel kugel){
+    protected Rendern(Kugel kugel, Manager m){
+    	
+    	//Setze Manager
+    	this.m = m;
     	
     	//Setze die Kugel als eigene
     	k = kugel;
@@ -92,13 +78,6 @@ public class Rendern {
     	this.pfeilID = pfeilID;
     	doing();
     	
-    }
-    
-    protected void maxLWJGL(){
-    	frame.setState(Frame.NORMAL);
-    }
-    protected void minLWJGL(){
-    	frame.setState(Frame.ICONIFIED);
     }
     
     /**
@@ -130,7 +109,7 @@ public class Rendern {
     	switch(renderMode){
     	case 1:
     		
-    		//Editor rendern
+    		//2D Editor rendern
     		Editor.renderEditor(k);
     		break;
     		
@@ -175,7 +154,7 @@ public class Rendern {
     		//Wenn der Globale Debugmodus eingeschalten ist, dann im Titel die Framerate anzeigen
     		if(Settings.DEBUGMODE){
     			
-    			frame.setTitle(windowTitle+" - "+fps);
+    			m.mainFrame.setTitle(Settings.TITEL+" - "+fps);
     			
     		}
     		
@@ -298,67 +277,16 @@ public class Rendern {
 	            }
 	        	
 	        }
-	        
-	        //Versuche das Icon für das Fenster zu laden
-	        try {
-	        	
-	        	//Erstelle ein ByteBuffer array für alle verfügbaren icons
-	            ByteBuffer[] icons = new ByteBuffer[4];
-	            
-	            //Defniniere welche Icons geladen werden, inklusive der Grösse
-	            //LWJGL wählt dann je nach Betriebssystem die beste Option 
-	            icons[0] = loadIcon("/img/icon_16.png", 16, 16);
-	            icons[1] = loadIcon("/img/icon_32.png", 32, 32);
-	            icons[2] = loadIcon("/img/icon_64.png", 64, 64);
-	            icons[3] = loadIcon("/img/icon_128.png", 128, 128);
-	            
-	            //Setzte die Icons           
-	            Display.setIcon(icons);
-	            
-	            
-	        //Werfe eine Exception, wenn ein Fehler dabei passiert!    
-	        } catch (IOException e) {
-	        	
-	           e.printStackTrace();
-	           
-	        }
-	
+
 	        //Setzte den DisplayMode und den Fenstertitel       
 	        Display.setDisplayMode(displayMode);
-	        Display.setTitle(windowTitle);
+	
+	        //Setzet Grösse und Position des Cancas
+	        canvas.setBounds(0, 20, 640, 480);
 	        
-	        
-	        //Neues Toolkit Objekt erstellen, wird gebraucht um an die Bildschirmaufläsung zu kommen
-			Toolkit tk = Toolkit.getDefaultToolkit();
-			
-			//Die Bildschirmdimensionen bekommen
-			Dimension screenSize = tk.getScreenSize();
+	        //Füge die Zeichnung dem Hauptfenster hinzu
+	        m.mainFrame.add(canvas);
 
-			//Berechne die Verschiebung des Fensters
-			x=((screenSize.width/2)-500);
-			y=((screenSize.height/2)-245);
-
-			//Lade das Icon
-			Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
-			
-			//Setzte Titel
-	        frame.setTitle(windowTitle);
-	        
-	        //Setzte Icon
-	        frame.setIconImage(icon);
-	        
-	        //Setzte Positioin
-	        frame.setLocation(x, y);
-	        
-	        //Füge Zeichnung hinzu
-	        frame.add(canvas);
-	        
-	        //Setzte gewünschte Grösse
-	        canvas.setPreferredSize(new Dimension(640, 480));
-	        
-	        //Setzte minimale Grösse
-			canvas.setMinimumSize(new Dimension(640, 480));
-			
 			//Neu zeichnen Ignorieren
 			canvas.setIgnoreRepaint(true);
 			
@@ -367,38 +295,6 @@ public class Rendern {
 	        
 	        //Canvas als LWJGL Parent setzen
 	        Display.setParent(canvas);
-	        
-	        //Fenster Packen
-	        frame.pack();
-	        
-	        //Grösse Verändern unmöglich
-	        frame.setResizable(false);
-	        
-	        //Fenster sichtbar
-	        frame.setVisible(true);
-	        
-	        //Default close Operation
-	        frame.setDefaultCloseOperation(Settings.SETCLOSE);
-	        
-	        //Window listener Hinzufügen
-	        frame.addWindowListener(new WindowListener() {
-				public void windowOpened(WindowEvent arg0) {
-				}
-				public void windowIconified(WindowEvent arg0) {
-					Manager.minCP();
-				}
-				public void windowDeiconified(WindowEvent arg0) {
-					Manager.maxCP();
-				}
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-				public void windowClosing(WindowEvent arg0) {
-				}
-				public void windowClosed(WindowEvent arg0) {
-				}
-				public void windowActivated(WindowEvent arg0) {
-				}
-			});
        
 	        //Erstelle Fenster mit den voreingestellten Einstellungen
 	        try{
@@ -413,12 +309,6 @@ public class Rendern {
 	        	Display.create();
 	        	
 	        }   
-	        //Aktuelle Position des Fensters abfragen
-	        x = Display.getX();
-	        y = Display.getY();
-	        
-	        //Neue Position setzten, so das Fenster und Controlpanel zentriert sind
-	        Display.setLocation(x-175, y);
 	        
 	        //VSync aktivieren
 	        Display.setVSyncEnabled(true);
@@ -433,51 +323,6 @@ public class Rendern {
     	
     	lastFPS = getTime();
     	
-    }
-    
-    /**
-     * Funktion, welche für das laden des Icons und umwandeln zu einem Bytebuffer verantwortlich ist
-     * 
-     * @param filename : gibt den Dateinamen an, welche Datei geladen wird
-     * @param width : breite der Datei, welche geladen werden wird
-     * @param height : höhe der Datei, welche geladen werden wird
-     * @return : gibt den ByteBuffer zurück
-     */
-    private ByteBuffer loadIcon(String filename, int width, int height) throws IOException {
-    	
-    	//Erstelle ein Buffered Image aus der Datei
-    	BufferedImage image = ImageIO.read(this.getClass().getResourceAsStream(filename));
-    	
-        //Wandle das Bild in ein ByteArray um
-        //erstelle ein Array welches genügend gross für die voreingestellte grösse des Bildes ist
-        //breite*höhe*4 (die 4 ist für rot, grün, blau und alpha)
-    
-        byte[] imageBytes = new byte[width * height * 4];
-        
-        for (int i = 0; i < height; i++) {
-        
-        	for (int j = 0; j < width; j++) {
-            	
-            	//Frage Image an entsprechende Position ab um es anschliessend in das Array zu schreiben
-                int pixel = image.getRGB(j, i);
-                
-                //Rot, Grün und Blau in das Array schreiben 
-                for (int k = 0; k < 3; k++){
-            
-                	imageBytes[(i*width+j)*4 + k] = (byte)(((pixel>>(2-k)*8))&255);
-                
-                }
-                
-                //Alpha (transparenz) in das Array schreiben
-                imageBytes[(i*width+j)*4 + 3] = (byte)(((pixel>>(3)*8))&255);
-                
-            }
-        	
-        }
-        
-        //Wandle das Byte Arre in ein ByteBuffer um und gebe ihn zurück
-        return ByteBuffer.wrap(imageBytes);
-        
     }
     
     /**
@@ -527,18 +372,5 @@ public class Rendern {
         GL11.glEnable(GL11.GL_BLEND);
         
     }
-    protected void resetPosition(){
-    	  
-        //Neues Toolkit Objekt erstellen, wird gebraucht um an die Bildschirmaufläsung zu kommen
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		
-		//Die Bildschirmdimensionen bekommen
-		Dimension screenSize = tk.getScreenSize();
-
-		//Berechne die Verschiebung des Fensters
-		x=((screenSize.width/2)-500);
-		y=((screenSize.height/2)-245);
-		
-		frame.setLocation(x, y);
-    }
+    
 }

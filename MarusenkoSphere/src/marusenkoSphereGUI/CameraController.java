@@ -2,6 +2,8 @@ package marusenkoSphereGUI;
 
 import java.nio.FloatBuffer;
 
+import marusenkoSphere.Settings;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -185,7 +187,9 @@ public class CameraController {
 				float dot = Vector3f.dot(startP, nowP);
 				
 				//Bekomme den Winkel und Multipliziere mit 2
-				float angle = (float) Math.acos(Math.toRadians(dot));
+				float angle = (float) Math.acos(Math.toRadians(dot))*(Settings.MOUSESENSITIVE)/10;
+				
+				//System.out.println(angle);
 				
 				//Erstelle neues Quaternion aus dem Vektor axis und dem Winkel angle
 				Quaternion q_rot = new Quaternion(
@@ -200,6 +204,8 @@ public class CameraController {
 				
 				//Setzte neues Start Quaternion
 				quatStart = quat;
+				
+				
 				
 				//Erstelle Matrix rotation aus dem Quaternion quat
 				Matrix4f rotation = QuaternionToMatrix4f(quat);
@@ -326,6 +332,8 @@ public class CameraController {
 	 * Wandelt ein Quaternion in eine 4x4 Matrix (Matrix4f) um
 	 */
 	private Matrix4f QuaternionToMatrix4f(Quaternion q){
+		q.normalise();
+		
 		//Bekomme die 4 Werte des Quaternions
 		float x = q.x;
 		float y = q.y;

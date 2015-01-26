@@ -277,6 +277,43 @@ public class Kugel{
 		
 	}
 	
+	protected String returnSphereToFile(){
+		String out = "1";
+		for(int i = 0; i<24;i++){
+			out=out+";"+tri[i];
+		}
+		for(int i = 0; i<8;i++){
+			out=out+";"+con[i];
+		}
+		out=out+";"+step;
+		int anz = solvingList.size();
+		out=out+";"+anz;
+		for(int i = 0; i<anz;i++){
+			out=out+";"+solvingList.get(i);
+		}
+		return out;
+	}
+	protected boolean recieveSphereFromFile(String s){
+		String[] sE = s.split(";");
+		if(Integer.parseInt(sE[0])==1){
+			for(int i = 0; i<24;i++){
+				tri[i]=Integer.parseInt(sE[i+1]);
+			}
+			for(int i = 0; i<8;i++){
+				con[i]=Integer.parseInt(sE[i+25]);
+			}
+			step = Integer.parseInt(sE[33]);
+			int anz = Integer.parseInt(sE[34]);
+			solvingList.clear();
+			for(int i = 0; i<anz;i++){
+				solvingList.add(sE[i+35]);
+			}
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	
 	/**********************************************************************************************************************************************
 	 *                                                                                                                                            *

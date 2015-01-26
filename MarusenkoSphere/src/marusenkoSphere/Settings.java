@@ -13,8 +13,8 @@ public class Settings {
 	//Allgemein
 	public static final boolean DEBUGMODE = false;
 	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
-	public static final boolean KIOSKMODE = true;
-	
+	public static final boolean KIOSKMODE = false;
+	public static final String TITEL = "MarusenkoSphere";
 	
 	//Main
 	public static final boolean STARTKONSOLE = false;
@@ -33,7 +33,7 @@ public class Settings {
 	public static final int VERSCHIEBEFENSTERY = -245;
 	
 	//Mouse
-	public static final double MOUSESENSITIVE = 0.1;
+	public static int MOUSESENSITIVE = 10;
 	
 	
 	
