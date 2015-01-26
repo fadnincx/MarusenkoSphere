@@ -171,7 +171,7 @@ public class Manager {
 		mainFrame.setIconImage(icon);
 				
 		//Definiere die Grösse der Fenster
-		mainFrame.setSize(1000, 538);
+		mainFrame.setSize(995, 528);
 				
 		//Setze sichtbar
 		mainFrame.setVisible(true);
@@ -557,8 +557,8 @@ public class Manager {
 	 */
 	protected void changeToMode(int i){
 		//Wenn der Editor angezeigt wurde, dann prüfen ob kugel korrekt und ob übernommen werden kann
-		if((displayMode==1||displayMode==3)&&(i!=1||i!=3)){
-			
+		if((displayMode==1||displayMode==3)&&(i!=1&&i!=3)){
+			System.out.println("Close Editor");
 			//Wenn Kugel korrekt, dann übernehmen
 			if(isSphereAllowed()){
 				
@@ -573,8 +573,8 @@ public class Manager {
 		}
 		
 		//Wenn neu der Editor
-		if((i==1||i==3)&&(displayMode!=1||displayMode!=3)){
-			
+		if((i==1||i==3)&&(displayMode!=1&&displayMode!=3)){
+			System.out.println("Open Editor");
 			//Setzte Step, damit im nachhinein wieder zu diesem zurück gekehrt werden kann
 			stepWhenGoesToEditor = k.getStep();
 			

@@ -45,15 +45,10 @@ public class ControlPanel implements ActionListener, KeyListener{
 	
 	//Button zum lösen bis ans ende
 	private JButton cpButtonSolve = new JButton("<html>Lösungsanimation<br>starten</html>");
-	
-	//Buttons mit Pfeile zum Drehen der Kugel
-	private JButton cpButtonUp = new JButton();
-	private JButton cpButtonRight = new JButton();
-	private JButton cpButtonLeft = new JButton();
-	private JButton cpButtonDown = new JButton();
+
 
 	//Button um Kamera zurück zu setzten
-	private JButton cpButtonResetView = new JButton("<html>Kamera<br>zurücksetzen</html>");
+	private JButton cpButtonResetView = new JButton("Kamera zurücksetzen");
 	
 	//Schritte vorwärts und zurück gehen
 	private JButton cpButtonAddOneStep = new JButton();
@@ -78,12 +73,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 	private JButton devChangeEditor = new JButton("Editor");
 	private JButton devChangeSphere = new JButton("Kugel");
 	
-	//Hilfe buttons
-	private JButton cpHelpAnimation = new JButton();
-	private JButton cpHelpFortschritt = new JButton();
-	private JButton cpHelpKamera = new JButton();
-	private JButton cpHelpEditor = new JButton();
-	private JButton editHelp = new JButton();
+
 	
 	//Die Farbigen Buttons des Editors
 	private JButton editButtonColor0 = new JButton();
@@ -197,35 +187,16 @@ public class ControlPanel implements ActionListener, KeyListener{
 	 * Funktion zum Initialisieren des Controlpanels
 	 */
 	private void initControlpanel() throws IOException{
-		
-		//Versuche die Bilder für die Pfeiltasten zu laden
-		ImageIcon imageUp = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/up.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		ImageIcon imageDown = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/down.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		ImageIcon imageRight = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/right.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		ImageIcon imageLeft = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/left.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		
+
 		//Versuche die Bilder + und - zu laden
 		ImageIcon imagePlus = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/plus.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 		ImageIcon imageMinus = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/minus.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		
-		//Versucge das Bild ? zu laden
-		ImageIcon imageHelp = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/help.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		
-		//Setze die Bilder der Pfeiltasten
-		cpButtonUp.setIcon(imageUp);
-		cpButtonDown.setIcon(imageDown);
-		cpButtonRight.setIcon(imageRight);
-		cpButtonLeft.setIcon(imageLeft);
+
 		
 		//Setze die Bilder + und -
 		cpButtonAddOneStep.setIcon(imagePlus);
 		cpButtonSubOneStep.setIcon(imageMinus);
 		
-		//Setze die Bilder ?
-		cpHelpAnimation.setIcon(imageHelp);
-		cpHelpEditor.setIcon(imageHelp);
-		cpHelpFortschritt.setIcon(imageHelp);
-		cpHelpKamera.setIcon(imageHelp);
 
 		//Button zum neu füllen der Kugel Position und Grösse zuweisen
 		cpButtonFillSphere.setBounds(20, 20, 145, 50);
@@ -243,35 +214,11 @@ public class ControlPanel implements ActionListener, KeyListener{
 		cpLabelAnimationSpeed.setBounds(20,80,310,20);
 		
 		//Dem Slider für die Animationsgeschwindikeit Position und Grösse zuweisen
-		cpSliderAnimationSpeed.setBounds(20,100,270,30);
+		cpSliderAnimationSpeed.setBounds(20,100,310,30);
 		
 		//Info ToolTip Hinzufügen
 		cpSliderAnimationSpeed.setToolTipText("Wie schnell die Animation abläuft");
-		
-		//Help Animation Position ung Grösse zuweisen
-		cpHelpAnimation.setBounds(300,100,30,30);
-		
-		//Info ToolTip Hinzufügen
-		cpHelpAnimation.setToolTipText("Hilfe");
-		
-		//Help Fortschritt Position und Grösse zuweisen
-		cpHelpFortschritt.setBounds(300,240,30,30);
-		
-		//Info ToolTip Hinzufügen
-		cpHelpFortschritt.setToolTipText("Hilfe");
-		
-		//Help Kamera Position und Grösse zuweisen
-		cpHelpKamera.setBounds(300,370,30,30);
-		
-		//Info ToolTip Hinzufügen
-		cpHelpKamera.setToolTipText("Hilfe");
-		
-		//Help Editor Position und Grösse zuweisen
-		cpHelpEditor.setBounds(300,440,30,30);
-		
-		//Info ToolTip Hinzufügen
-		cpHelpEditor.setToolTipText("Hilfe");
-		
+
 		//Trennlinie Position und Grösse zuweisen
 		cpSepSliders.setBounds(5,140,330,5);
     	
@@ -344,48 +291,32 @@ public class ControlPanel implements ActionListener, KeyListener{
     	      });
     	
     	//Trennlinie
-    	cpSepCamera.setBounds(5,280,330,5);
+    	cpSepCamera.setBounds(5,290,330,5);
     	
     	//Dem Button zum zurücksetzen der Kamera Position und Grösse zuweisen
-    	cpButtonResetView.setBounds(210,290,120,50);
+    	cpButtonResetView.setBounds(20,315,310,50);
     	
     	//Info ToolTip Hinzufügen
     	cpButtonResetView.setToolTipText("Setzt die Position der Kamera zurück");
     	
-    	//Den 4 Buttons mit Pfeilen Position und Grösse zuweisen
-    	cpButtonUp.setBounds(150,290,50,50);
-    	cpButtonLeft.setBounds(90,350,50,50);
-    	cpButtonRight.setBounds(210,350,50,50);
-    	cpButtonDown.setBounds(150,350,50,50);
-    	  
-    	//Info ToolTip Hinzufügen
-    	cpButtonUp.setToolTipText("Dreht die Kugel nach oben");
-    	cpButtonLeft.setToolTipText("Dreht die Kugel nach links");
-    	cpButtonRight.setToolTipText("Dreht die Kugel nach rechts");
-    	cpButtonDown.setToolTipText("Dreht die Kugel nach unten");
-    	
     	//Trennlinie
-    	cpSepChangeWindow.setBounds(5,410,330,5);
+    	cpSepChangeWindow.setBounds(5,390,330,5);
     	
     	//ToolTip für Editor Button
     	cpChangeEditor.setToolTipText("Öffne den Editor um eine eigene Kugel zu erstellen");
     	
     	//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen
 		if(Settings.DEBUGMODE){
-			cpChangeDev.setBounds(20,420,105,50);
-		   	cpChangeEditor.setBounds(145,420,145,50);
+			cpChangeDev.setBounds(20,410,105,50);
+		   	cpChangeEditor.setBounds(145,410,185,50);
 		}else{
-		   	cpChangeEditor.setBounds(20,420,270,50);
+		   	cpChangeEditor.setBounds(20,410,310,50);
 		}
     	
     	
     	//Füge jedes Objekt dem Controlpanel hinzu
     	controlPanel.add(cpButtonFillSphere);
     	controlPanel.add(cpButtonSolve);
-    	controlPanel.add(cpButtonUp);
-    	controlPanel.add(cpButtonDown);
-    	controlPanel.add(cpButtonLeft);
-    	controlPanel.add(cpButtonRight);
     	controlPanel.add(cpButtonResetView);
     	controlPanel.add(cpButtonAddOneStep);
     	controlPanel.add(cpButtonSubOneStep);
@@ -400,28 +331,16 @@ public class ControlPanel implements ActionListener, KeyListener{
     	controlPanel.add(cpSepChangeWindow);
     	controlPanel.add(cpChangeDev);
     	controlPanel.add(cpChangeEditor);
-    	controlPanel.add(cpHelpAnimation);
-    	controlPanel.add(cpHelpFortschritt);
-    	controlPanel.add(cpHelpKamera);
-    	controlPanel.add(cpHelpEditor);
     	
     	//Füge den Buttons ein ActionListener hinzu
     	cpButtonFillSphere.addActionListener(this);
     	cpButtonSolve.addActionListener(this);
-    	cpButtonUp.addActionListener(this);
-    	cpButtonRight.addActionListener(this);
-    	cpButtonLeft.addActionListener(this);
-    	cpButtonDown.addActionListener(this);
     	cpButtonResetView.addActionListener(this);
     	cpButtonAddOneStep.addActionListener(this);
     	cpButtonSubOneStep.addActionListener(this);
         cpChangeDev.addActionListener(this);
         cpChangeEditor.addActionListener(this);
-        cpHelpAnimation.addActionListener(this);
-        cpHelpEditor.addActionListener(this);
-        cpHelpFortschritt.addActionListener(this);
-        cpHelpKamera.addActionListener(this);
-        
+
         //Füge alle Objekten ein KeyListener hinzu
         addKeyListenerToAll();
         
@@ -433,13 +352,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 	/**
 	 * Funktion zum initialisieren des Editors
 	 */
-	private void initEditor() throws IOException{
-			
-		//Versuche das ? Icon zu laden
-		ImageIcon imageHelp = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/help.png"))).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		
-		//setzet das Icon
-		editHelp.setIcon(imageHelp);
+	private void initEditor(){
 		
 		//Den farbigen Buttons die Farbe als Hintergrund zuweisen
 		editButtonColor0.setBackground(color0);
@@ -460,13 +373,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editButtonColor5.setBounds(20, 170, 150, 20);
 		editButtonColor6.setBounds(20, 200, 150, 20);
 		editButtonColor7.setBounds(20, 230, 150, 20);
-	
-		//Help Editor Position und Grösse zuweisen
-		editHelp.setBounds(300,440,30,30);
-		
-		//Info ToolTip Hinzufügen
-		editHelp.setToolTipText("Hilfe");
-		
+			
 		
 		editViewSwitch3D.setBounds(20, 300, 50, 50);
 		editViewSwitch2D.setBounds(70, 300, 50, 50);
@@ -498,7 +405,6 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editLabelSelected.setBounds(180, (m.getSelectedColor()*30)+20, 100, 20);
 		
 		//Alle Elemente zu editorPanel hinzufügen
-		editorPanel.add(editHelp);
 		editorPanel.add(editChangeDev);
 		editorPanel.add(editChangeSphere);
 		editorPanel.add(editButtonColor0);
@@ -526,7 +432,6 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editButtonColor7.addActionListener(this);
 		editChangeDev.addActionListener(this);
 		editChangeSphere.addActionListener(this);
-		editHelp.addActionListener(this);
 		editViewSwitch3D.addActionListener(this);
 		editViewSwitch2D.addActionListener(this);
 		
@@ -585,19 +490,11 @@ public class ControlPanel implements ActionListener, KeyListener{
 	private void addKeyListenerToAll(){
 		cpButtonFillSphere.addKeyListener(this);
 		cpButtonSolve.addKeyListener(this);
-		cpButtonUp.addKeyListener(this);
-		cpButtonDown.addKeyListener(this);
-		cpButtonRight.addKeyListener(this);
-		cpButtonLeft.addKeyListener(this);
 		cpButtonResetView.addKeyListener(this);
 		cpButtonAddOneStep.addKeyListener(this);
 		cpButtonSubOneStep.addKeyListener(this);
 		cpChangeEditor.addKeyListener(this);
 		cpChangeDev.addKeyListener(this);
-		cpHelpAnimation.addKeyListener(this);
-		cpHelpEditor.addKeyListener(this);
-		cpHelpFortschritt.addKeyListener(this);
-		cpHelpKamera.addKeyListener(this);
 		cpLabelAnimationSpeed.addKeyListener(this);
 		cpLabelProgress.addKeyListener(this);
 		cpLabelSphereStepMax.addKeyListener(this);
@@ -755,30 +652,6 @@ public class ControlPanel implements ActionListener, KeyListener{
         	String in = devTextFieldSphereDebugStringInput.getText();
         	m.fillSphereFromDevString(in, devCheckBoxSolve.isSelected());
         	
-        //Ist der Button nach Oben gedrückt?
-        }else if (z.getSource() == cpButtonUp){
-        	
-        	//Kugel nach oben drehen
-        	m.changeRotationAngle(5,0);
-        	
-        //Ist der Button nach Rechts gedrückt?	
-        }else if (z.getSource() == cpButtonRight){
-        	
-        	//Kugel nach rechts drehen
-        	m.changeRotationAngle(0,-5);
-        	
-        //Ist der Button nach Links gedrückt?
-        }else if (z.getSource() == cpButtonLeft){
-        	
-        	//Kugel nach links drehen
-        	m.changeRotationAngle(0,5);
-        	
-        //Ist der Button nach Unten gedrückt?	
-        }else if (z.getSource() == cpButtonDown){
-        	
-        	//Kugel nach unten drehen
-        	m.changeRotationAngle(-5,0);
-        	
         //Ist der Button zum Zurücksetzen der Drehung gedrückt?
         }else if (z.getSource() == cpButtonResetView){
         	
@@ -887,41 +760,6 @@ public class ControlPanel implements ActionListener, KeyListener{
         	//K als KeyBoard Input hinzufügen
         	KeyboardMouseManager.pressedKey.add('k');
         	
-        //Ist der Button gedrückt um die Animationshilfe zu starten?
-        }else if (z.getSource() == cpHelpAnimation){
-        	
-        	//Animation stoppen
-        	m.stopAnimationToEnd();
-        	
-        	//Help fenster öffnen
-        	new Help(0);
-        
-        //Ist der Button gedückt um die Editorshilfe zu starten?
-        }else if (z.getSource() == cpHelpEditor || z.getSource() == editHelp){
-        	
-        	//Animation stoppen
-        	m.stopAnimationToEnd();
-        	
-        	//Help fenster öffnen
-        	new Help(3);
-        
-        //Ist der Button gedückt um die Fortschrittshilfe zu starten?
-        }else if (z.getSource() == cpHelpFortschritt){
-        	
-        	//Animation stoppen
-        	m.stopAnimationToEnd();
-        	
-        	//Help fenster öffnen
-        	new Help(1);	
-        	
-        //Ist der Button gedückt um die Kamerahilfe zu starten?
-        }else if (z.getSource() == cpHelpKamera){
-        	
-        	//Animation stoppen
-        	m.stopAnimationToEnd();
-        	
-        	//Help fenster öffnen
-        	new Help(2);	
         }else if (z.getSource() == editViewSwitch2D){
         	
         	m.changeToMode(1);
