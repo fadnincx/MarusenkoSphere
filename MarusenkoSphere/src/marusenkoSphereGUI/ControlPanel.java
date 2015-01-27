@@ -49,6 +49,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 
 	//Button um Kamera zurück zu setzten
 	private JButton cpButtonResetView = new JButton("Kamera zurücksetzen");
+	private JButton editButtonResetView = new JButton("Kamera zurücksetzen");
 	
 	//Schritte vorwärts und zurück gehen
 	private JButton cpButtonAddOneStep = new JButton();
@@ -388,13 +389,14 @@ public class ControlPanel implements ActionListener, KeyListener{
     	editViewSwitch2D.setToolTipText("Wechselt die Ansicht des Editors auf 2D");
     	editViewSwitch3D.setToolTipText("Wechselt die Ansicht des Editors auf 3D");
 		
+    	editButtonResetView.setBounds(20, 360, 310, 50);
 		
 		//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen 
 		if(Settings.DEBUGMODE){
-			editChangeSphere.setBounds(20,370,145,50);
-			editChangeDev.setBounds(185, 370, 145,50);
+			editChangeSphere.setBounds(20,420,145,50);
+			editChangeDev.setBounds(185, 420, 145,50);
 		}else{
-			editChangeSphere.setBounds(20,370,300,50);
+			editChangeSphere.setBounds(20,420,310,50);
 		}
 		
 		
@@ -420,6 +422,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editorPanel.add(editViewSwitch);
 		editorPanel.add(editViewSwitch2D);
 		editorPanel.add(editViewSwitch3D);
+		editorPanel.add(editButtonResetView);
 		
 		//Den Buttons ein Actionlistener hinzufügen
 		editButtonColor0.addActionListener(this);
@@ -434,6 +437,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editChangeSphere.addActionListener(this);
 		editViewSwitch3D.addActionListener(this);
 		editViewSwitch2D.addActionListener(this);
+		editButtonResetView.addActionListener(this);
 		
 		//das EditorPanel neu zeichnen
 		editorPanel.repaint();
@@ -657,6 +661,12 @@ public class ControlPanel implements ActionListener, KeyListener{
         	
         	//Drehen zurück setzen
         	m.resetRotationAngle();
+        	
+        //Ist der Button zum Zurücksetzen der Drehung gedrückt?
+        }else if (z.getSource() == editButtonResetView){
+        	
+        	//Drehen zurück setzen
+        	m.resetRotationAngle();	
         	
         //Ist der Button zum im Lösungsweg einen Schritt weiter zu gehen gedrückt?	
         }else if (z.getSource() == cpButtonAddOneStep){

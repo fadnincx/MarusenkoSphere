@@ -16,6 +16,9 @@ import org.lwjgl.opengl.Display;
 public class KeyboardMouseManager {
 	private static boolean lookPfeile = false;
 	private static int position = -1;
+	private static int lastX;
+	private static int lastY;
+	private static boolean last = false;
 	
 	public static void init(){
 		Mouse.getDX();
@@ -313,29 +316,35 @@ public class KeyboardMouseManager {
 	    }else
 	    //Wenn 3D-Editor angezeigt wird
 	    if(m.getDisplayMode() == 3){
-	    	if(Mouse.isButtonDown(1)){
+	    	if(Mouse.isButtonDown(0)){
 	    		
-	    		//Speichere die x und y Koordinate der Maus im Fenster
-		    	int x = Mouse.getX();
-		    	int y = Mouse.getY();
-	    		
-	    		//Bekomme die Koordinaten der Maus im 3Dimensionalen System
-	    		double[] mousePosIn3D = Editor.MouseIn3D(x,y);
-	    		position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
-    			//System.out.println(position);
-	    		
+	    		if(!last){
+	    			last = true;
+	    			lastX = Mouse.getX();
+			    	lastY = Mouse.getY();
+	    		}
     			
-    			if(position>=0&&position<24){
-    
-    				m.editSphereTri(position);
-    			
-    			}else
-    			if(position>=30&&position<38){
-    			
-    				m.editSphereCon(position-30);
-    			
-    			}
-    			
+	    	}else{
+	    		if(last){
+	    			if(lastX==Mouse.getX()&&lastY==Mouse.getY()){
+	    				//Bekomme die Koordinaten der Maus im 3Dimensionalen System
+	    	    		double[] mousePosIn3D = Editor.MouseIn3D(lastX,lastY);
+	    	    		position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
+	        			//System.out.println(position);	
+	        			
+	        			if(position>=0&&position<24){
+	        
+	        				m.editSphereTri(position);
+	        			
+	        			}else
+	        			if(position>=30&&position<38){
+	        			
+	        				m.editSphereCon(position-30);
+	        			
+	        			}
+	    			}
+	    		}
+	    		last = false;
 	    	}
 	    }
 	
