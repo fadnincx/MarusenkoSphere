@@ -640,8 +640,8 @@ public class ControlPanel implements ActionListener, KeyListener{
 		//Ist der Button zum Kugel neu mischen gedrückt?
 		if (z.getSource() == cpButtonFillSphere){
 			
-			//S als KeyBoard Input hinzufügen
-			KeyboardMouseManager.pressedKey.add('s');
+			//Kugel mischen
+			m.fillSphere();
 		
 		//Ist der Button zum start der Animation gedrückt?
         }else if (z.getSource() == cpButtonSolve){

@@ -47,7 +47,7 @@ public class KioskBG{
 		overlay.setFocusableWindowState(false);
 		overlay.getRootPane().putClientProperty("apple.awt.draggableWindowBackground", false);
 		
-		titel.setFont(new Font(titel.getFont().getName(), Font.PLAIN, 150));
+		titel.setFont(new Font(titel.getFont().getName(), Font.PLAIN, 100));
 		copyright.setFont(new Font(copyright.getFont().getName(), Font.PLAIN, 20));
 		
 		overlay.getContentPane().setLayout(new java.awt.BorderLayout());

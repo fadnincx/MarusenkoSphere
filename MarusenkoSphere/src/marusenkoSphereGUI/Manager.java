@@ -336,7 +336,7 @@ public class Manager {
 			        JSlider slider = new JSlider();
 			        slider.setMajorTickSpacing(1);
 			        slider.setMinimum(1);
-			        slider.setMaximum(50);
+			        slider.setMaximum(25);
 			        slider.setValue((int) (Settings.MOUSESENSITIVE));
 			        slider.setPaintTicks(false);
 			        slider.setPaintLabels(false);
