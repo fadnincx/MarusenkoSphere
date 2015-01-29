@@ -53,6 +53,17 @@ public class Solver {
 		solvingWay.add(k.getSphere(""+pol+anz+modus));
 		
 	}
+	protected ArrayList<String> solve2(Kugel kugel){
+		k = kugel;
+		solvingWay.add(k.getSphere("000"));
+		
+		return solvingWay;
+	}
+	protected ArrayList<String> solve3(Kugel kugel){
+		k = kugel;
+		solvingWay.add(k.getSphere("000"));
+		return solvingWay;
+	}
 	
 	
 	/**

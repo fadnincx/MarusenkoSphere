@@ -381,7 +381,7 @@ public class Manager {
 		});
 
 		mainFrame.add(menuBar);
-		
+		mainFrame.repaint();
 	}
 	
 	/**
@@ -560,9 +560,11 @@ public class Manager {
 		if((displayMode==1||displayMode==3)&&(i!=1&&i!=3)){
 			//System.out.println("Close Editor");
 			//Wenn Kugel korrekt, dann übernehmen
-			if(isSphereAllowed()){
+			System.out.println(levelOfSphere());
+			if(levelOfSphere()!=-1){
+			
 				
-				k.sphereFromEditor();
+				k.sphereFromEditor(levelOfSphere());
 				updateControlpanelInformations();
 				
 			}else{
@@ -763,43 +765,66 @@ public class Manager {
 	 */
 	private void updateInformationToLegalityOfSphere(){
 		
-		cp.updateInfoIsSphereAllowed(isSphereAllowed());
+		cp.updateInfoIsSphereAllowed(levelOfSphere()!=-1);
 		
 	}
 	
 	/**
-	 * Prüfe, ob Kugel legal ist
+	 * Gibt das Level der Kugel zurück
 	 */
-	private boolean isSphereAllowed(){
-		
+	private int levelOfSphere(){
 		//Erstelle Array für alle aktuellen Tris
 		int[] checkTri = new int[24];
-		
+				
 		//Erstelle Array für alle aktuellen Cons
 		int[] checkCon = new int[8];
-		
-		//Erstelle Referenz Array für Tri
-		int[] referenceTri = new int[] {0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7};
-		
-		//Erstelle Referenz Array für Con
-		int[] referenceCon = new int[] {0,1,2,3,4,5,6,7};
 		
 		//Fülle das TriArray mit aktuellen Werten
 		for(int i = 0; i<24;i++){
 			checkTri[i] = k.tri[i];
 		}
-		
+				
 		//Fülle das ConArray mit aktuellen Werten
 		for(int i = 0; i<8;i++){
 			checkCon[i] = k.con[i];
 		}
 		
-		//Sortiere die aktuellen Arrays, damit sie einfach verglichen werden können
 		Arrays.sort(checkTri);
 		Arrays.sort(checkCon);
 		
-		return Arrays.equals(checkTri,referenceTri)&&Arrays.equals(checkCon,referenceCon);
+		int[] conAnz = new int[8];
+		int[] triAnz = new int[8];
 		
+		for(int i = 0; i<8; i++){
+			conAnz[checkCon[i]]++;
+		}
+		for(int i = 0; i<24; i++){
+			triAnz[checkTri[i]]++;
+		}
+		
+		Arrays.sort(conAnz);
+		Arrays.sort(triAnz);
+		
+		
+		System.out.println(Arrays.toString(conAnz));
+		System.out.println(Arrays.toString(triAnz));
+		if(conAnz[6]==4&&conAnz[7]==4&&triAnz[6]==12&&triAnz[7]==12){
+			return 1;
+		}else if(conAnz[7]==8&&triAnz[7]==4&&triAnz[6]==4&&triAnz[5]==4&&triAnz[4]==4&&triAnz[3]==4&&triAnz[2]==4){
+			return 2;
+		}else if(conAnz[7]==4&&conAnz[6]==4&&triAnz[7]==8&&triAnz[6]==8&&triAnz[5]==4&&triAnz[4]==4){
+			return 3;
+		}else if(conAnz[7]==2&&conAnz[6]==2&&conAnz[5]==2&&conAnz[4]==2&&triAnz[7]==4&&triAnz[6]==4&&triAnz[5]==4||triAnz[4]==4){
+			return 4;
+		}else if(conAnz[7]==1&&triAnz[7]==3&&triAnz[6]==3&&triAnz[5]==3||triAnz[4]==3&&triAnz[3]==3&&triAnz[2]==3){
+			return 5;
+		}
+		
+		return -1;
+	}
+	
+	protected void setToLevel(int i){
+		k.setToLevel(i);
 	}
 	protected void resetPosition(){
 		mainFrame.setLocationRelativeTo(null);

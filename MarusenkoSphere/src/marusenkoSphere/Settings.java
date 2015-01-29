@@ -13,7 +13,7 @@ public class Settings {
 	//Allgemein
 	public static final boolean DEBUGMODE = false;
 	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
-	public static final boolean KIOSKMODE = true;
+	public static final boolean KIOSKMODE = false;
 	public static final String TITEL = "MarusenkoSphere";
 	
 	//Main
@@ -23,7 +23,7 @@ public class Settings {
 	public static final String LOGPATH = "D:/marusenkoLog";
 	
 	//Kugel
-	public static final boolean PRINTSPHERECODE = false;
+	public static final boolean PRINTSPHERECODE = true;
 	
 	//RendernKugel
 	public static final int KUGELRENDERRASTER = 10; //Nur 1, 2, 5, 10

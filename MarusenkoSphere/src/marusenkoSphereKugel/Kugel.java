@@ -28,6 +28,8 @@ public class Kugel{
 	//Der AnimationsManager für die Animationen
 	public AnimationsManager animationManager;
 	
+	public int level = 5;
+	
 	/**
 	 * Initialisiert den AnimationsManager und füllt die Kugel mit einer gelösten Kugel, ohne diese zu lösen
 	 */
@@ -70,11 +72,33 @@ public class Kugel{
 	/**
 	 * Übernimmt die Kugel aus dem Editor
 	 */
-	public void sphereFromEditor(){
-		
+	public void sphereFromEditor(int level){
+		//System.out.println(getSphere("000"));
+		this.level = level;
 		step = 0;
 		fillKugelFromDebugString(getSphere("000"),true);
 		
+	}
+	public void setToLevel(int i){
+		switch(i){
+		case 1:
+			setSphereToString("03033030303030300303030330300303n0n000");
+			break;
+		case 2:
+			setSphereToString("00000000111122225555444433337777n0n000");
+			break;
+		case 3:
+			setSphereToString("33332222322332233223322311110000n0n000");
+			break;
+		case 4:
+			setSphereToString("71347134331133444477117734713471n0n000");
+			break;
+		case 5:
+			setSphereToString("56437201402640133175627543560172n0n000");
+			break;
+		default:
+			System.out.println("Nicht existierendes Level");
+		}
 	}
 
 	/**
@@ -268,10 +292,16 @@ public class Kugel{
 	 * Methode, welche das lösen aufruft und Lösung speichert
 	 */
 	private void solveSphere(){
-		
-		// Lösung des Lösens in SolvingList speichern
-		solvingList = new Solver().solve(this);
-		
+		if(level==2){
+			// Lösung des Lösens in SolvingList speichern
+			solvingList = new Solver().solve2(this);
+		}else if(level==3){
+			// Lösung des Lösens in SolvingList speichern
+			solvingList = new Solver().solve3(this);
+		}else{
+			// Lösung des Lösens in SolvingList speichern
+			solvingList = new Solver().solve(this);
+		}
 		//Setzet die Kugel zurück in den Anfangsstatus
 		setSphereToString(solvingList.get(0));
 		
