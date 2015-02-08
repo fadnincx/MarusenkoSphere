@@ -188,7 +188,7 @@ public class CameraController {
 						
 						//Bekomme den Winkel und Multipliziere mit 2
 						float angle = (float) Math.acos(dot);
-						System.out.println(angle+", "+(angle/Math.PI)+", "+Math.toDegrees(angle));
+
 						if(angle>0){
 							//Erstelle neues Quaternion aus dem Vektor axis und dem Winkel angle
 							Quaternion q_rot = new Quaternion(
