@@ -11,16 +11,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.imageio.ImageIO;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import marusenkoSphere.Settings;
@@ -54,9 +50,6 @@ public class Manager {
 	private JMenuItem save;
 	private JMenuItem open;
 	private JMenuItem exit;
-	
-	private JMenu settings;
-	private JMenuItem mouseSensity;
 	
 	private JMenu help;
 	private JMenuItem helpcenter;
@@ -120,7 +113,6 @@ public class Manager {
 			}
 			rendern = new Rendern(k, this);
 			cp = new ControlPanel(this);
-			KeyboardMouseManager.init();
 		}catch(Exception e){
 			
 			e.printStackTrace();
@@ -312,48 +304,6 @@ public class Manager {
 				System.exit(0);
 			}
 		});
-		
-		settings = new JMenu("Einstellungen");
-		menuBar.add(settings);
-		
-		mouseSensity = new JMenuItem("Mausempfindlichkeit");
-		settings.add(mouseSensity);
-		mouseSensity.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane optionPane = new JOptionPane();
-			    JSlider slider = getSlider(optionPane);
-			    optionPane.setMessage(new Object[] { "Wähle Mausempfindlichkeit ", slider });
-			    optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
-			    optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
-			    JDialog dialog = optionPane.createDialog(mainFrame, "Mausempfindlichkeit");
-			    dialog.setVisible(true);
-			    System.out.println("Input: " + optionPane.getInputValue());
-			    Settings.MOUSESENSITIVE = (int) optionPane.getInputValue();
-			}
-			    JSlider getSlider(final JOptionPane optionPane) {
-			        JSlider slider = new JSlider();
-			        slider.setMajorTickSpacing(1);
-			        slider.setMinimum(1);
-			        slider.setMaximum(25);
-			        slider.setValue((int) (Settings.MOUSESENSITIVE));
-			        slider.setPaintTicks(false);
-			        slider.setPaintLabels(false);
-			        ChangeListener changeListener = new ChangeListener() {
-			          public void stateChanged(ChangeEvent changeEvent) {
-			            JSlider theSlider = (JSlider) changeEvent.getSource();
-			            if (!theSlider.getValueIsAdjusting()) {
-			              optionPane.setInputValue(new Integer(theSlider.getValue()));
-			            }
-			          }
-			        };
-			        slider.addChangeListener(changeListener);
-			        return slider;
-			      }
-			
-		});
-		
 		
 		help = new JMenu("Hilfe");
 		menuBar.add(help);
@@ -556,6 +506,14 @@ public class Manager {
 	 *  0 = Kugel, 1 = Editor, 2 = Dev
 	 */
 	protected void changeToMode(int i){
+		
+		//Sicherheitsabfrage, da nur bei Debugmodus das Debugmenu geöffnet werden darf...
+		if(i==2){
+			if(!Settings.DEBUGMODE){
+				i = displayMode;
+			}
+		}
+		
 		//Wenn der Editor angezeigt wurde, dann prüfen ob kugel korrekt und ob übernommen werden kann
 		if((displayMode==1||displayMode==3)&&(i!=1&&i!=3)){
 			//System.out.println("Close Editor");

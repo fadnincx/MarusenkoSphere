@@ -348,7 +348,22 @@ public class ControlPanel implements ActionListener, KeyListener{
         cpChangeEditor.addActionListener(this);
 
         //Füge alle Objekten ein KeyListener hinzu
-        addKeyListenerToAll();
+        cpButtonFillSphere.addKeyListener(this);
+		cpButtonSolve.addKeyListener(this);
+		cpButtonResetView.addKeyListener(this);
+		cpButtonAddOneStep.addKeyListener(this);
+		cpButtonSubOneStep.addKeyListener(this);
+		cpChangeEditor.addKeyListener(this);
+		cpChangeDev.addKeyListener(this);
+		cpLabelAnimationSpeed.addKeyListener(this);
+		cpLabelProgress.addKeyListener(this);
+		cpLabelSphereStepMax.addKeyListener(this);
+		cpLabelSphereStepNow.addKeyListener(this);
+		cpSepCamera.addKeyListener(this);
+		cpSepChangeWindow.addKeyListener(this);
+		cpSepSliders.addKeyListener(this);
+		cpSliderAnimationSpeed.addKeyListener(this);
+		cpSliderForSteps.addKeyListener(this);
         
         //Controlpanel neu Zeichnen
         controlPanel.repaint();
@@ -527,28 +542,6 @@ public class ControlPanel implements ActionListener, KeyListener{
 	}
 	
 	/**
-	 * Fügt allen Objekten des Controlpanels ein KeyListener hinzu
-	 */
-	private void addKeyListenerToAll(){
-		cpButtonFillSphere.addKeyListener(this);
-		cpButtonSolve.addKeyListener(this);
-		cpButtonResetView.addKeyListener(this);
-		cpButtonAddOneStep.addKeyListener(this);
-		cpButtonSubOneStep.addKeyListener(this);
-		cpChangeEditor.addKeyListener(this);
-		cpChangeDev.addKeyListener(this);
-		cpLabelAnimationSpeed.addKeyListener(this);
-		cpLabelProgress.addKeyListener(this);
-		cpLabelSphereStepMax.addKeyListener(this);
-		cpLabelSphereStepNow.addKeyListener(this);
-		cpSepCamera.addKeyListener(this);
-		cpSepChangeWindow.addKeyListener(this);
-		cpSepSliders.addKeyListener(this);
-		cpSliderAnimationSpeed.addKeyListener(this);
-		cpSliderForSteps.addKeyListener(this);
-	}
-	
-	/**
 	 * Funktion zum wechseln des Anzeigemodus
 	 * @param mode
 	 */
@@ -684,8 +677,8 @@ public class ControlPanel implements ActionListener, KeyListener{
 		//Ist der Button zum start der Animation gedrückt?
         }else if (z.getSource() == cpButtonSolve){
         	
-        	//L als KeyBoard Input hinzufügen
-        	KeyboardMouseManager.pressedKey.add('l');
+        	//starte/stoppe Animation
+        	m.changeRunAnimationToEnd();
         	
         //Ist der Button zum übernehmen des DebuggingStrings gedrückt?
         }else if (z.getSource() == devButtonSphereDebugStringInput){
@@ -709,14 +702,14 @@ public class ControlPanel implements ActionListener, KeyListener{
         //Ist der Button zum im Lösungsweg einen Schritt weiter zu gehen gedrückt?	
         }else if (z.getSource() == cpButtonAddOneStep){
         	
-        	//X als KeyBoard Input hinzufügen
-			KeyboardMouseManager.pressedKey.add('x');
+        	//X zu Queue hinzufügen
+        	m.addToSolvingQueue('x');
         	
 		//Ist der Button zum im Lösungseg einen Schritt zurück zu gehen gedrückt?	
         }else if (z.getSource() == cpButtonSubOneStep){
         	
-        	//Y als KeyBoard Input hinzufügen
-        	KeyboardMouseManager.pressedKey.add('y');
+        	//X zu Queue hinzufügen
+        	m.addToSolvingQueue('y');
         	
         //Ist Im Editor die Farbe 0 ausgewählt?	
         }else if (z.getSource() == editButtonColor0){
@@ -793,20 +786,20 @@ public class ControlPanel implements ActionListener, KeyListener{
         //Ist der Button gedrück um in den Dev-Modus zu wechseln?        	
         }else if (z.getSource() == cpChangeDev || z.getSource() == editChangeDev){
         	
-        	//D als KeyBoard Input hinzufügen
-        	KeyboardMouseManager.pressedKey.add('d');
+        	//Zum Editor wechseln
+        	m.changeToMode(2);
         	
         //Ist der Button gedrückt um in den Editor-Modus zu wechseln?	
         }else if (z.getSource() == cpChangeEditor|| z.getSource() == devChangeEditor){
         	
-        	//E als KeyBoard Input hinzufügen
-        	KeyboardMouseManager.pressedKey.add('e');
+        	//Zum Editor wechseln
+        	m.changeToMode(3);
         	
         //Ist der Button gedrückt um in den Normalen-Modus zu wechseln?	
         }else if (z.getSource() == devChangeSphere|| z.getSource() == editChangeSphere){
         	
-        	//K als KeyBoard Input hinzufügen
-        	KeyboardMouseManager.pressedKey.add('k');
+        	//Zur Kugelansicht wechseln
+        	m.changeToMode(0);
         	
         }else if (z.getSource() == editViewSwitch2D){
         	

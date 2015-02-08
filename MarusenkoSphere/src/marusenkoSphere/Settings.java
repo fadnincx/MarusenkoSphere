@@ -36,5 +36,7 @@ public class Settings {
 	public static int MOUSESENSITIVE = 10;
 	
 	
-	
+	public static boolean debug(){
+		return DEBUGMODE;
+	}
 }

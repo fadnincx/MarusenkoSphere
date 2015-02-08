@@ -2,8 +2,6 @@ package marusenkoSphereGUI;
 
 import java.nio.FloatBuffer;
 
-import marusenkoSphere.Settings;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -171,51 +169,60 @@ public class CameraController {
 
 				//Normalisiere den Vektor
 				nowP.normalise();
+				startP.normalise();
 				
-				//Erstelle neuer Vektor Axis
-				Vector3f axis= new Vector3f();
-				
-				//Vektor Axis ist das Kreuzprodukt aus startP und nowP
-				Vector3f.cross(startP, nowP, axis);
-				
-				//Wenn axis eine Länge hat, dann normalisiere den Vektor
-				if(axis.length()>0){
-					axis.normalise();
+				if(nowP!=startP){
+					//Erstelle neuer Vektor Axis
+					Vector3f axis= new Vector3f();
+					
+					//Vektor Axis ist das Kreuzprodukt aus startP und nowP
+					Vector3f.cross(startP, nowP, axis);
+					
+					
+					//Wenn axis eine Länge hat, dann normalisiere den Vektor
+					if(axis.length()>0){
+						axis.normalise();
+						
+						//Das Punktprodukt aus den Vektoren startP und nowP
+						float dot = Vector3f.dot(startP, nowP);
+						
+						//Bekomme den Winkel und Multipliziere mit 2
+						float angle = (float) Math.acos(dot);
+						System.out.println(angle+", "+(angle/Math.PI)+", "+Math.toDegrees(angle));
+						if(angle>0){
+							//Erstelle neues Quaternion aus dem Vektor axis und dem Winkel angle
+							Quaternion q_rot = new Quaternion(
+									(float) (axis.x*Math.sin(angle)), 
+									(float) (axis.y*Math.sin(angle)), 
+									(float) (axis.z*Math.sin(angle)), 
+									(float) (Math.cos(angle))
+											);
+							
+							//Multipliziere das bereits bestehende Quaternion mit dem neuen Quaternion um die gesammt drehung zu erhalten
+							Quaternion.mul(quatStart, q_rot, quat);
+							
+							//Setzte neues Start Quaternion
+							quatStart = quat;
+							
+							
+							
+							//Erstelle Matrix rotation aus dem Quaternion quat
+							Matrix4f rotation = QuaternionToMatrix4f(quat);
+							
+							//Initialisiere den FloatBuffer neu
+							fb = BufferUtils.createFloatBuffer(16);
+							
+							//Speichere die Matrix rotation im FloatBuffer und zurück auf 0
+							rotation.store(fb);
+							fb.flip();
+						}else{
+							System.out.println("Stoped");
+						}
+						
+						
+					}
+					
 				}
-				
-				//Das Punktprodukt aus den Vektoren startP und nowP
-				float dot = Vector3f.dot(startP, nowP);
-				
-				//Bekomme den Winkel und Multipliziere mit 2
-				float angle = (float) Math.acos(Math.toRadians(dot))*(Settings.MOUSESENSITIVE)/10;
-				
-				//System.out.println(angle);
-				
-				//Erstelle neues Quaternion aus dem Vektor axis und dem Winkel angle
-				Quaternion q_rot = new Quaternion(
-						(float) (axis.x*Math.sin(Math.toRadians(angle))), 
-						(float) (axis.y*Math.sin(Math.toRadians(angle))), 
-						(float) (axis.z*Math.sin(Math.toRadians(angle))), 
-						(float) (Math.cos(Math.toRadians(angle)))
-								);
-				
-				//Multipliziere das bereits bestehende Quaternion mit dem neuen Quaternion um die gesammt drehung zu erhalten
-				Quaternion.mul(quatStart, q_rot, quat);
-				
-				//Setzte neues Start Quaternion
-				quatStart = quat;
-				
-				
-				
-				//Erstelle Matrix rotation aus dem Quaternion quat
-				Matrix4f rotation = QuaternionToMatrix4f(quat);
-				
-				//Initialisiere den FloatBuffer neu
-				fb = BufferUtils.createFloatBuffer(16);
-				
-				//Speichere die Matrix rotation im FloatBuffer und zurück auf 0
-				rotation.store(fb);
-				fb.flip();
 				
 				//Wende FloatBuffer auf die Szene an
 				GL11.glMultMatrix(fb);
