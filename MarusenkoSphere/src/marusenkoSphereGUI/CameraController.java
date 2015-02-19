@@ -2,6 +2,8 @@ package marusenkoSphereGUI;
 
 import java.nio.FloatBuffer;
 
+import marusenkoSphere.Log;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -153,10 +155,11 @@ public class CameraController {
 			//Setze reset = false
 			reset = false;
 
-		}else
-			
+		}else	
 		//Wenn Maus gedrückt
 		if(Mouse.isButtonDown(0)){
+			
+			
 			
 			//Wenn Click = true
 			if(click){
@@ -166,7 +169,7 @@ public class CameraController {
 				
 				//Speichere die Mauskoordinaten als Vector3f
 				nowP =new Vector3f((float) mousePosIn3D[0],(float)mousePosIn3D[1],(float)mousePosIn3D[2]);
-
+				Log.DebugLog("Click"+Mouse.getX()+","+Mouse.getY());
 				//Normalisiere den Vektor
 				nowP.normalise();
 				startP.normalise();
@@ -241,7 +244,7 @@ public class CameraController {
 				
 				//Speichere die Koordinaten als Vector3f
 				startP =new Vector3f((float) mousePosIn3D[0],(float)mousePosIn3D[1],(float)mousePosIn3D[2]);
-				
+				Log.DebugLog("NClick"+Mouse.getX()+","+Mouse.getY());
 				//Normalisiere den Vektor
 				startP.normalise();
 				
@@ -324,6 +327,8 @@ public class CameraController {
 			
 		//Wenn nichts an der Kamera verändert werden soll	
 		}else{
+			Log.DebugLog("Nothing"+Mouse.getX()+","+Mouse.getY());
+			
 			
 			//Setzte Klick = false
 			click = false;

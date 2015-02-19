@@ -17,7 +17,6 @@ public class KeyboardMouseManager {
 	private static int lastX;
 	private static int lastY;
 	private static boolean last = false;
-	
 	/**
 	 * Wird aufgerufen um den Input zu überprüfen
 	 */
@@ -300,14 +299,16 @@ public class KeyboardMouseManager {
 	    }else
 	    //Wenn 3D-Editor angezeigt wird
 	    if(m.getDisplayMode() == 3){
+	    	
 	    	if(Mouse.isButtonDown(0)){
 	    		
 	    		if(!last){
 	    			last = true;
 	    			lastX = Mouse.getX();
 			    	lastY = Mouse.getY();
+			    	//Log.DebugLog("Do Editor...");
 	    		}
-    			
+	    		
 	    	}else{
 	    		if(last){
 	    			if(lastX==Mouse.getX()&&lastY==Mouse.getY()){
@@ -333,5 +334,6 @@ public class KeyboardMouseManager {
 	    }
 	
 	}
+	
 
 }

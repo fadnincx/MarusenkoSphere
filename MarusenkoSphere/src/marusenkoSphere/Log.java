@@ -94,7 +94,7 @@ public class Log {
 		}
 		
 		//Datum generieren
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
 		Date date = new Date();
 		
 		//Vor die Ausgabe Datum hängen

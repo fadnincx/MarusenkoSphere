@@ -20,7 +20,7 @@ public class Settings {
 	public static final boolean STARTKONSOLE = false;
 
 	//Log
-	public static final String LOGPATH = "D:/marusenkoLog";
+	public static final String LOGPATH = "F:/marusenkoLog";
 	
 	//Kugel
 	public static final boolean PRINTSPHERECODE = false;
