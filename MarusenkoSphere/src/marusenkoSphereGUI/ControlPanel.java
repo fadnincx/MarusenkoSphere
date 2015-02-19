@@ -555,7 +555,18 @@ public class ControlPanel implements ActionListener, KeyListener{
 		//Setze entsprechendes Fenster auf sichtbar
 		//Controlpanel ist default anstelle 0, damit sicher immer ein Fenster angezeigt wird...
 		switch(mode){
-			case 1:case 3:
+			case 1:
+	        	editViewSwitch3D.setSelected(false);
+	        	editViewSwitch2D.setEnabled(false);
+	        	editViewSwitch3D.setEnabled(true);
+	        	editButtonResetView.setEnabled(false);
+	        	editorPanel.setVisible(true);
+				break;
+			case 3:
+	        	editViewSwitch2D.setSelected(false);
+	        	editViewSwitch3D.setEnabled(false);
+	        	editViewSwitch2D.setEnabled(true);
+	        	editButtonResetView.setEnabled(true);
 				editorPanel.setVisible(true);
 				break;
 			case 2:
@@ -807,13 +818,14 @@ public class ControlPanel implements ActionListener, KeyListener{
         	editViewSwitch3D.setSelected(false);
         	editViewSwitch2D.setEnabled(false);
         	editViewSwitch3D.setEnabled(true);
-        	
+        	editButtonResetView.setEnabled(false);
         }else if (z.getSource() == editViewSwitch3D){
         	
         	m.changeToMode(3);
         	editViewSwitch2D.setSelected(false);
         	editViewSwitch3D.setEnabled(false);
         	editViewSwitch2D.setEnabled(true);
+        	editButtonResetView.setEnabled(true);
         }else if (z.getSource() == editLevel1){
         	m.setToLevel(1);
         }else if (z.getSource() == editLevel2){

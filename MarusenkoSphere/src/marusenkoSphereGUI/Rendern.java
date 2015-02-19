@@ -3,6 +3,9 @@ package marusenkoSphereGUI;
 import java.awt.Canvas;
 import java.awt.Color;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import marusenkoSphere.Settings;
 import marusenkoSphereKugel.Kugel;
 
@@ -226,7 +229,6 @@ public class Rendern {
 	    	//dargestellt werden kann
 	    		
 	        DisplayMode d[] = Display.getAvailableDisplayModes();
-	        
 	        //Suche den richtigen Modus richtige heraus    
 	        
 	        //Bevorzuge 32Bit farbtiefe
@@ -292,10 +294,10 @@ public class Rendern {
 			
 			//Canvas sichtbar machen
 	        canvas.setVisible(true);
-	        
+	        m.mainFrame.setVisible(true);
 	        //Canvas als LWJGL Parent setzen
 	        Display.setParent(canvas);
-       
+	        m.mainFrame.setVisible(false);
 	        //Erstelle Fenster mit den voreingestellten Einstellungen
 	        try{
 	        	
@@ -317,8 +319,18 @@ public class Rendern {
     		
     		//Wenn Fehler beim Initialisieren des Fensters passiert, dann sofort Programm beenden
     		e.printStackTrace();
+    		
+    		String message = "MarusenkoSphere konnte nicht gestartet werden, weil die entsprechenden Grafiktreiber fehlen!!!";
+    		    JOptionPane.showMessageDialog(new JDialog(), message, "Error",
+    		        JOptionPane.ERROR_MESSAGE);
     		System.exit(0);
     		
+    	}catch(NullPointerException e){
+    		e.printStackTrace();
+    		String message = "MarusenkoSphere konnte nicht gestartet werden, weil die entsprechenden Grafiktreiber fehlen!!!";
+		    JOptionPane.showMessageDialog(new JDialog(), message, "Error",
+		        JOptionPane.ERROR_MESSAGE);
+		    System.exit(0);
     	}
     	
     	lastFPS = getTime();

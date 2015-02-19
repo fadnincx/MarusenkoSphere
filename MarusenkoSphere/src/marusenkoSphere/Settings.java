@@ -20,7 +20,7 @@ public class Settings {
 	public static final boolean STARTKONSOLE = false;
 
 	//Log
-	public static final String LOGPATH = "F:/marusenkoLog";
+	public static final String LOGPATH = "D:/marusenkoLog";
 	
 	//Kugel
 	public static final boolean PRINTSPHERECODE = false;
@@ -31,10 +31,6 @@ public class Settings {
 	//Controlpanel
 	public static final int VERSCHIEBEFENSTERX = 165;
 	public static final int VERSCHIEBEFENSTERY = -245;
-	
-	//Mouse
-	public static int MOUSESENSITIVE = 10;
-	
 	
 	public static boolean debug(){
 		return DEBUGMODE;

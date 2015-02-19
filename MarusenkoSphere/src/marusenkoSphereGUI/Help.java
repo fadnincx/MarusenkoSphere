@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
+import marusenkoSphere.Settings;
+
 /**
  * Zeigt das HelpCenter an
  */
@@ -58,7 +60,7 @@ public class Help extends JPanel{
 	private void createAndShowGUI(int tab) throws IOException {
 		
         //Erstelle Fenster
-        JFrame frame = new JFrame("MarusenkoSphere Hilfecenter");
+        JFrame frame = new JFrame(Settings.TITEL+" - Hilfecenter");
         
         Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
         
@@ -134,26 +136,26 @@ public class Help extends JPanel{
 	         
 	        
 	        //Erstelle das dritte Panel
-	        JComponent panel3 = createImgTab("/helpCenterPages/helpKamera.png");
+	        JComponent panel3 = createImgTab("/helpCenterPages/helpEditor.png");
 	        
 	        //Setze die bevorzugte Grösse des Tabs
 	        panel3.setPreferredSize(new Dimension(640, 480));
 	        
 	        //Füge das Panel mit Titel, Icon und ToolTip dem TabbedPane hinzu
-	        tabbedPane.addTab("Kamera", icon, panel3, "Hilfe zur Kamera");
+	        tabbedPane.addTab("Editor", icon, panel3, "Hilfe für den Editor");
 	        
 	        //Setze so, dass darauf gewechselt werde kann
 	        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 	         
 	        
 	        //Erstelle das vierte Panel
-	        JComponent panel4 = createImgTab("/helpCenterPages/helpEditor.png");
+	        JComponent panel4 = createImgTab("/helpCenterPages/helpEditorPanel.png");
 	        
 	        //Setze die bevorzugte Grösse des Tabs
 	        panel4.setPreferredSize(new Dimension(640, 480));
 	        
 	        //Füge das Panel mit Titel, Icon und ToolTip dem TabbedPane hinzu
-	        tabbedPane.addTab("Editor", icon, panel4, "Hilfe für den Editor");
+	        tabbedPane.addTab("Editorpanel", icon, panel4, "Hilfe für das Editorpanel");
 	        
 	        //Setze so, dass darauf gewechselt werde kann
 	        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
