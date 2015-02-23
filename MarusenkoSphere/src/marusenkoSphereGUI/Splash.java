@@ -20,8 +20,10 @@ public class  Splash{
 	//Fenster
 	private JFrame frame;
 	
-	//Veriable um zu prüfen, ob Splash schon geschlossen wurde
+	//Variable um zu prüfen, ob Splash schon geschlossen wurde
 	private volatile static boolean closed = true;
+	
+	private volatile static boolean askClosed = true;
 	
 	//Fortschrittsbar
 	private JProgressBar bar;
@@ -30,6 +32,7 @@ public class  Splash{
 		
 		//Zuerst sagen, dass Splash läuft
 		closed = false;
+		askClosed = false;
 		
 		//Lade das BIld
 		ImageIcon img = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/splash.png"))).getImage().getScaledInstance(640, 400, Image.SCALE_SMOOTH));
@@ -44,7 +47,7 @@ public class  Splash{
 		frame.setIconImage(icon);
 
 		//Erstelle die Fortschrittsbar
-		bar= new JProgressBar(0,3000);
+		bar= new JProgressBar(0,2000);
 		
 		//Setzte Fortschritt auf 0
 		bar.setValue(0);
@@ -103,29 +106,41 @@ public class  Splash{
 			//Run Methode
 		    public void run(){
 		    	
-		    	//Startzeit in Millisekunden speichern
+		    	int wert = 0;
 		    	long startTime = System.currentTimeMillis();
-		  		
-		    	//Schlaufe bis 3s vorbei sind
-		  		while(System.currentTimeMillis()-startTime<3000){
+		    	
+		    	while(wert<2000){
+		    		//Die vergangene Zeit speichern
+		  			wert  = (int) (System.currentTimeMillis()-startTime);	
 		  			
-		  			//Die vergangene Zeit speichern
-		  			int wert = (int) (System.currentTimeMillis()-startTime);
+		  			if(wert>1800&&!askClosed){
+		  				wert = 1800;
+		  			}
+		  			
 		  			
 		  			//Neuer Wert im Ladebalken setzten
 		  			bar.setValue(wert);
 		  			
 		  			//Verschiedene Texte anzeigen
-		  			if(wert>2000){
-		  				bar.setString("Starte Lösungsalgorithmen");
+		  			if(wert>1800){
+		  				bar.setString("Starte GUI");
 		  			}else
-		  			if(wert>1000){
-		  				bar.setString("Starte LWJGL");
+		  			if(wert>1500){
+		  				bar.setString("Initialisiere Lösungsalgorithmen");
+		  			}else
+		  			if(wert>1200){
+		  				bar.setString("Initialisiere OpenGL");
+		  			}else
+		  			if(wert>800){
+		  				bar.setString("Initialisiere Fenster");
+		  			}else
+		  			if(wert>400){
+		  				bar.setString("Initialisiere Kugel");
 		  			}else{
 		  				bar.setString("Starte Java");
 		  			}
 		  			
-		  		}
+		    	}
 		  		
 		  		//Nach dieser Zeit 
 		  		//Fenster schliessen
@@ -141,6 +156,7 @@ public class  Splash{
 	
 	//Funktion ob Splash schon geschlossen wurde
 	public static boolean isClose(){
+		askClosed = true;
 		return closed;
 	}
 }

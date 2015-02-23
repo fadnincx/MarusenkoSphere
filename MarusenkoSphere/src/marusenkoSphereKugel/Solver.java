@@ -103,6 +103,7 @@ public class Solver {
 
 			//Entferne unnötige Schritte
 			RemoveUnusedSteps(AL);
+			RemoveUnusedSteps(AL);
 			
 			//Wenn Kugel nicht gelöst, dann ist es sicher nicht der schnellste Algorithmus
 			if(!SolveCheck.isKugelSolved(k)){
@@ -1400,22 +1401,21 @@ public class Solver {
 			//Gehe für jede Position durch
 			for(int i = 0; i<arrayList.size()-2;i++){
 				
-				//Speichere den aktuellen Zustand der Kugel
-				String sphere = SphereUtils.getPureSphereCode(arrayList.get(i));
-				
 				//Gehe jeden Status bis ans ende der Kugel durch
-				for(int j = i+1; j<arrayList.size()-1;j++){
+				for(int j = arrayList.size()-1; j>i;j-=1){
 					
 					//Wenn die Kugel nochmals genau gleich ist
-					if(sphere==SphereUtils.getPureSphereCode(arrayList.get(j))){
-						
+					if(SphereUtils.getPureSphereCode(arrayList.get(i))==SphereUtils.getPureSphereCode(arrayList.get(j))){
+						System.out.println("Gleich\n");
 						//Gehe für alle Schritte retour zurück
 						for(int l = j; l>i; l--){
 							
 							//Entferne diese Schritte
 							arrayList.remove(l);
-							
+						
 						}
+						
+						i=0;
 						
 					}
 					
@@ -1477,6 +1477,7 @@ public class Solver {
 				
 				
 			}
+			
 		}
 		
 		//Gib arraylist zurück
