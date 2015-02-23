@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 public class Settings {
 	
 	//Allgemein
-	public static final boolean DEBUGMODE = false;
+	public static final boolean DEBUGMODE = true;
 	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
 	public static final boolean KIOSKMODE = false;
 	public static final String TITEL = "MarusenkoSphere";

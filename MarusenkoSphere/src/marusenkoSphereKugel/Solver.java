@@ -1464,7 +1464,19 @@ public class Solver {
 				}
 				
 			}
-			
+			//Gehe für jede Position durch
+			for(int i = 0; i<arrayList.size()-2;i++){
+				
+				//Speichere den aktuellen Zustand der Kugel
+				int[] drehung = SphereUtils.getDrehungFromStringAsIntArray(arrayList.get(i));
+				
+				
+				if(drehung[1]==0){
+					arrayList.remove(i);
+				}
+				
+				
+			}
 		}
 		
 		//Gib arraylist zurück
