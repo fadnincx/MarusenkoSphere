@@ -21,6 +21,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 
 import marusenkoSphere.Settings;
 import marusenkoSphereKugel.ImportExportSphere;
@@ -188,7 +189,8 @@ public class Manager {
 	}
 	
 	private void initMainFrame() throws IOException{
-		mainFrame = new JFrame("MarusenkoSphere");
+		//mainFrame = new JFrame(Settings.TITEL);
+		mainFrame = new JFrame();
 		
 		//Lade das Icon
 		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
@@ -276,14 +278,18 @@ public class Manager {
 				//Erstellle einen Dateidialog
 				JFileChooser chooser;
 				
-				//Verzeichnis
-			    String pfad = System.getProperty("user.home");
-			    
-			    //Datei die gefählt wird
-			    File file = new File(pfad.trim());
+				
+			    //FileSystemView erstellen
+				FileSystemView file = FileSystemView.getFileSystemView();
+				
+				//Wenn gewollt, Ordner einschränken
+				if(Settings.RESTRICTEDFILEMODE){
+					  file = new DirectoryRestrictedFileSystemView(new File("D:\\MarusenkoSphere"));
+    
+				}
 
-			    //Der Dateidialog initialisieren
-			    chooser = new JFileChooser(pfad){
+				//Der Dateidialog initialisieren
+			    chooser = new JFileChooser(file){
 					private static final long serialVersionUID = 7625169427404387627L;
 
 					//Bei auswahl
@@ -342,7 +348,7 @@ public class Manager {
 			    if (result == JFileChooser.APPROVE_OPTION) {
 
 			    	//Bekomme den Speicherort
-			    	pfad = chooser.getSelectedFile().toString();
+			    	String pfad = chooser.getSelectedFile().toString();
 			    	
 			    	//Sofern die Datei nicht mit ".mssf" endet Endung hinzufügen
 			        if (!pfad.endsWith(".mssf")){
@@ -350,13 +356,13 @@ public class Manager {
 			        }
 			        
 			        //Datei anlegen
-		         	file = new File(pfad);
+		         	File sfile = new File(pfad);
 		         	
 		         	//Soferndateiendung Erlaubt ist, sollte der Fall sein speichern 
-		            if (Filter.accept(file)){
+		            if (Filter.accept(sfile)){
 		            	
 		            	//Speichere die Kugel
-		            	ImportExportSphere.save(file, k);
+		            	ImportExportSphere.save(sfile, k);
 		            }else{
 		            	String message = "Kugel konnte nicht als Datei gespeichert werden";
 		    		    JOptionPane.showMessageDialog(new JDialog(), message, "Error",
@@ -384,13 +390,18 @@ public class Manager {
 				//Erstellle einen Dateidialog
 				JFileChooser chooser;
 			    
-				//Verzeichnis
-				String pfad = System.getProperty("user.home");
-				//Datei die gefählt wird
-			    File file = new File(pfad.trim());
+				//FileSystemView erstellen
+				FileSystemView file = FileSystemView.getFileSystemView();
+				
+				//Wenn gewollt, Ordner einschränken
+				if(Settings.RESTRICTEDFILEMODE){
+					  file = new DirectoryRestrictedFileSystemView(new File("D:\\MarusenkoSphere"));
+    
+				}
+
 
 			    //Der Dateidialog initialisieren
-			    chooser = new JFileChooser(pfad);
+			    chooser = new JFileChooser(file);
 			    
 			    //Der Dateidialog soll Öffnen
 			    chooser.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -417,16 +428,16 @@ public class Manager {
 			    if (result == JFileChooser.APPROVE_OPTION) {
 
 			    	//Bekomme den Speicherort
-			    	pfad = chooser.getSelectedFile().toString();
+			    	String pfad = chooser.getSelectedFile().toString();
 
 			    	//Datei anlegen
-		         	file = new File(pfad);
+		         	File sfile = new File(pfad);
 		         	
 		         	//Soferndateiendung Erlaubt ist, sollte der Fall sein speichern 
-		            if (Filter.accept(file)){
+		            if (Filter.accept(sfile)){
 		            	
 		            	//Öffne die Datei
-		            	ImportExportSphere.open(file, k);
+		            	ImportExportSphere.open(sfile, k);
 		            	
 		            	//Aktuallisiere das Controlpanel
 		            	updateControlpanelInformations();
@@ -459,7 +470,10 @@ public class Manager {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//Programm beenden
-				System.exit(0);
+				if(Settings.close()!=JFrame.DO_NOTHING_ON_CLOSE){
+					System.exit(0);
+				}
+				
 			}
 		});
 		

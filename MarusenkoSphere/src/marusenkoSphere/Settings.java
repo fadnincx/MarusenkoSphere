@@ -16,6 +16,7 @@ public class Settings {
 	public static final boolean KIOSKMODE = false;
 	public static final boolean TOUCHMODE = true;
 	public static final String TITEL = "MarusenkoSphere";
+	public static final boolean RESTRICTEDFILEMODE = false;
 	
 	//Main
 	public static final boolean STARTKONSOLE = false;
@@ -24,16 +25,16 @@ public class Settings {
 	public static final String LOGPATH = "D:/marusenkoLog";
 	
 	//Kugel
-	public static final boolean PRINTSPHERECODE = true;
+	public static final boolean PRINTSPHERECODE = false;
 	
 	//RendernKugel
 	public static final int KUGELRENDERRASTER = 10; //Nur 1, 2, 5, 10
 	
-	//Controlpanel
-	public static final int VERSCHIEBEFENSTERX = 165;
-	public static final int VERSCHIEBEFENSTERY = -245;
 	
 	public static boolean debug(){
 		return DEBUGMODE;
+	}
+	public static int close(){
+		return SETCLOSE;
 	}
 }

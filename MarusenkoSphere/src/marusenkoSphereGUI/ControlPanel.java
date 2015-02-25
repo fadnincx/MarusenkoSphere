@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -97,6 +98,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 	private Color color5 = Rendern.getColorColor(5);
 	private Color color6 = Rendern.getColorColor(6);
 	private Color color7 = Rendern.getColorColor(7);
+	
 	
 	private JButton editLevel1 = new JButton();
 	private JButton editLevel2 = new JButton();
@@ -404,6 +406,17 @@ public class ControlPanel implements ActionListener, KeyListener{
 			editButtonColor5.setBounds(170, 140, 150, 60);
 			editButtonColor6.setBounds(20, 200, 150, 60);
 			editButtonColor7.setBounds(170, 200, 150, 60);
+			
+			editButtonColor0.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor1.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor2.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor3.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor4.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor5.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor6.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor7.setBorder(BorderFactory.createEmptyBorder());
+			
+			
 		}else{
 			//Den farbigen Buttons die Position und Grösse zuweisen
 			editButtonColor0.setBounds(20, 20, 150, 20);
@@ -564,26 +577,19 @@ public class ControlPanel implements ActionListener, KeyListener{
 	protected int getClickedButton(MouseEvent m){
 		if(m.getSource()==editButtonColor0){
 			return 0;
-		}else
-		if(m.getSource()==editButtonColor1){
+		}else if(m.getSource()==editButtonColor1){
 			return 1;
-		}else
-		if(m.getSource()==editButtonColor2){
+		}else if(m.getSource()==editButtonColor2){
 			return 2;
-		}else
-		if(m.getSource()==editButtonColor3){
+		}else if(m.getSource()==editButtonColor3){
 			return 3;
-		}else
-		if(m.getSource()==editButtonColor4){
+		}else if(m.getSource()==editButtonColor4){
 			return 4;
-		}else
-		if(m.getSource()==editButtonColor5){
+		}else if(m.getSource()==editButtonColor5){
 			return 5;
-		}else
-		if(m.getSource()==editButtonColor6){
+		}else if(m.getSource()==editButtonColor6){
 			return 6;
-		}else
-		if(m.getSource()==editButtonColor7){
+		}else if(m.getSource()==editButtonColor7){
 			return 7;
 		}else{
 			return -1;

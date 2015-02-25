@@ -1,7 +1,13 @@
 package marusenkoSphereGUI;
 
+import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Robot;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 
 import marusenkoSphere.Settings;
 
@@ -22,6 +28,7 @@ public class KeyboardMouseManager implements MouseListener{
 	private static boolean last = false;
 	private Manager m;
 	private ControlPanel cp;
+	private Color borderColor = new Color(0f,0f,0f);
 	public KeyboardMouseManager(Manager m, ControlPanel cp){
 		this.cp = cp;
 		this.m = m;
@@ -268,23 +275,93 @@ public class KeyboardMouseManager implements MouseListener{
 		    
 		    }
 		    
-	    }/*else
-
-	    //Wenn der 2D-Editor angezeigt wird
-	    if(m.getDisplayMode() == 1){
-
-	    	
-	    	
-	    	
-	    	//Wenn links Klick aus geführt wird
-	    	if(Mouse.isButtonDown(0)){
-	    		
-	    		//Speichere die x und y Koordinate der Maus im Fenster
-		    	int x = Mouse.getX();
-		    	int y = Mouse.getY();
-	    		
+	    }else{
+		    if(!Settings.TOUCHMODE){
+	
+		    	//Wenn der 2D-Editor angezeigt wird
+		    	if(m.getDisplayMode() == 1){
+	
+		    		//Wenn links Klick aus geführt wird
+		    		if(Mouse.isButtonDown(0)){
+		    		
+			    		//Speichere die x und y Koordinate der Maus im Fenster
+				    	int x = Mouse.getX();
+				    	int y = Mouse.getY();
+			    		
+			    		//Bekomme die Koordinaten der Maus im 3Dimensionalen System
+			    		double[] mousePosIn3D = Editor.MouseIn3D(x,y);
+			    		
+			    		//Wenn die Tiefe Z <= 4 ist, dann ist dort ein Objekt--> also Muss Aktion statt finden
+			    		if(mousePosIn3D[2]<=4){
+			    			
+			    			//Objekt auf welchem die Maus ist
+			    			int objekt = Editor.onWhichField(mousePosIn3D[0],mousePosIn3D[1]);
+			    			
+			    			//Wenn objekt < 24 ist, dann ist es ein Dreieck sonst ein Verbindungsstück
+			    					
+			    			if(objekt>=0&&objekt<24){
+			    
+			    				m.editSphereTri(objekt);
+			    			
+			    			}else
+			    			if(objekt>=0&&objekt<32){
+			    			
+			    				m.editSphereCon(objekt-24);
+			    			
+			    			}
+	
+			    		}
+		    	
+		    		}
+		    
+		    	}else
+			    //Wenn 3D-Editor angezeigt wird
+			    if(m.getDisplayMode() == 3){
+			    	
+			    	if(Mouse.isButtonDown(0)){
+			    		
+			    		if(!last){
+			    			last = true;
+			    			lastX = Mouse.getX();
+					    	lastY = Mouse.getY();
+					    	//Log.DebugLog("Do Editor...");
+			    		}
+			    		
+			    	}else{
+			    		if(last){
+			    			if(lastX==Mouse.getX()&&lastY==Mouse.getY()){
+			    				//Bekomme die Koordinaten der Maus im 3Dimensionalen System
+			    	    		double[] mousePosIn3D = Editor.MouseIn3D(lastX,lastY);
+			    	    		position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
+			        			//System.out.println(position);	
+			        			
+			        			if(position>=0&&position<24){
+			        
+			        				m.editSphereTri(position);
+			        			
+			        			}else
+			        			if(position>=30&&position<38){
+			        			
+			        				m.editSphereCon(position-30);
+			        			
+			        			}
+			    			}
+			    		}
+			    		last = false;
+			    	}
+			    }
+		    }
+	    }
+	
+	}
+	protected static void mousePosition(Manager m){
+		if(Settings.TOUCHMODE){
+		
+			//Wenn der 2D-Editor angezeigt wird
+		    if(m.getDisplayMode() == 1){
+	    		//System.out.println(Mouse.getX()+","+Mouse.getY());
 	    		//Bekomme die Koordinaten der Maus im 3Dimensionalen System
-	    		double[] mousePosIn3D = Editor.MouseIn3D(x,y);
+	    		double[] mousePosIn3D = Editor.MouseIn3D(Mouse.getX(),Mouse.getY());
 	    		
 	    		//Wenn die Tiefe Z <= 4 ist, dann ist dort ein Objekt--> also Muss Aktion statt finden
 	    		if(mousePosIn3D[2]<=4){
@@ -304,104 +381,41 @@ public class KeyboardMouseManager implements MouseListener{
 	    				m.editSphereCon(objekt-24);
 	    			
 	    			}
-
-	    		}
-	    	
-	    	}
-	    
-	    }else
-	    //Wenn 3D-Editor angezeigt wird
-	    if(m.getDisplayMode() == 3){
-	    	
-	    	if(Mouse.isButtonDown(0)){
-	    		
-	    		if(!last){
-	    			last = true;
-	    			lastX = Mouse.getX();
-			    	lastY = Mouse.getY();
-			    	//Log.DebugLog("Do Editor...");
-	    		}
-	    		
-	    	}else{
-	    		if(last){
-	    			if(lastX==Mouse.getX()&&lastY==Mouse.getY()){
-	    				//Bekomme die Koordinaten der Maus im 3Dimensionalen System
-	    	    		double[] mousePosIn3D = Editor.MouseIn3D(lastX,lastY);
-	    	    		position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
-	        			//System.out.println(position);	
-	        			
-	        			if(position>=0&&position<24){
-	        
-	        				m.editSphereTri(position);
-	        			
-	        			}else
-	        			if(position>=30&&position<38){
-	        			
-	        				m.editSphereCon(position-30);
-	        			
-	        			}
-	    			}
-	    		}
-	    		last = false;
-	    	}
-	    }*/
 	
-	}
-	protected static void mousePosition(Manager m){
-		//Wenn der 2D-Editor angezeigt wird
-	    if(m.getDisplayMode() == 1){
-    		System.out.println(Mouse.getX()+","+Mouse.getY());
-    		//Bekomme die Koordinaten der Maus im 3Dimensionalen System
-    		double[] mousePosIn3D = Editor.MouseIn3D(Mouse.getX(),Mouse.getY());
-    		
-    		//Wenn die Tiefe Z <= 4 ist, dann ist dort ein Objekt--> also Muss Aktion statt finden
-    		if(mousePosIn3D[2]<=4){
-    			
-    			//Objekt auf welchem die Maus ist
-    			int objekt = Editor.onWhichField(mousePosIn3D[0],mousePosIn3D[1]);
-    			
-    			//Wenn objekt < 24 ist, dann ist es ein Dreieck sonst ein Verbindungsstück
-    					
-    			if(objekt>=0&&objekt<24){
-    
-    				m.editSphereTri(objekt);
-    			
-    			}else
-    			if(objekt>=0&&objekt<32){
-    			
-    				m.editSphereCon(objekt-24);
-    			
-    			}
-
-	    	
-	    	}
-	    
-	    }else
-	    //Wenn 3D-Editor angezeigt wird
-	    if(m.getDisplayMode() == 3){
-	    	
-	    	System.out.println(Mouse.getX()+","+Mouse.getY());
-			
-			//Bekomme die Koordinaten der Maus im 3Dimensionalen System
-    		double[] mousePosIn3D = Editor.MouseIn3D(Mouse.getX(), Mouse.getY());
-    		position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
-			//System.out.println(position);	
-			
-			if(position>=0&&position<24){
-
-				m.editSphereTri(position);
-			
-			}else
-			if(position>=30&&position<38){
-			
-				m.editSphereCon(position-30);
-			
+		    	
+		    	}
+		    
+		    }else
+		    //Wenn 3D-Editor angezeigt wird
+		    if(m.getDisplayMode() == 3){
+		    	
+		    //	System.out.println(Mouse.getX()+","+Mouse.getY());
+				
+				//Bekomme die Koordinaten der Maus im 3Dimensionalen System
+	    		double[] mousePosIn3D = Editor.MouseIn3D(Mouse.getX(), Mouse.getY());
+	    		position = Editor.positionOnSphere(mousePosIn3D[0], mousePosIn3D[1], mousePosIn3D[2]);
+				//System.out.println(position);	
+				
+				if(position>=0&&position<24){
+	
+					m.editSphereTri(position);
+				
+				}else
+				if(position>=30&&position<38){
+				
+					m.editSphereCon(position-30);
+				
+				}
+				
+		    	
+		    }	
+		   // Mouse.setCursorPosition(lastX, lastY);
+		    try {
+				new Robot().mouseMove(lastX, lastY);
+			} catch (AWTException e) {
+				e.printStackTrace();
 			}
-			
-	    	
-	    }	
-	    Mouse.setCursorPosition(0, 0);
-	    
+		}
 	}
 	@Override
 	public void mouseClicked(MouseEvent me) {}
@@ -414,16 +428,16 @@ public class KeyboardMouseManager implements MouseListener{
 		Manager.mouseDown = true;	
 		m.changeSelectedColor(cp.getClickedButton(me));
 		cp.updateSelectedPosition();
-		System.out.println("Cli");
-		
+		lastX = me.getXOnScreen();
+		lastY = me.getYOnScreen();
+		((JButton) me.getSource()).setBorder(BorderFactory.createLineBorder(borderColor, 3));
 	}
 	@Override
 	public void mouseReleased(MouseEvent me) {
 		Manager.mouseDown = false;
 		Manager.requestMousePosition = true;
-		System.out.println("cked");
-
+		((JButton) me.getSource()).setBorder(BorderFactory.createEmptyBorder());
 	}
-	
 
+	
 }
