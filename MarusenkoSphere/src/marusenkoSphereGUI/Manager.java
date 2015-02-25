@@ -2,9 +2,11 @@ package marusenkoSphereGUI;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -189,8 +191,8 @@ public class Manager {
 	}
 	
 	private void initMainFrame() throws IOException{
-		//mainFrame = new JFrame(Settings.TITEL);
-		mainFrame = new JFrame();
+		mainFrame = new JFrame(Settings.TITEL);
+		//mainFrame = new JDialog();
 		
 		//Lade das Icon
 		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
@@ -213,6 +215,9 @@ public class Manager {
 		//Setzte Layout = null
 		mainFrame.setLayout(null);
 		
+	/*	mainFrame.getContentPane().setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
+				new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "blank cursor"));
+		*/
 		//Initialisiere die Menubar
 		initMenuBar();
 		

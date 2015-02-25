@@ -13,10 +13,10 @@ public class Settings {
 	//Allgemein
 	public static final boolean DEBUGMODE = false;
 	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
-	public static final boolean KIOSKMODE = false;
+	public static final boolean KIOSKMODE = true;
 	public static final boolean TOUCHMODE = true;
 	public static final String TITEL = "MarusenkoSphere";
-	public static final boolean RESTRICTEDFILEMODE = false;
+	public static final boolean RESTRICTEDFILEMODE = true;
 	
 	//Main
 	public static final boolean STARTKONSOLE = false;
