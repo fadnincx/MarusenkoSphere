@@ -79,7 +79,7 @@ public class Manager {
 	private int displayMode = 0; 
 	
 	//Gibt an, welche Farbe im Editor ausgewählt ist
-	private int selectedColor = 0;
+	private volatile int selectedColor = 0;
 	
 	//Gibt den die Animationsgeschwindigkeit an
 	private static double animationSpeed = 1.0;
@@ -103,7 +103,8 @@ public class Manager {
 	//Pfeil ID
 	private int pfeilID = -1;
 	
-	
+	public static volatile boolean mouseDown = false;
+	public static volatile boolean requestMousePosition = false;
 	
 	/**
 	 * Manager zum Lösen Verwalten der GUI und lösen der Kugel
@@ -148,6 +149,8 @@ public class Manager {
 		//Beende das Initialisieren des Hauptfensterns
 		initMainFrameEnd();
 	
+		//Display.getInstange().isTouchscreenDevice();
+		
 		//Methode loop starten
 		loop();
 		
@@ -175,6 +178,10 @@ public class Manager {
 				QueueManager.Queue(this);
 				
 		    }
+			if(requestMousePosition){
+				KeyboardMouseManager.mousePosition(this);
+				requestMousePosition = false;
+			}
 
 		}
 		  
@@ -235,6 +242,8 @@ public class Manager {
 		
 		//Setzte Fenster sichtbar
 		mainFrame.setVisible(true);
+		
+		mainFrame.getCursor();
 		
 		//Update die Anzeigt bezüglich der Anzahl Schritten 
 		updateControlpanelInformations();

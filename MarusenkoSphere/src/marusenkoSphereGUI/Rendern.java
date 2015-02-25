@@ -314,7 +314,7 @@ public class Rendern {
 	        
 	        //VSync aktivieren
 	        Display.setVSyncEnabled(true);
-	        
+	                
     	}catch(LWJGLException e){
     		
     		//Wenn Fehler beim Initialisieren des Fensters passiert, dann sofort Programm beenden

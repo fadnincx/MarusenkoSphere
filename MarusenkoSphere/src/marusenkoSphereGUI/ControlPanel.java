@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -394,16 +395,29 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editButtonColor6.setBackground(color6);
 		editButtonColor7.setBackground(color7);
 		
-		//Den farbigen Buttons die Position und Grösse zuweisen
-		editButtonColor0.setBounds(20, 20, 150, 20);
-		editButtonColor1.setBounds(20, 50, 150, 20);
-		editButtonColor2.setBounds(20, 80, 150, 20);
-		editButtonColor3.setBounds(20, 110, 150, 20);
-		editButtonColor4.setBounds(20, 140, 150, 20);
-		editButtonColor5.setBounds(20, 170, 150, 20);
-		editButtonColor6.setBounds(20, 200, 150, 20);
-		editButtonColor7.setBounds(20, 230, 150, 20);
+		if(Settings.TOUCHMODE){
+			editButtonColor0.setBounds(20, 20, 150, 60);
+			editButtonColor1.setBounds(170, 20, 150, 60);
+			editButtonColor2.setBounds(20, 80, 150, 60);
+			editButtonColor3.setBounds(170, 80, 150, 60);
+			editButtonColor4.setBounds(20, 140, 150, 60);
+			editButtonColor5.setBounds(170, 140, 150, 60);
+			editButtonColor6.setBounds(20, 200, 150, 60);
+			editButtonColor7.setBounds(170, 200, 150, 60);
+		}else{
+			//Den farbigen Buttons die Position und Grösse zuweisen
+			editButtonColor0.setBounds(20, 20, 150, 20);
+			editButtonColor1.setBounds(20, 50, 150, 20);
+			editButtonColor2.setBounds(20, 80, 150, 20);
+			editButtonColor3.setBounds(20, 110, 150, 20);
+			editButtonColor4.setBounds(20, 140, 150, 20);
+			editButtonColor5.setBounds(20, 170, 150, 20);
+			editButtonColor6.setBounds(20, 200, 150, 20);
+			editButtonColor7.setBounds(20, 230, 150, 20);
 			
+			//Dem Label mit Selected Position und Grösse zuweisen
+			editLabelSelected.setBounds(180, (m.getSelectedColor()*30)+20, 100, 20);
+		}	
 		
 		editViewSwitch3D.setBounds(20, 300, 50, 50);
 		editViewSwitch2D.setBounds(70, 300, 50, 50);
@@ -446,8 +460,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 		//Dem Label mit Infos zur Legalität der Kugel Position und Grösse zuweisen
 		editLabelIsSphereLegal.setBounds(20,260,300,50);
 		
-		//Dem Label mit Selected Position und Grösse zuweisen
-		editLabelSelected.setBounds(180, (m.getSelectedColor()*30)+20, 100, 20);
+		
 		
 		//Alle Elemente zu editorPanel hinzufügen
 		editorPanel.add(editChangeDev);
@@ -491,6 +504,14 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editLevel3.addActionListener(this);
 		editLevel4.addActionListener(this);
 		editLevel5.addActionListener(this);
+		editButtonColor0.addMouseListener(new KeyboardMouseManager(m,this));
+		editButtonColor1.addMouseListener(new KeyboardMouseManager(m,this));
+		editButtonColor2.addMouseListener(new KeyboardMouseManager(m,this));
+		editButtonColor3.addMouseListener(new KeyboardMouseManager(m,this));
+		editButtonColor4.addMouseListener(new KeyboardMouseManager(m,this));
+		editButtonColor5.addMouseListener(new KeyboardMouseManager(m,this));
+		editButtonColor6.addMouseListener(new KeyboardMouseManager(m,this));
+		editButtonColor7.addMouseListener(new KeyboardMouseManager(m,this));
 		
 		//das EditorPanel neu zeichnen
 		editorPanel.repaint();
@@ -540,6 +561,35 @@ public class ControlPanel implements ActionListener, KeyListener{
         devPanel.repaint();
         
 	}
+	protected int getClickedButton(MouseEvent m){
+		if(m.getSource()==editButtonColor0){
+			return 0;
+		}else
+		if(m.getSource()==editButtonColor1){
+			return 1;
+		}else
+		if(m.getSource()==editButtonColor2){
+			return 2;
+		}else
+		if(m.getSource()==editButtonColor3){
+			return 3;
+		}else
+		if(m.getSource()==editButtonColor4){
+			return 4;
+		}else
+		if(m.getSource()==editButtonColor5){
+			return 5;
+		}else
+		if(m.getSource()==editButtonColor6){
+			return 6;
+		}else
+		if(m.getSource()==editButtonColor7){
+			return 7;
+		}else{
+			return -1;
+		}
+	}
+	
 	
 	/**
 	 * Funktion zum wechseln des Anzeigemodus
@@ -633,7 +683,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 	/**
 	 * Updated die Position des Textes selected im Editor
 	 */
-	private void updateSelectedPosition(){
+	protected void updateSelectedPosition(){
 		
 		//Setze neue Position
 		editLabelSelected.setBounds(180, (m.getSelectedColor()*30)+20, 100, 20);
