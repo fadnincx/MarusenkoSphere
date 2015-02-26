@@ -2,11 +2,9 @@ package marusenkoSphereGUI;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +36,7 @@ import marusenkoSphereKugel.Kugel;
 public class Manager {
 	
 	//Hauptfenster
-	protected JFrame mainFrame;
+	protected JDialog mainFrame;
 	
 	//Kugel die dargestellt wird
 	private Kugel k;
@@ -191,8 +189,10 @@ public class Manager {
 	}
 	
 	private void initMainFrame() throws IOException{
-		mainFrame = new JFrame(Settings.TITEL);
-		//mainFrame = new JDialog();
+		//mainFrame = new JFrame(Settings.TITEL);
+		mainFrame = new JDialog();
+		mainFrame.setTitle(Settings.TITEL);
+		
 		
 		//Lade das Icon
 		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
@@ -732,7 +732,7 @@ public class Manager {
 			//System.out.println("Open Editor");
 			//Setzte Step, damit im nachhinein wieder zu diesem zurück gekehrt werden kann
 			stepWhenGoesToEditor = k.getStep();
-			
+			updateInformationToLegalityOfSphere();
 		}
 		
 		//Ändere den Modus

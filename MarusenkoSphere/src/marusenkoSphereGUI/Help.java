@@ -10,6 +10,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -60,7 +61,9 @@ public class Help extends JPanel{
 	private void createAndShowGUI(int tab) throws IOException {
 		
         //Erstelle Fenster
-        JFrame frame = new JFrame(Settings.TITEL+" - Hilfecenter");
+        JDialog frame = new JDialog();
+        
+        frame.setTitle(Settings.TITEL+" - Hilfecenter");
         
         Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
         
@@ -80,6 +83,8 @@ public class Help extends JPanel{
         
         //Setze das Fenster sichtbar
         frame.setVisible(true);
+        
+        frame.setResizable(false);
         
     }
 	

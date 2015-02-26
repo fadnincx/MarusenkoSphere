@@ -1,8 +1,6 @@
 package marusenkoSphereGUI;
 
-import java.awt.AWTException;
 import java.awt.Color;
-import java.awt.Robot;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -409,12 +407,12 @@ public class KeyboardMouseManager implements MouseListener{
 				
 		    	
 		    }	
-		   // Mouse.setCursorPosition(lastX, lastY);
-		    try {
+		   Mouse.setCursorPosition(0, 0);
+		    /*try {
 				new Robot().mouseMove(lastX, lastY);
 			} catch (AWTException e) {
 				e.printStackTrace();
-			}
+			}*/
 		}
 	}
 	@Override
