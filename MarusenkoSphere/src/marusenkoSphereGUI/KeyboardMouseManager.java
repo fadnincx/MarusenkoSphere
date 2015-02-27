@@ -274,7 +274,7 @@ public class KeyboardMouseManager implements MouseListener{
 		    }
 		    
 	    }else{
-		    if(!Settings.TOUCHMODE){
+		    if(!Settings.touchmode){
 	
 		    	//Wenn der 2D-Editor angezeigt wird
 		    	if(m.getDisplayMode() == 1){
@@ -353,7 +353,7 @@ public class KeyboardMouseManager implements MouseListener{
 	
 	}
 	protected static void mousePosition(Manager m){
-		if(Settings.TOUCHMODE){
+		if(Settings.touchmode){
 		
 			//Wenn der 2D-Editor angezeigt wird
 		    if(m.getDisplayMode() == 1){

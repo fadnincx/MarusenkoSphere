@@ -397,7 +397,7 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editButtonColor6.setBackground(color6);
 		editButtonColor7.setBackground(color7);
 		
-		if(Settings.TOUCHMODE){
+		if(Settings.touchmode){
 			editButtonColor0.setBounds(20, 20, 150, 60);
 			editButtonColor1.setBounds(170, 20, 150, 60);
 			editButtonColor2.setBounds(20, 80, 150, 60);
@@ -595,8 +595,46 @@ public class ControlPanel implements ActionListener, KeyListener{
 			return -1;
 		}
 	}
-	
-	
+	protected void updateTouchscreen(){
+		if(Settings.touchmode){
+			editButtonColor0.setBounds(20, 20, 150, 60);
+			editButtonColor1.setBounds(170, 20, 150, 60);
+			editButtonColor2.setBounds(20, 80, 150, 60);
+			editButtonColor3.setBounds(170, 80, 150, 60);
+			editButtonColor4.setBounds(20, 140, 150, 60);
+			editButtonColor5.setBounds(170, 140, 150, 60);
+			editButtonColor6.setBounds(20, 200, 150, 60);
+			editButtonColor7.setBounds(170, 200, 150, 60);
+			
+			editButtonColor0.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor1.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor2.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor3.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor4.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor5.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor6.setBorder(BorderFactory.createEmptyBorder());
+			editButtonColor7.setBorder(BorderFactory.createEmptyBorder());
+			
+			editLabelSelected.setBounds(0,0,0,0);
+		}else{
+			//Den farbigen Buttons die Position und Grösse zuweisen
+			editButtonColor0.setBounds(20, 20, 150, 20);
+			editButtonColor1.setBounds(20, 50, 150, 20);
+			editButtonColor2.setBounds(20, 80, 150, 20);
+			editButtonColor3.setBounds(20, 110, 150, 20);
+			editButtonColor4.setBounds(20, 140, 150, 20);
+			editButtonColor5.setBounds(20, 170, 150, 20);
+			editButtonColor6.setBounds(20, 200, 150, 20);
+			editButtonColor7.setBounds(20, 230, 150, 20);
+			
+			//Dem Label mit Selected Position und Grösse zuweisen
+			editLabelSelected.setBounds(180, (m.getSelectedColor()*30)+20, 100, 20);
+			
+			
+		}
+		
+		editorPanel.repaint();
+	}
 	/**
 	 * Funktion zum wechseln des Anzeigemodus
 	 * @param mode

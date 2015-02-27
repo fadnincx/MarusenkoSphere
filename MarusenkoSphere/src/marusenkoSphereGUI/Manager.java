@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.imageio.ImageIO;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -36,7 +37,7 @@ import marusenkoSphereKugel.Kugel;
 public class Manager {
 	
 	//Hauptfenster
-	protected JDialog mainFrame;
+	protected JFrame mainFrame;
 	
 	//Kugel die dargestellt wird
 	private Kugel k;
@@ -62,6 +63,12 @@ public class Manager {
 	//Menupunkt Schliessen
 	private JMenuItem exit;
 	
+	//Menu Hilfe
+	private JMenu settings;
+	
+	//Menupunkt öffnen
+	private JCheckBoxMenuItem touchscreen;
+
 	//Menu Hilfe
 	private JMenu help;
 	
@@ -112,7 +119,7 @@ public class Manager {
 	 * @param k : Kugel zum lösen
 	 */
 	public Manager(Kugel k){
-		
+
 		//Übernehme Kugel von der Main-Datei
 		this.k = k;
 		
@@ -133,6 +140,7 @@ public class Manager {
 			//Wenn gewollt öffne den Kioskmode
 			if(Settings.KIOSKMODE){
 				new KioskBG();
+				
 			}
 			
 			//Öffne das Controlpanel
@@ -189,11 +197,10 @@ public class Manager {
 	}
 	
 	private void initMainFrame() throws IOException{
-		//mainFrame = new JFrame(Settings.TITEL);
-		mainFrame = new JDialog();
-		mainFrame.setTitle(Settings.TITEL);
-		
-		
+		mainFrame = new JFrame(Settings.TITEL);
+		//mainFrame = new JDialog();
+		//mainFrame.setTitle(Settings.TITEL);
+		//mainFrame.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
 		//Lade das Icon
 		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
 			
@@ -215,9 +222,6 @@ public class Manager {
 		//Setzte Layout = null
 		mainFrame.setLayout(null);
 		
-	/*	mainFrame.getContentPane().setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
-				new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "blank cursor"));
-		*/
 		//Initialisiere die Menubar
 		initMenuBar();
 		
@@ -376,7 +380,10 @@ public class Manager {
 		            
 		            //Dialog schloessen
 		            chooser.setVisible(false);
-				}
+	    
+			    }
+			    
+			    
 			}
 		});
 		
@@ -392,9 +399,13 @@ public class Manager {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				
+				
 				//Erstellle einen Dateidialog
 				JFileChooser chooser;
 			    
+				
+				
 				//FileSystemView erstellen
 				FileSystemView file = FileSystemView.getFileSystemView();
 				
@@ -458,6 +469,7 @@ public class Manager {
 		            chooser.setVisible(false);
 
 				}
+			    
 			}
 		});
 		
@@ -482,6 +494,26 @@ public class Manager {
 			}
 		});
 		
+		//Erstelle Menu Einstellungen
+		settings = new JMenu("Einstellungen");
+		
+		//Füge Einstellungen der Menubar hinzu
+		menuBar.add(settings);
+		
+		touchscreen = new JCheckBoxMenuItem("Touchscreen");
+		
+		settings.add(touchscreen);
+		
+		touchscreen.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Settings.touchmode = !Settings.touchmode;
+				touchscreen.setSelected(Settings.touchmode);
+				changeTouchscreenMode();
+			}
+		});
+		touchscreen.setSelected(Settings.touchmode);
 		
 		//Erstelle Menu Hilfe
 		help = new JMenu("Hilfe");
@@ -496,7 +528,7 @@ public class Manager {
 		//Füge Menupunkt dem Menu Hilfehinzu
 		help.add(helpcenter);
 		
-		//ERstelle Actionlistener
+		//Erstelle Actionlistener
 		helpcenter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -609,6 +641,9 @@ public class Manager {
 		
 		cp.updateSphereInfos(k.getStep(), k.getSolvingListSize()-1);
 		
+	}
+	protected void changeTouchscreenMode(){
+		cp.updateTouchscreen();
 	}
 	
 	/**
