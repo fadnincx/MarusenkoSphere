@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
@@ -32,7 +30,7 @@ import marusenkoSphere.Settings;
  * Ein KeyListener sorgt dafür, dass auf Tastatur eingaben gemacht werden können
  */
 
-public class ControlPanel implements ActionListener, KeyListener{
+public class ControlPanel implements ActionListener{
 
 	//Manager
 	private Manager m;
@@ -50,8 +48,8 @@ public class ControlPanel implements ActionListener, KeyListener{
 
 
 	//Button um Kamera zurück zu setzten
-	private JButton cpButtonResetView = new JButton("Kamera zurücksetzen");
-	private JButton editButtonResetView = new JButton("Kamera zurücksetzen");
+	private JButton cpButtonResetView = new JButton("Ansicht zurücksetzen");
+	private JButton editButtonResetView = new JButton("Ansicht zurücksetzen");
 	
 	//Schritte vorwärts und zurück gehen
 	private JButton cpButtonAddOneStep = new JButton();
@@ -180,7 +178,8 @@ public class ControlPanel implements ActionListener, KeyListener{
 		devPanel.setLayout(null);
 		
 		//Setze KeyListener
-		controlPanel.addKeyListener(this);
+		controlPanel.addKeyListener(m.kmm);
+		editorPanel.addKeyListener(m.kmm);
 		
 		//Füge Panels dem Hauptfensterhinzu
 		m.mainFrame.add(controlPanel);
@@ -351,22 +350,22 @@ public class ControlPanel implements ActionListener, KeyListener{
         cpChangeEditor.addActionListener(this);
 
         //Füge alle Objekten ein KeyListener hinzu
-        cpButtonFillSphere.addKeyListener(this);
-		cpButtonSolve.addKeyListener(this);
-		cpButtonResetView.addKeyListener(this);
-		cpButtonAddOneStep.addKeyListener(this);
-		cpButtonSubOneStep.addKeyListener(this);
-		cpChangeEditor.addKeyListener(this);
-		cpChangeDev.addKeyListener(this);
-		cpLabelAnimationSpeed.addKeyListener(this);
-		cpLabelProgress.addKeyListener(this);
-		cpLabelSphereStepMax.addKeyListener(this);
-		cpLabelSphereStepNow.addKeyListener(this);
-		cpSepCamera.addKeyListener(this);
-		cpSepChangeWindow.addKeyListener(this);
-		cpSepSliders.addKeyListener(this);
-		cpSliderAnimationSpeed.addKeyListener(this);
-		cpSliderForSteps.addKeyListener(this);
+        cpButtonFillSphere.addKeyListener(m.kmm);
+		cpButtonSolve.addKeyListener(m.kmm);
+		cpButtonResetView.addKeyListener(m.kmm);
+		cpButtonAddOneStep.addKeyListener(m.kmm);
+		cpButtonSubOneStep.addKeyListener(m.kmm);
+		cpChangeEditor.addKeyListener(m.kmm);
+		cpChangeDev.addKeyListener(m.kmm);
+		cpLabelAnimationSpeed.addKeyListener(m.kmm);
+		cpLabelProgress.addKeyListener(m.kmm);
+		cpLabelSphereStepMax.addKeyListener(m.kmm);
+		cpLabelSphereStepNow.addKeyListener(m.kmm);
+		cpSepCamera.addKeyListener(m.kmm);
+		cpSepChangeWindow.addKeyListener(m.kmm);
+		cpSepSliders.addKeyListener(m.kmm);
+		cpSliderAnimationSpeed.addKeyListener(m.kmm);
+		cpSliderForSteps.addKeyListener(m.kmm);
         
         //Controlpanel neu Zeichnen
         controlPanel.repaint();
@@ -378,14 +377,13 @@ public class ControlPanel implements ActionListener, KeyListener{
 	 */
 	private void initEditor() throws IOException{
 		
+		
+		//Lade die Level Icons
 		ImageIcon lv1 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv1.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
 		ImageIcon lv2 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv2.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
 		ImageIcon lv3 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv3.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
 		ImageIcon lv4 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv4.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
 		ImageIcon lv5 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv5.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
-		
-		
-		
 		
 		//Den farbigen Buttons die Farbe als Hintergrund zuweisen
 		editButtonColor0.setBackground(color0);
@@ -397,6 +395,8 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editButtonColor6.setBackground(color6);
 		editButtonColor7.setBackground(color7);
 		
+		
+		//Wenn Touchscreen, dann die Farbbuttons anderst plazieren
 		if(Settings.touchmode){
 			editButtonColor0.setBounds(20, 20, 150, 60);
 			editButtonColor1.setBounds(170, 20, 150, 60);
@@ -407,6 +407,8 @@ public class ControlPanel implements ActionListener, KeyListener{
 			editButtonColor6.setBounds(20, 200, 150, 60);
 			editButtonColor7.setBounds(170, 200, 150, 60);
 			
+			
+			//Rand entfernen
 			editButtonColor0.setBorder(BorderFactory.createEmptyBorder());
 			editButtonColor1.setBorder(BorderFactory.createEmptyBorder());
 			editButtonColor2.setBorder(BorderFactory.createEmptyBorder());
@@ -416,8 +418,10 @@ public class ControlPanel implements ActionListener, KeyListener{
 			editButtonColor6.setBorder(BorderFactory.createEmptyBorder());
 			editButtonColor7.setBorder(BorderFactory.createEmptyBorder());
 			
-			
+			//Label soll nicht sichtbar sein
+			editLabelSelected.setBounds(0,0,0,0);
 		}else{
+			
 			//Den farbigen Buttons die Position und Grösse zuweisen
 			editButtonColor0.setBounds(20, 20, 150, 20);
 			editButtonColor1.setBounds(20, 50, 150, 20);
@@ -430,21 +434,30 @@ public class ControlPanel implements ActionListener, KeyListener{
 			
 			//Dem Label mit Selected Position und Grösse zuweisen
 			editLabelSelected.setBounds(180, (m.getSelectedColor()*30)+20, 100, 20);
+			
 		}	
 		
+		//Plaziere die Switchbutton
 		editViewSwitch3D.setBounds(20, 300, 50, 50);
 		editViewSwitch2D.setBounds(70, 300, 50, 50);
 		editViewSwitch.setBounds(140, 300, 50, 50);
 		
+		
+		//Select 3D
 		editViewSwitch3D.setSelected(true);
 		editViewSwitch2D.setSelected(false);
+		
+		//Enable nur 2D
 		editViewSwitch3D.setEnabled(false);
     	editViewSwitch2D.setEnabled(true);
 		
+    	
+    	//Füge ToolTip Hinzu
     	editViewSwitch.setToolTipText("Wechselt die Ansicht des Editors");
     	editViewSwitch2D.setToolTipText("Wechselt die Ansicht des Editors auf 2D");
     	editViewSwitch3D.setToolTipText("Wechselt die Ansicht des Editors auf 3D");
 		
+    	//Setzet Kamerazurücksetzen button
     	editButtonResetView.setBounds(20, 360, 310, 50);
     	
     	editLevel1.setIcon(lv1);
@@ -517,14 +530,14 @@ public class ControlPanel implements ActionListener, KeyListener{
 		editLevel3.addActionListener(this);
 		editLevel4.addActionListener(this);
 		editLevel5.addActionListener(this);
-		editButtonColor0.addMouseListener(new KeyboardMouseManager(m,this));
-		editButtonColor1.addMouseListener(new KeyboardMouseManager(m,this));
-		editButtonColor2.addMouseListener(new KeyboardMouseManager(m,this));
-		editButtonColor3.addMouseListener(new KeyboardMouseManager(m,this));
-		editButtonColor4.addMouseListener(new KeyboardMouseManager(m,this));
-		editButtonColor5.addMouseListener(new KeyboardMouseManager(m,this));
-		editButtonColor6.addMouseListener(new KeyboardMouseManager(m,this));
-		editButtonColor7.addMouseListener(new KeyboardMouseManager(m,this));
+		editButtonColor0.addMouseListener(m.kmm);
+		editButtonColor1.addMouseListener(m.kmm);
+		editButtonColor2.addMouseListener(m.kmm);
+		editButtonColor3.addMouseListener(m.kmm);
+		editButtonColor4.addMouseListener(m.kmm);
+		editButtonColor5.addMouseListener(m.kmm);
+		editButtonColor6.addMouseListener(m.kmm);
+		editButtonColor7.addMouseListener(m.kmm);
 		
 		//das EditorPanel neu zeichnen
 		editorPanel.repaint();
@@ -934,51 +947,5 @@ public class ControlPanel implements ActionListener, KeyListener{
 		
 	}
 
-	/**
-	 * Dreht bei betätigen der Pfeiltasten die Kugel
-	 */
-	@Override
-	public void keyPressed(KeyEvent key) {
-		
-		//Wenn Pfeiltasten nach Oben gedrückt wurden
-		if(key.getKeyCode() == KeyEvent.VK_UP){
-			
-			//Drehe nach oben
-			m.changeRotationAngle(-1, 0);
-			
-		}else
-		
-		//Wenn Pfeiltaste nach Unten gedrückt wurde	
-		if(key.getKeyCode() == KeyEvent.VK_DOWN){
-			
-			//Drehe nach unten
-			m.changeRotationAngle(1, 0);
-			
-		}else
-			
-		//Wenn Pfeiltaste nach Links gedrückt wurde	
-		if(key.getKeyCode() == KeyEvent.VK_LEFT){
-			
-			//Drehen nach links
-			m.changeRotationAngle(0, -1);
-			
-		}else
-			
-		//Wenn Pfeiltaste nach Rechts gedrückt wurde
-		if(key.getKeyCode() == KeyEvent.VK_RIGHT){
-			
-			//Drehen nach rechts
-			m.changeRotationAngle(0, 1);
-			
-		}
-		
-	}
-
-	//Die Methoden müssen da sein, wegen dem KeyListener
-	@Override
-	public void keyReleased(KeyEvent arg0) {}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {}
 
 }

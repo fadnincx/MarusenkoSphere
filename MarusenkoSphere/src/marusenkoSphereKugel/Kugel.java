@@ -165,7 +165,7 @@ public class Kugel{
 	 * Funktion zum zufälligen Füllen der Kugel mit Werten
 	 */
 	public void fillRandom(){
-		
+		animationManager = new AnimationsManager();
 		//Objekt rm als Zufallsobjekt, aus welchem dann die Zusatzzahl generiert wird
 		Random rm = new Random();
 		
@@ -292,18 +292,25 @@ public class Kugel{
 	 * Methode, welche das lösen aufruft und Lösung speichert
 	 */
 	private void solveSphere(){
+		
+		//Erstelle neues Kugelobjekt
+		Kugel solvK = new Kugel();
+		
+		//Setzte dieses auf den Aktuellen Stand
+		solvK.setSphereToString(this.getSphere("000"));
+		
+		//Löse das neue Kugelobjekt und übertrage das Auf das bestehende Objekt
 		if(level==2){
 			// Lösung des Lösens in SolvingList speichern
-			solvingList = new Solver().solve2(this);
+			solvingList = new Solver().solve2(solvK);
 		}else if(level==3){
 			// Lösung des Lösens in SolvingList speichern
-			solvingList = new Solver().solve3(this);
+			solvingList = new Solver().solve3(solvK);
 		}else{
 			// Lösung des Lösens in SolvingList speichern
-			solvingList = new Solver().solve(this);
+			solvingList = new Solver().solve(solvK);
 		}
-		//Setzet die Kugel zurück in den Anfangsstatus
-		setSphereToString(solvingList.get(0));
+
 		
 	}
 	

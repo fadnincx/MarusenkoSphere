@@ -1,6 +1,8 @@
 package marusenkoSphereGUI;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -18,7 +20,7 @@ import org.lwjgl.input.Mouse;
  * Verwaltet die ganzen Keyboard und Mausaktionen
  *
  */
-public class KeyboardMouseManager implements MouseListener{
+public class KeyboardMouseManager implements MouseListener, KeyListener{
 	private static boolean lookPfeile = false;
 	private static int position = -1;
 	private static volatile int lastX;
@@ -42,7 +44,6 @@ public class KeyboardMouseManager implements MouseListener{
 			
 			//Fenster verschieben
 			m.resetPosition();
-	        
 	    }
 		
 	    //Zu Kugel wechseln wenn K gedrückt, zusätzlich 100ms blockieren, damit nicht mehrere Anschläge in einem gemacht werden
@@ -436,6 +437,54 @@ public class KeyboardMouseManager implements MouseListener{
 		Manager.requestMousePosition = true;
 		((JButton) me.getSource()).setBorder(BorderFactory.createEmptyBorder());
 	}
+
+	@Override
+	public void keyPressed(KeyEvent key) {
+		System.out.println("KeyPressed");
+		//Wenn Pfeiltasten nach Oben gedrückt wurden
+		if(key.getKeyCode() == KeyEvent.VK_UP){
+			
+			//Drehe nach oben
+			m.changeRotationAngle(-1, 0);
+			
+		}else
+		
+		//Wenn Pfeiltaste nach Unten gedrückt wurde	
+		if(key.getKeyCode() == KeyEvent.VK_DOWN){
+			
+			//Drehe nach unten
+			m.changeRotationAngle(1, 0);
+			
+		}else
+			
+		//Wenn Pfeiltaste nach Links gedrückt wurde	
+		if(key.getKeyCode() == KeyEvent.VK_LEFT){
+			
+			//Drehen nach links
+			m.changeRotationAngle(0, -1);
+			
+		}else
+			
+		//Wenn Pfeiltaste nach Rechts gedrückt wurde
+		if(key.getKeyCode() == KeyEvent.VK_RIGHT){
+			
+			//Drehen nach rechts
+			m.changeRotationAngle(0, 1);
+			
+		}else
+			
+		//Wenn F3
+		if(key.getKeyCode() == KeyEvent.VK_F3){	
+			//reset Fensterposition
+			m.resetPosition();
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {}
+
+	@Override
+	public void keyTyped(KeyEvent e) {}
 
 	
 }

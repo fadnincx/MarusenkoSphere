@@ -48,6 +48,8 @@ public class Manager {
 	//Die Controlpanels
 	private ControlPanel cp;
 	
+	protected KeyboardMouseManager kmm;
+	
 	//Menubar
 	private JMenuBar menuBar;
 	
@@ -148,6 +150,8 @@ public class Manager {
 			
 			//Öffne das Rendernpanel
 			rendern = new Rendern(k, this);
+			
+			kmm = new KeyboardMouseManager(this, cp);
 
 		}catch(Exception e){
 			
@@ -199,7 +203,7 @@ public class Manager {
 	private void initMainFrame() throws IOException{
 		mainFrame = new JFrame(Settings.TITEL);
 		//mainFrame = new JDialog();
-		//mainFrame.setTitle(Settings.TITEL);
+		mainFrame.setTitle(Settings.TITEL);
 		//mainFrame.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
 		//Lade das Icon
 		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
@@ -224,6 +228,8 @@ public class Manager {
 		
 		//Initialisiere die Menubar
 		initMenuBar();
+		
+		mainFrame.addKeyListener(kmm);
 		
 		//Zeiche das Fenster neu
 		mainFrame.repaint();
@@ -293,7 +299,7 @@ public class Manager {
 				
 				//Wenn gewollt, Ordner einschränken
 				if(Settings.RESTRICTEDFILEMODE){
-					  file = new DirectoryRestrictedFileSystemView(new File("D:\\MarusenkoSphere"));
+					  file = new DirectoryRestrictedFileSystemView(new File(Settings.RESTRICTEDPATH));
     
 				}
 
@@ -411,7 +417,7 @@ public class Manager {
 				
 				//Wenn gewollt, Ordner einschränken
 				if(Settings.RESTRICTEDFILEMODE){
-					  file = new DirectoryRestrictedFileSystemView(new File("D:\\MarusenkoSphere"));
+					  file = new DirectoryRestrictedFileSystemView(new File(Settings.RESTRICTEDPATH));
     
 				}
 
@@ -556,6 +562,12 @@ public class Manager {
 			}
 		});
 		
+		if(Settings.close()==JFrame.DO_NOTHING_ON_CLOSE){
+			exit.setEnabled(false);
+			touchscreen.setEnabled(false);
+		}
+		
+		
 		//Füge Menubar dem Fensterhinzu
 		mainFrame.add(menuBar);
 	}
@@ -642,6 +654,10 @@ public class Manager {
 		cp.updateSphereInfos(k.getStep(), k.getSolvingListSize()-1);
 		
 	}
+	
+	/**
+	 * Update das Controlpanel bezüglich TouchscreenModus
+	 */
 	protected void changeTouchscreenMode(){
 		cp.updateTouchscreen();
 	}
@@ -662,7 +678,6 @@ public class Manager {
 	/**
 	 * Wird aufgerufen, wenn der Slider auf dem Controlpanel verändert wird
 	 * (durch Benutzer und Programm)
-	 * @param x
 	 */
 	protected void cpSliderChangeState(int x){
 		
@@ -1013,11 +1028,21 @@ public class Manager {
 		return -1;
 	}
 	
+	/*
+	 * Setze Level von Kugel neu
+	 */
 	protected void setToLevel(int i){
 		k.setToLevel(i);
 	}
+	
+	
 	protected void resetPosition(){
-		mainFrame.setLocationRelativeTo(null);
+		//Bekomme die Bildschirmdiemsionen
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				
+		//Setze die Position des Fensters
+		mainFrame.setLocation(dim.width/2-mainFrame.getSize().width/2, dim.height/2-mainFrame.getSize().height/2);
+		
 	}
 	
 	/**

@@ -687,6 +687,8 @@ public class Solver {
 			}
 		
 		//Wenn nocht lösbar
+		}else if((int)(pos1/4)==(int)(pos2/4)){
+			change2PositionsOnOnePol(pos1, pos2);
 		}else{
 			
 			//Gib Fehlermeldung aus

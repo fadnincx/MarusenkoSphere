@@ -73,12 +73,12 @@ public class Konsole {
 			
 			//Mittelwert aktuallisieren
 			mittelwert=((mittelwert*i)+aktAnz)/(i+1);
-			/**if(aktAnz<500){
+			if(aktAnz<500){
 				stats1[aktAnz]++;
 				stats2[aktAnz/2]++;
 				stats5[aktAnz/5]++;
 				stats10[aktAnz/10]++;
-			}**/
+			}
 			
 			//Jede zehnte Kugel status ausgeben
 			if(i%10==0){

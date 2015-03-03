@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
@@ -78,8 +79,11 @@ public class Help extends JPanel{
         //Setzte die Fenstergrösse optimal
         frame.pack();
         
-        //Zentriere das Fenster auf dem Bildschirm
-        frame.setLocationRelativeTo(null);
+        //Bekomme die Bildschirmdiemsionen
+      	Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+      	//Setze die Position des Fensters
+      	frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
         
         //Setze das Fenster sichtbar
         frame.setVisible(true);
