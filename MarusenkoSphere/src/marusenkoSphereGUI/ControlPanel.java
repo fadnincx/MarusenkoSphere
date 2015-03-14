@@ -530,14 +530,14 @@ public class ControlPanel implements ActionListener{
 		editLevel3.addActionListener(this);
 		editLevel4.addActionListener(this);
 		editLevel5.addActionListener(this);
-		editButtonColor0.addMouseListener(m.kmm);
-		editButtonColor1.addMouseListener(m.kmm);
-		editButtonColor2.addMouseListener(m.kmm);
-		editButtonColor3.addMouseListener(m.kmm);
-		editButtonColor4.addMouseListener(m.kmm);
-		editButtonColor5.addMouseListener(m.kmm);
-		editButtonColor6.addMouseListener(m.kmm);
-		editButtonColor7.addMouseListener(m.kmm);
+		editButtonColor0.addMouseListener(new KeyboardMouseManager(m, this));
+		editButtonColor1.addMouseListener(new KeyboardMouseManager(m, this));
+		editButtonColor2.addMouseListener(new KeyboardMouseManager(m, this));
+		editButtonColor3.addMouseListener(new KeyboardMouseManager(m, this));
+		editButtonColor4.addMouseListener(new KeyboardMouseManager(m, this));
+		editButtonColor5.addMouseListener(new KeyboardMouseManager(m, this));
+		editButtonColor6.addMouseListener(new KeyboardMouseManager(m, this));
+		editButtonColor7.addMouseListener(new KeyboardMouseManager(m, this));
 		
 		//das EditorPanel neu zeichnen
 		editorPanel.repaint();
