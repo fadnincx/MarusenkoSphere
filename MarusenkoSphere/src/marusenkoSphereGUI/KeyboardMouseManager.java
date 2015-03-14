@@ -430,12 +430,16 @@ public class KeyboardMouseManager implements MouseListener, KeyListener{
 		lastX = me.getXOnScreen();
 		lastY = me.getYOnScreen();
 		((JButton) me.getSource()).setBorder(BorderFactory.createLineBorder(borderColor, 3));
+		System.out.println("Mouse down");
+		
 	}
 	@Override
 	public void mouseReleased(MouseEvent me) {
 		Manager.mouseDown = false;
 		Manager.requestMousePosition = true;
 		((JButton) me.getSource()).setBorder(BorderFactory.createEmptyBorder());
+		System.out.println("Mouse up");
+		
 	}
 
 	@Override

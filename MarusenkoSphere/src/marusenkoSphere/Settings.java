@@ -1,5 +1,7 @@
 package marusenkoSphere;
 
+import java.io.File;
+
 import javax.swing.JFrame;
 
 /**
@@ -10,33 +12,48 @@ import javax.swing.JFrame;
  */
 public class Settings {
 	
-	//Allgemein
+	//Debugmodus
 	public static final boolean DEBUGMODE = false;
+	
+	//Aktion bei Klick auf X
 	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
+	
+	//Kioskmodus
 	public static final boolean KIOSKMODE = false;
+	
+	//Titel des Fensters
 	public static final String TITEL = "MarusenkoSphere";
-	public static final boolean RESTRICTEDFILEMODE = false;
-	public static final String RESTRICTEDPATH = "C:/MarusenkoSphere/MarusenkoSphere";
 	
-	public static boolean touchmode = false;
+	//Pfade, der im Kioskmodus zulässig ist
+	public static final File[] RESTRICTEDPATH = new File[]{new File("C:/MarusenkoSphere/MarusenkoSphere")};
 	
-	//Main
+	//Pfad OnScreenKeyboard
+	public static final String ONSCREENKEYBOARD = "C:/windows/system32/cmd /c C:/Windows/system32/osk.exe";
+	
+	//Ist Touchmodus Aktiv?
+	public static boolean touchmode = true;
+	
+	//Konsole starten????
 	public static final boolean STARTKONSOLE = false;
 
-	//Log
+	//Pfad für Log-Dateien
 	public static final String LOGPATH = "D:/marusenkoLog";
 	
-	//Kugel
+	//Gibt für jede Kugel den Spherecode aus
 	public static final boolean PRINTSPHERECODE = false;
 	
-	//RendernKugel
+	//Raster dichte zum Kugelnrendern
 	public static final int KUGELRENDERRASTER = 10; //Nur 1, 2, 5, 10
 	
 	
+	//Gibt debugmodus zurück, damit kein Error weil final
 	public static boolean debug(){
 		return DEBUGMODE;
 	}
+	
+	//Gibt close zurück, damit kein Error weil final
 	public static int close(){
 		return SETCLOSE;
 	}
+	
 }

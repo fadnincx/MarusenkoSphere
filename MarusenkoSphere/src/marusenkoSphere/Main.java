@@ -12,15 +12,9 @@ import marusenkoSphereKugel.Kugel;
  * 
  */
 public class Main {
-	
-	//Bekomme die unveränderliche Variable, ob die Kugel gestartet werden soll
-	private static boolean konsole = Settings.STARTKONSOLE;
 
-	
 	public static void main(String[] args){		 
 
-		//Wenn Argument "ng" (NoGUI) übergeben worden ist, dann ohne GUI starten
-		konsole = ((args.length>0&&args[0]=="ng")||konsole);
 		
 		//Erstelle eine neues Kugel Objekt  
 		Kugel k = new Kugel();
@@ -28,7 +22,10 @@ public class Main {
 		//Versuche das weitere Programm zu starten
 		try{
 			
-			if(konsole){
+			//Öffne Schliessen auf USB
+			new CloseOnUSBKey();
+			
+			if(Settings.STARTKONSOLE){
 			
 				//Starte die Konsole
 				new Konsole(k);

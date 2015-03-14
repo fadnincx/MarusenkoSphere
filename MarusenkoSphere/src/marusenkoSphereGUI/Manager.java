@@ -48,6 +48,7 @@ public class Manager {
 	//Die Controlpanels
 	private ControlPanel cp;
 	
+	//KeyboardMouseManager
 	protected KeyboardMouseManager kmm;
 	
 	//Menubar
@@ -201,10 +202,14 @@ public class Manager {
 	}
 	
 	private void initMainFrame() throws IOException{
+		
+		//initialisiere das Fenster
 		mainFrame = new JFrame(Settings.TITEL);
 		//mainFrame = new JDialog();
+		
+		//setze den Titel
 		mainFrame.setTitle(Settings.TITEL);
-		//mainFrame.getRootPane().setWindowDecorationStyle(JRootPane.INFORMATION_DIALOG);
+		
 		//Lade das Icon
 		Image icon = ImageIO.read(this.getClass().getResource("/img/icon_64.png"));
 			
@@ -298,11 +303,21 @@ public class Manager {
 				FileSystemView file = FileSystemView.getFileSystemView();
 				
 				//Wenn gewollt, Ordner einschränken
-				if(Settings.RESTRICTEDFILEMODE){
-					  file = new DirectoryRestrictedFileSystemView(new File(Settings.RESTRICTEDPATH));
-    
+				if(Settings.KIOSKMODE){
+					
+					  file = new DirectoryRestrictedFileSystemView(Settings.RESTRICTEDPATH);
+					  
 				}
-
+				if(Settings.touchmode){
+					
+					try {
+						Runtime.getRuntime().exec(Settings.ONSCREENKEYBOARD);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					  
+				}
+				
 				//Der Dateidialog initialisieren
 			    chooser = new JFileChooser(file){
 					private static final long serialVersionUID = 7625169427404387627L;
@@ -416,11 +431,19 @@ public class Manager {
 				FileSystemView file = FileSystemView.getFileSystemView();
 				
 				//Wenn gewollt, Ordner einschränken
-				if(Settings.RESTRICTEDFILEMODE){
-					  file = new DirectoryRestrictedFileSystemView(new File(Settings.RESTRICTEDPATH));
+				if(Settings.KIOSKMODE){
+					  file = new DirectoryRestrictedFileSystemView(Settings.RESTRICTEDPATH);
     
 				}
-
+				if(Settings.touchmode){
+					
+					try {
+						Runtime.getRuntime().exec(Settings.ONSCREENKEYBOARD);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					  
+				}
 
 			    //Der Dateidialog initialisieren
 			    chooser = new JFileChooser(file);
