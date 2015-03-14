@@ -308,7 +308,7 @@ public class Manager {
 					  file = new DirectoryRestrictedFileSystemView(Settings.RESTRICTEDPATH);
 					  
 				}
-				if(Settings.touchmode){
+				if(Settings.touchmode&&!Settings.DISABLEOSK){
 					
 					try {
 						Runtime.getRuntime().exec(Settings.ONSCREENKEYBOARD);
@@ -380,6 +380,11 @@ public class Manager {
 			    	//Bekomme den Speicherort
 			    	String pfad = chooser.getSelectedFile().toString();
 			    	
+			    	if(pfad.length()>60){
+			    		pfad=pfad.substring(0,60);
+			    	}
+			    	
+			    	
 			    	//Sofern die Datei nicht mit ".mssf" endet Endung hinzufügen
 			        if (!pfad.endsWith(".mssf")){
 			        	pfad += ".mssf";
@@ -434,15 +439,6 @@ public class Manager {
 				if(Settings.KIOSKMODE){
 					  file = new DirectoryRestrictedFileSystemView(Settings.RESTRICTEDPATH);
     
-				}
-				if(Settings.touchmode){
-					
-					try {
-						Runtime.getRuntime().exec(Settings.ONSCREENKEYBOARD);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-					  
 				}
 
 			    //Der Dateidialog initialisieren

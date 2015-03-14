@@ -19,7 +19,7 @@ public class Settings {
 	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
 	
 	//Kioskmodus
-	public static final boolean KIOSKMODE = false;
+	public static final boolean KIOSKMODE = true;
 	
 	//Titel des Fensters
 	public static final String TITEL = "MarusenkoSphere";
@@ -29,6 +29,9 @@ public class Settings {
 	
 	//Pfad OnScreenKeyboard
 	public static final String ONSCREENKEYBOARD = "C:/windows/system32/cmd /c C:/Windows/system32/osk.exe";
+	
+	//Disable onScreenKeyboard
+	public static boolean DISABLEOSK = true;
 	
 	//Ist Touchmodus Aktiv?
 	public static boolean touchmode = true;
