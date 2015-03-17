@@ -25,16 +25,20 @@ public class Log {
 	 * Schreibe ErrorLog zu Datei
 	 */
 	public static void ErrorLog(String error){
-		LogFile(error,Settings.LOGPATH+"/error.log");
-		System.out.println("!!!Error!!!  "+error);
+		if(Settings.ENABLELOG){
+			LogFile(error,Settings.LOGPATH+"/error.log");
+			System.out.println("!!!Error!!!  "+error);
+		}
 	}
 	
 	/**
 	 * Schreibe DebugLog zu Datei
 	 */
 	public static void DebugLog(String debug){
-		LogFile(debug,Settings.LOGPATH+"/debug.log");
-		System.out.println("Debug, "+debug);
+		if(Settings.ENABLELOG){
+			LogFile(debug,Settings.LOGPATH+"/debug.log");
+			System.out.println("Debug, "+debug);
+		}
 	}
 	
 	/**

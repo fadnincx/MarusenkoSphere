@@ -19,7 +19,7 @@ public class Settings {
 	public static final int SETCLOSE = JFrame.EXIT_ON_CLOSE;
 	
 	//Kioskmodus
-	public static final boolean KIOSKMODE = true;
+	public static final boolean KIOSKMODE = false;
 	
 	//Titel des Fensters
 	public static final String TITEL = "MarusenkoSphere";
@@ -34,10 +34,13 @@ public class Settings {
 	public static boolean DISABLEOSK = true;
 	
 	//Ist Touchmodus Aktiv?
-	public static boolean touchmode = true;
+	public static boolean touchmode = false;
 	
 	//Konsole starten????
 	public static final boolean STARTKONSOLE = false;
+	
+	//Pfad für Log-Dateien
+	public static final boolean ENABLELOG = false;
 
 	//Pfad für Log-Dateien
 	public static final String LOGPATH = "D:/marusenkoLog";

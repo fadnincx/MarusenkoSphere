@@ -98,12 +98,6 @@ public class ControlPanel implements ActionListener{
 	private Color color7 = Rendern.getColorColor(7);
 	
 	
-	private JButton editLevel1 = new JButton();
-	private JButton editLevel2 = new JButton();
-	private JButton editLevel3 = new JButton();
-	private JButton editLevel4 = new JButton();
-	private JButton editLevel5 = new JButton();
-	
 	//Label für Editor setzten
 	private JLabel editLabelIsSphereLegal = new JLabel("Die Kugel enthält keine Fehler");
 	private JLabel editLabelSelected = new JLabel("Ausgewählt");
@@ -378,13 +372,6 @@ public class ControlPanel implements ActionListener{
 	private void initEditor() throws IOException{
 		
 		
-		//Lade die Level Icons
-		ImageIcon lv1 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv1.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
-		ImageIcon lv2 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv2.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
-		ImageIcon lv3 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv3.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
-		ImageIcon lv4 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv4.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
-		ImageIcon lv5 = new ImageIcon(new ImageIcon(ImageIO.read(this.getClass().getResourceAsStream("/img/lv5.png"))).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
-		
 		//Den farbigen Buttons die Farbe als Hintergrund zuweisen
 		editButtonColor0.setBackground(color0);
 		editButtonColor1.setBackground(color1);
@@ -459,25 +446,11 @@ public class ControlPanel implements ActionListener{
 		
     	//Setzet Kamerazurücksetzen button
     	editButtonResetView.setBounds(20, 360, 310, 50);
-    	
-    	editLevel1.setIcon(lv1);
-    	editLevel2.setIcon(lv2);
-    	editLevel3.setIcon(lv3);
-    	editLevel4.setIcon(lv4);
-    	editLevel5.setIcon(lv5);
-    	
-    	
 		
 		//Den Buttons für das Wechseln des Modus Position und Grösse zuweisen 
 		if(Settings.DEBUGMODE){
 			editChangeSphere.setBounds(20,420,145,50);
 			editChangeDev.setBounds(185, 420, 145,50);
-			
-			editLevel1.setBounds(280,20,50,50);
-	    	editLevel2.setBounds(280,70,50,50);
-	    	editLevel3.setBounds(280,120,50,50);
-	    	editLevel4.setBounds(280,170,50,50);
-	    	editLevel5.setBounds(280,220,50,50);
 		}else{
 			editChangeSphere.setBounds(20,420,310,50);
 		}
@@ -505,11 +478,6 @@ public class ControlPanel implements ActionListener{
 		editorPanel.add(editViewSwitch2D);
 		editorPanel.add(editViewSwitch3D);
 		editorPanel.add(editButtonResetView);
-		editorPanel.add(editLevel1);
-    	editorPanel.add(editLevel2);
-    	editorPanel.add(editLevel3);
-    	editorPanel.add(editLevel4);
-    	editorPanel.add(editLevel5);
 		
 		//Den Buttons ein Actionlistener hinzufügen
 		editButtonColor0.addActionListener(this);
@@ -525,11 +493,6 @@ public class ControlPanel implements ActionListener{
 		editViewSwitch3D.addActionListener(this);
 		editViewSwitch2D.addActionListener(this);
 		editButtonResetView.addActionListener(this);
-		editLevel1.addActionListener(this);
-		editLevel2.addActionListener(this);
-		editLevel3.addActionListener(this);
-		editLevel4.addActionListener(this);
-		editLevel5.addActionListener(this);
 		editButtonColor0.addMouseListener(new KeyboardMouseManager(m, this));
 		editButtonColor1.addMouseListener(new KeyboardMouseManager(m, this));
 		editButtonColor2.addMouseListener(new KeyboardMouseManager(m, this));
@@ -933,16 +896,6 @@ public class ControlPanel implements ActionListener{
         	editViewSwitch3D.setEnabled(false);
         	editViewSwitch2D.setEnabled(true);
         	editButtonResetView.setEnabled(true);
-        }else if (z.getSource() == editLevel1){
-        	m.setToLevel(1);
-        }else if (z.getSource() == editLevel2){
-        	m.setToLevel(2);
-        }else if (z.getSource() == editLevel3){
-        	m.setToLevel(3);
-        }else if (z.getSource() == editLevel4){
-        	m.setToLevel(4);
-        }else if (z.getSource() == editLevel5){
-        	m.setToLevel(5);	
         }
 		
 	}
